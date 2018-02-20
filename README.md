@@ -25,3 +25,20 @@ A Scrapy generic crawler wrapped in a Tornado framework with a nice interface ..
 
 ## Contact
 Julien Paris (JPy)
+
+-------
+
+## WALKTHROUGH
+
+1. setup 
+
+    > $ pip install -r requirements.txt
+
+2. run app
+
+    ... from /app_scrapnado
+
+    > $ python main.py
+
+    ... check in the browser at `localhost:8000`
+   
