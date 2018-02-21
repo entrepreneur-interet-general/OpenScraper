@@ -14,7 +14,7 @@ urls = [
 	(r"/edit/([0-9Xx\-]+)", ContributorEditHandler),
 	(r"/add", ContributorEditHandler),
 
-	(r"/crawl/testspider", TestSpiderHandler),
+	(r"/crawl/testspider", SpiderHandler),
 
 
 	# (r"/crawl/", CrawlerHandler )

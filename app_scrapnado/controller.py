@@ -1,7 +1,10 @@
 
 import tornado.web, tornado.template
 
-from scraper import run_test_spider 
+from app_infos import app_infos, app_main_texts
+
+
+from scraper import run_generic_spider 
 
 ### REQUEST HANDLERS
 
@@ -13,8 +16,8 @@ class MainHandler(tornado.web.RequestHandler):
 
 		self.render(
 			"index.html",
-			page_title = "CIS | spider manager",
-			header_text = "Welcome to CIS's spider manager!",
+			page_title  = app_titles["main_title"],
+			header_text = app_titles["main_header"],
 		)
 
 class ContributorEditHandler(tornado.web.RequestHandler):
@@ -63,12 +66,32 @@ class ContributorsHandler(tornado.web.RequestHandler):
 			books = contributors
 		)
 
-class TestSpiderHandler(tornado.web.RequestHandler) : 
+class SpiderHandler(tornado.web.RequestHandler) : 
 	"""
 	test a basic spider : launch the run from client side
 	"""
-	def get(self):
-		run_test_spider()
+	def get(self, spidername = "testspider" ):
+		
+		### retrieve spider config from its name in the db
+		try : 
+			coll = self.application.db.books
+			spider_config = coll.find_one({"spider": isbn})
+		except : 
+			test_config = {
+					"name"  : "quote", 
+					"start_urls" : ['http://quotes.toscrape.com/tag/humor/'],
+				 } 
+			spider_config = basic_config
+		
+		### run the corresponding spider
+		run_generic_spider( run_spider_config = spider_config )
+
+		### redirect to a page 
+		self.render(
+			"index.html",
+			page_title = app_main_texts["main_title"],
+			header_text = "crawling of -%s- finished..." %(spidername),
+		)
 
 
 

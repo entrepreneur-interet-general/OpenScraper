@@ -1,7 +1,7 @@
 
 
 """ 
-TEST FOR A GENERIC SPIDER 
+TESTS FOR A GENERIC SPIDER 
 -------------------------
 
 """
@@ -17,13 +17,14 @@ from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 
 s = get_project_settings()
-# print dict(s)
+# print "settings : " , dict(s)
 
 runner = crawler.CrawlerRunner()
 
 
 ### import itmes
 from items import ProjectItems
+
 
 ### define pipelines
 
@@ -45,17 +46,27 @@ class GenericSpider(scrapy.Spider):
 		"""
 		self.name = spider_config["name"] # "quote"
 		self.start_urls = spider_config["start_urls"] 
-		
+		###...
+
 	def parse(self, response):
 		for quote in response.css('div.quote'):
 			print(quote.css('span.text::text').extract_first())
+			
+
+
+
+
 
 
 
 ### define spider runner
-def run_test_spider(run_spider_config = basic_spider_config):
+### cf : https://stackoverflow.com/questions/13437402/how-to-run-scrapy-from-within-a-python-script
+### cf : https://doc.scrapy.org/en/latest/topics/practices.html
+### solution chosen from : https://stackoverflow.com/questions/41495052/scrapy-reactor-not-restartable 
+
+def run_generic_spider(run_spider_config = basic_spider_config):
 	"""
-	just launch run_test_spider() from any handler
+	just launch run_generic_spider() from any handler in controller
 	"""
 
 	### configure custom spider from a config
@@ -65,7 +76,6 @@ def run_test_spider(run_spider_config = basic_spider_config):
 		try:
 			### add crawler.runner as deferred
 			deferred = runner.crawl(spider)
-			# deferred = runner.crawl(self.spider)
 			deferred.addBoth(lambda _: reactor.stop())
 			reactor.run()
 			q.put(None)
@@ -88,6 +98,8 @@ def run_test_spider(run_spider_config = basic_spider_config):
 
 	### convert to class object
 	# spider = globals()[spider]
+
+
 
 
 

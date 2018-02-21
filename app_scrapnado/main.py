@@ -49,9 +49,6 @@ class Application(tornado.web.Application):
 	
 	def __init__(self):
 
-		### scrapy init
-		
-
 		### connect to MongoDB
 		client = MongoClient(host='localhost', port=27017) # MongoClient()
 		self.db = client.bookstore
