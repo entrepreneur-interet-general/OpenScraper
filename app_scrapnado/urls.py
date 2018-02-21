@@ -10,11 +10,11 @@ urls = [
 
 	### main pages
 	(r"/", MainHandler),
-	(r"/recommended/", ContributorsHandler),
+	(r"/contributors/", ContributorsHandler),
 	(r"/edit/([0-9Xx\-]+)", ContributorEditHandler),
 	(r"/add", ContributorEditHandler),
 
-	(r"/testspider", TestSpiderHandler),
+	(r"/crawl/testspider", TestSpiderHandler),
 
 
 	# (r"/crawl/", CrawlerHandler )

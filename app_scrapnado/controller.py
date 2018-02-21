@@ -1,6 +1,7 @@
 
 import tornado.web, tornado.template
 
+from scraper import run_test_spider 
 
 ### REQUEST HANDLERS
 
@@ -67,7 +68,9 @@ class TestSpiderHandler(tornado.web.RequestHandler) :
 	test a basic spider : launch the run from client side
 	"""
 	def get(self):
-		pass
+		run_test_spider()
+
+
 
 ### TORNADO MODULES
 
