@@ -1,1 +1,1 @@
-### folder to store all configuration files and setups
+### folder to store all app configuration files and setups

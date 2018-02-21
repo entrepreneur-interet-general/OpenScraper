@@ -38,33 +38,44 @@ from controller import *
 
 ### main application wrapper
 class Application(tornado.web.Application):
-    
+	"""
+	main Tornado application wrapper :
+	- set MongoDB client
+	- set scrapy
+	- set modules
+	- set urls handlers
+	- set and init Tornado app
+	"""
+	
 	def __init__(self):
 
 		### scrapy init
 
 
-        ### connect to MongoDB
+		### connect to MongoDB
 		client = MongoClient(host='localhost', port=27017) # MongoClient()
 		self.db = client.bookstore
 
-        ### retrieve handlers from urls.py
+		### retrieve handlers from urls.py
 		handlers = urls.urls
 
-        ### basic app settings
+		### basic app settings
 		settings = dict(
 			template_path=os.path.join(os.path.dirname(__file__), "templates"),
 			static_path=os.path.join(os.path.dirname(__file__), "static"),
-			ui_modules={"Book": BookModule},
+			ui_modules={"Book": ContributorModule},
 			debug=True,
-        )
-        
-        ### app init
+		)
+		
+		### app init
 		tornado.web.Application.__init__(self, handlers, **settings )
 
 
 
 def main():
+	"""
+	start / run app
+	"""
 	tornado.options.parse_command_line()
 	http_server = tornado.httpserver.HTTPServer(Application())
 	http_server.listen(options.port)

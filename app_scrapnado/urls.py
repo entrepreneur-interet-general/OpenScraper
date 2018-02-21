@@ -5,16 +5,19 @@ from controller import *
 
 ### all routing functions are in controller.py
 urls = [
-    # (r"/", MainHandler),
-    # (r"/test", TestHandler),
+	# (r"/", MainHandler),
+	# (r"/test", TestHandler),
 
-    ### main pages
-    (r"/", MainHandler),
-    (r"/recommended/", RecommendedHandler),
-    (r"/edit/([0-9Xx\-]+)", BookEditHandler),
-    (r"/add", BookEditHandler),
+	### main pages
+	(r"/", MainHandler),
+	(r"/recommended/", ContributorsHandler),
+	(r"/edit/([0-9Xx\-]+)", ContributorEditHandler),
+	(r"/add", ContributorEditHandler),
 
-    # (r"/crawl/", CrawlerHandler )
+	(r"/testspider", TestSpiderHandler),
 
-    # (r"/admin", AdminHandler),    
+
+	# (r"/crawl/", CrawlerHandler )
+
+	# (r"/admin", AdminHandler),    
 ]

@@ -19,9 +19,19 @@ A Scrapy generic crawler wrapped in a Tornado framework with a nice interface ..
 6. integrate generic spider + tests + run
 7. make a nice front in bootstrap 
 8. ... nicer front in vue.js
+9. GUI to edit also fields' names (structure of the scrapping)
+
+------
 
 ### Notes
 ... work in progress @ step 1. : for now I'm just trying to adapt some Tornado tutorial
+
+### CURRENTLY... 
+
+- cleaning references to "books" (adapt tutorial to OpenScrapper goals)
+- trying to run scrapy  
+
+-------
 
 ## Contact
 Julien Paris (JPy)
