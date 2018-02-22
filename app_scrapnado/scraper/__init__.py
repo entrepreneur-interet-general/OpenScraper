@@ -36,22 +36,35 @@ from items import ProjectItems
 basic_spider_config = {
 					"name"  : "quote", 
 					"start_urls" : ['http://quotes.toscrape.com/tag/humor/'],
-				 } 
 
+					"xpath_title" : "...",
+					"xpath_abstract" : "...",
+					"xpath_image" : "...",
+				 } 
+# @gen.coroutine
 class GenericSpider(scrapy.Spider):
 	
 	def __init__(self, spider_config = basic_spider_config): 
 		"""
 		init spider with its config dict as an arg (from contributor datas in DB)
 		"""
-		self.name = spider_config["name"] # "quote"
+		### main arguments
+		self.name = spider_config["name"] 
 		self.start_urls = spider_config["start_urls"] 
+		
+		### parsing arguments
+		### ...
+		
+		### custom xpaths
 		###...
 
 	def parse(self, response):
-		for quote in response.css('div.quote'):
-			print(quote.css('span.text::text').extract_first())
-			
+		"""
+		parse pages to scrap innovative projects
+		"""
+		for project in response.css('div.quote'):
+			print(project.css('span.text::text').extract_first())
+
 
 
 

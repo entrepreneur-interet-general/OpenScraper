@@ -9,14 +9,21 @@ a project by ...
 
 
 ### global imports
-import os
+import os, os.path
 import json
+import datetime
+from uuid import uuid4
 
 ### tornado imports
 import tornado.ioloop
 import tornado.web
+import tornado.auth
+import tornado.options
+import tornado.gen
 # from tornado import httpclient, gen, ioloop, queues
 from tornado.options import define, options
+from tornado.concurrent import Future
+
 define("port", default=8000, help="run on the given port", type=int)
 
 ### import dependencies
@@ -60,8 +67,13 @@ class Application(tornado.web.Application):
 		settings = dict(
 			template_path=os.path.join(os.path.dirname(__file__), "templates"),
 			static_path=os.path.join(os.path.dirname(__file__), "static"),
-			ui_modules={"Book": ContributorModule},
+			ui_modules={"Contributor": ContributorModule},
 			debug=True,
+			
+			login_url="/login",
+			
+			cookie_secret = "bZJc2sWbQLKos6GkHn/VB9oXwQt8S0R0kRvJ5/xJ89E=", ### example / store real key in ignored config.py
+			xsrf_cookies = True
 		)
 		
 		### app init
@@ -74,9 +86,14 @@ def main():
 	start / run app
 	"""
 	tornado.options.parse_command_line()
+	
 	http_server = tornado.httpserver.HTTPServer(Application())
 	http_server.listen(options.port)
 	tornado.ioloop.IOLoop.instance().start()
+	
+	# http_server.bind(options.port)
+	# http_server.start(0)  # Forks multiple sub-processes
+	# tornado.ioloop.IOLoop.current().start()
 
 
 if __name__ == "__main__":

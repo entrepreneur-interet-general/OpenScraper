@@ -7,20 +7,49 @@ from app_infos import app_infos, app_main_texts
 from scraper import run_generic_spider 
 
 ### REQUEST HANDLERS
+"""
+Tornado supports any valid HTTP method (GET,POST,PUT,DELETE,HEAD,OPTIONS)
 
-class MainHandler(tornado.web.RequestHandler):
+"""
+
+### Login handlers 
+class BaseHandler(tornado.web.RequestHandler):
+	def get_current_user(self):
+		return self.get_secure_cookie("username")
+
+class LoginHandler(BaseHandler):
+	def get(self):
+		self.render('login.html')
+	def post(self):
+		self.set_secure_cookie("username", self.get_argument("username"))
+		self.redirect("/")
+		
+class WelcomeHandler(BaseHandler):
 	"""
 	handler for index page
 	"""
+	@tornado.web.authenticated
 	def get(self):
 
 		self.render(
 			"index.html",
-			page_title  = app_titles["main_title"],
-			header_text = app_titles["main_header"],
+			page_title  = app_main_texts["main_title"],
+			header_text = app_main_texts["main_header"],
+			user=self.current_user
 		)
 
-class ContributorEditHandler(tornado.web.RequestHandler):
+	# def write_error(self, status_code, **kwargs):
+	# 	self.write("Gosh darnit, user! You caused a %d error." % status_code)
+
+class LogoutHandler(BaseHandler):
+	def get(self):
+		if (self.get_argument("logout", None)):
+			self.clear_cookie("username")
+			self.redirect("/")
+		
+
+# class ContributorEditHandler(tornado.web.RequestHandler):
+class ContributorEditHandler(BaseHandler):
 	"""
 	contributor edit handler
 	"""
@@ -52,41 +81,48 @@ class ContributorEditHandler(tornado.web.RequestHandler):
 			coll.insert_one(contributor)
 		self.redirect("/recommended/")
 
-class ContributorsHandler(tornado.web.RequestHandler):
+# class ContributorsHandler(tornado.web.RequestHandler):
+class ContributorsHandler(BaseHandler):
 	"""
 	list all contributors
 	"""
 	def get(self):
-		coll = self.application.db.books
+		coll = self.application.db.books #db.contributors
 		contributors = coll.find()
 		self.render(
-			"recommended.html",
+			"list_contributors.html",
 			page_title = "List of contributors to CIS",
 			header_text = "...",
-			books = contributors
+			contributors = contributors
 		)
 
-class SpiderHandler(tornado.web.RequestHandler) : 
+# class SpiderHandler(tornado.web.RequestHandler) : 
+class SpiderHandler(BaseHandler) : 
 	"""
 	test a basic spider : launch the run from client side
 	"""
-	def get(self, spidername = "testspider" ):
+	def get(self, spidername=None ):
 		
 		### retrieve spider config from its name in the db
-		try : 
-			coll = self.application.db.books
-			spider_config = coll.find_one({"spider": isbn})
-		except : 
+		coll = self.application.db.contributors
+		spider_config = coll.find_one({"spider": spidername})
+		
+		if spider_config == None : 
+			print " !!! Spidername not found : test spider with test_config"
 			test_config = {
 					"name"  : "quote", 
 					"start_urls" : ['http://quotes.toscrape.com/tag/humor/'],
 				 } 
-			spider_config = basic_config
+			spider_config = test_config
 		
+		print "--- spidername : ", spidername
+		print "--- spider_config :", spider_config
+
 		### run the corresponding spider
 		run_generic_spider( run_spider_config = spider_config )
 
 		### redirect to a page 
+		# self.redirect("/contributors/%s")
 		self.render(
 			"index.html",
 			page_title = app_main_texts["main_title"],

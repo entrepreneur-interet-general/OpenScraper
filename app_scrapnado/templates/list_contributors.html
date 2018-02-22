@@ -1,0 +1,9 @@
+{% extends "main.html" %}
+{% autoescape None %}
+
+{% block body %}
+<h2>List contributors</h2>
+	{% for contributor in contributors %}
+ 	 	{{ modules.Contributor(contributor) }}
+	{% end %}
+{% end %}

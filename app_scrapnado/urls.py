@@ -8,16 +8,19 @@ urls = [
 	# (r"/", MainHandler),
 	# (r"/test", TestHandler),
 
-	### main pages
-	(r"/", MainHandler),
+	### index
+	(r"/", WelcomeHandler),
+	(r'/login', LoginHandler),
+	(r'/logout', LogoutHandler),
+
+	### lists and edits
 	(r"/contributors/", ContributorsHandler),
 	(r"/edit/([0-9Xx\-]+)", ContributorEditHandler),
 	(r"/add", ContributorEditHandler),
 
-	(r"/crawl/testspider", SpiderHandler),
+	### spider launchers
+	(r"/crawl/(\w+)", SpiderHandler), ### get spidername as input
 
-
-	# (r"/crawl/", CrawlerHandler )
 
 	# (r"/admin", AdminHandler),    
 ]

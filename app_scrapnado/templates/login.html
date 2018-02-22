@@ -1,0 +1,14 @@
+<html>
+	<head>
+		<title>Please Log In</title>
+	</head>
+		<body>
+		<form action="/login" method="POST">
+			{% module xsrf_form_html() %}
+			Username: 
+			<input type="text" name="username" />
+			<input type="submit" value="Log In" />
+			
+		</form>
+	</body>
+</html>
