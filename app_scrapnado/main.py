@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-CIS SPIDER MANAGER
+OpenScrapper - a Tornado Scrapy spiders manager
 ------------------ 
 a project by ... 
 
@@ -24,12 +24,13 @@ import tornado.gen
 from tornado.options import define, options
 from tornado.concurrent import Future
 
-define("port", default=8000, help="run on the given port", type=int)
+### import app settings from .config.settings
+from config.settings_example import * 
+# from config.settings import * 
 
-### import dependencies
-import urls
+define( "port", default=APP_PORT, help="run on the given port", type=int )
 
-### BDD imports and client
+# BDD imports and client
 # import pymongo
 from pymongo import MongoClient
 
@@ -39,11 +40,14 @@ from scrapy.crawler import CrawlerRunner
 from scraper import *
 crawl_runner = CrawlerRunner()      # requires the Twisted reactor to run
 
+### import dependencies
+import urls
+
 ### import controller : url functions
 from controller import *
 
 
-### main application wrapper
+### main Tornado application wrapper
 class Application(tornado.web.Application):
 	"""
 	main Tornado application wrapper :
@@ -57,8 +61,11 @@ class Application(tornado.web.Application):
 	def __init__(self):
 
 		### connect to MongoDB
-		client = MongoClient(host='localhost', port=27017) # MongoClient()
-		self.db = client.bookstore
+		client = MongoClient(
+					host = MONGODB_HOST, 
+					port = MONGODB_PORT
+		)
+		self.db = client[ MONGODB_DB ]
 
 		### retrieve handlers from urls.py
 		handlers = urls.urls
@@ -68,12 +75,12 @@ class Application(tornado.web.Application):
 			template_path=os.path.join(os.path.dirname(__file__), "templates"),
 			static_path=os.path.join(os.path.dirname(__file__), "static"),
 			ui_modules={"Contributor": ContributorModule},
-			debug=True,
-			
+
 			login_url="/login",
-			
-			cookie_secret = "bZJc2sWbQLKos6GkHn/VB9oXwQt8S0R0kRvJ5/xJ89E=", ### example / store real key in ignored config.py
-			xsrf_cookies = True
+
+			debug = APP_DEBUG ,
+			cookie_secret = COOKIE_SECRET , ### example / store real key in ignored config.py
+			xsrf_cookies  = XSRF_ENABLED
 		)
 		
 		### app init

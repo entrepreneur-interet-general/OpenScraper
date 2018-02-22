@@ -2,8 +2,8 @@
 import tornado.web, tornado.template
 from tornado import gen
 
-from app_infos import app_infos, app_main_texts
-
+### import static infos 
+from config.app_infos import app_infos, app_main_texts
 
 from scraper import run_generic_spider 
 

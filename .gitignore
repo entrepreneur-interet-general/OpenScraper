@@ -3,15 +3,16 @@
 ### CONFIG FILES
 config.py
 */config.py
-coral/app/backend/config_mail_recaptcha.py 
-coral/app/backend/config.py 
+app_scrapnado/config/settings.py
+# coral/app/backend/config_mail_recaptcha.py 
+# coral/app/backend/config.py 
 
 config.cfg
 */config.cfg
 /config.cfg
-coral/config.cfg
-coral/app/config.cfg
-coral/app/backend/config.cfg
+# coral/config.cfg
+# coral/app/config.cfg
+# coral/app/backend/config.cfg
 
 ### BOWER
 bower_components
