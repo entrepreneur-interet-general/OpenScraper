@@ -1,5 +1,6 @@
 
 import tornado.web, tornado.template
+from tornado import gen
 
 from app_infos import app_infos, app_main_texts
 
@@ -9,7 +10,6 @@ from scraper import run_generic_spider
 ### REQUEST HANDLERS
 """
 Tornado supports any valid HTTP method (GET,POST,PUT,DELETE,HEAD,OPTIONS)
-
 """
 
 ### Login handlers 
@@ -30,7 +30,6 @@ class WelcomeHandler(BaseHandler):
 	"""
 	@tornado.web.authenticated
 	def get(self):
-
 		self.render(
 			"index.html",
 			page_title  = app_main_texts["main_title"],
@@ -101,6 +100,8 @@ class SpiderHandler(BaseHandler) :
 	"""
 	test a basic spider : launch the run from client side
 	"""
+	@tornado.web.authenticated
+	@gen.coroutine
 	def get(self, spidername=None ):
 		
 		### retrieve spider config from its name in the db
@@ -118,16 +119,24 @@ class SpiderHandler(BaseHandler) :
 		print "--- spidername : ", spidername
 		print "--- spider_config :", spider_config
 
-		### run the corresponding spider
-		run_generic_spider( run_spider_config = spider_config )
+		### asynchronous run the corresponding spider
+		# run_generic_spider( run_spider_config = spider_config ) # synchronous
+		print "--- starting spider runner --- "
+		yield self.run_spider( spider_config ) # asynchronous
 
 		### redirect to a page 
 		# self.redirect("/contributors/%s")
 		self.render(
 			"index.html",
 			page_title = app_main_texts["main_title"],
-			header_text = "crawling of -%s- finished..." %(spidername),
+			header_text = "crawling of -%s- launched ..." %(spidername),
+			user=self.current_user
 		)
+
+	@gen.coroutine
+	def run_spider (self, spider_config) :
+		result = run_generic_spider( run_spider_config = spider_config )
+		raise gen.Return(result)
 
 
 
