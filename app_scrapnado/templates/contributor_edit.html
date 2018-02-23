@@ -4,20 +4,20 @@
 {% block body %}
 <form method="POST">
 	ISBN <input type="text" name="isbn"
-		value="{{ book.get('isbn', '') }}"><br>
+		value="{{ contributor.get('isbn', '') }}"><br>
 	Title <input type="text" name="title"
-		value="{{ book.get('title', '') }}"><br>
+		value="{{ contributor.get('title', '') }}"><br>
 	Subtitle <input type="text" name="subtitle"
-		value="{{ book.get('subtitle', '') }}"><br>
+		value="{{ contributor.get('subtitle', '') }}"><br>
 	Image <input type="text" name="image"
-		value="{{ book.get('image', '') }}"><br>
+		value="{{ contributor.get('image', '') }}"><br>
 	Author <input type="text" name="author"
-		value="{{ book.get('author', '') }}"><br>
+		value="{{ contributor.get('author', '') }}"><br>
 	Date released <input type="text" name="date_released"
-		value="{{ book.get('date_released', '') }}"><br>
+		value="{{ contributor.get('date_released', '') }}"><br>
 	Description<br>
 	<textarea name="description" rows="5"
-		cols="40">{% raw book.get('description', '')%}</textarea><br>
+		cols="40">{% raw contributor.get('description', '')%}</textarea><br>
 	<input type="submit" value="Save">
 </form>
 {% end %}

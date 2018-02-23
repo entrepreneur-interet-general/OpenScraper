@@ -82,17 +82,20 @@ avise_spider_config = {
 
 class GenericSpider(scrapy.Spider, GenericSpiderMix):
 	
-	def __init__(self, spider_config = basic_spider_config): 
+	def __init__(self, datamodel = [] , spider_config=basic_spider_config): 
 		"""
 		init spider with its config dict as an arg (from contributor datas in DB)
 		"""
 
-		print "--- GenericSpiderMix / spider_config : ", spider_config
+		print "--- GenericSpider / spider_config : ", spider_config
 
 		### main arguments
-		self.name		= spider_config["name"] 
-		self.start_urls = spider_config["start_urls"] 
-		
+		# self.name		= spider_config["name"] 
+		# self.start_urls = spider_config["start_urls"] 
+		for k, v in spider_config.iteritems() : 
+			print k, ":", v
+			self.__dict__[k] = v
+
 		### parsing arguments
 		self.get_next_page = ""
 		### ...
@@ -105,6 +108,7 @@ class GenericSpider(scrapy.Spider, GenericSpiderMix):
 		parse pages to scrap innovative projects
 		"""
 		for scraped_data in response.css('div.quote'):
+			
 			### create Item to fill
 			item = ScrapedItem()
 			

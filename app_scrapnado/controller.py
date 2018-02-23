@@ -2,12 +2,14 @@
 import tornado.web, tornado.template
 from tornado import gen
 
-### import static infos 
+### import app settings / infos 
 from config.app_infos import app_infos, app_main_texts
+from config.settings_example import MONGODB_COLL_CONTRIBUTORS, MONGODB_COLL_DATAMODEL, MONGODB_COLL_DATASCRAPPED
 
 from scraper import run_generic_spider 
 
-### REQUEST HANDLERS
+
+### REQUEST HANDLERS ###
 """
 Tornado supports any valid HTTP method (GET,POST,PUT,DELETE,HEAD,OPTIONS)
 """
@@ -57,15 +59,16 @@ class ContributorEditHandler(BaseHandler):
 		if isbn:
 			coll = self.application.db.books
 			contributor = coll.find_one({"isbn": isbn})
+
 		self.render("contributor_edit.html",
 			page_title="CIS contributors",
 			header_text="Edit contributor",
-			book=contributor)
+			contributor=contributor)
 
 	def post(self, isbn=None):
 		import time
 		book_fields = ['isbn', 'title', 'subtitle', 'image', 'author',
-			'date_released', 'description']
+						'date_released', 'description']
 		coll = self.application.db.books
 		contributor = dict()
 		if isbn:
