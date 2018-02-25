@@ -4,12 +4,12 @@ app_infos = {
 	"licence"   : "MIT",
 	"authors"   : [ "Julien Paris (aka JPy)"],
 	"version"   : "0.1",
-	"date"      : "",
-	"link_git"  : "http://...",
-	"link_project" : "http://..."
+	"date"      : "2018-02-25",
+	"link_git"  : "https://github.com/entrepreneur-interet-general/OpenScraper",
+	"link_online" : "http://..."
 }
 
 app_main_texts = {
-	"main_title"  : "CIS | spider manager" ,
-	"main_header" : "Welcome to CIS's spider manager!" ,
+	"main_title"  : "CIS | open scraper" ,
+	"main_header" : "Welcome to CIS's Open Scraper !" ,
 }
