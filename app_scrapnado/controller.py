@@ -6,6 +6,7 @@ from tornado import gen
 from config.app_infos import app_infos, app_main_texts
 from config.settings_example import MONGODB_COLL_CONTRIBUTORS, MONGODB_COLL_DATAMODEL, MONGODB_COLL_DATASCRAPPED
 
+### OpenScraper generic scraper
 from scraper import run_generic_spider 
 
 
@@ -47,7 +48,7 @@ class LogoutHandler(BaseHandler):
 		if (self.get_argument("logout", None)):
 			self.clear_cookie("username")
 			self.redirect("/")
-		
+ 
 
 # class ContributorEditHandler(tornado.web.RequestHandler):
 class ContributorEditHandler(BaseHandler):
@@ -57,7 +58,7 @@ class ContributorEditHandler(BaseHandler):
 	def get(self, isbn=None):
 		contributor = dict()
 		if isbn:
-			coll = self.application.db.books
+			coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] # .books
 			contributor = coll.find_one({"isbn": isbn})
 
 		self.render("contributor_edit.html",
@@ -67,9 +68,9 @@ class ContributorEditHandler(BaseHandler):
 
 	def post(self, isbn=None):
 		import time
-		book_fields = ['isbn', 'title', 'subtitle', 'image', 'author',
+		book_fields = [	'isbn', 'title', 'subtitle', 'image', 'author',
 						'date_released', 'description']
-		coll = self.application.db.books
+		coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] # .books
 		contributor = dict()
 		if isbn:
 			contributor = coll.find_one({"isbn": isbn})
@@ -89,7 +90,7 @@ class ContributorsHandler(BaseHandler):
 	list all contributors
 	"""
 	def get(self):
-		coll = self.application.db.books #db.contributors
+		coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] #db.contributors
 		contributors = coll.find()
 		self.render(
 			"list_contributors.html",
@@ -98,6 +99,19 @@ class ContributorsHandler(BaseHandler):
 			contributors = contributors
 		)
 
+
+
+
+test_spider_config = {
+	"name"  : "TEST", 
+	"start_urls" : ['http://quotes.toscrape.com/tag/humor/'],
+
+	"xpath_title" : "...",
+	"xpath_abstract" : "...",
+	"xpath_image" : "...",
+} 
+
+
 # class SpiderHandler(tornado.web.RequestHandler) : 
 class SpiderHandler(BaseHandler) : 
 	"""
@@ -105,40 +119,46 @@ class SpiderHandler(BaseHandler) :
 	"""
 	@tornado.web.authenticated
 	@gen.coroutine
-	def get(self, spidername=None ):
+	def get(self, spidername = None ):
 		
+		print "\nSpiderHandler.get... "
+
 		### retrieve spider config from its name in the db
-		coll = self.application.db.contributors
-		spider_config = coll.find_one({"spider": spidername})
+		coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] #.contributors
+		spider_config = coll.find_one({"name": spidername})
 		
+		### redirect / set default runner if no spider_config
 		if spider_config == None : 
-			print " !!! Spidername not found : test spider with test_config"
-			test_config = {
-					"name"  : "quote", 
-					"start_urls" : ['http://quotes.toscrape.com/tag/humor/'],
-				 } 
-			spider_config = test_config
+			print "SpiderHandler.get --- !!! Spidername not found : test spider with test_config"
+			# test_config = {
+			# 		"name"  : "quote", 
+			# 		"start_urls" : ['http://quotes.toscrape.com/tag/humor/'],
+			# 	 } 
+			
+			# (this will come from DB later)
+			spider_config = test_spider_config
 		
-		print "--- spidername : ", spidername
-		print "--- spider_config :", spider_config
+		print "SpiderHandler.get --- spidername : ", spidername
+		print "SpiderHandler.get --- spider_config :", spider_config
 
-		### asynchronous run the corresponding spider
+		print "SpiderHandler.get --- starting spider runner --- "
+		### TO CHECK IF REALLY WORKING : asynchronous run the corresponding spider
 		# run_generic_spider( run_spider_config = spider_config ) # synchronous
-		print "--- starting spider runner --- "
-		yield self.run_spider( spider_config ) # asynchronous
+		yield self.run_spider( spidername, spider_config=spider_config ) # asynchronous
 
-		### redirect to a page 
+		### TO DO : redirect to a page showing crawling status / results
 		# self.redirect("/contributors/%s")
 		self.render(
 			"index.html",
 			page_title = app_main_texts["main_title"],
 			header_text = "crawling of -%s- launched ..." %(spidername),
-			user=self.current_user
+			user = self.current_user
 		)
 
 	@gen.coroutine
-	def run_spider (self, spider_config) :
-		result = run_generic_spider( run_spider_config = spider_config )
+	def run_spider (self, spidername, spider_config) :
+		print "\nSpiderHandler.run_spider --- "
+		result = run_generic_spider( spidername, run_spider_config = spider_config )
 		raise gen.Return(result)
 
 

@@ -10,8 +10,8 @@ XSRF_ENABLED  = True
 ### settings for MONGO_DB
 MONGODB_HOST 		= "localhost"
 MONGODB_PORT 		= 27017
-MONGODB_DB          = "bookstore"
+MONGODB_DB          = "bookstore" ####
 # collections
-MONGODB_COLL_CONTRIBUTORS = "books"
+MONGODB_COLL_CONTRIBUTORS = "books" ####
 MONGODB_COLL_DATAMODEL	  = "datamodel"
 MONGODB_COLL_DATASCRAPPED = "projects"

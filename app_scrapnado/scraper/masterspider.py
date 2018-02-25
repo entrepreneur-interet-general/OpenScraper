@@ -1,7 +1,8 @@
 
+import pprint
+
 ### import scrapy utilities
 import scrapy
-import scrapy.crawler as crawler
 
 from multiprocessing import Process, Queue
 from twisted.internet import reactor, defer
@@ -9,10 +10,20 @@ from twisted.internet import reactor, defer
 from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 
-s = get_project_settings()
-# print "settings : " , dict(s)
 
-runner = crawler.CrawlerRunner()
+### settings scrapy
+
+s = get_project_settings()
+print "\ndefault settings scrapy : "
+pprint.pprint(dict(s))
+# update settings from settings_scrapy.py
+# s.update(dict(ITEM_PIPELINES={
+# 	'openscraper.pipelines.RestExportPipeline': 300,
+# }))
+# print "\nupdated settings scrapy : "
+# pprint.pprint(dict(s))
+
+# runner = crawler.CrawlerRunner(settings=s)
 
 
 ### import base_fields ###############
@@ -23,7 +34,7 @@ from . import base_fields
 from items import ScrapedItem
 
 ### import mixins
-from mixins import GenericSpiderMix 
+from mixins import GenericSpiderMixin
 
 ### define pipelines
 
@@ -32,7 +43,21 @@ from mixins import GenericSpiderMix
 #####################################################
 ### test spider configurations
 
-basic_spider_config = {
+"""
+model spider_config dict : 
+
+spider_config = {
+	"spidername" : "...",
+	"start_urls" : ['http://...'],
+
+	for data_field in datamodel :
+		data_field : xpath ...
+}
+
+"""
+
+"""
+spider_config_struct = {
 	"name"  : "quote", 
 	"start_urls" : ['http://quotes.toscrape.com/tag/humor/'],
 
@@ -40,7 +65,9 @@ basic_spider_config = {
 	"xpath_abstract" : "...",
 	"xpath_image" : "...",
 } 
+"""
 
+### EXAMPLE FROM ORIGINAL SPIDER TO FACTORIZE
 avise_spider_config = {
 	
 	"LIMIT" : 20,
@@ -77,42 +104,47 @@ avise_spider_config = {
 }
 
 #####################################################
-
 ### define generic spider
+### cf : https://blog.scrapinghub.com/2016/02/24/scrapy-tips-from-the-pros-february-2016-edition/
 
-class GenericSpider(scrapy.Spider, GenericSpiderMix):
+
+from scrapy import Spider
+from scrapy.spiders import SitemapSpider, CrawlSpider
+from scrapy.crawler import CrawlerProcess, CrawlerRunner
+import scrapy.crawler as crawler
+
+# process = crawler.CrawlerRunner()
+
+# class GenericSpider(GenericSpiderMixin) :
+class GenericSpider(Spider) :
 	
-	def __init__(self, datamodel = [] , spider_config=basic_spider_config): 
-		"""
-		init spider with its config dict as an arg (from contributor datas in DB)
-		"""
+	"""a generic spider to be configured with spider_config variable"""
+	
+	### spider class needs a default name
+	name = "genericspider"
 
-		print "--- GenericSpider / spider_config : ", spider_config
-
-		### main arguments
-		# self.name		= spider_config["name"] 
-		# self.start_urls = spider_config["start_urls"] 
-		for k, v in spider_config.iteritems() : 
-			print k, ":", v
-			self.__dict__[k] = v
-
-		### parsing arguments
-		self.get_next_page = ""
-		### ...
+	def __init__(self, spider_config=None, *args, **kwargs) : 
 		
-		### custom xpaths
-		###...
+		### super init/override spider class with current args 
+		print "\n--- GenericSpider / spider_config :", spider_config
+		super(GenericSpider, self).__init__(*args, **kwargs)
+
+		### getting all the config args from spider_config
+		print "--- GenericSpider / passing kwargs..."
+		for k, v in spider_config.iteritems() : 
+			print "   - ", k, ":", v
+			self.__dict__[k] = v
 
 	def parse(self, response):
 		"""
-		parse pages to scrap innovative projects
+		parse pages to scrap data
 		"""
 		for scraped_data in response.css('div.quote'):
 			
 			### create Item to fill
 			item = ScrapedItem()
 			
-			### fill item 
+			### TO DO : fill item with results
 			# self.fill_item_from_results_page(action, item)
 
 			print(scraped_data.css('span.text::text').extract_first())
@@ -121,13 +153,9 @@ class GenericSpider(scrapy.Spider, GenericSpiderMix):
 		if is_next_page:
 			yield response.follow(next_page, callback=self.parse)
 
-
 	def get_next_page_bis(self, response, no_page_url):
 		has_next_page = True
 		has_not_next_page = False
-
-
-
 
 
 ### define spider runner
@@ -135,24 +163,33 @@ class GenericSpider(scrapy.Spider, GenericSpiderMix):
 ### cf : https://doc.scrapy.org/en/latest/topics/practices.html
 ### solution chosen from : https://stackoverflow.com/questions/41495052/scrapy-reactor-not-restartable 
 
-def run_generic_spider(run_spider_config = basic_spider_config):
+def run_generic_spider( spidername, run_spider_config = None ):
 	"""
 	just launch run_generic_spider() from any handler in controller
 	"""
 
-	### configure custom spider from a config
-	spider = GenericSpider( spider_config = run_spider_config )
+	print "\n--- run_generic_spider / spidername : ", spidername
+	print "--- run_generic_spider / run_spider_config : ", run_spider_config
+	
+	### initiating crawler process
+	process = CrawlerRunner()
+	# process = CrawlerProcess({
+	# 	'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
+	# })
 
+	### adding crawler.runner as deferred
 	def f(q):
 		try:
-			### add crawler.runner as deferred
-			deferred = runner.crawl(spider)
+			### send custom spider config from run_spider_config
+			### cf : https://stackoverflow.com/questions/35662146/dynamic-spider-generation-with-scrapy-subclass-init-error
+			deferred = process.crawl(GenericSpider, spider_config=run_spider_config )
 			deferred.addBoth(lambda _: reactor.stop())
 			reactor.run()
 			q.put(None)
 		except Exception as e:
 			q.put(e)
 
+	### putting task in queue and start
 	q = Queue() 
 	p = Process(target=f, args=(q,))
 	p.start()

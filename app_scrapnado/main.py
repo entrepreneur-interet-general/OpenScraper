@@ -36,9 +36,9 @@ from pymongo import MongoClient
 
 
 ### scrapy dependencies
-from scrapy.crawler import CrawlerRunner
+# from scrapy.crawler import CrawlerRunner
 from scraper import *
-crawl_runner = CrawlerRunner()      # requires the Twisted reactor to run
+# crawl_runner = CrawlerRunner()      # requires the Twisted reactor to run
 
 ### import dependencies
 import urls
