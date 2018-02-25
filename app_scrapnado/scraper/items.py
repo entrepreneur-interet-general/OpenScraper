@@ -7,6 +7,7 @@
 
 import scrapy
 
+'''
 class ScrapedItem(scrapy.Item):
 	"""inherited from Makina Corpus' POC"""
 
@@ -28,16 +29,16 @@ class ScrapedItem(scrapy.Item):
 	coordinates = scrapy.Field()
 
 	date = scrapy.Field()
-
+'''
 
 class GenericItem(scrapy.Item) : 
 
-	"""generic Item populated from a list"""
+	"""generic scrapy.Item populated with scrapy.Field() from a list"""
 
-	def __init__(self, datamodel_list ) : 
+	def __init__(self, datamodel_list, *args, **kwargs ) : 
 		
-		self.date = scrapy.Field()
-
+		super(GenericItem, self).__init__(*args, **kwargs)
+		
 		for i in datamodel_list : 
 			self.__dict__[i] = scrapy.Field()
 

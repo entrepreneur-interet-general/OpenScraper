@@ -1,3 +1,4 @@
+import pprint 
 
 import tornado.web, tornado.template
 from tornado import gen
@@ -9,6 +10,8 @@ from config.settings_example import MONGODB_COLL_CONTRIBUTORS, MONGODB_COLL_DATA
 ### OpenScraper generic scraper
 from scraper import run_generic_spider 
 
+### import item classes
+from scraper import GenericItem
 
 ### REQUEST HANDLERS ###
 """
@@ -100,16 +103,35 @@ class ContributorsHandler(BaseHandler):
 		)
 
 
-
+test_data_model = [
+	"title", 
+	"img", 
+	"abstract", 
+	"link_data", 
+	"link_src", 
+	"tags", 
+	"area",
+	"date_data"
+]
 
 test_spider_config = {
+
 	"name"  : "TEST", 
+	"label" : "test_spider_config",
 	"start_urls" : ['http://quotes.toscrape.com/tag/humor/'],
 
-	"xpath_title" : "...",
-	"xpath_abstract" : "...",
-	"xpath_image" : "...",
+	"error_array" : [],
+	"item_count": 0, 
+	"item_count_depth_1" : 0,
+	"LIMIT" : 5,
+	"page_count" : 1,
+	"download_delay" : 0,
+
+	"title_xpath" : "...",
+	"abstract_xpath" : "...",
+	"img_xpath" : "...",
 } 
+
 
 
 # class SpiderHandler(tornado.web.RequestHandler) : 
@@ -147,7 +169,7 @@ class SpiderHandler(BaseHandler) :
 		yield self.run_spider( spidername, spider_config=spider_config ) # asynchronous
 
 		### TO DO : redirect to a page showing crawling status / results
-		# self.redirect("/contributors/%s")
+		# self.redirect("/contributors/")
 		self.render(
 			"index.html",
 			page_title = app_main_texts["main_title"],
@@ -158,7 +180,21 @@ class SpiderHandler(BaseHandler) :
 	@gen.coroutine
 	def run_spider (self, spidername, spider_config) :
 		print "\nSpiderHandler.run_spider --- "
-		result = run_generic_spider( spidername, run_spider_config = spider_config )
+
+		print "SpiderHandler.run_spider --- creating scrapy custom_item "
+		### creating Item on the fly from data_model list (this will come from DB later)
+		data_model = test_data_model 
+		custom_item = GenericItem(data_model)
+		print "SpiderHandler.run_spider --- custom_item :"
+		pprint.pprint(custom_item.__dict__)
+
+		### run spider 
+		result = run_generic_spider( 
+									spidername=spidername, 
+									custom_item=custom_item, 
+									datamodel=data_model, 
+									run_spider_config=spider_config 
+									)
 		raise gen.Return(result)
 
 

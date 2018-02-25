@@ -21,5 +21,6 @@ base_fields = [
 		"date_xpath" ,
 ]
 
-### needs import here to be called from controller.py
+### needs imports here to be called from controller.py
+from items import *
 from masterspider import *

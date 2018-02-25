@@ -28,13 +28,13 @@ pprint.pprint(dict(s))
 
 ### import base_fields ###############
 ### inherit fields (data model) from somewhere (static dict or DB)
-from . import base_fields
+# from . import base_fields
 
 ### import items
-from items import ScrapedItem
+# from items import GenericItem #ScrapedItem
 
 ### import mixins
-from mixins import GenericSpiderMixin
+# from mixins import GenericSpiderMixin
 
 ### define pipelines
 
@@ -81,6 +81,7 @@ avise_spider_config = {
 	"list_xpath_selector" : '//div[@class:"view-content"]//div[@onclick]',
 	"next_page_xpath" : '//li[@class:"pager-next"]/a/@href',
 
+	# 
 	"img_xpath" : './/image/@*[name():"xlink:href"]',
 	"link_xpath" : './/h2/a/@href',
 	"abstract_xpath" : './/div[@class:"field-item even"]/text()',
@@ -123,11 +124,14 @@ class GenericSpider(Spider) :
 	### spider class needs a default name
 	name = "genericspider"
 
-	def __init__(self, spider_config=None, *args, **kwargs) : 
+	def __init__(self, custom_item=None, spider_config=None, *args, **kwargs) : 
 		
 		### super init/override spider class with current args 
 		print "\n--- GenericSpider / spider_config :", spider_config
 		super(GenericSpider, self).__init__(*args, **kwargs)
+
+		### storing item
+		self.custom_item = custom_item 
 
 		### getting all the config args from spider_config
 		print "--- GenericSpider / passing kwargs..."
@@ -142,7 +146,8 @@ class GenericSpider(Spider) :
 		for scraped_data in response.css('div.quote'):
 			
 			### create Item to fill
-			item = ScrapedItem()
+			# item = ScrapedItem()
+			item = self.custom_item
 			
 			### TO DO : fill item with results
 			# self.fill_item_from_results_page(action, item)
@@ -153,17 +158,28 @@ class GenericSpider(Spider) :
 		if is_next_page:
 			yield response.follow(next_page, callback=self.parse)
 
-	def get_next_page_bis(self, response, no_page_url):
+	def get_next_page(self, response, no_page_url):
 		has_next_page = True
 		has_not_next_page = False
 
+	# def get_next_page(self, response):
+	# 	"""tries to find a new page to scrap.
+	# 	if it finds one, returns it along with a True value"""
+	# 	next_page = response.xpath(self.next_page_xpath).extract_first()
+	# 	if (next_page is not None) and (self.page_count < self.LIMIT):
+	# 		self.page_count += 1
+	# 		next_page = next_page.strip()
+	# 		next_page = self.add_string_to_complete_url_if_needed(next_page, self.page_url)
+	# 		return True, next_page
+	# 	else:
+	# 		return False, next_page
 
 ### define spider runner
 ### cf : https://stackoverflow.com/questions/13437402/how-to-run-scrapy-from-within-a-python-script
 ### cf : https://doc.scrapy.org/en/latest/topics/practices.html
 ### solution chosen from : https://stackoverflow.com/questions/41495052/scrapy-reactor-not-restartable 
 
-def run_generic_spider( spidername, run_spider_config = None ):
+def run_generic_spider( spidername=None, custom_item=None, datamodel=None, run_spider_config=None ):
 	"""
 	just launch run_generic_spider() from any handler in controller
 	"""
@@ -182,7 +198,7 @@ def run_generic_spider( spidername, run_spider_config = None ):
 		try:
 			### send custom spider config from run_spider_config
 			### cf : https://stackoverflow.com/questions/35662146/dynamic-spider-generation-with-scrapy-subclass-init-error
-			deferred = process.crawl(GenericSpider, spider_config=run_spider_config )
+			deferred = process.crawl(GenericSpider, item=custom_item, spider_config=run_spider_config )
 			deferred.addBoth(lambda _: reactor.stop())
 			reactor.run()
 			q.put(None)
@@ -198,6 +214,9 @@ def run_generic_spider( spidername, run_spider_config = None ):
 
 	if result is not None:
 		raise result
+
+
+
 
 
 
