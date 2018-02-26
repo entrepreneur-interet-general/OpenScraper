@@ -158,7 +158,7 @@ test_spider_config = {
 	"error_array" : [],
 	"item_count": 0, # will be incremented each time a new item is created
 	"item_count_depth_1" : 0,# will be incremented each time an item is completed in detailed page
-	"LIMIT" : 1, # The number of pages where the spider will stop
+	"LIMIT" : 3, # The number of pages where the spider will stop
 	"page_count" : 1, # The number of pages already scraped
 	"download_delay" : 0, # The delay in seconds between each request. some website will block too many requests
 

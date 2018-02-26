@@ -140,8 +140,6 @@ class GenericSpider(Spider) :
 		"""
 		for raw_data in response.xpath('//div[@class="quote"]'):
 			
-
-
 			### create Item to fill
 			itemclass = create_item_class('GenericItemClass', self.datamodel)
 			item = itemclass()
@@ -161,11 +159,39 @@ class GenericSpider(Spider) :
 			yield item
 
 		### get and go to next page 
-		next_page_url = response.xpath(self.spider_config[ "next_page_xpath" ]).extract_first()
-		if next_page_url is not None:
-			print "\n --- GenericSpider.parse / NEXT PAGE... \n"
-			yield scrapy.Request(response.urljoin(next_page_url))
+		# next_page_url = response.xpath(self.spider_config[ "next_page_xpath" ]).extract_first()
+		# if next_page_url is not None:
+		# 	print "\n --- GenericSpider.parse / NEXT PAGE... \n"
+		# 	# yield scrapy.Request(response.urljoin(next_page_url))
+		# 	yield scrapy.follow(response.urljoin(next_page_url, callback=self.parse))
 
+		is_next_page, next_page = self.get_next_page(response)
+		if is_next_page:
+			print "\n --- GenericSpider.parse / NEXT PAGE... \n"
+			yield response.follow(next_page, callback=self.parse)
+
+	def get_next_page(self, response):
+		"""tries to find a new page to scrap.
+		if it finds one, returns it along with a True value"""
+		next_page = response.xpath(self.next_page_xpath).extract_first()
+		if (next_page is not None) and (self.page_count < self.LIMIT):
+			self.page_count += 1
+			# next_page = next_page.strip()
+			# next_page = self.add_string_to_complete_url_if_needed(next_page, self.page_url)
+			next_page = response.xpath(self.spider_config[ "next_page_xpath" ]).extract_first()
+			return True, next_page
+		else:
+			return False, next_page
+
+	def add_string_to_complete_url_if_needed(self, not_complete_url, rest_of_url=None):
+		"""adds the missing beggining part of an url with the '/' if needed"""
+		if rest_of_url is None:
+			rest_of_url = self.page_url
+		if not not_complete_url.startswith("http"):
+			if not not_complete_url.startswith("/"):
+				not_complete_url = "{}{}".format("/", not_complete_url)
+			not_complete_url = "{}{}".format(rest_of_url, not_complete_url)
+		return not_complete_url
 
 	def parse_item (self, response): 
 
