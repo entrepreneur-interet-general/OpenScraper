@@ -117,34 +117,15 @@ import scrapy.crawler as crawler
 # process = crawler.CrawlerRunner()
 
 
+### UTILS
+def dictFromDataModelList (datamodel_list ) : 
+	"""create a correspondance dict from datamodel to _xpath like : {} """
+	data_model_dict = { i : "{}_xpath".format(i) for i in datamodel_list }
+	return data_model_dict
+
 
 ### ON ITEMS AND PIPELINES SEE : https://gist.github.com/alecxe/fc1527d6d9492b59c610
 
-# class ToScrapeSpiderXPath(Spider):
-# 	name = 'toscrape-xpath'
-# 	start_urls = [
-# 		'http://quotes.toscrape.com/',
-# 	]
-
-# 	def parse(self, response):
-# 		for quote in response.xpath('//div[@class="quote"]'):
-# 			# yield {
-# 			# 	'text': quote.xpath('./span[@class="text"]/text()').extract_first(),
-# 			# 	'author': quote.xpath('.//small[@class="author"]/text()').extract_first(),
-# 			# 	'tags': quote.xpath('.//div[@class="tags"]/a[@class="tag"]/text()').extract()
-# 			# }
-# 			print "\ntext : ", quote.xpath('./span[@class="text"]/text()').extract_first(),
-# 			print 'author : ', quote.xpath('.//small[@class="author"]/text()').extract_first(),
-# 			print 'tags : ', quote.xpath('.//div[@class="tags"]/a[@class="tag"]/text()').extract()
-			
-# 		next_page_url = response.xpath('//li[@class="next"]/a/@href').extract_first()
-# 		if next_page_url is not None:
-# 			yield scrapy.Request(response.urljoin(next_page_url))
-
-
-
-
-# class GenericSpider(GenericSpiderMixin) :
 class GenericSpider(Spider) :
 	
 	"""a generic spider to be configured with spider_config variable"""
@@ -157,11 +138,19 @@ class GenericSpider(Spider) :
 		### super init/override spider class with current args 
 		print "\n--- GenericSpider / spider_config :", spider_config
 		super(GenericSpider, self).__init__(*args, **kwargs)
+		
+		### store spider_config
+		self.spider_config = spider_config
 
 		### getting data model for later use in item
 		print "--- GenericSpider / datamodel :"
 		self.datamodel = datamodel 
 		pprint.pprint (self.datamodel)
+
+		## storing a _xpath correspondance dict from datamodel
+		print "--- GenericSpider / datamodel_dict :"
+		self.datamodel_dict = dictFromDataModelList(datamodel)
+		pprint.pprint(self.datamodel_dict)
 
 		### getting all the config args from spider_config
 		print "--- GenericSpider / passing kwargs..."
@@ -169,28 +158,30 @@ class GenericSpider(Spider) :
 			print "   - ", k, ":", v
 			self.__dict__[k] = v
 
-	# def parse(self, response):
-	# 	"""
-	# 	parse pages to scrap data
-	# 	"""
-	# 	for scraped_data in response.css('div.quote'):
+	'''
+	def parse(self, response):
+		"""
+		parse pages to scrap data
+		"""
+		for scraped_data in response.css('div.quote'):
 			
-	# 		### create Item to fill
-	# 		# item = ScrapedItem()
-	# 		item = self.custom_item
+			### create Item to fill
+			# item = ScrapedItem()
+			item = self.custom_item
 			
-	# 		### TO DO : fill item with results
-	# 		# self.fill_item_from_results_page(action, item)
+			### TO DO : fill item with results
+			# self.fill_item_from_results_page(action, item)
 
-	# 		print(scraped_data.css('span.text::text').extract_first())
+			print(scraped_data.css('span.text::text').extract_first())
 
-	# 	is_next_page, next_page = self.get_next_page(response)
-	# 	if is_next_page:
-	# 		yield response.follow(next_page, callback=self.parse)
+		is_next_page, next_page = self.get_next_page(response)
+		if is_next_page:
+			yield response.follow(next_page, callback=self.parse)
 
-	# def get_next_page(self, response, no_page_url):
-	# 	has_next_page = True
-	# 	has_not_next_page = False
+	def get_next_page(self, response, no_page_url):
+		has_next_page = True
+		has_not_next_page = False
+		'''
 
 	def parse(self, response):
 		"""
@@ -198,9 +189,9 @@ class GenericSpider(Spider) :
 		"""
 		for scraped_data in response.xpath('//div[@class="quote"]'):
 			
-			print "\nabstract : ", scraped_data.xpath('./span[@class="text"]/text()').extract_first()
-			print 'author : ', scraped_data.xpath('.//small[@class="author"]/text()').extract_first()
-			print 'tags : ', scraped_data.xpath('.//div[@class="tags"]/a[@class="tag"]/text()').extract()
+			print '\nauthor : ', scraped_data.xpath('.//small[@class="author"]/text()').extract_first()
+			# print "abstract : ", scraped_data.xpath('./span[@class="text"]/text()').extract_first()
+			# print 'tags : ', scraped_data.xpath('.//div[@class="tags"]/a[@class="tag"]/text()').extract()
 			
 			### create Item to fill
 			itemclass = create_item_class('GenericItemClass', self.datamodel)
@@ -208,14 +199,18 @@ class GenericSpider(Spider) :
 			# just for debugging purposes
 			item['testClass'] = "class is tested"
 
-			# ### extract data
-			item['abstract'] = scraped_data.xpath('./span[@class="text"]/text()').extract_first()
-			item['author'] 	 = scraped_data.xpath('.//small[@class="author"]/text()').extract_first()
-			item['tags']     = scraped_data.xpath('.//div[@class="tags"]/a[@class="tag"]/text()').extract()
+			### extract data based on spider_config
+			for d_model, d_xpath in self.datamodel_dict.iteritems() : 
+				# first check if xpath exists in spider_config
+				if d_xpath in self.spider_config : 
+					item[ d_model ] = scraped_data.xpath(self.spider_config[ d_xpath ]).extract()
 
+			# item['abstract'] = scraped_data.xpath('./span[@class="text"]/text()').extract_first()
+			# item['author'] 	 = scraped_data.xpath('.//small[@class="author"]/text()').extract_first()
+			# item['tags']     = scraped_data.xpath('.//div[@class="tags"]/a[@class="tag"]/text()').extract()
 			
-			# print item.items()
-			print item.keys()
+			print item.items()
+			# print item.keys()
 			yield item
 
 

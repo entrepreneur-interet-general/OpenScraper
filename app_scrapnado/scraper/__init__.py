@@ -13,13 +13,13 @@ TOWARDS A GENERIC SPIDER
 ### - generic spider : class GenericSpider(scrapy.Spider, GenericSpiderMix):
 
 ### temporary solution (static list) 
-base_fields = [
-		"img_xpath" ,
-		"link_xpath" ,
-		"abstract_xpath" ,
-		"title_xpath" ,
-		"date_xpath" ,
-]
+# base_fields = [
+# 		"img_xpath" ,
+# 		"link_xpath" ,
+# 		"abstract_xpath" ,
+# 		"title_xpath" ,
+# 		"date_xpath" ,
+# ]
 
 ### needs imports here to be called from controller.py
 from items import *
