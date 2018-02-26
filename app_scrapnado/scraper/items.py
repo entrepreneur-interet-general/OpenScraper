@@ -45,15 +45,14 @@ class GenericItem(Item) :
 		for field in datamodel_list : 
 			self.__dict__[field] = scrapy.Field()
 
+
 ### cf : https://github.com/scrapy/scrapy/issues/398
 def create_item_class(class_name, field_list):
-    field_dict = {}
-    for field_name in field_list:
-        field_dict[field_name] = Field()
-    return type(str(class_name), (DictItem,), {'fields': field_dict})
 
+	"""generic Item class creator populated from a list"""
 
-# class StackItem(Item):
-# 	def __setitem__(self, datamodel_list):
-# 		for field in datamodel_list : 
-# 			self.fields[field] = scrapy.Field()
+	field_dict = {}
+	for field_name in field_list:
+		field_dict[field_name] = Field()
+	return type(str(class_name), (DictItem,), {'fields': field_dict})
+

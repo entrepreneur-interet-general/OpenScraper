@@ -4,6 +4,8 @@
 """ 
 TOWARDS A GENERIC SPIDER 
 -------------------------
+imports generic Item creator
+imports generic spider 
 """
 
 ### need to be flexible : user set it and store structure in DB

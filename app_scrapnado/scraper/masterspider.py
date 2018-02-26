@@ -13,9 +13,9 @@ from scrapy.utils.project import get_project_settings
 
 ### settings scrapy
 
-s = get_project_settings()
-print "\ndefault settings scrapy : "
-pprint.pprint(dict(s))
+# s = get_project_settings()
+# print "\ndefault settings scrapy : "
+# pprint.pprint(dict(s))
 # update settings from settings_scrapy.py
 # s.update(dict(ITEM_PIPELINES={
 # 	'openscraper.pipelines.RestExportPipeline': 300,
@@ -41,68 +41,19 @@ from items import * #GenericItem #, StackItem #ScrapedItem
 
 
 #####################################################
-### test spider configurations
-
 """
-model spider_config dict : 
-
-spider_config = {
-	"spidername" : "...",
-	"start_urls" : ['http://...'],
-
-	for data_field in datamodel :
-		data_field : xpath ...
-}
-
+	error_array = []
+	item_count = 0  # will be incremented each time a new item is created
+	item_count_depth_1 = 0  # will be incremented each time an item is completed in detailed page
+	LIMIT = 5  # The number of pages where the spider will stop
+	page_count = 1  # The number of pages already scraped
+	name = ""  # The name of the spider to use when executing the spider
+	download_delay = 0  # The delay in seconds between each request. some website will block too many requests
+	page_url = ""  # base url (ex : "https://www.mysite.org")
+	label = ""
+	start_urls = []  # List of URLs that will be crawled by the parse method
 """
 
-"""
-spider_config_struct = {
-	"name"  : "quote", 
-	"start_urls" : ['http://quotes.toscrape.com/tag/humor/'],
-
-	"xpath_title" : "...",
-	"xpath_abstract" : "...",
-	"xpath_image" : "...",
-} 
-"""
-
-### EXAMPLE FROM ORIGINAL SPIDER TO FACTORIZE
-avise_spider_config = {
-	
-	"LIMIT" : 20,
-	
-	"name" : "avise",
-	"label" : "Avise",
-
-	"page_url" : "http://www.avise.org",
-	"start_urls" : ['http://www.avise.org/portraits', ],
-
-	"list_xpath_selector" : '//div[@class:"view-content"]//div[@onclick]',
-	"next_page_xpath" : '//li[@class:"pager-next"]/a/@href',
-
-	# 
-	"img_xpath" : './/image/@*[name():"xlink:href"]',
-	"link_xpath" : './/h2/a/@href',
-	"abstract_xpath" : './/div[@class:"field-item even"]/text()',
-	"title_xpath" : './/h2/a/text()',
-
-	# In action page
-	"date_xpath" : 	'//div[@class:"field field--name-field-created-year field--type-text field--label-inline ' \
-				 	'clearfix"]//div[@class:"field-item even"]/text()',
-	"area_xpath" : 	'//div[@class:"addressfield-container-inline locality-block country-FR' \
-				 	'"]/span/text()',
-	"key_words_xpath" : '//div[@class:"field field--name-field-portrait-domain ' \
-					  'field--type-text field--label-inline clearfix"]' \
-					  '//div[@class:"field-item even"]//text()',
-	"contact_xpath" : '//div[@id:"node-portrait-full-group-portrait-coordonnees"]//text()',
-	"video_xpath" : "",
-	"state_xpath" : "",
-	"project_holder_xpath" : '//div[@id:"node-portrait-full-group-portrait-coordonnees"]' \
-							 '//div[@class:"name-block"]/text()',
-	"partner_xpath" : "",
-	"economic_xpath" : "",
-}
 
 #####################################################
 ### define generic spider
@@ -128,7 +79,7 @@ def dictFromDataModelList (datamodel_list ) :
 
 class GenericSpider(Spider) :
 	
-	"""a generic spider to be configured with spider_config variable"""
+	"""a generic spider to be configured with datamodel and spider_config variables"""
 	
 	### spider class needs a default name
 	name = "genericspider"
@@ -187,36 +138,54 @@ class GenericSpider(Spider) :
 		"""
 		parse pages to scrap data
 		"""
-		for scraped_data in response.xpath('//div[@class="quote"]'):
+		for raw_data in response.xpath('//div[@class="quote"]'):
 			
-			print '\nauthor : ', scraped_data.xpath('.//small[@class="author"]/text()').extract_first()
-			# print "abstract : ", scraped_data.xpath('./span[@class="text"]/text()').extract_first()
-			# print 'tags : ', scraped_data.xpath('.//div[@class="tags"]/a[@class="tag"]/text()').extract()
-			
+
+
 			### create Item to fill
 			itemclass = create_item_class('GenericItemClass', self.datamodel)
 			item = itemclass()
 			# just for debugging purposes
 			item['testClass'] = "class is tested"
 
-			### extract data based on spider_config
+			### extract data and feed it to item based on spider_config
 			for d_model, d_xpath in self.datamodel_dict.iteritems() : 
-				# first check if xpath exists in spider_config
+				# first, checks if xpath exists in spider_config
 				if d_xpath in self.spider_config : 
-					item[ d_model ] = scraped_data.xpath(self.spider_config[ d_xpath ]).extract()
+					if self.spider_config[d_xpath] != [] :
+						# fill item field corresponding to xpath
+						item[ d_model ] = raw_data.xpath(self.spider_config[ d_xpath ]).extract()
 
-			# item['abstract'] = scraped_data.xpath('./span[@class="text"]/text()').extract_first()
-			# item['author'] 	 = scraped_data.xpath('.//small[@class="author"]/text()').extract_first()
-			# item['tags']     = scraped_data.xpath('.//div[@class="tags"]/a[@class="tag"]/text()').extract()
-			
-			print item.items()
+			print "\nGenericSpider.parse - item : \n", item.items()
 			# print item.keys()
 			yield item
 
-
-		next_page_url = response.xpath('//li[@class="next"]/a/@href').extract_first()
+		### get and go to next page 
+		next_page_url = response.xpath(self.spider_config[ "next_page_xpath" ]).extract_first()
 		if next_page_url is not None:
+			print "\n --- GenericSpider.parse / NEXT PAGE... \n"
 			yield scrapy.Request(response.urljoin(next_page_url))
+
+
+	def parse_item (self, response): 
+
+		### create Item to fill
+		itemclass = create_item_class('GenericItemClass', self.datamodel)
+		item = itemclass()
+		# just for debugging purposes
+		item['testClass'] = "class is tested"
+
+		### extract data and feed it to item based on spider_config
+		for d_model, d_xpath in self.datamodel_dict.iteritems() : 
+			# first, checks if xpath exists in spider_config
+			if d_xpath in self.spider_config : 
+				# fill item field corresponding to xpath
+				item[ d_model ] = raw_data.xpath(self.spider_config[ d_xpath ]).extract()
+
+		print "\nGenericSpider.parse - item : \n", item.items()
+		# print item.keys()
+		yield item
+
 
 
 ### define spider runner
@@ -232,11 +201,21 @@ def run_generic_spider( spidername=None, datamodel=None, run_spider_config=None 
 	print "\n--- run_generic_spider / spidername : ", spidername
 	print "--- run_generic_spider / run_spider_config : ", run_spider_config
 	
-	### initiating crawler process
-	process = CrawlerRunner()
-	# process = CrawlerProcess({
-	# 	'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
+	### instantiate settings and provide a custom configuration
+	# settings = Settings()
+	# settings.set('ITEM_PIPELINES', {
+	# 	'__main__.JsonWriterPipeline': 100
 	# })
+
+	### initiating crawler process
+	# process = CrawlerRunner() #CrawlerProcess()
+	process = CrawlerRunner({
+		'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)',
+		# 'ITEM_PIPELINES' : '',
+	})
+	settings = get_project_settings()
+	print "--- run_generic_spider / Your USER_AGENT is:\n%s" % (settings.get('USER_AGENT'))
+	print "--- run_generic_spider / Your ITEM_PIPELINES is:\n%s" % (settings.get('ITEM_PIPELINES'))
 
 	### adding crawler.runner as deferred
 	def f(q):
