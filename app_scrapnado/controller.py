@@ -111,14 +111,19 @@ test_data_model = [
 	"link_src", 
 	"tags", 
 	"area",
-	"date_data"
+	"author",
+	"date_data",
+
+	"testClass" ### for debugging purposes
 ]
 
 test_spider_config = {
 
 	"name"  : "TEST", 
 	"label" : "test_spider_config",
-	"start_urls" : ['http://quotes.toscrape.com/tag/humor/'],
+	"start_urls" : [
+		'http://quotes.toscrape.com/'
+	],
 
 	"error_array" : [],
 	"item_count": 0, 
@@ -127,9 +132,9 @@ test_spider_config = {
 	"page_count" : 1,
 	"download_delay" : 0,
 
-	"title_xpath" : "...",
-	"abstract_xpath" : "...",
-	"img_xpath" : "...",
+	"abstract_xpath" : './span[@class="text"]/text()',
+	"author_xpath" : './/small[@class="author"]/text()',
+	"tags_xpath" : './/div[@class="tags"]/a[@class="tag"]/text()',
 } 
 
 
@@ -182,16 +187,14 @@ class SpiderHandler(BaseHandler) :
 		print "\nSpiderHandler.run_spider --- "
 
 		print "SpiderHandler.run_spider --- creating scrapy custom_item "
-		### creating Item on the fly from data_model list (this will come from DB later)
+		### getting data_model list (this will come from DB later)
+		# coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
+		# data_model = coll_model.find_one({"name": spidername})
 		data_model = test_data_model 
-		custom_item = GenericItem(data_model)
-		print "SpiderHandler.run_spider --- custom_item :"
-		pprint.pprint(custom_item.__dict__)
 
 		### run spider 
 		result = run_generic_spider( 
 									spidername=spidername, 
-									custom_item=custom_item, 
 									datamodel=data_model, 
 									run_spider_config=spider_config 
 									)

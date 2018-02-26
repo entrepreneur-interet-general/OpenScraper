@@ -5,7 +5,8 @@
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/items.html
 
-import scrapy
+from scrapy import Item
+from scrapy.item import DictItem, Field
 
 '''
 class ScrapedItem(scrapy.Item):
@@ -31,15 +32,28 @@ class ScrapedItem(scrapy.Item):
 	date = scrapy.Field()
 '''
 
-class GenericItem(scrapy.Item) : 
+class GenericItem(Item) : 
 
 	"""generic scrapy.Item populated with scrapy.Field() from a list"""
 
 	def __init__(self, datamodel_list, *args, **kwargs ) : 
 		
+		print "::: GenericItem - datamodel_list : ", datamodel_list
 		super(GenericItem, self).__init__(*args, **kwargs)
 		
-		for i in datamodel_list : 
-			self.__dict__[i] = scrapy.Field()
+		######## NOT WORKNG : NEED TO OVERRIDE ITEM (check Item class from within Scrapy)
+		for field in datamodel_list : 
+			self.__dict__[field] = scrapy.Field()
+
+### cf : https://github.com/scrapy/scrapy/issues/398
+def create_item_class(class_name, field_list):
+    field_dict = {}
+    for field_name in field_list:
+        field_dict[field_name] = Field()
+    return type(str(class_name), (DictItem,), {'fields': field_dict})
 
 
+# class StackItem(Item):
+# 	def __setitem__(self, datamodel_list):
+# 		for field in datamodel_list : 
+# 			self.fields[field] = scrapy.Field()
