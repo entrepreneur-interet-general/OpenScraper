@@ -1,14 +1,68 @@
 {% extends "main.html" %}
 
-{% block header %}
-	<h1>{{ header_text }}</h1>
-{% end %}
 
 {% block body %}
-	<div id="hello">
-		{# <p>Welcome to Spider Manager<p> #}
-		{# <p>{{ header_text }}<p> #}
-		<p>your user name : {{ user }}</p>
-	</div>
-{% end %}
 
+<section class="hero is-primary is-fullheight is-bold">
+  
+  	<div class="hero-body">
+
+		<div class="container has-text-centered">
+			
+			<div class="level">
+				<div class="level-item">
+					<h1 class="title">
+						{{ header_text }}
+					</h1>
+				</div>
+			</div>
+			<div class="level">
+				<div class="level-item">
+					<h2 class="subtitle">
+						an open source scraper you can adapt to (almost) any website
+					</h2>
+				</div>
+			</div>
+
+			<br></br>
+
+			<div class="level">
+				<div class="level-item">
+					<h2 class="subtitle">
+						your user name : {{ user }}
+					</h2>
+				</div>
+			</div>
+			
+			<br><br>
+
+			<hr>
+
+			<div class="level">
+				<div class="level-item has-text-centered">
+					<div>
+					<p class="heading">data model</p>
+					<p class="title">10 fields</p>
+					</div>
+				</div>
+				<div class="level-item has-text-centered">
+					<div>
+					<p class="heading">data scrapped</p>
+					<p class="title">15 000 structured data</p>
+					</div>
+				</div>
+				<div class="level-item has-text-centered">
+					<div>
+					<p class="heading">scrapped from </p>
+					<p class="title">30 contributors</p>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+</section>
+
+{% end %}

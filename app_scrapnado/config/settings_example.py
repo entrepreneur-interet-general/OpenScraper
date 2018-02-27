@@ -10,8 +10,9 @@ XSRF_ENABLED  = True
 ### settings for MONGO_DB
 MONGODB_HOST 		= "localhost"
 MONGODB_PORT 		= 27017
-MONGODB_DB          = "bookstore" ####
+MONGODB_DB          = "openscraper" ####
 # collections
-MONGODB_COLL_CONTRIBUTORS = "books" ####
-MONGODB_COLL_DATAMODEL	  = "datamodel"
-MONGODB_COLL_DATASCRAPPED = "projects"
+MONGODB_COLL_CONTRIBUTORS = "contributors" ####
+MONGODB_COLL_DATAMODEL	  = "data_model"
+MONGODB_COLL_DATASCRAPPED = "data_scraped"
+MONGODB_COLL_USERS        = "users"

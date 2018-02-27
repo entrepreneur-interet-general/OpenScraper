@@ -87,10 +87,11 @@ class GenericSpider(Spider) :
 	def __init__(self, datamodel=None, spider_config=None, *args, **kwargs) : 
 		
 		### super init/override spider class with current args 
-		print "\n--- GenericSpider / spider_config :", spider_config
+		print "\n--- GenericSpider / __init__ :"
 		super(GenericSpider, self).__init__(*args, **kwargs)
 		
 		### store spider_config
+		print "--- GenericSpider / spider_config :", spider_config
 		self.spider_config = spider_config
 
 		### getting data model for later use in item
@@ -150,13 +151,19 @@ class GenericSpider(Spider) :
 			for d_model, d_xpath in self.datamodel_dict.iteritems() : 
 				# first, checks if xpath exists in spider_config
 				if d_xpath in self.spider_config : 
-					if self.spider_config[d_xpath] != [] :
+					# check if field is not empty
+					if self.spider_config[d_xpath] != [] and self.spider_config[d_xpath] != "" :
 						# fill item field corresponding to xpath
 						item[ d_model ] = raw_data.xpath(self.spider_config[ d_xpath ]).extract()
 
 			print "\nGenericSpider.parse - item : \n", item.items()
 			# print item.keys()
 			yield item
+
+			if self.spider_config["parse_follow"] == True : 
+				pass
+				url = item['link']
+				yield scrapy.Request(url, callback=self.parse_detailed_page, meta={'item': item})
 
 		### get and go to next page 
 		# next_page_url = response.xpath(self.spider_config[ "next_page_xpath" ]).extract_first()
@@ -169,6 +176,7 @@ class GenericSpider(Spider) :
 		if is_next_page:
 			print "\n --- GenericSpider.parse / NEXT PAGE... \n"
 			yield response.follow(next_page, callback=self.parse)
+
 
 	def get_next_page(self, response):
 		"""tries to find a new page to scrap.
@@ -198,7 +206,8 @@ class GenericSpider(Spider) :
 		### create Item to fill
 		itemclass = create_item_class('GenericItemClass', self.datamodel)
 		item = itemclass()
-		# just for debugging purposes
+
+		### just for debugging purposes
 		item['testClass'] = "class is tested"
 
 		### extract data and feed it to item based on spider_config

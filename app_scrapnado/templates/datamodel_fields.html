@@ -1,0 +1,70 @@
+{% extends "main.html" %}
+{% autoescape None %}
+
+{% block body %}
+
+
+<br>
+<section class="section">
+	
+	<div class="container has-text-centered">
+		<h1 class="title">
+			Data structure overview
+		</h1>
+		<h2 class="subtitle">
+			this is the data model you are using. You can modify it and "save"
+		</h2>
+	</div>
+
+	<br>
+
+	<div class="container">
+
+		<div class="columns">
+			
+			<div class="column is-one-fifth">
+			</div>
+
+			<div class="column is-three-fifth">
+
+				<table id="example" class="table display" width="100%" cellspacing="0">
+					<thead>
+						<tr>
+							<th>Field Name</th>
+							<th>Object ID</th>
+						</tr>
+					</thead>
+
+					<tbody>
+					{% for field in datamodel %}
+						<tr>
+							<td> {{ escape (field["field_name"]) }} </td>
+							<td> True	</td>
+						</tr>
+					{% end %}
+					</tbody>
+
+					<tfoot>
+						<tr>
+							<th>Field Name</th>
+							<th>Object ID</th>
+						</tr>
+					</tfoot>
+				</table>
+
+			</div>
+		</div>
+
+
+	</div>
+
+
+	<div class="container has-text-centered">
+		<a class="button is-primary is-rounded">save changes</a>
+	</div>
+
+
+</section>
+
+
+{% end %}

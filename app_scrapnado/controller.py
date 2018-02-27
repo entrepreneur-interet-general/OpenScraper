@@ -40,6 +40,7 @@ class WelcomeHandler(BaseHandler):
 	"""
 	@tornado.web.authenticated
 	def get(self):
+		print "this is the welcome page requested from url..."
 		self.render(
 			"index.html",
 			page_title  = app_main_texts["main_title"],
@@ -60,8 +61,7 @@ class LogoutHandler(BaseHandler):
 ########################
 ### lists / edit handlers
 
-# class ContributorEditHandler(tornado.web.RequestHandler):
-class ContributorEditHandler(BaseHandler):
+class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 	"""
 	contributor edit handler
 	"""
@@ -72,9 +72,9 @@ class ContributorEditHandler(BaseHandler):
 			contributor = coll.find_one({"isbn": isbn})
 
 		self.render("contributor_edit.html",
-			page_title="CIS contributors",
-			header_text="Edit contributor",
-			contributor=contributor)
+			page_title = app_main_texts["main_title"],
+			header_text = "Edit contributor",
+			contributor = contributor)
 
 	def post(self, isbn=None):
 		import time
@@ -94,20 +94,54 @@ class ContributorEditHandler(BaseHandler):
 			coll.insert_one(contributor)
 		self.redirect("/recommended/")
 
-# class ContributorsHandler(tornado.web.RequestHandler):
-class ContributorsHandler(BaseHandler):
+
+class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 	"""
-	list all contributors
+	list all contributors from db.contributors
 	"""
 	def get(self):
 		coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] #db.contributors
 		contributors = coll.find()
 		self.render(
 			"list_contributors.html",
-			page_title = "List of contributors to CIS",
+			page_title = app_main_texts["main_title"],
 			header_text = "...",
 			contributors = contributors
 		)
+
+### TO DO 
+class DataModelHandler(BaseHandler):
+	"""
+	list the fields of your data model from db.data_model
+	"""
+	def get(self) : 
+
+		print "\DataModelHandler.get... "
+
+		coll = self.application.db[ MONGODB_COLL_DATAMODEL ]
+		# data_model = coll.distinct("field_name")
+		data_model = list(coll.find())
+
+		print "\DataModelHandler.get / data_model :"
+		pprint.pprint (data_model)
+
+		self.render(
+			"datamodel_fields.html",
+			page_title = app_main_texts["main_title"],
+			datamodel = data_model
+		)
+	
+	def post(self):
+		pass
+
+
+### TO DO 
+class DataScrapedHandler(BaseHandler):
+	"""
+	list all data scraped from db.data_scraped 
+	"""
+	def get (self):
+		pass
 
 
 ########################
@@ -115,16 +149,18 @@ class ContributorsHandler(BaseHandler):
 
 test_data_model = [
 	
-	# item contents
-	"title", 
-	"img", 
-	"abstract", 
-	"tags", # keywords
 
 	# item source and
 	"link_data", 
 	"link_src", 
 	"link_to",
+
+	# item contents
+	"title", 
+	"img", 
+	"abstract", 
+	"tags", # keywords
+	"raw_date", 
 
 	# item 
 	"area",
@@ -140,30 +176,33 @@ test_data_model = [
 ]
 
 
-
 test_spider_config = {
 
-	### mandatory fields
+	### custom mandatory fields
 	"name"  : "TEST", 
-	"label" : "test_spider_config",
+	# "label" : "test_spider_config",
 	"page_url" : "http://quote.toscrape.com", # base url (ex : "https://www.mysite.org")
 	"start_urls" : [ # List of URLs that will be crawled by the parse method
 		'http://quotes.toscrape.com/'
 	],
 
-	### notes
+	### custom notes
 	"notes" : u"test configuration for debugging / developping purposes...",
 
 	### settings and logging fields
 	"error_array" : [],
 	"item_count": 0, # will be incremented each time a new item is created
 	"item_count_depth_1" : 0,# will be incremented each time an item is completed in detailed page
-	"LIMIT" : 3, # The number of pages where the spider will stop
+	"LIMIT" : 10, # The number of pages where the spider will stop
 	"page_count" : 1, # The number of pages already scraped
 	"download_delay" : 0, # The delay in seconds between each request. some website will block too many requests
 
+
 	### custom boolean on whether the page contains complete items or need to follow links
-	"page_lists_full_items" : False, 
+	"parse_follow" : False, 
+
+	### custom info if website needs AJAX requests...
+	"page_needs_splash" : False,
 
 	### custom xpaths for next_page, filled by user
 	"next_page_xpath" :'//li[@class="next"]/a/@href', 
@@ -173,7 +212,7 @@ test_spider_config = {
 	"abstract_xpath" : './span[@class="text"]/text()',
 	"author_xpath" : './/small[@class="author"]/text()',
 	"tags_xpath" : './/div[@class="tags"]/a[@class="tag"]/text()',
-
+	"rawdate_xpath" : ""
 } 
 
 
@@ -237,7 +276,7 @@ class SpiderHandler(BaseHandler) :
 
 		### retrieve spider config from its name in the db
 		coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] #.contributors
-		spider_config = coll.find_one({"name": spidername})
+		spider_config = coll.find_one({"spidername": spidername})
 		
 		### redirect / set default runner if no spider_config
 		if spider_config == None : 
@@ -247,34 +286,47 @@ class SpiderHandler(BaseHandler) :
 			# 		"start_urls" : ['http://quotes.toscrape.com/tag/humor/'],
 			# 	 } 
 			# (this will come from DB later)
-			spider_config = test_spider_config
+			# spider_config = test_spider_config
+			# self.redirect("/")			
+			self.render(
+				"index.html",
+				page_title = app_main_texts["main_title"],
+				header_text = "ERROR !!! there is no ''%s'' spider configuration in the DB ..." %(spidername),
+				user = self.current_user
+			)
 		
-		print "SpiderHandler.get --- spidername : ", spidername
-		print "SpiderHandler.get --- spider_config :", spider_config
+		else : 
+			print "SpiderHandler.get --- spidername : ", spidername
+			print "SpiderHandler.get --- spider_config :"
+			pprint.pprint(spider_config)
 
-		print "SpiderHandler.get --- starting spider runner --- "
-		### TO DO : CHECK IF REALLY WORKING : asynchronous run the corresponding spider
-		# run_generic_spider( run_spider_config = spider_config ) # synchronous
-		yield self.run_spider( spidername, spider_config=spider_config ) # asynchronous
+			print "SpiderHandler.get --- starting spider runner --- "
+			### TO DO : CHECK IF REALLY WORKING : asynchronous run the corresponding spider
+			# run_generic_spider( run_spider_config = spider_config ) # synchronous
+			yield self.run_spider( spidername, spider_config=spider_config ) # asynchronous
 
-		### TO DO : redirect to a page showing crawling status / results
-		# self.redirect("/contributors/")
-		self.render(
-			"index.html",
-			page_title = app_main_texts["main_title"],
-			header_text = "crawling of -%s- launched ..." %(spidername),
-			user = self.current_user
-		)
+			### TO DO : redirect to a page showing crawling status / results
+			# self.redirect("/contributors/")
+			self.render(
+				"index.html",
+				page_title = app_main_texts["main_title"],
+				header_text = "crawling of -%s- launched ..." %(spidername),
+				user = self.current_user
+			)
 
 	@gen.coroutine
 	def run_spider (self, spidername, spider_config) :
 		print "\nSpiderHandler.run_spider --- "
 
-		print "SpiderHandler.run_spider --- creating scrapy custom_item "
+		print "SpiderHandler.run_spider --- creating data model list from fields in db "
 		### getting data_model list (this will come from DB later)
-		# coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
-		# data_model = coll_model.find_one({"name": yourdatamodel_name })
-		data_model = test_data_model 
+		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
+		data_model = coll_model.distinct("field_name")
+		print "SpiderHandler.run_spider --- data_model from db :" 
+		pprint.pprint(data_model)
+		
+		### for debugging
+		# data_model = test_data_model 
 
 		### run spider 
 		result = run_generic_spider( 
@@ -296,7 +348,7 @@ class ContributorModule(tornado.web.UIModule):
 	def render(self, contributor):
 		return self.render_string(
 			"modules/mod_contributor.html", 
-			book=contributor,
+			contributor=contributor,
 		)
 	
 	def css_files(self):
