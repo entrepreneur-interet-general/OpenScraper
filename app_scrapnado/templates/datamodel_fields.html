@@ -20,36 +20,37 @@
 
 	<div class="container">
 
-		<div class="columns">
+		<div class="columns is-centered">
 			
-			<div class="column is-one-fifth">
-			</div>
 
-			<div class="column is-three-fifth">
+			<div class="column is-half">
 
-				<table id="example" class="table display" width="100%" cellspacing="0">
+				<table id="t_datamodel" class="table display" width="100%" cellspacing="0">
 					<thead>
 						<tr>
 							<th>Field Name</th>
-							<th>Object ID</th>
+							<th>Field Class</th>
 						</tr>
 					</thead>
 
+					{# displaying data #}
 					<tbody>
 					{% for field in datamodel %}
-						<tr>
-							<td> {{ escape (field["field_name"]) }} </td>
-							<td> True	</td>
+						<tr >
+							<th> {{ escape (field["field_name"]) }} </th>
+							<td> {{ escape (field["field_class"]) }} field</td>
 						</tr>
 					{% end %}
 					</tbody>
 
-					<tfoot>
+					{# <tfoot>
 						<tr>
 							<th>Field Name</th>
 							<th>Object ID</th>
 						</tr>
-					</tfoot>
+					</tfoot> #}
+
+
 				</table>
 
 			</div>
@@ -60,7 +61,10 @@
 
 
 	<div class="container has-text-centered">
-		<a class="button is-primary is-rounded">save changes</a>
+		<a class="button is-primary is-rounded">
+			<span class="icon is-small"><i class="fas fa-check"></i></span>
+			<span>save changes</span>		
+		</a>
 	</div>
 
 

@@ -104,7 +104,7 @@ class GenericSpider(Spider) :
 		self.datamodel_dict = dictFromDataModelList(datamodel)
 		pprint.pprint(self.datamodel_dict)
 
-		### getting all the config args from spider_config
+		### getting all the config args from spider_config (i.e. next_page_xpath, ...)
 		print "--- GenericSpider / passing kwargs..."
 		for k, v in spider_config.iteritems() : 
 			print "   - ", k, ":", v
@@ -234,7 +234,6 @@ def run_generic_spider( spidername=None, datamodel=None, run_spider_config=None 
 	"""
 
 	print "\n--- run_generic_spider / spidername : ", spidername
-	print "--- run_generic_spider / run_spider_config : ", run_spider_config
 	
 	### instantiate settings and provide a custom configuration
 	# settings = Settings()
@@ -252,12 +251,23 @@ def run_generic_spider( spidername=None, datamodel=None, run_spider_config=None 
 	print "--- run_generic_spider / Your USER_AGENT is:\n%s" % (settings.get('USER_AGENT'))
 	print "--- run_generic_spider / Your ITEM_PIPELINES is:\n%s" % (settings.get('ITEM_PIPELINES'))
 
+
+	### flattening run_spider_config : from nested to flat dict 
+	print "--- run_generic_spider / run_spider_config : ", run_spider_config
+	print "--- run_generic_spider / flattening run_spider_config"
+	spider_config_flat = {}
+	for conf_class, conf_set in run_spider_config.iteritems() :
+		if conf_class != "_id" :
+			for conf_field, conf_data in conf_set.iteritems() : 
+				spider_config_flat[conf_field] = conf_data
+	print "--- run_generic_spider / spider_config_flat : ", spider_config_flat
+
 	### adding crawler.runner as deferred
 	def f(q):
 		try:
 			### send custom spider config from run_spider_config
 			### cf : https://stackoverflow.com/questions/35662146/dynamic-spider-generation-with-scrapy-subclass-init-error
-			deferred = process.crawl(GenericSpider, datamodel=datamodel, spider_config=run_spider_config )
+			deferred = process.crawl(GenericSpider, datamodel=datamodel, spider_config=spider_config_flat )
 			# deferred = process.crawl(ToScrapeSpiderXPath )
 			
 			deferred.addBoth(lambda _: reactor.stop())

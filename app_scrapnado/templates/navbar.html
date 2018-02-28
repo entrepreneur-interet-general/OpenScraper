@@ -1,7 +1,9 @@
 <nav class="navbar is-fixed-top is-transparent">
   <div class="navbar-brand">
 	<a class="navbar-item" href="/">
-	  <img src="http://www.pvhc.net/img5/onmbyubllatmozmvsdtf.png" alt="" height="28">
+	  {# <img src="http://www.pvhc.net/img5/onmbyubllatmozmvsdtf.png" alt="" height="28"> #}
+		<img src="{{ static_url ('images/brush_B.png') }}" alt="" height="28">
+
 	</a>
 	<div class="navbar-burger burger" data-target="navbarExampleTransparentExample">
 	  <span></span>
@@ -30,6 +32,9 @@
 		  <a class="navbar-item" href="/datamodel/edit">
 			Edit your data model
 		  </a>
+			<a class="navbar-item" href="/datamodel/form">
+			Example form
+		  </a>
 		</div>
 
 	  </div>
@@ -37,15 +42,15 @@
 	  {# dropdowns contributors #}
 	  <div class="navbar-item has-dropdown is-hoverable">
 		
-		<a class="navbar-link" href="/contributors/">
+		<a class="navbar-link" href="/contributors">
 		  Contributors
 		</a>
 		<div class="navbar-dropdown is-boxed">
-		  <a class="navbar-item" href="/datamodel/view">
+		  <a class="navbar-item" href="/contributors">
 			List of all contributors / websites
 		  </a>
-		  <a class="navbar-item" href="https://bulma.io/documentation/modifiers/syntax/">
-			Edit
+		  <a class="navbar-item" href="/contributor/add">
+			Add a new contributor
 		  </a>
 		</div>
 
@@ -59,7 +64,7 @@
 		</a>
 		<div class="navbar-dropdown is-boxed">
 		  <a class="navbar-item" href="/dataset/view">
-			Overview
+			Overview of the complete dataset
 		  </a>
 		  <a class="navbar-item" href="/dataset/export">
 			Export data
@@ -76,10 +81,13 @@
 		  Documentation
 		</a>
 		<div class="navbar-dropdown is-boxed">
-		  <a class="navbar-item" href="/datamodel/view">
+		  <a class="navbar-item" href="/infos/who">
+			Who created this and why ?
+		  </a>
+			 <a class="navbar-item" href="/infos/tuto">
 			How to use {{page_title}}
 		  </a>
-		  <a class="navbar-item" href="/datamodel/edit">
+		  <a class="navbar-item" href="/infos/api">
 			API documentation 
 		  </a>
 		</div>
@@ -92,18 +100,40 @@
 
 	{# social / repo github #}
 	<div class="navbar-end">
-	  <div class="navbar-item">
-		<div class="field is-grouped">
-		  <p class="control">
-			<a class="button is-primary" href="https://github.com/entrepreneur-interet-general/OpenScraper">
-			  <span class="icon">
-				<i class="fab fa-github"></i>
-			  </span>
-			  <span>repo</span>
-			</a>
-		  </p>
+
+		<div class="navbar-item">
+			<div class="field is-grouped">
+			
+				<p class="control">
+					<a class="button" href="/login">
+					<span class="icon">
+						<i class="fas fa-sign-in-alt"></i>
+					</span>
+					<span>login</span>
+					</a>
+				</p>
+
+
+				<p class="control">
+					<a class="button is-primary" href="https://github.com/entrepreneur-interet-general/OpenScraper">
+					<span class="icon">
+						<i class="fab fa-github"></i>
+					</span>
+					<span>repo</span>
+					</a>
+				</p>
+
+			</div>
 		</div>
-	  </div>
+
+
 	</div>
+
+
+
   </div>
+
+
+
+
 </nav>

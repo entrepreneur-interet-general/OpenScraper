@@ -9,14 +9,16 @@ urls = [
 	(r'/login', LoginHandler),
 	(r'/logout', LogoutHandler),
 
+	### forms
+	(r"/datamodel/form", FormHandler),
+
 	### set DB structure 
 	(r"/datamodel/view", DataModelHandler),
 	(r"/datamodel/edit", DataModelHandler),
 
 	### lists and edits
 	(r"/contributors", ContributorsHandler),
-	(r"/contributor/edit/([0-9Xx\-]+)", ContributorEditHandler),
-	# (r"/contributor/edit/(\w+)", ContributorEditHandler),
+	(r"/contributor/edit/(\w+)", ContributorEditHandler), # ([0-9Xx\-]+) # for regex numbers and dashes
 	(r"/contributor/add", ContributorEditHandler),
 
 	### spider launchers

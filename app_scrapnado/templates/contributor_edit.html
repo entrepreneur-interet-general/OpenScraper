@@ -2,22 +2,224 @@
 {% autoescape None %}
 
 {% block body %}
-<form method="POST">
-	ISBN <input type="text" name="isbn"
-		value="{{ contributor.get('isbn', '') }}"><br>
-	Title <input type="text" name="title"
-		value="{{ contributor.get('title', '') }}"><br>
-	Subtitle <input type="text" name="subtitle"
-		value="{{ contributor.get('subtitle', '') }}"><br>
-	Image <input type="text" name="image"
-		value="{{ contributor.get('image', '') }}"><br>
-	Author <input type="text" name="author"
-		value="{{ contributor.get('author', '') }}"><br>
-	Date released <input type="text" name="date_released"
-		value="{{ contributor.get('date_released', '') }}"><br>
-	Description<br>
-	<textarea name="description" rows="5"
-		cols="40">{% raw contributor.get('description', '')%}</textarea><br>
-	<input type="submit" value="Save">
-</form>
+
+
+<br>
+<section class="section">
+	
+	<div class="container has-text-centered">
+		<h1 class="title">
+			EDIT/ADD A NEW SPIDER
+		</h1>
+		<h2 class="subtitle">
+			Fill the form to create a new spider.
+		</h2>
+	</div>
+
+
+	<div class="container">
+
+		<div class="columns is-centered">
+			
+
+			<div class="column is-8">
+
+				<hr>
+
+				<form method="POST">
+				{% module xsrf_form_html() %}
+
+				{# <div>
+					ISBN <input type="text" name="isbn"
+						value="{{ contributor.get('isbn', '') }}"><br>
+					
+					Title <input type="text" name="title"
+						value="{{ contributor.get('title', '') }}"><br>
+					
+					Date released <input type="text" name="date_released"
+						value="{{ contributor.get('date_released', '') }}"><br>
+					
+					Description<br>
+					
+					<textarea name="description" rows="5"
+						cols="40">{% raw contributor.get('note', '')%}</textarea><br>
+					<input type="submit" value="Save">
+				</div> #}
+
+
+					{# global fields for spider #}
+					<div class="content has-text-centered">
+						<h3> global fields</h3>
+						<p class="is-small">describe the website you want to crawl</p>
+					</div>
+					{% for field, value in contributor_edit_fields.items() %}
+
+						{% for needed in value["needed"] %}
+
+							<div class="field is-horizontal">
+								<div class="field-label is-normal">
+									<label class="label">{{ needed }}</label>
+								</div>
+								<div class="field-body">
+									<div class="field">
+										
+										{% if needed not in ["page_needs_splash", "parse_follow" ]%}
+										<p class="control is-expanded has-icons-left">
+											<input class="input" type="text" 
+													placeholder="{{ needed }}"
+													name="{{ needed }}"
+													value="{{ contributor.get('name', '') }}">
+										</p>
+
+										{% else %}
+										<div class="control">
+											<label class="radio">
+												<input type="radio" name="{{ needed }}" checked>
+												The data is complete in the list  
+											</label><br>
+											<label class="radio">
+												<input type="radio" name="{{ needed }}">
+												I need to click to have the complete data
+											</label>
+										</div>
+										{% end %}
+									</div>
+								</div>
+							</div>
+
+
+
+						{% end %}
+
+					{% end %}
+
+					<hr>
+
+					{# custom fields #}
+					<div class="content has-text-centered">
+						<h3> custom fields</h3>
+						<p class="is-small">where do you find your data on the lists ?</p>
+					</div>
+					{% for dm in datamodel %}
+						<div class="field is-horizontal">
+							<div class="field-label is-normal">
+								<label class="label is-small">{{ dm[u'field_name'] }}</label>
+							</div>
+							<div class="field-body">
+								<div class="field">
+									<p class="control is-expanded has-icons-left">
+										<input class="input is-small" type="text" 
+												placeholder="xpath for -{{ dm[u'field_name'] }}-"
+												name="{{ dm[u'field_name'] }}"
+												value="{{ contributor.get( dm[u'field_name'], '') }}">
+									</p>
+								</div>
+							</div>
+						</div>
+
+					{% end %}
+
+					<hr>
+
+					{# <div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label class="label">Name</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<p class="control is-expanded has-icons-left">
+									<input class="input" type="text" 
+											placeholder="Name"
+											name="name"
+											value="{{ contributor.get('name', '') }}">
+								</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label class="label">Spider name</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<p class="control is-expanded has-icons-left">
+									<input class="input" type="text" 
+											placeholder="spidername"
+											name="spidername"
+											value="{{ contributor.get('spidername', '') }}">
+								</p>
+							</div>
+						</div>
+					</div> #}
+
+					{#  #}
+					{# <div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label class="label">Follow</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<div class="control">
+									<label class="radio">
+										<input type="radio" name="parse_follow" checked>
+										The data is complete in the list 
+									</label><br>
+									<label class="radio">
+										<input type="radio" name="parse_follow">
+										I need to click to have the complete data
+									</label>
+								</div>
+							</div>
+						</div>
+					</div> #}
+
+
+					{# notes on spider #}
+					<div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label class="label is-small">Notes</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<textarea class="textarea is-small" 
+											placeholder="your notes on this spider"
+											value="{{ contributor.get('notes', '') }}">
+								</textarea>
+							</div>
+						</div>
+					</div>
+
+
+
+
+					{# submit form #}
+
+					<div class="field is-grouped has-text-centered">
+						<div class="control">
+							<button class="button is-link is-rounded">Submit</button>
+						</div>
+						<div class="control">
+							<button class="button is-text">Cancel</button>
+						</div>
+					</div>
+
+
+				</form>
+
+
+
+			</div>
+
+		</div>
+
+	</div>
+
+
+</section>
+
+
+
+
+
 {% end %}

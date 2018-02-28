@@ -2,8 +2,136 @@
 {% autoescape None %}
 
 {% block body %}
-<h2>List contributors</h2>
+
+
+{# <h2>List contributors</h2>
 	{% for contributor in contributors %}
  	 	{{ modules.Contributor(contributor) }}
-	{% end %}
+	{% end %} #}
+
+
+
+<br>
+<section class="section">
+	
+	<div class="container has-text-centered">
+		<h1 class="title">
+			List contributors
+		</h1>
+		<h2 class="subtitle">
+			this is the list of websites you are scraping
+		</h2>
+	</div>
+
+	<br>
+
+	<div class="container has-text-centered">
+		<a class="button is-info is-rounded"
+		   href="/contributor/add">
+			<span class="icon is-small"><i class="fas fa-plus-circle"></i></span>
+			<span>add a new spider</span>
+			
+		</a>
+	</div>
+
+
+	<br>
+
+	<div class="container">
+
+		<div class="columns is-centered">
+			
+
+			<div class="column is-two-third">
+
+				<table id="t_contributors" class="table display" width="100%" cellspacing="0">
+					
+					<thead>
+						<tr>
+							<th>name</th>
+							<th>page_url</th>
+							
+							<th>start_urls</th>
+
+							{#
+							<th>page_needs_splash</th>
+
+							<th>parse_follow</th>							
+							<th>next_page_xpath</th> 
+							#}
+
+							<th>spidername</th>
+
+							<th>edit spider</th>
+							<th>run spider</th>
+						</tr>
+					</thead>
+
+					{# displaying data #}
+					<tbody>
+					{% for contrib in contributors %}
+						<tr>
+							<th> {{ escape (contrib["infos"]["name"]) }}</th>
+
+							<td> {{ linkify (contrib["infos"]["page_url"]) }}</td>
+							 
+							<td>
+							{% for url_ in contrib["scraper_config"]["start_urls"] %} 
+								{{ linkify ( url_)  }}
+							{% end %}
+							</td>
+							
+							{#
+							<td> {{ escape (contrib["scraper_config"]["page_needs_splash"]) }}</td>
+							<td> {{ escape (contrib["scraper_config"]["parse_follow"]) }}</td>
+							<td> {{ escape (contrib["scraper_config_xpaths"]["next_page_xpath"]) }}</td> 
+							#}
+
+							<td> {{ escape (contrib["scraper_config"]["spidername"]) }}</td>
+
+							<td> 
+								<a class="button is-primary is-rounded is-small" 
+									href="/contributor/edit/{{ escape (contrib['scraper_config']['spidername']) }}" >
+									<span class="icon is-small"><i class="fas fa-list"></i></span>
+									<span>edit spider</span>
+								</a> 
+							</td>
+							<td> 
+								<a class="button is-warning is-rounded is-small"
+									href="/crawl/{{ escape (contrib['scraper_config']['spidername']) }}" >
+									<span class="icon is-small"><i class="fas fa-play"></i></span>
+									<span>run spider</span>
+								</a> 
+							</td>
+						</tr>
+					{% end %}
+					</tbody>
+
+					{# <tfoot>
+						<tr>
+							<th>Field Name</th>
+							<th>Object ID</th>
+						</tr>
+					</tfoot> #}
+
+				</table>
+
+			</div>
+		</div>
+
+
+	</div>
+
+
+	<div class="container has-text-centered">
+		{# <a class="button is-primary is-rounded">save changes</a> #}
+		<a class="button is-danger is-rounded" disabled>
+			<span class="icon is-small"><i class="fas fa-play"></i></span>
+			<span>run all spiders</span>
+		</a>
+	</div>
+
+
+</section>
+
 {% end %}

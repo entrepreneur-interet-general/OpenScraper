@@ -6,6 +6,10 @@ from tornado import gen
 ### import app settings / infos 
 from config.app_infos import app_infos, app_main_texts
 from config.settings_example import MONGODB_COLL_CONTRIBUTORS, MONGODB_COLL_DATAMODEL, MONGODB_COLL_DATASCRAPPED
+from config.settings_corefields import *
+
+### import contributor generic class
+from contributor import ContributorBaseClass
 
 ### OpenScraper generic scraper
 from scraper import run_generic_spider 
@@ -65,33 +69,75 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 	"""
 	contributor edit handler
 	"""
-	def get(self, isbn=None):
-		contributor = dict()
-		if isbn:
-			coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] # .books
-			contributor = coll.find_one({"isbn": isbn})
+	def get(self, spidername=None):
+		"""show infos on one contributor : get info in DB and prefill form"""
 
+		print "\nContributorEditHandler.get ... "
+
+		### retrieve datamodel custom
+		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
+		data_model_custom = list(coll_model.find( {"field_class" : "custom"}, {"field_name":1, "_id":1} ))
+		print "... ContributorEditHandler.get / data_model_custom : "
+		pprint.pprint(data_model_custom)
+
+		### retrieve contributor data from spidername
+		# core empty contributor to begin with
+		# contributor = dict()
+		contributor = CONTRIBUTOR_CORE_FIELDS
+
+		contributor_edit_fields = CONTRIBUTOR_EDIT_FIELDS
+		print "... ContributorEditHandler.get / contributor_edit_fields :"
+		pprint.pprint(contributor_edit_fields)
+
+		if spidername:
+			coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] 
+			contributor = coll.find_one({"scraper_config.spidername": spidername})
+
+		print "... ContributorEditHandler.get / contributor :"
+		pprint.pprint(contributor)
+
+		### render
 		self.render("contributor_edit.html",
-			page_title = app_main_texts["main_title"],
+			page_title 	= app_main_texts["main_title"],
 			header_text = "Edit contributor",
-			contributor = contributor)
+			contributor_edit_fields = contributor_edit_fields,
+			contributor = contributor,
+			datamodel	= data_model_custom,
+			)
 
-	def post(self, isbn=None):
+	def post(self, spidername=None):
+		"""update contributor in DB"""
+		
 		import time
-		book_fields = [	'isbn', 'title', 'subtitle', 'image', 'author',
-						'date_released', 'description']
-		coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] # .books
-		contributor = dict()
-		if isbn:
-			contributor = coll.find_one({"isbn": isbn})
-		for key in book_fields:
-			contributor[key] = self.get_argument(key, None)
+		#####################################
+		### TO DO : REAL UPDATE FOR CONTRIBUTOR 
+		# #####################################
+		# book_fields = [	'name', 'title', 'subtitle', 'image', 'author',
+		# 				'date_released', 'description']
 
-		if isbn:
-			coll.save(contributor)
+		contributor = CONTRIBUTOR_CORE_FIELDS
+		contributor = dict()
+		
+		coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] 
+
+		if spidername:
+			contributor = coll.find_one({"scraper_config.spidername": spidername})
+
+		print "ContributorEditHandler.post / contributor :"
+		pprint.pprint(contributor)
+		
+		for key in book_fields:
+			contributor[ key ] = self.get_argument(key, None)
+
+		if spidername:
+			# coll.save(contributor)
+			pass
 		else:
-			contributor['date_added'] = int(time.time())
+			# contributor['date_added'] = int(time.time())
 			coll.insert_one(contributor)
+			pass
+		
+		
 		self.redirect("/recommended/")
 
 
@@ -100,13 +146,26 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 	list all contributors from db.contributors
 	"""
 	def get(self):
-		coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] #db.contributors
-		contributors = coll.find()
+
+		coll_contrib = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] #db.contributors
+		####################
+		# contributors = list(coll_contrib.find({"infos.name":"quote"}))
+		contributors = list(coll_contrib.find())
+		print "DataModelHandler.get / contributors :"
+		pprint.pprint (contributors)
+
+		### retrieve datamodel from DB
+		coll_dm = self.application.db[ MONGODB_COLL_DATAMODEL ]
+		data_model = list(coll_dm.find())
+		print "DataModelHandler.get / data_model :"
+		pprint.pprint (data_model)
+
 		self.render(
 			"list_contributors.html",
-			page_title = app_main_texts["main_title"],
-			header_text = "...",
-			contributors = contributors
+			page_title  	= app_main_texts["main_title"],
+			header_text 	= "...",
+			data_model		= data_model,
+			contributors 	= contributors
 		)
 
 ### TO DO 
@@ -116,13 +175,12 @@ class DataModelHandler(BaseHandler):
 	"""
 	def get(self) : 
 
-		print "\DataModelHandler.get... "
+		print "\nDataModelHandler.get... "
 
+		### retrieve datamodel from DB
 		coll = self.application.db[ MONGODB_COLL_DATAMODEL ]
-		# data_model = coll.distinct("field_name")
 		data_model = list(coll.find())
-
-		print "\DataModelHandler.get / data_model :"
+		print "DataModelHandler.get / data_model :"
 		pprint.pprint (data_model)
 
 		self.render(
@@ -134,6 +192,19 @@ class DataModelHandler(BaseHandler):
 	def post(self):
 		pass
 
+
+class FormHandler(BaseHandler) : 
+	"""
+	test with basic Bulma Form
+	"""
+	def get(self):
+
+		print "\FormHandler.get... "
+
+		self.render(
+			"form_instance.html",
+			page_title = app_main_texts["main_title"],
+		)
 
 ### TO DO 
 class DataScrapedHandler(BaseHandler):
@@ -276,7 +347,7 @@ class SpiderHandler(BaseHandler) :
 
 		### retrieve spider config from its name in the db
 		coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] #.contributors
-		spider_config = coll.find_one({"spidername": spidername})
+		spider_config = coll.find_one({"scraper_config.spidername": spidername})
 		
 		### redirect / set default runner if no spider_config
 		if spider_config == None : 
