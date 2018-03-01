@@ -13,8 +13,9 @@ urls = [
 	(r"/datamodel/form", FormHandler),
 
 	### set DB structure 
-	(r"/datamodel/view", DataModelHandler),
-	(r"/datamodel/edit", DataModelHandler),
+	(r"/datamodel/view", DataModelViewHandler),
+	(r"/datamodel/edit", DataModelEditHandler),
+	(r"/datamodel/add_field", DataModelEditHandler),
 
 	### lists and edits
 	(r"/contributors", ContributorsHandler),
@@ -25,7 +26,8 @@ urls = [
 	(r"/crawl/(\w+)", SpiderHandler), ### get spidername as input
 
 	### all data routes
-	# (r"/data", DataHandler),
+	(r"/data", DataScrapedHandler),
+	(r"/data/view/(\w+)", DataScrapedHandler),
 	# (r"/data/api/search?=()", DataApiHandler),
 	
 ]

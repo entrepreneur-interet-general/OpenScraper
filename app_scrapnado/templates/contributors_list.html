@@ -49,6 +49,7 @@
 					<thead>
 						<tr>
 							<th>name</th>
+							<th>added by</th>
 							<th>page_url</th>
 							
 							<th>start_urls</th>
@@ -64,6 +65,7 @@
 
 							<th>edit spider</th>
 							<th>run spider</th>
+							<th>view data</th>
 						</tr>
 					</thead>
 
@@ -72,7 +74,7 @@
 					{% for contrib in contributors %}
 						<tr>
 							<th> {{ escape (contrib["infos"]["name"]) }}</th>
-
+							<td> {{ escape (contrib["infos"]["added_by"]) }}</td>
 							<td> {{ linkify (contrib["infos"]["page_url"]) }}</td>
 							 
 							<td>
@@ -103,6 +105,14 @@
 									<span>run spider</span>
 								</a> 
 							</td>
+							<td> 
+								<a class="button is-info is-rounded is-small"
+									href="/data/view/{{ escape (contrib['scraper_config']['spidername']) }}" >
+									<span class="icon is-small"><i class="fas fa-table"></i></span>
+									<span>view data</span>
+								</a> 
+							</td>
+
 						</tr>
 					{% end %}
 					</tbody>

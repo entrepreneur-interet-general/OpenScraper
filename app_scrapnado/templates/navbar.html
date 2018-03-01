@@ -1,98 +1,101 @@
 <nav class="navbar is-fixed-top is-transparent">
-  <div class="navbar-brand">
+	<div class="navbar-brand">
 	<a class="navbar-item" href="/">
-	  {# <img src="http://www.pvhc.net/img5/onmbyubllatmozmvsdtf.png" alt="" height="28"> #}
+		{# <img src="http://www.pvhc.net/img5/onmbyubllatmozmvsdtf.png" alt="" height="28"> #}
 		<img src="{{ static_url ('images/brush_B.png') }}" alt="" height="28">
 
 	</a>
 	<div class="navbar-burger burger" data-target="navbarExampleTransparentExample">
-	  <span></span>
-	  <span></span>
-	  <span></span>
+		<span></span>
+		<span></span>
+		<span></span>
 	</div>
-  </div>
+	</div>
 
-  <div id="navbarExampleTransparentExample" class="navbar-menu">
+	<div id="navbarExampleTransparentExample" class="navbar-menu">
 	<div class="navbar-start">
-	  
-	  <a class="navbar-item" href="/">
+		
+		<a class="navbar-item" href="/">
 		{{page_title}}
-	  </a>
+		</a>
 
-	  {# dropdowns datamodel #}
-	  <div class="navbar-item has-dropdown is-hoverable">
+		{# dropdowns datamodel #}
+		<div class="navbar-item has-dropdown is-hoverable">
 		
 		<a class="navbar-link" href="/datamodel/view">
-		  Datamodel
+			Datamodel
 		</a>
 		<div class="navbar-dropdown is-boxed">
-		  <a class="navbar-item" href="/datamodel/view">
-			Overview
-		  </a>
-		  <a class="navbar-item" href="/datamodel/edit">
-			Edit your data model
-		  </a>
+			<a class="navbar-item" href="/datamodel/view">
+				Overview
+			</a>
+			<a class="navbar-item" href="/datamodel/edit">
+				Edit your data model
+			</a>
 			<a class="navbar-item" href="/datamodel/form">
-			Example form
-		  </a>
+				Example form
+			</a>
 		</div>
 
-	  </div>
+		</div>
 
-	  {# dropdowns contributors #}
-	  <div class="navbar-item has-dropdown is-hoverable">
+		{# dropdowns contributors #}
+		<div class="navbar-item has-dropdown is-hoverable">
 		
 		<a class="navbar-link" href="/contributors">
-		  Contributors
+			Contributors
 		</a>
 		<div class="navbar-dropdown is-boxed">
-		  <a class="navbar-item" href="/contributors">
-			List of all contributors / websites
-		  </a>
-		  <a class="navbar-item" href="/contributor/add">
-			Add a new contributor
-		  </a>
+			<a class="navbar-item" href="/contributors">
+				List of all contributors / websites
+			</a>
+			<a class="navbar-item" href="/contributor/add">
+				Add a new contributor
+			</a>
 		</div>
 
-	  </div>
+		</div>
 
-	  {# dropdowns data #}
-	  <div class="navbar-item has-dropdown is-hoverable">
+		{# dropdowns data #}
+		<div class="navbar-item has-dropdown is-hoverable">
 		
 		<a class="navbar-link" href="/dataset/view/">
-		  Dataset
+			Dataset
 		</a>
 		<div class="navbar-dropdown is-boxed">
-		  <a class="navbar-item" href="/dataset/view">
-			Overview of the complete dataset
-		  </a>
-		  <a class="navbar-item" href="/dataset/export">
-			Export data
-		  </a>
+			<a class="navbar-item" href="/dataset/view">
+				Overview of the complete dataset
+			</a>
+			<a class="navbar-item" href="/dataset/dataviz">
+				Simple data visualisation of the data set
+			</a>
+			<a class="navbar-item" href="/dataset/export">
+				Export data
+			</a>
 		</div>
 
-	  </div>
+		</div>
 
 
-	  {# dropdowns datamodel #}
-	  <div class="navbar-item has-dropdown is-hoverable">
+		{# dropdowns datamodel #}
+		<div class="navbar-item has-dropdown is-hoverable">
 		
 		<a class="navbar-link" href="/datamodel/view">
-		  Documentation
+			Documentation
 		</a>
 		<div class="navbar-dropdown is-boxed">
-		  <a class="navbar-item" href="/infos/who">
-			Who created this and why ?
-		  </a>
+			<a class="navbar-item" href="/infos/who">
+				Who created this and why ?
+			</a>
 			 <a class="navbar-item" href="/infos/tuto">
-			How to use {{page_title}}
-		  </a>
-		  <a class="navbar-item" href="/infos/api">
-			API documentation 
-		  </a>
+				How to use {{page_title}}
+			</a>
+			<a class="navbar-item" href="/infos/api">
+				API documentation 
+			</a>
 		</div>
 
-	  </div>
+		</div>
 
 
 	</div>
@@ -131,7 +134,7 @@
 
 
 
-  </div>
+	</div>
 
 
 

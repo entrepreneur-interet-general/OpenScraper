@@ -22,7 +22,7 @@
 		<div class="columns is-centered">
 			
 
-			<div class="column is-8">
+			<div class="column is-6">
 
 				<hr>
 
@@ -58,7 +58,7 @@
 
 							<div class="field is-horizontal">
 								<div class="field-label is-normal">
-									<label class="label">{{ needed }}</label>
+									<label class="label">{{ needed }} *</label>
 								</div>
 								<div class="field-body">
 									<div class="field">
@@ -68,19 +68,31 @@
 											<input class="input" type="text" 
 													placeholder="{{ needed }}"
 													name="{{ needed }}"
-													value="{{ contributor.get('name', '') }}">
+
+													{% if needed == "start_urls" %}
+														value="{% for i in contributor[field].get(needed, '') %}{{i}}, {% end %}"
+													{% else %}
+														value="{{ contributor[field].get(needed, '') }}"
+													{% end %}
+													
+													>
 										</p>
 
 										{% else %}
 										<div class="control">
 											<label class="radio">
-												<input type="radio" name="{{ needed }}" checked>
+												
+												{# TO DO : fill radio "checked" value from contributor data #}
+												<input type="radio" name="{{ needed }}" 
+														checked
+												>
 												The data is complete in the list  
 											</label><br>
 											<label class="radio">
 												<input type="radio" name="{{ needed }}">
 												I need to click to have the complete data
 											</label>
+
 										</div>
 										{% end %}
 									</div>
@@ -95,14 +107,35 @@
 
 					<hr>
 
-					{# custom fields #}
+					{# XPATHS fields #}
 					<div class="content has-text-centered">
 						<h3> custom fields</h3>
-						<p class="is-small">where do you find your data on the lists ?</p>
+						<p class="is-small">where do you find your data on the pages you crawl ?
+						<br>you can modify the data model here : </p>
 					</div>
+
+					{# next_page as core field #}
+					<div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label class="label is-small">{{ datamodel_next_page[u'field_name'] }}</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<p class="control is-expanded has-icons-left">
+									<input class="input is-small" type="text" 
+											placeholder="xpath for -{{ datamodel_next_page[u'field_name'] }}-"
+											name="{{ datamodel_next_page[u'_id'] }}"
+											value="{{ escape (contributor[u'scraper_config_xpaths'].get( datamodel_next_page[u'_id'], '') ) }}">
+								</p>
+							</div>
+						</div>
+					</div>
+
+					{# other XPATH fields from custom datamodel #}
 					{% for dm in datamodel %}
 						<div class="field is-horizontal">
 							<div class="field-label is-normal">
+								{# <label class="label is-small">{{ dm[u'field_name'] }}</label> #}
 								<label class="label is-small">{{ dm[u'field_name'] }}</label>
 							</div>
 							<div class="field-body">
@@ -110,8 +143,8 @@
 									<p class="control is-expanded has-icons-left">
 										<input class="input is-small" type="text" 
 												placeholder="xpath for -{{ dm[u'field_name'] }}-"
-												name="{{ dm[u'field_name'] }}"
-												value="{{ contributor.get( dm[u'field_name'], '') }}">
+												name="{{ dm[u'_id'] }}"
+												value="{{ escape( contributor[u'scraper_config_xpaths'].get( dm[u'_id'], '') )  }}">
 									</p>
 								</div>
 							</div>
@@ -183,18 +216,35 @@
 						<div class="field-body">
 							<div class="field">
 								<textarea class="textarea is-small" 
-											placeholder="your notes on this spider"
-											value="{{ contributor.get('notes', '') }}">
+											name="notes"
+											rows="3"
+											placeholder="your notes on this spider">
+											{% raw contributor['infos'].get('notes', '') %}
+											{# value="{{ escape (contributor['infos'].get('notes', '') ) }}"> #}
 								</textarea>
 							</div>
 						</div>
 					</div>
 
 
+					{# submit button #}
+					<div class="field is-horizontal">
+						<div class="field-label">
+							<!-- Left empty for spacing -->
+						</div>
+						<div class="field-body">
+							<div class="field is-grouped has-text-centered">
+								<div class="control">
+									<button class="button is-link is-rounded">Submit</button>
+								</div>
+								<div class="control">
+									<button class="button is-text">Cancel</button>
+								</div>
+							</div>
+						</div>
+					</div>
 
-
-					{# submit form #}
-
+					{# 
 					<div class="field is-grouped has-text-centered">
 						<div class="control">
 							<button class="button is-link is-rounded">Submit</button>
@@ -203,6 +253,7 @@
 							<button class="button is-text">Cancel</button>
 						</div>
 					</div>
+					#}
 
 
 				</form>

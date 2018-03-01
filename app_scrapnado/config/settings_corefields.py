@@ -8,6 +8,7 @@ MongoDB instantiated at Application level
 
 ### to instantiate datamodel core fields in mongoDB
 DATAMODEL_CORE_FIELDS = [
+	"next_page",
 	"link_data",
 	"link_src",
 	"item_created_at",
@@ -81,7 +82,7 @@ CONTRIBUTOR_EDIT_FIELDS = {
 		"needed" : [
 			"spidername" ,
 			"start_urls",
-			"next_page_xpath",
+			# "next_page_xpath",
 			"parse_follow",
 		], 
 		"optional": [

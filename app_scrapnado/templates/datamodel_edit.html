@@ -1,0 +1,97 @@
+{% extends "main.html" %}
+{% autoescape None %}
+
+{% block body %}
+
+
+<br>
+<section class="section">
+
+{# form to edit datamodel here #}
+	<div class="container has-text-centered">
+		<h1 class="title">
+			Edit your data structure
+		</h1>
+		<h2 class="subtitle">
+			this is the data model you are using. 
+			<br>You can modify the custom fields in the form and then click on "save"
+		</h2>
+
+	</div>
+
+	<br>
+
+
+	<div class="container">
+
+		<div class="columns is-centered">
+			
+			<div class="column is-6">
+
+				<hr>
+
+				<form method="POST">
+				{% module xsrf_form_html() %}
+
+
+
+					{# XPATHS fields #}
+					<div class="content has-text-centered">
+						<h3> custom fields</h3>
+						<p class="is-small"> the name of the fields of data you expect </p>
+						<a class="button is-info is-rounded"
+							href="/datamodel/add_field" >
+							<span class="icon is-small"><i class="fas fa-plus-circle"></i></span>
+							<span>add a new field</span>		
+						</a>
+					</div>
+
+					{# custom field #}
+					{% for field in datamodel_custom %}
+						<div class="field is-horizontal">
+							<div class="field-label is-normal">
+								<label class="label">your field</label>
+							</div>
+							<div class="field-body">
+								<div class="field">
+									<p class="control is-expanded has-icons-left">
+										<input class="input is-small" type="text" 
+												placeholder="test"
+												name="{{ field[u'_id'] }}"
+												value="{{ escape (field[u'field_name']) }}">
+									</p>
+								</div>
+							</div>
+						</div>
+					{% end %}
+
+
+					{# submit button #}
+					<div class="field is-horizontal">
+						<div class="field-label">
+							<!-- Left empty for spacing -->
+						</div>
+						<div class="field-body">
+							<div class="field">
+							<div class="control">
+								<button class="button is-primary is-rounded">
+									Save changes
+								</button>
+							</div>
+							</div>
+						</div>
+					</div>
+
+
+				</form>
+			
+			</div>
+		
+		</div>
+	
+	</div>
+
+</section>
+
+
+{% end %}

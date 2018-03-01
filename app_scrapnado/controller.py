@@ -1,4 +1,5 @@
 import pprint 
+from bson import ObjectId
 
 import tornado.web, tornado.template
 from tornado import gen
@@ -76,34 +77,40 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 		### retrieve datamodel custom
 		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
-		data_model_custom = list(coll_model.find( {"field_class" : "custom"}, {"field_name":1, "_id":1} ))
-		print "... ContributorEditHandler.get / data_model_custom : "
-		pprint.pprint(data_model_custom)
+		data_model = list(coll_model.find( {"field_class" : "custom"})) #, {"field_name":1, "_id":1} ))
+		data_model = [ { k : str(v) for k,v in i.iteritems() } for i in data_model ]
+		print "\n... ContributorEditHandler.get / data_model : "
+		pprint.pprint(data_model)
+
+		data_model_next_page = coll_model.find_one( {"field_name" : "next_page"}) #, {"field_name":1, "_id":1} )
+		data_model_next_page = { k : str(v) for k,v in data_model_next_page.iteritems() }
+		print "\n... ContributorEditHandler.get / data_model_next_page : "
+		pprint.pprint(data_model_next_page)
 
 		### retrieve contributor data from spidername
-		# core empty contributor to begin with
-		# contributor = dict()
+		# core empty contributor structure to begin with
 		contributor = CONTRIBUTOR_CORE_FIELDS
 
 		contributor_edit_fields = CONTRIBUTOR_EDIT_FIELDS
-		print "... ContributorEditHandler.get / contributor_edit_fields :"
+		print "\n... ContributorEditHandler.get / contributor_edit_fields :"
 		pprint.pprint(contributor_edit_fields)
 
 		if spidername:
 			coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] 
 			contributor = coll.find_one({"scraper_config.spidername": spidername})
 
-		print "... ContributorEditHandler.get / contributor :"
+		print "\n... ContributorEditHandler.get / contributor :"
 		pprint.pprint(contributor)
 
-		### render
+		### render page
 		self.render("contributor_edit.html",
 			page_title 	= app_main_texts["main_title"],
-			header_text = "Edit contributor",
+			# header_text = "Edit contributor",
 			contributor_edit_fields = contributor_edit_fields,
 			contributor = contributor,
-			datamodel	= data_model_custom,
-			)
+			datamodel	= data_model,
+			datamodel_next_page	= data_model_next_page,
+		)
 
 	def post(self, spidername=None):
 		"""update contributor in DB"""
@@ -115,14 +122,12 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		# book_fields = [	'name', 'title', 'subtitle', 'image', 'author',
 		# 				'date_released', 'description']
 
+		# contributor = dict()
 		contributor = CONTRIBUTOR_CORE_FIELDS
-		contributor = dict()
 		
 		coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] 
-
 		if spidername:
 			contributor = coll.find_one({"scraper_config.spidername": spidername})
-
 		print "ContributorEditHandler.post / contributor :"
 		pprint.pprint(contributor)
 		
@@ -148,28 +153,26 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 	def get(self):
 
 		coll_contrib = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] #db.contributors
-		####################
-		# contributors = list(coll_contrib.find({"infos.name":"quote"}))
 		contributors = list(coll_contrib.find())
 		print "DataModelHandler.get / contributors :"
 		pprint.pprint (contributors)
 
-		### retrieve datamodel from DB
-		coll_dm = self.application.db[ MONGODB_COLL_DATAMODEL ]
-		data_model = list(coll_dm.find())
-		print "DataModelHandler.get / data_model :"
-		pprint.pprint (data_model)
+		# ### retrieve datamodel from DB
+		# coll_dm = self.application.db[ MONGODB_COLL_DATAMODEL ]
+		# data_model = list(coll_dm.find())
+		# print "DataModelHandler.get / data_model :"
+		# pprint.pprint (data_model)
 
 		self.render(
-			"list_contributors.html",
+			"contributors_list.html",
 			page_title  	= app_main_texts["main_title"],
 			header_text 	= "...",
-			data_model		= data_model,
+			# data_model		= data_model,
 			contributors 	= contributors
 		)
 
-### TO DO 
-class DataModelHandler(BaseHandler):
+
+class DataModelViewHandler(BaseHandler):
 	"""
 	list the fields of your data model from db.data_model
 	"""
@@ -178,20 +181,53 @@ class DataModelHandler(BaseHandler):
 		print "\nDataModelHandler.get... "
 
 		### retrieve datamodel from DB
-		coll = self.application.db[ MONGODB_COLL_DATAMODEL ]
-		data_model = list(coll.find())
-		print "DataModelHandler.get / data_model :"
-		pprint.pprint (data_model)
+		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
+		# data_model = list(coll_model.find())
+		data_model_custom = list(coll_model.find({"field_class" : "custom"}))
+		print "DataModelHandler.get / data_model_custom :"
+		pprint.pprint (data_model_custom)
+
+		data_model_core = list(coll_model.find({"field_class" : "core"}))
+		print "DataModelHandler.get / data_model_core :"
+		pprint.pprint (data_model_core)
+
+		### test printing object ID
+		print "DataModelHandler.get / data_model_core[0] object_ID :"
+		print str(data_model_core[0]["_id"])
 
 		self.render(
-			"datamodel_fields.html",
+			"datamodel_view.html",
 			page_title = app_main_texts["main_title"],
-			datamodel = data_model
+			datamodel_custom = data_model_custom,
+			datamodel_core = data_model_core
 		)
 	
-	def post(self):
-		pass
 
+
+class DataModelEditHandler(BaseHandler):
+	"""
+	list the fields of your data model from db.data_model
+	"""
+	def get(self) : 
+		print "\nDataModelHandler.get... "
+
+		### retrieve datamodel from DB
+		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
+		# data_model = list(coll_model.find())
+		data_model_custom = list(coll_model.find({"field_class" : "custom"}))
+		print "DataModelHandler.get / data_model_custom :"
+		pprint.pprint (data_model_custom)
+
+		self.render(
+			"datamodel_edit.html",
+			page_title = app_main_texts["main_title"],
+			datamodel_custom = data_model_custom,
+		)
+
+	def post(self):
+		### get fields + objectIDs
+		### 
+		pass
 
 class FormHandler(BaseHandler) : 
 	"""
@@ -217,7 +253,7 @@ class DataScrapedHandler(BaseHandler):
 
 ########################
 ### run spider handlers
-
+"""
 test_data_model = [
 	
 
@@ -245,7 +281,6 @@ test_data_model = [
  	### for debugging purposes
 	"testClass"
 ]
-
 
 test_spider_config = {
 
@@ -285,7 +320,6 @@ test_spider_config = {
 	"tags_xpath" : './/div[@class="tags"]/a[@class="tag"]/text()',
 	"rawdate_xpath" : ""
 } 
-
 
 avise_spider_config = {
 	
@@ -332,7 +366,7 @@ avise_spider_config = {
 	"partner_xpath" : "",
 	"economic_xpath" : "",
 }
-
+"""
 
 # class SpiderHandler(tornado.web.RequestHandler) : 
 class SpiderHandler(BaseHandler) : 
