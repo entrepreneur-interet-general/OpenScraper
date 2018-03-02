@@ -63,6 +63,11 @@ class BaseHandler(tornado.web.RequestHandler):
 		user 	   = coll_users.find_one({"email": self.get_argument("email") })
 		return user 
 
+	def add_user_to_db(self, user): 
+
+		coll_users = self.application.db[ MONGODB_COLL_USERS ]
+		coll_users.insert_one( user )
+
 	def set_current_user(self, user) :
 		""" set cookie from user infos """
 		if user : 
@@ -107,7 +112,7 @@ class LoginHandler(BaseHandler):
 	def post(self):
 		""" check if user exists in db and set cookie"""
 		self.check_xsrf_cookie()
-		
+
 		print "\nLoginHandler.post ... "
 
 		print "\nLoginHandler.post / request.arguments ... "
@@ -158,7 +163,7 @@ class RegisterHandler(BaseHandler):
 	
 		print "\nRegisterHandler.get ... "
 
-		self.render('register.html',
+		self.render('login.html',
 			page_title  = app_main_texts["main_title"],
 			login_or_register = "register"
 		)
@@ -194,7 +199,8 @@ class RegisterHandler(BaseHandler):
 				"password" 	: user_password,
 				"level_admin" : "user",
 				}
-			coll_users.insert_one( user_dict )
+			self.add_user_to_db(user_dict)
+			# coll_users.insert_one( user_dict )
 
 			### set user
 			# self.set_secure_cookie("user_name", user_name )
