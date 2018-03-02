@@ -16,7 +16,7 @@ urls = [
 	### set DB structure 
 	(r"/datamodel/view", DataModelViewHandler),
 	(r"/datamodel/edit", DataModelEditHandler),
-	(r"/datamodel/add_field", DataModelEditHandler),
+	(r"/datamodel/add_field", DataModelAddFieldHandler),
 
 	### lists and edits
 	(r"/contributors", ContributorsHandler),

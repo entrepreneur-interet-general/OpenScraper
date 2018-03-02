@@ -96,7 +96,7 @@
 
 						
 						{# submit button #}
-						<div class="field is-horizontal">
+						{# <div class="field is-horizontal">
 							<div class="field-label">
 								<!-- Left empty for spacing -->
 							</div>
@@ -109,6 +109,24 @@
 								</div>
 								</div>
 							</div>
+						</div> #}
+
+						<div class="field is-grouped is-grouped-centered">
+							
+							<p class="control">
+								<a class="button is-primary is-rounded">
+									{{ login_or_register }} 
+								</a>
+							</p>
+
+							{% if login_or_register == "register" %}
+							<p class="control">
+								<a class="button is-light is-rounded">
+									Cancel
+								</a>
+							</p>
+							{% end %}
+
 						</div>
 
 						

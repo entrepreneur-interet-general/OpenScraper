@@ -31,9 +31,8 @@ Tornado supports any valid HTTP method (GET,POST,PUT,DELETE,HEAD,OPTIONS)
 """
 
 ########################
-### Base handler
+### BASE handler
  
-  
 # def get_user_from_db(self, user_email) :
 # 	""" get user from db"""
 # 	coll_users = self.application.db[ MONGODB_COLL_USERS ]
@@ -94,6 +93,8 @@ class PageNotFoundHandler(BaseHandler):
 		)
 
 
+
+######################################
 ### Login - logout - register handlers 
 
 class LoginHandler(BaseHandler):
@@ -213,8 +214,6 @@ class RegisterHandler(BaseHandler):
 			self.redirect("/register")
 
 
-
-
 class LogoutHandler(BaseHandler):
 	def get(self):
 		
@@ -243,8 +242,8 @@ class WelcomeHandler(BaseHandler):
 
 
 
-########################
-### lists / edit handlers
+#####################################
+### CONTRIBUTOR lists / edit handlers
 
 class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 	"""
@@ -352,6 +351,10 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 		)
 
 
+
+#####################################
+### DATA MODEL lists / edit handlers
+
 class DataModelViewHandler(BaseHandler):
 	"""
 	list the fields of your data model from db.data_model
@@ -383,7 +386,6 @@ class DataModelViewHandler(BaseHandler):
 		)
 	
 
-
 class DataModelEditHandler(BaseHandler):
 	"""
 	list the fields of your data model from db.data_model
@@ -406,21 +408,35 @@ class DataModelEditHandler(BaseHandler):
 
 	def post(self):
 		### get fields + objectIDs
-		### 
+		### TO DO  
 		pass
 
-class FormHandler(BaseHandler) : 
-	"""
-	test with basic Bulma Form
-	"""
-	def get(self):
 
-		print "\FormHandler.get... "
+class DataModelAddFieldHandler(BaseHandler) : 
+	"""
+	Add a new field to your data model 
+	"""
+	def get(self) : 
+
+		print "\DataModelAddFieldHandler.get... "
 
 		self.render(
-			"form_instance.html",
+			"datamodel_new_field.html",
 			page_title = app_main_texts["main_title"],
 		)
+
+	def post(self):
+
+		### get fields + objectIDs
+
+		print "DataModelAddFieldHandler.post ..."
+
+		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
+
+		self.redirect("/datamodel/edit")
+
+#####################################
+### DATA lists / edit handlers
 
 ### TO DO 
 class DataScrapedHandler(BaseHandler):
@@ -432,7 +448,7 @@ class DataScrapedHandler(BaseHandler):
 
 
 ########################
-### run spider handlers
+### RUN SPIDER handlers
 """
 test_data_model = [
 	
@@ -620,6 +636,25 @@ class SpiderHandler(BaseHandler) :
 									run_spider_config=spider_config 
 									)
 		raise gen.Return(result)
+
+
+
+#####################################
+### SNIPPETS handlers
+
+class FormHandler(BaseHandler) : 
+	"""
+	test with basic Bulma Form
+	"""
+	def get(self):
+
+		print "\FormHandler.get... "
+
+		self.render(
+			"form_instance.html",
+			page_title = app_main_texts["main_title"],
+		)
+
 
 
 ########################
