@@ -6,8 +6,13 @@ from tornado import gen
 
 ### import app settings / infos 
 from config.app_infos import app_infos, app_main_texts
-from config.settings_example import MONGODB_COLL_CONTRIBUTORS, MONGODB_COLL_DATAMODEL, MONGODB_COLL_DATASCRAPPED
+from config.settings_example import * # MONGODB_COLL_CONTRIBUTORS, MONGODB_COLL_DATAMODEL, MONGODB_COLL_DATASCRAPPED
 from config.settings_corefields import *
+
+# ### import WTForms for validation
+# from wtforms import validators 
+# from tornadotools.forms import Form
+from forms import *
 
 ### import contributor generic class
 from contributor import ContributorBaseClass
@@ -26,19 +31,193 @@ Tornado supports any valid HTTP method (GET,POST,PUT,DELETE,HEAD,OPTIONS)
 """
 
 ########################
-### Login handlers 
+### Base handler
+ 
+  
+# def get_user_from_db(self, user_email) :
+# 	""" get user from db"""
+# 	coll_users = self.application.db[ MONGODB_COLL_USERS ]
+# 	user 	   = coll_users.find_one({"email": self.get_argument("email") })
+# 	return user 
+
+# def set_current_user(self, user) :
+	
+# 	# retrieve user data 
+# 	user_name		= user["username"]
+# 	user_password	= user["password"]
+# 	user_email		= user["email"]
+
+# 	self.set_secure_cookie("user_name", user_name )
+# 	self.set_secure_cookie("user_email", user_email )
+
 
 class BaseHandler(tornado.web.RequestHandler):
+	
 	def get_current_user(self):
-		return self.get_secure_cookie("username")
+		""" return user_name"""
+		return self.get_secure_cookie("user_name")
+
+	def get_user_from_db(self, user_email) :
+		""" get user from db"""
+		coll_users = self.application.db[ MONGODB_COLL_USERS ]
+		user 	   = coll_users.find_one({"email": self.get_argument("email") })
+		return user 
+
+	def set_current_user(self, user) :
+		""" set cookie from user infos """
+		if user : 
+			# retrieve user data 
+			user_name		= user["username"]
+			user_password	= user["password"]
+			user_email		= user["email"]
+
+			self.set_secure_cookie("user_name", user_name )
+			self.set_secure_cookie("user_email", user_email )
+		else:
+			self.clear_current_user()
+
+	def clear_current_user(self):
+		# if (self.get_argument("logout", None)):
+		self.clear_cookie("user_name")
+		self.clear_cookie("user_email")
+
+
+class PageNotFoundHandler(BaseHandler): 
+	def get(self):
+		self.render("404.html",
+					page_title  = app_main_texts["main_title"],
+		)
+
+
+### Login - logout - register handlers 
 
 class LoginHandler(BaseHandler):
+	
 	def get(self):
-		self.render('login.html')
+
+		print "\nLoginHandler.get ... "
+
+		### TO DO : add WTForms as form 
+
+		self.render('login.html',
+			page_title  = app_main_texts["main_title"],
+			login_or_register = "login"
+		)
+	
 	def post(self):
-		self.set_secure_cookie("username", self.get_argument("username"))
-		self.redirect("/")
+		""" check if user exists in db and set cookie"""
+		self.check_xsrf_cookie()
 		
+		print "\nLoginHandler.post ... "
+
+		print "\nLoginHandler.post / request.arguments ... "
+		# print self.request 
+		print self.request.arguments 
+
+		### get user from db
+		# coll_users = self.application.db[ MONGODB_COLL_USERS ]
+		# user 	   = coll_users.find_one({"email": self.get_argument("email") })
+		user = self.get_user_from_db( self.get_argument("email") )
+		print "LoginHandler.post / user :"
+		print user
+
+		### TO DO : form validation 
+
+		### check if user exists in db
+		if user : 
+
+			user_password	= user["password"]
+			# check password 
+			if self.get_argument("password") == user_password : 
+				
+				# set user
+				self.set_current_user(user)
+
+				# # retrieve user data 
+				# user_name		= user["username"]
+				# user_password	= user["password"]
+				# user_email		= user["email"]
+
+
+				# if self.get_argument("password") == user_password : 
+				# 	self.set_secure_cookie("user_name", user_name )
+				# 	self.set_secure_cookie("user_email", user_email )
+
+				self.redirect("/")
+			
+			else : 
+				self.redirect("/login")
+		else : 
+			self.redirect("/login")
+	
+
+class RegisterHandler(BaseHandler):
+	""" register a user (check if exists in db first)  and set cookie"""
+
+	def get(self):
+	
+		print "\nRegisterHandler.get ... "
+
+		self.render('register.html',
+			page_title  = app_main_texts["main_title"],
+			login_or_register = "register"
+		)
+
+	def post(self):
+		""" check if user exists in db, insert it in db, and set cookie"""
+		
+		self.check_xsrf_cookie()
+		print "\nRegisterHandler.post ... "
+
+		### get user infos + data validation
+		user_name 		= self.get_argument("username")
+		user_email 		= self.get_argument("email")
+		user_password 	= self.get_argument("password")
+
+		### TO DO : form validation
+		print "RegisterHandler.post / request.arguments ... "
+		# print self.request 
+		print self.request.arguments 
+
+		### get user from db
+		# coll_users = self.application.db[ MONGODB_COLL_USERS ]
+		# user 	   = coll_users.find_one({"email": self.get_argument("email") })
+		user = self.get_user_from_db( self.get_argument("email") )
+
+		if user == None : 
+
+			print "\RegisterHandler.post / adding user to DB "
+			
+			user_dict = { 
+				"username" 	: user_name,
+				"email" 	: user_email,
+				"password" 	: user_password,
+				"level_admin" : "user",
+				}
+			coll_users.insert_one( user_dict )
+
+			### set user
+			# self.set_secure_cookie("user_name", user_name )
+			# self.set_secure_cookie("user_email", user_email )
+			self.set_current_user(user_dict)
+
+			self.redirect("/")
+
+		else : 
+			self.redirect("/register")
+
+
+
+
+class LogoutHandler(BaseHandler):
+	def get(self):
+		
+		self.clear_current_user()
+		self.redirect("/")
+
+
+########################
+### Index page 
 class WelcomeHandler(BaseHandler):
 	"""
 	handler for index page
@@ -49,19 +228,14 @@ class WelcomeHandler(BaseHandler):
 		self.render(
 			"index.html",
 			page_title  = app_main_texts["main_title"],
-			header_text = app_main_texts["main_header"],
+			# header_text = app_main_texts["main_header"],
 			user=self.current_user
 		)
 
 	# def write_error(self, status_code, **kwargs):
 	# 	self.write("Gosh darnit, user! You caused a %d error." % status_code)
 
-class LogoutHandler(BaseHandler):
-	def get(self):
-		if (self.get_argument("logout", None)):
-			self.clear_cookie("username")
-			self.redirect("/")
- 
+
 
 ########################
 ### lists / edit handlers
@@ -166,7 +340,7 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 		self.render(
 			"contributors_list.html",
 			page_title  	= app_main_texts["main_title"],
-			header_text 	= "...",
+			# header_text 	= "...",
 			# data_model		= data_model,
 			contributors 	= contributors
 		)

@@ -4,9 +4,10 @@ from controller import *
 ### all routing functions are in controller.py
 urls = [
 
-	### index
+	### index and login
 	(r"/", WelcomeHandler),
 	(r'/login', LoginHandler),
+	(r'/register', RegisterHandler),
 	(r'/logout', LogoutHandler),
 
 	### forms
@@ -29,5 +30,8 @@ urls = [
 	(r"/data", DataScrapedHandler),
 	(r"/data/view/(\w+)", DataScrapedHandler),
 	# (r"/data/api/search?=()", DataApiHandler),
+	
+	(r'.*', PageNotFoundHandler),
+
 	
 ]

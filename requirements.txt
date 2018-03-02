@@ -25,6 +25,7 @@ parsel==1.4.0
 pyasn1==0.4.2
 pyasn1-modules==0.2.1
 pycparser==2.18
+pycurl==7.43.0.1
 PyDispatcher==2.0.5
 Pygments==2.2.0
 pymongo==3.6.0
@@ -42,8 +43,11 @@ snowballstemmer==1.2.1
 Sphinx==1.7.0
 sphinxcontrib-websupport==1.0.1
 tornado==4.5.3
+tornadotools==0.2.2
 Twisted==17.9.0
 typing==3.6.4
 urllib3==1.22
 w3lib==1.19.0
+WTForms==2.1
+wtforms-tornado==0.0.2
 zope.interface==4.4.3
