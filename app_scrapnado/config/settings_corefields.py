@@ -6,6 +6,15 @@ MongoDB instantiated at Application level
 
 """
 
+### to instantiate user core fields in mongoDB
+USER_CORE_FIELDS = [
+	"username",
+	"email",
+	"uuid",		#
+	"password" 	# needs to be hashed
+]
+
+
 ### to instantiate datamodel core fields in mongoDB
 DATAMODEL_FIELDS_TYPES = [
 	"url", 
@@ -35,28 +44,29 @@ DATAMODEL_DEFAULT_CUSTOM_FIELDS = [
 
 ### to instantiate contributor core fields in mongoDB
 CONTRIBUTOR_CORE_FIELDS = {
-
+	
 	# custom infos 
 	"infos" : {
-		"name" : None , 	# real name contributor
-		"page_url" : None ,
-		"contact" : None,
-		"notes" : None,
-		"added_by" : None,
+		"name" : "" , 	# real name contributor
+		"page_url" : "" ,
+		"contact" : "",
+		"notes" : "",
+		"added_by" : "",
 	},
 
 	# scraper - custom for scraping basics
 	 "scraper_config" : {
-		"spidername" : None,
+		"spidername" : "",
 		"start_urls" : [],
 		"parse_follow" : False,
-		"follow_xpath" : None,
+		"next_page" : "",
+		"follow_xpath" : "",
 		"page_needs_splash" : False,
 	},
 
 	# scraper - custom for scraping xpaths
 	"scraper_config_xpaths" : {
-		"next_page_xpath" : None,
+		# "next_page_xpath" : None,
 	},
 
 	# scraper - global settings	
@@ -110,7 +120,7 @@ CONTRIBUTOR_EDIT_FIELDS = {
 
 	# # scraper - custom for scraping xpaths
 	# "scraper_config_xpaths" : {
-	# 	"next_page_xpath" : None,
+	# # 	"next_page_xpath" : None,
 	# },
 
 	# # scraper - global settings	
@@ -128,10 +138,3 @@ CONTRIBUTOR_EDIT_FIELDS = {
 	# },
 }
 
-### to instantiate user core fields in mongoDB
-USER_CORE_FIELDS = [
-	"username",
-	"email",
-	"uuid",		#
-	"password" 	# needs to be hashed
-]

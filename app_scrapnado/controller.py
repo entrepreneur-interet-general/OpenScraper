@@ -30,7 +30,7 @@ from scraper import GenericItem
 
 ########################
 ########################
-### DEFAULT / UTILS 
+### DEFAULT / UTILS --- NOT TESTED
 
 def create_generic_custom_fields():
 	"""create default custom fields in DB """
@@ -54,6 +54,7 @@ def reset_fields_to_default():
 	coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
 	coll_model.remove({})
 	create_generic_custom_fields()
+
 
 ########################
 ########################
@@ -446,23 +447,26 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		print "\n... ContributorEditHandler.get / data_model : "
 		pprint.pprint(data_model)
 
-		data_model_next_page = coll_model.find_one( {"field_name" : "next_page"}) #, {"field_name":1, "_id":1} )
-		data_model_next_page = { k : str(v) for k,v in data_model_next_page.iteritems() }
-		print "\n... ContributorEditHandler.get / data_model_next_page : "
-		pprint.pprint(data_model_next_page)
-
-		### retrieve contributor data from spidername
-		# core empty contributor structure to begin with
-		contributor = CONTRIBUTOR_CORE_FIELDS
+		# data_model_next_page = coll_model.find_one( {"field_name" : "next_page"}) #, {"field_name":1, "_id":1} )
+		# data_model_next_page = { k : str(v) for k,v in data_model_next_page.iteritems() }
+		# print "\n... ContributorEditHandler.get / data_model_next_page : "
+		# pprint.pprint(data_model_next_page)
 
 		contributor_edit_fields = CONTRIBUTOR_EDIT_FIELDS
 		print "\n... ContributorEditHandler.get / contributor_edit_fields :"
 		pprint.pprint(contributor_edit_fields)
 
+
+		### retrieve contributor data from spidername
+		# core empty contributor structure to begin with
+		contributor = CONTRIBUTOR_CORE_FIELDS
+		# spider exists : edit form
 		if spidername:
 			coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] 
 			contributor = coll.find_one({"scraper_config.spidername": spidername})
-
+		# new spider : add form
+		else :
+			pass 
 		print "\n... ContributorEditHandler.get / contributor :"
 		pprint.pprint(contributor)
 
@@ -473,7 +477,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			contributor_edit_fields = contributor_edit_fields,
 			contributor = contributor,
 			datamodel	= data_model,
-			datamodel_next_page	= data_model_next_page,
+			# datamodel_next_page	= data_model_next_page,
 		)
 
 	def post(self, spidername=None):

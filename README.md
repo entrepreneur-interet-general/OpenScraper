@@ -6,7 +6,7 @@ A generic Scrapy crawler wrapped in a Tornado framework with a nice interface, s
 ----
 
 #### **To which needs this project aims to answer ?**
-Scraping can quickly become a mess, mostly if you need to scrap several websites in order to eventually get a structured dataset. Usually you need to set up several scrapers for every website, configure the spiders one by one, get the data from every website, and clean up the mess to get from this raw material one structured dataset you know that exists... So you have two choices : either use a proprietary service (like Apify) and depend on an external service, or write your own code (for instance based on BeautifulSoup or Scrapy), adapt it for your own purposes, and usually be the only one to be able to use/adapt it. 
+Scraping can quickly become a mess, mostly if you need to scrap several websites in order to eventually get a structured dataset. Usually you need to set up several scrapers for every website, configure the spiders one by one, get the data from every website, and clean up the mess to get from this raw material one structured dataset you know that exists... So you have two choices : either use a proprietary and expensive service (like [Apify](https://www.apify.com/) or [import.io](https://www.apify.com/)) and depend on an external service, or write your own code (for instance based on BeautifulSoup or Scrapy), adapt it for your own purposes, and usually be the only one to be able to use/adapt it. 
 
 To make that job a bit easier OpenScraper aims to display a GUI interface (a webapp on the client side) so you'll just have to set the field names (the data structure you expect), then enter a list of websites to scrap, for each one set up the xpath to scrap for each field, and finally click on a button to run the scraper configured for each website... and tadaaaa you'll have your data... 
 
@@ -47,9 +47,9 @@ So let's say you have a list of different websites you want to scrap projects fr
 
 ### STACK
 - _Language_ : **Python**... because let's be honest, I don't manage so many languages for that kind of project
-- _Backend_  : **Tornado**... one of the few async/non-blocking Python frameworks
-- _Scraping_ : **Scrapy**, perhaps with **Selenium** inside or **splash** for jquery follow-up...
-- _Frontend_ : **Bulma** (to make it nice) and then **Vue.js** (to make it async)
+- _Backend_  : **Tornado** [(link)](http://www.tornadoweb.org/en/stable/)... one of the few async/non-blocking Python frameworks
+- _Scraping_ : **Scrapy** [(link)](https://scrapy.org/), perhaps with **Selenium for Python** [(link)](http://selenium-python.readthedocs.io/) inside or **splash** for jquery follow-up...
+- _Frontend_ : **Bulma** [(link)](https://bulma.io/) (to make it nice) and then **Vue.js** [(link)](https://vuejs.org/) (to make it async)
 
 ### TECH GOALS
 - web interface to edit the data structure

@@ -54,6 +54,7 @@ from controller import *
 # update/upsert a field for all documents in a collection
 # cf : db.getCollection('contributors').update({}, {$set:{"infos.added_by" : "admin"} }, {upsert:true, multi:true})
 
+
 ### main Tornado application wrapper
 class Application(tornado.web.Application):
 	"""
@@ -99,6 +100,8 @@ class Application(tornado.web.Application):
 		]
 		# self.db[ "test_coll" ].bulk_write(operations)
 		self.db[ MONGODB_COLL_DATAMODEL ].bulk_write(operations)
+
+		
 
 		### retrieve handlers from urls.py
 		handlers = urls.urls
