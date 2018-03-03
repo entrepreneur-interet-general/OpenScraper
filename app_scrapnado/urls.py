@@ -22,6 +22,7 @@ urls = [
 	(r"/contributors", ContributorsHandler),
 	(r"/contributor/edit/(\w+)", ContributorEditHandler), # ([0-9Xx\-]+) # for regex numbers and dashes
 	(r"/contributor/add", ContributorEditHandler),
+	(r"/contributor/delete/(\w+)", ContributorDeleteHandler), # ([0-9Xx\-]+) # for regex numbers and dashes
 
 	### spider launchers
 	(r"/crawl/(\w+)", SpiderHandler), ### get spidername as input

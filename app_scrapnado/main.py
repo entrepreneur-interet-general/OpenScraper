@@ -68,6 +68,8 @@ class Application(tornado.web.Application):
 	
 	def __init__(self):  
 
+		print "\n>>> Application.__init__ ... "
+
 		### connect to MongoDB
 		client = MongoClient(
 					host = MONGODB_HOST, 
@@ -83,8 +85,8 @@ class Application(tornado.web.Application):
 				"added_by" 		: "admin"
 			} for field in DATAMODEL_CORE_FIELDS
 		]
-		print "\n>>> Application.__init__ / datamodel - core_fields : ", 
-		pprint.pprint(core_fields)
+		print ">>> Application.__init__ / datamodel - core_fields : "
+		# pprint.pprint(core_fields)
 		
 		# upsert fields as bulk job in mongoDB
 		# cf : https://stackoverflow.com/questions/5292370/fast-or-bulk-upsert-in-pymongo
@@ -123,6 +125,8 @@ class Application(tornado.web.Application):
 		
 		### app init
 		tornado.web.Application.__init__(self, handlers, **settings )
+		print ">>> Application.__init__ end ... \n"
+
 
 
 

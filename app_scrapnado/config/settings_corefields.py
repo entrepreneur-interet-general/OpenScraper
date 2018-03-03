@@ -47,20 +47,21 @@ CONTRIBUTOR_CORE_FIELDS = {
 	
 	# custom infos 
 	"infos" : {
-		"name" : "" , 	# real name contributor
-		"page_url" : "" ,
-		"contact" : "",
-		"notes" : "",
-		"added_by" : "",
+		"name" 			: "" , 	# real name contributor
+		"page_url" 		: "" ,
+		"contact" 		: "",
+		"notes" 		: "",
+		"added_by" 		: "",
+		"is_working" 	: False
 	},
 
 	# scraper - custom for scraping basics
 	 "scraper_config" : {
-		"spidername" : "",
-		"start_urls" : [],
-		"parse_follow" : False,
-		"next_page" : "",
-		"follow_xpath" : "",
+		"spidername" 	: "",
+		"start_urls" 	: [],
+		"parse_follow" 	: False,
+		"next_page" 	: "",
+		"follow_xpath" 	: "",
 		"page_needs_splash" : False,
 	},
 
@@ -71,15 +72,15 @@ CONTRIBUTOR_CORE_FIELDS = {
 
 	# scraper - global settings	
 	"scraper_settings" : {
-		"LIMIT" : 100,
-		"download_delay" : 0,
-		"page_count" : 1,
+		"LIMIT" 			: 100,
+		"download_delay" 	: 0,
+		"page_count" 		: 1,
 	},
 
 	# scraper stats	
 	"stats" : {
-		"error_array" : [],
-		"item_count" : 0,
+		"error_array" 		: [],
+		"item_count" 		: 0,
 		"item_count_depth_1" : 0
 	},
 
@@ -138,3 +139,14 @@ CONTRIBUTOR_EDIT_FIELDS = {
 	# },
 }
 
+class SpiderConfig :
+
+	def __init__(self, *args, **kwargs) :
+		"""
+		a spider config object to instantiate a config
+		this config will be stored in db
+		"""
+		
+		self.spider_config_empty = CONTRIBUTOR_CORE_FIELDS
+		for key in self.spider_config_empty.keys() :
+			pass

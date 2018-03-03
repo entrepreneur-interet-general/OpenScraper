@@ -42,10 +42,12 @@
 						{# needed values #}
 						{% for needed in value["needed"] %}
 
-							<div class="field is-horizontal">
-								
-								<div class="field-label is-normal">
-									<label class="label">{{ needed }} *</label>
+							<div class="field has-addons is-horizontal">
+							
+								<div class="field-label button is-static ">
+									<label class="label ">
+										{{ needed }} *
+									</label>
 								</div>
 
 								<div class="field-body">
@@ -83,6 +85,21 @@
 
 											</div>
 										
+										{% elif needed == "follow_xpath" %}
+											<p class="control is-expanded has-icons-left">
+												<input class="input" type="text" 
+														placeholder="{{ needed }}"
+														name="{{ needed }}"
+
+														{% if needed == "start_urls" %}
+															value="{% for i in contributor[field].get(needed, '') %}{{ escape(i) }}, {% end %}"
+														{% else %}
+															value="{{ escape (contributor[field].get(needed, '')) }}"
+														{% end %}
+														
+														>
+											</p>
+
 										{% end %}
 
 
@@ -91,7 +108,6 @@
 									</div>
 								</div>
 							</div>
-
 
 
 						{% end %}
@@ -110,10 +126,13 @@
 					{# other XPATH fields from custom datamodel #}
 					{% for dm in datamodel %}
 						<div class="field is-horizontal">
-							<div class="field-label is-small">
-								{# <label class="label is-small">{{ dm[u'field_name'] }}</label> #}
-								<label class="label">{{ dm[u'field_name'] }}</label>
+
+							<div class="field-label button is-static is-small">
+								<label class="label ">
+									{{ dm[u'field_name'] }}
+								</label>
 							</div>
+
 							<div class="field-body">
 								<div class="field">
 									<p class="control is-expanded has-icons-left">
@@ -132,10 +151,14 @@
 
 
 					{# notes on spider #}
-					<div class="field is-horizontal">
-						<div class="field-label is-small">
-							<label class="label">Notes</label>
+					<div class="field has-addons is-horizontal">
+						
+						<div class="field-label button is-static is-small">
+							<label class="label ">
+								notes
+							</label>
 						</div>
+
 						<div class="field-body">
 							<div class="field">
 								<textarea class="textarea is-small" 
@@ -156,7 +179,7 @@
 						<p class="control">
 							<input 	class="button is-primary is-rounded" 
 									type="submit" 
-									value="Save contributor"
+									value="{{ create_or_update }} contributor"
 								>
 							</input>
 						</p>

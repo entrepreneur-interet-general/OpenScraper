@@ -62,16 +62,21 @@
 							#}
 
 							<th>spidername</th>
+							<th>working</th>
 
-							<th>edit spider</th>
-							<th>run spider</th>
-							<th>view data</th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
 						</tr>
 					</thead>
 
 					{# displaying data #}
 					<tbody>
 					{% for contrib in contributors %}
+						
+						{% set is_working = contrib["infos"]["is_working"] %}
+
 						<tr>
 							<th> {{ escape (contrib["infos"]["name"]) }}</th>
 							<td> {{ escape (contrib["infos"]["added_by"]) }}</td>
@@ -90,26 +95,48 @@
 							#}
 
 							<td> {{ escape (contrib["scraper_config"]["spidername"]) }}</td>
+							<td class="has-text-centered"> 
+								{% if is_working %}
+									<span class="icon has-text-success">
+										<i class="fas fa-check-square"></i>
+									</span>
+								{% else %}
+									<span class="icon has-text-danger">
+										<i class="is-danger fas fa-exclamation-circle "></i>
+									</span>
+								{% end %}
+							</td>
 
 							<td> 
-								<a class="button is-primary is-rounded is-small" 
+								<a class="has-text-centered button is-primary is-rounded is-small" 
 									href="/contributor/edit/{{ escape (contrib['scraper_config']['spidername']) }}" >
 									<span class="icon is-small"><i class="fas fa-list"></i></span>
 									<span>edit spider</span>
 								</a> 
 							</td>
 							<td> 
-								<a class="button is-warning is-rounded is-small"
-									href="/crawl/{{ escape (contrib['scraper_config']['spidername']) }}" >
+								<a class="has-text-centered button is-warning is-rounded is-small"
+									href="/crawl/{{ escape (contrib['scraper_config']['spidername']) }}" 
+									{% if not is_working %}
+									disabled
+									{% end %}
+									>
 									<span class="icon is-small"><i class="fas fa-play"></i></span>
 									<span>run spider</span>
 								</a> 
 							</td>
 							<td> 
-								<a class="button is-info is-rounded is-small"
+								<a class="has-text-centered button is-info is-rounded is-small"
 									href="/data/view/{{ escape (contrib['scraper_config']['spidername']) }}" >
 									<span class="icon is-small"><i class="fas fa-table"></i></span>
 									<span>view data</span>
+								</a> 
+							</td>
+							<td> 
+								<a class="has-text-centered button is-danger is-outlined is-rounded is-small"
+									href="/contributor/delete/{{ escape (contrib['scraper_config']['spidername']) }}" >
+									<span class="icon is-small"><i class="fas fa-times"></i></span>
+									<span>delete</span>
 								</a> 
 							</td>
 

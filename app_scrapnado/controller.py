@@ -1,5 +1,6 @@
 import pprint 
 from bson import ObjectId
+import time
 
 from pymongo import UpdateOne
 
@@ -382,7 +383,7 @@ class DataModelEditHandler(BaseHandler):
 				# coll_model.remove({"_id" : field["_id"]})
 
 		### redirect once finished
-		self.redirect("/datamodel/edit")
+		self.redirect("/datamodel/view")
 
 
 class DataModelAddFieldHandler(BaseHandler) : 
@@ -456,62 +457,87 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		print "\n... ContributorEditHandler.get / contributor_edit_fields :"
 		pprint.pprint(contributor_edit_fields)
 
+		create_or_update = "create"
 
 		### retrieve contributor data from spidername
 		# core empty contributor structure to begin with
 		contributor = CONTRIBUTOR_CORE_FIELDS
+		
 		# spider exists : edit form
 		if spidername:
+			create_or_update = "update"
 			coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] 
 			contributor = coll.find_one({"scraper_config.spidername": spidername})
 		# new spider : add form
 		else :
-			pass 
+			create_or_update = "create"
+
 		print "\n... ContributorEditHandler.get / contributor :"
 		pprint.pprint(contributor)
 
 		### render page
 		self.render("contributor_edit.html",
-			page_title 	= app_main_texts["main_title"],
-			# header_text = "Edit contributor",
+			page_title 			= app_main_texts["main_title"],
+			create_or_update 	= create_or_update,
 			contributor_edit_fields = contributor_edit_fields,
-			contributor = contributor,
-			datamodel	= data_model,
+			contributor 		= contributor,
+			datamodel			= data_model,
 			# datamodel_next_page	= data_model_next_page,
 		)
 
 	def post(self, spidername=None):
 		"""update contributor in DB"""
 		
-		import time
-		#####################################
-		### TO DO : REAL UPDATE FOR CONTRIBUTOR 
-		# #####################################
-		# book_fields = [	'name', 'title', 'subtitle', 'image', 'author',
-		# 				'date_released', 'description']
 
-		# contributor = dict()
+		### TO DO : form validation
+
+		print "\nContributorEditHandler.post / request.arguments : "
+		# print self.request 
+		pprint.pprint( self.request.arguments )
+
+		coll_spider = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] 
+
+		print "ContributorEditHandler.post / creating spider as document  ... "
 		contributor = CONTRIBUTOR_CORE_FIELDS
 		
-		coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] 
 		if spidername:
-			contributor = coll.find_one({"scraper_config.spidername": spidername})
+			contributor = coll_spider.find_one({"scraper_config.spidername": spidername})
+
+			# operations =[ UpdateOne( 
+			# 	{"_id" : contributor["_id"]},
+			# 	{'$set':  { 
+			# 			"field_type" 	: contributor["field_type"],
+			# 			"field_name" 	: contributor["field_name"],
+			# 			} 
+			# 	}, 
+			# 	upsert=True )
+			# ]
+			# coll_spider.bulk_write(operations)
+
+		else :
+			# create a safe spidername
+			
+			# insert new spider to db
+			# coll_spider = self.application.db[ MONGODB_COLL_DATAMODEL ]
+			# coll_spider.insert_one(new_spider)
+			pass
+
 		print "ContributorEditHandler.post / contributor :"
 		pprint.pprint(contributor)
 		
-		for key in book_fields:
-			contributor[ key ] = self.get_argument(key, None)
 
-		if spidername:
-			# coll.save(contributor)
-			pass
-		else:
-			# contributor['date_added'] = int(time.time())
-			coll.insert_one(contributor)
-			pass
+
+		# if spidername:
+		# 	# coll.save(contributor)
+		# 	pass
+		# else:
+		# 	# contributor['date_added'] = int(time.time())
+		# 	coll.insert_one(contributor)
+		# 	pass
 		
 		
-		self.redirect("/recommended/")
+		# self.redirect("/contributors")
+		self.redirect("/contributors")
 
 
 class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
@@ -522,7 +548,7 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 		coll_contrib = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] #db.contributors
 		contributors = list(coll_contrib.find())
-		print "DataModelHandler.get / contributors :"
+		print "\ContributorsHandler.get / contributors :"
 		pprint.pprint (contributors)
 
 		# ### retrieve datamodel from DB
@@ -539,7 +565,17 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 			contributors 	= contributors
 		)
 
+class ContributorDeleteHandler(BaseHandler) : 
+	"""
+	delete a spider config
+	"""
+	def get(self, spidername=None):
+		print "\ContributorDeleteHandler.get / contributors :"
+		self.redirect("/404")
 
+	def post(self):
+		print "\ContributorDeleteHandler.get / contributors :"
+		self.redirect("/404")
 
 
 #####################################
