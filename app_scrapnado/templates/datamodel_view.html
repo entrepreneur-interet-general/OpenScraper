@@ -7,12 +7,13 @@
 <br>
 <section class="section">
 	
+	<br>
 	<div class="container has-text-centered">
 		<h1 class="title">
 			Data structure overview
 		</h1>
 		<h2 class="subtitle">
-			this is the data model you are using. 
+			this is the data model you are using, the names of the columns of your data set. 
 			<br>You can modify the custom fields clicking on "edit data model"
 		</h2>
 		<a class="button is-primary is-rounded"
@@ -29,12 +30,13 @@
 		<div class="columns is-centered">
 			
 
-			<div class="column is-half">
+			<div class="column is-8">
 
 				<table id="t_datamodel" class="table display" width="100%" cellspacing="0">
 					<thead>
 						<tr>
 							<th>Field Name</th>
+							<th>Field Type</th>
 							<th>added by</th>
 							<th>Field Class</th>
 							<th>Field ID</th>
@@ -47,6 +49,7 @@
 					{% for field in datamodel_custom %}
 						<tr >
 							<th> {{ escape (field["field_name"]) }} </th>
+							<td> {{ escape (field["field_type"]) }} </td>
 							<td> {{ escape (field["added_by"]) }} </td>
 							<td> {{ escape (field["field_class"]) }} field</td>
 							<td> {{ escape (str(field["_id"])) }} </td>
@@ -56,6 +59,7 @@
 					{% for field in datamodel_core %}
 						<tr >
 							<td> {{ escape (field["field_name"]) }} </td>
+							<td> {{ escape (field["field_type"]) }} </td>
 							<td> {{ escape (field["added_by"]) }} </td>
 							<td> {{ escape (field["field_class"]) }} field</td>
 							<td> {{ escape (str(field["_id"])) }} </td>

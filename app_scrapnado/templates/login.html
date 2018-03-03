@@ -19,24 +19,25 @@
 
 		
 		{% if login_or_register == "login" %}
-		<hr>
-		<div class="container has-text-centered">
-			<p>new on Open Scraper ?</p><br>
-			<a class="button is-info is-rounded"
-			href="/register">
-				<span class="icon is-small"><i class="fas fa-sign-in-alt"></i></span>
-				<span>register</span>
-			</a>
-		</div>
+			<hr>
+			<div class="container has-text-centered">
+				<p>new on Open Scraper ?</p><br>
+				<a class="button is-info is-rounded"
+				href="/register">
+					<span class="icon is-small"><i class="fas fa-sign-in-alt"></i></span>
+					<span>register</span>
+				</a>
+			</div>
 		{% end %}
 		
+		<br>
+
 		<div class="container">
 
 			<div class="columns is-centered">
 				
-				<div class="column is-5">
+				<div class="column is-4">
 
-					<hr>
 
 					<form action="/{{ login_or_register}}" method="POST">
 						{% module xsrf_form_html() %}
@@ -46,13 +47,13 @@
 
 						{# username field #}
 						<div class="field is-horizontal">
-							<div class="field-label is-normal">
+							{# <div class="field-label is-normal">
 								<label class="label">username</label>
-							</div>
+							</div> #}
 							<div class="field-body">
 								<div class="field">
 									<p class="control is-expanded has-icons-left">
-										<input class="input is-small" type="text" 
+										<input class="input " type="text" 
 												placeholder="your username"
 												name="username">
 									</p>
@@ -64,13 +65,13 @@
 
 						{# email field #}
 						<div class="field is-horizontal">
-							<div class="field-label is-normal">
+							{# <div class="field-label is-normal">
 								<label class="label">email</label>
-							</div>
+							</div> #}
 							<div class="field-body">
 								<div class="field">
 									<p class="control is-expanded has-icons-left">
-										<input class="input is-small" type="text" 
+										<input class="input" type="text" 
 												placeholder="your email"
 												name="email">
 									</p>
@@ -80,13 +81,13 @@
 
 						{# password field #}
 						<div class="field is-horizontal">
-							<div class="field-label is-normal">
+							{# <div class="field-label is-normal">
 								<label class="label">password</label>
-							</div>
+							</div> #}
 							<div class="field-body">
 								<div class="field">
 									<p class="control is-expanded has-icons-left">
-										<input class="input is-small" type="text" 
+										<input class="input" type="text" 
 												placeholder="your password"
 												name="password">
 									</p>
@@ -94,41 +95,38 @@
 							</div>
 						</div>
 
-						
-						{# submit button #}
-						{# <div class="field is-horizontal">
-							<div class="field-label">
-								<!-- Left empty for spacing -->
-							</div>
-							<div class="field-body">
-								<div class="field">
+						{# agreement to CGU #}
+						{% if login_or_register == "register" %}
+							<div class="field ">
 								<div class="control">
-									<button class="button is-primary is-rounded">
-										 {{ login_or_register }} 
-									</button>
-								</div>
+									<label class="checkbox">
+										<input type="checkbox" name="cgu">
+											I agree to the 
+											<a href="/infos/cgu">
+											terms and conditions
+											</a>
+									</label>
 								</div>
 							</div>
-						</div> #}
+						{% end %}
 
+
+						{# submit button #}
+						<br>
 						<div class="field is-grouped is-grouped-centered">
-							
 							<p class="control">
-								<a class="button is-primary is-rounded">
-									{{ login_or_register }} 
-								</a>
+								<input 	class="button is-primary is-rounded" 
+										type="submit" 
+										value="{{ login_or_register }}"
+									>
+								</input>
 							</p>
-
-							{% if login_or_register == "register" %}
 							<p class="control">
-								<a class="button is-light is-rounded">
+								<a class="button is-light is-rounded" href="/">
 									Cancel
 								</a>
 							</p>
-							{% end %}
-
 						</div>
-
 						
 					</form>
 

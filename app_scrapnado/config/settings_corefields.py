@@ -7,14 +7,30 @@ MongoDB instantiated at Application level
 """
 
 ### to instantiate datamodel core fields in mongoDB
+DATAMODEL_FIELDS_TYPES = [
+	"url", 
+	"text", 
+	"image", 
+	"adress", 
+	"date", 
+	"tags", 
+	"price"
+]
 DATAMODEL_CORE_FIELDS = [
-	"next_page",
-	"link_data",
-	"link_src",
-	"item_created_at",
-	"added_by", 
-
-	"testClass"
+	{"field_name" : "next_page", 		"field_type" : "text"},
+	{"field_name" : "follow_xpath", 	"field_type" : "url"}, 
+	{"field_name" : "link_data", 		"field_type" : "url"},
+	{"field_name" : "link_src", 		"field_type" : "url"},
+	{"field_name" : "added_by", 		"field_type" : "text"}, 
+	{"field_name" : "item_created_at", 	"field_type" : "date"},
+	
+	{"field_name" : "testClass", "field_type" : "text"}
+]
+DATAMODEL_DEFAULT_CUSTOM_FIELDS = [
+	{"field_name" : "author",	"field_type" : "text"},
+	{"field_name" : "abstract", "field_type" : "text"},
+	{"field_name" : "tags", 	"field_type" : "tags"},
+	{"field_name" : "url", 		"field_type" : "url"},
 ]
 
 ### to instantiate contributor core fields in mongoDB
@@ -34,6 +50,7 @@ CONTRIBUTOR_CORE_FIELDS = {
 		"spidername" : None,
 		"start_urls" : [],
 		"parse_follow" : False,
+		"follow_xpath" : None,
 		"page_needs_splash" : False,
 	},
 
@@ -82,8 +99,9 @@ CONTRIBUTOR_EDIT_FIELDS = {
 		"needed" : [
 			"spidername" ,
 			"start_urls",
-			# "next_page_xpath",
+			"next_page",
 			"parse_follow",
+			"follow_xpath",
 		], 
 		"optional": [
 			"page_needs_splash",

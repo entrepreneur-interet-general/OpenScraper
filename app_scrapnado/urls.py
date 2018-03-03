@@ -28,7 +28,7 @@ urls = [
 
 	### all data routes
 	(r"/data", DataScrapedHandler),
-	(r"/data/view/(\w+)", DataScrapedHandler),
+	(r"/data/view/(\w+)", DataScrapedViewOneHandler),
 	# (r"/data/api/search?=()", DataApiHandler),
 	
 	(r'.*', PageNotFoundHandler),

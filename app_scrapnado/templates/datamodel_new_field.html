@@ -7,14 +7,14 @@
 <br>
 <section class="section">
 
-{# form to edit datamodel here #}
+	<br>
 	<div class="container has-text-centered">
 		<h1 class="title">
 			Add a new field to your data structure
 		</h1>
-		{# <h2 class="subtitle">
-			this is the data model you are using. 
-		</h2> #}
+		<h2 class="subtitle">
+			this will create a new column in your data set. 
+		</h2>
 
 	</div>
 
@@ -25,56 +25,49 @@
 
 		<div class="columns is-centered">
 			
-			<div class="column is-6">
-
-				<hr>
+			<div class="column is-4">
 
 				<br>
 				
 				<form method="POST" action="/datamodel/add_field">
 				{% module xsrf_form_html() %}
 
-					{# custom field #}
-					<div class="field is-horizontal">
-						<div class="field-label is-normal">
-							<label class="label">your field</label>
-						</div>
-						<div class="field-body">
-							<div class="field">
-								<p class="control is-expanded has-icons-left">
-									<input class="input is-small" type="text" 
-											placeholder="the name of the new field"
-											name="new_field"
-											value="">
-								</p>
-							</div>
-						</div>
-					</div>
 
-					{# submit button #}
-					{# <div class="field is-horizontal">
-						<div class="field-label">
-							<!-- Left empty for spacing -->
-						</div>
-						<div class="field-body">
-							<div class="field">
-							<div class="control">
-								<button class="button is-primary is-rounded">
-									Save new field
-								</button>
-							</div>
-							</div>
-						</div>
-					</div> #}
-
-					<div class="field is-grouped is-grouped-centered">
-						<p class="control">
-							<a class="button is-primary is-rounded">
-								Save new field
-							</a>
+					<div class="field has-addons">
+						<p class="control is-expanded has-icons-left">
+							<input class="input" type="text" 
+									placeholder="the name of your new field"
+									name="field_name"
+									value="">
 						</p>
 						<p class="control">
-							<a class="button is-light is-rounded">
+							<span class="select" >
+								<select name="field_type">
+									{% for ft in field_types %}
+										<option 
+											{% if str(ft) == 'text' %} selected {% end %}
+											>
+											{{ ft }}
+										</option>
+									{% end %}
+								</select>
+							</span>
+						</p>
+					</div>
+
+
+					<br>
+					{# submit button #}
+					<div class="field is-grouped is-grouped-centered">
+						<p class="control">
+							<input 	class="button is-primary is-rounded" 
+									type="submit" 
+									value="Create a new field"
+								>
+							</input>
+						</p>
+						<p class="control">
+							<a class="button is-light is-rounded" href="/datamodel/edit">
 								Cancel
 							</a>
 						</p>

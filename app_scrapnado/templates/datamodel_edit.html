@@ -7,7 +7,7 @@
 <br>
 <section class="section">
 
-{# form to edit datamodel here #}
+	<br>
 	<div class="container has-text-centered">
 		<h1 class="title">
 			Edit your data structure
@@ -28,15 +28,13 @@
 			
 			<div class="column is-6">
 
-				<hr>
+				{# <hr> #}
 
 				<form method="POST" action="/datamodel/edit">
 				{% module xsrf_form_html() %}
 
-					{# XPATHS fields #}
+					{# add a new fields #}
 					<div class="content has-text-centered">
-						<h3> custom fields</h3>
-						<p class="is-small"> the name of the fields of data you expect </p>
 						<a class="button is-info is-rounded"
 							href="/datamodel/add_field" >
 							<span class="icon is-small"><i class="fas fa-plus-circle"></i></span>
@@ -44,40 +42,75 @@
 						</a>
 					</div>
 
-					{# custom field #}
+					{# custom fields #}
 					{% for field in datamodel_custom %}
-						<div class="field is-horizontal">
-							<div class="field-label is-normal">
-								<label class="label">your field</label>
-							</div>
+						
+						<div class="field is-grouped is-horizontal">
+							
+							<input name="_id" type="hidden" value="{{ escape (str(field['_id'])) }}"></input>
+	
 							<div class="field-body">
-								<div class="field">
+								
+								<div class="field has-addons">
 									<p class="control is-expanded has-icons-left">
-										<input class="input is-small" type="text" 
+										<input class="input" type="text" 
 												placeholder="test"
-												name="{{ field[u'_id'] }}"
+												name="field_name"
 												value="{{ escape (field[u'field_name']) }}">
 									</p>
+									<p class="control">
+										<span class="select" >
+											<select name="field_type">
+												{% for ft in field_types %}
+												<option 
+													{% if str(ft) == escape(field[u'field_type']) %} selected {% end %}
+													>
+													{{ ft }}
+												</option>
+												{% end %}
+											</select>
+										</span>
+									</p>
 								</div>
+
+								<div class="field">
+									<p class="control">
+										<span class="select is-rounded" >
+											<select name="field_keep">
+												<option selected >
+													keep
+												</option>
+												<option>
+													delete
+												</option>
+											</select>
+										</span>
+									</p>
+								</div>
+
 							</div>
+
+
 						</div>
+
 					{% end %}
 
-
+					
+					<br>
 					{# submit button #}
-					<div class="field is-horizontal">
-						<div class="field-label">
-							<!-- Left empty for spacing -->
-						</div>
-						<div class="field-body">
-							<div class="field">
-							<div class="control">
-								<button class="button is-primary is-rounded">
-									Save changes
-								</button>
-							</div>
-							</div>
-						</div>
+					<div class="field is-grouped is-grouped-centered">
+						<p class="control">
+							<input 	class="button is-primary is-rounded" 
+									type="submit" 
+									value="Save changes"
+								>
+							</input>
+						</p>
+						<p class="control">
+							<a class="button is-light is-rounded" href="/datamodel/view">
+								Cancel
+							</a>
+						</p>
 					</div>
 
 

@@ -1,6 +1,8 @@
 import pprint 
 from bson import ObjectId
 
+from pymongo import UpdateOne
+
 import tornado.web, tornado.template
 from tornado import gen
 
@@ -23,6 +25,36 @@ from scraper import run_generic_spider
 ### import item classes
 from scraper import GenericItem
 
+
+
+
+########################
+########################
+### DEFAULT / UTILS 
+
+def create_generic_custom_fields():
+	"""create default custom fields in DB """
+	
+	coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
+
+	default_fields_list = []
+	for default_field in DATAMODEL_DEFAULT_CUSTOM_FIELDS :
+		new_field = {
+			"field_name" 	: default_field["field_name"],
+			"field_type" 	: default_field["field_type"],
+			"added_by" 		: "admin",
+			"field_class" 	: "custom",
+		}
+		default_fields_list.append(new_field)
+	
+	coll_model.insert_many(default_fields_list)
+
+def reset_fields_to_default():
+	"""reset datamodel to default : core fields and default custom fields"""
+	coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
+	coll_model.remove({})
+	create_generic_custom_fields()
+
 ########################
 ########################
 ### REQUEST HANDLERS ###
@@ -32,34 +64,22 @@ Tornado supports any valid HTTP method (GET,POST,PUT,DELETE,HEAD,OPTIONS)
 
 ########################
 ### BASE handler
- 
-# def get_user_from_db(self, user_email) :
-# 	""" get user from db"""
-# 	coll_users = self.application.db[ MONGODB_COLL_USERS ]
-# 	user 	   = coll_users.find_one({"email": self.get_argument("email") })
-# 	return user 
-
-# def set_current_user(self, user) :
-	
-# 	# retrieve user data 
-# 	user_name		= user["username"]
-# 	user_password	= user["password"]
-# 	user_email		= user["email"]
-
-# 	self.set_secure_cookie("user_name", user_name )
-# 	self.set_secure_cookie("user_email", user_email )
-
 
 class BaseHandler(tornado.web.RequestHandler):
 	
 	def get_current_user(self):
 		""" return user_name"""
 		return self.get_secure_cookie("user_name")
+	
+	def get_current_user_email(self):
+		""" return user_name"""
+		return self.get_secure_cookie("user_email")
 
 	def get_user_from_db(self, user_email) :
 		""" get user from db"""
 		coll_users = self.application.db[ MONGODB_COLL_USERS ]
-		user 	   = coll_users.find_one({"email": self.get_argument("email") })
+		# user 	   = coll_users.find_one({"email": self.get_argument("email") })
+		user 	   = coll_users.find_one({"email": user_email })
 		return user 
 
 	def add_user_to_db(self, user): 
@@ -241,6 +261,171 @@ class WelcomeHandler(BaseHandler):
 	# 	self.write("Gosh darnit, user! You caused a %d error." % status_code)
 
 
+#####################################
+### DATA MODEL lists / edit handlers
+
+class DataModelViewHandler(BaseHandler):
+	"""
+	list the fields of your data model from db.data_model
+	"""
+	def get(self) : 
+
+		print "\nDataModelHandler.get... "
+
+		### retrieve datamodel from DB
+		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
+		# data_model = list(coll_model.find())
+		data_model_custom = list(coll_model.find({"field_class" : "custom"}))
+		print "DataModelHandler.get / data_model_custom :"
+		pprint.pprint (data_model_custom)
+
+		data_model_core = list(coll_model.find({"field_class" : "core"}))
+		print "DataModelHandler.get / data_model_core :"
+		pprint.pprint (data_model_core)
+
+		### test printing object ID
+		print "DataModelHandler.get / data_model_core[0] object_ID :"
+		print str(data_model_core[0]["_id"])
+
+		self.render(
+			"datamodel_view.html",
+			page_title = app_main_texts["main_title"],
+			datamodel_custom = data_model_custom,
+			datamodel_core = data_model_core
+		)
+	
+
+class DataModelEditHandler(BaseHandler):
+	"""
+	list the fields of your data model from db.data_model
+	"""
+	def get(self) : 
+		print "\nDataModelHandler.get... "
+
+		### retrieve datamodel from DB
+		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
+		# data_model = list(coll_model.find())
+		data_model_custom = list(coll_model.find({"field_class" : "custom"}))
+		print "DataModelHandler.get / data_model_custom :"
+		pprint.pprint (data_model_custom)
+
+		self.render(
+			"datamodel_edit.html",
+			page_title 	= app_main_texts["main_title"],
+			field_types = DATAMODEL_FIELDS_TYPES,
+			datamodel_custom = data_model_custom,
+		)
+
+	def post(self):
+
+		### get fields + objectIDs
+		print "\nDataModelEditHandler.post ..."
+
+		raw_updated_fields = self.request.arguments
+
+		### TO DO : form validation
+
+		# print "DataModelEditHandler.post / raw_updated_fields : "
+		# # print self.request 
+		# pprint.pprint( raw_updated_fields )
+
+		post_keys = self.request.arguments.keys()
+		print "DataModelEditHandler.post / post_keys :  "
+		post_keys.remove("_xsrf")
+		print post_keys
+
+		# clean post args from _xsrf
+		del raw_updated_fields['_xsrf']
+		print "DataModelEditHandler.post / raw_updated_fields :  "
+		pprint.pprint( raw_updated_fields )
+		# print( type(raw_updated_fields) )
+
+		# recreate fields 
+		updated_fields = []
+		for i, field_id in  enumerate(raw_updated_fields["_id"]):
+			field = { 
+				k : raw_updated_fields[k][i] for k in post_keys
+			}
+			updated_fields.append(field)
+		# _id back to object id
+		for field in updated_fields : 
+			field["_id"] = ObjectId(field["_id"])
+		print "DataModelEditHandler.post / updated_fields :  "
+		pprint.pprint(updated_fields)
+
+
+		### DELETE / UPDATE FIELDS
+		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
+
+
+		# first : update fields in DB
+		print "DataModelEditHandler.post / updating fields :  "
+		operations =[ UpdateOne( 
+			{"_id" : field["_id"]},
+			{'$set':  { 
+					"field_type" 	: field["field_type"],
+					"field_name" 	: field["field_name"],
+					 } 
+			}, 
+			upsert=True ) for field in updated_fields 
+		]
+		coll_model.bulk_write(operations)
+
+		# then : delete fields in db 
+		print "DataModelEditHandler.post / deleting fields :  "
+		for field in updated_fields :
+			if field["field_keep"] == "delete" :
+				field_in_db = coll_model.find_one({"_id" : field["_id"]})
+				print field_in_db
+				coll_model.delete_one({"_id" : field["_id"]})
+				# coll_model.remove({"_id" : field["_id"]})
+
+		### redirect once finished
+		self.redirect("/datamodel/edit")
+
+
+class DataModelAddFieldHandler(BaseHandler) : 
+	"""
+	Add a new field to your data model 
+	"""
+	def get(self) : 
+
+		print "\nDataModelAddFieldHandler.get... "
+
+		self.render(
+			"datamodel_new_field.html",
+			page_title = app_main_texts["main_title"],
+			field_types = DATAMODEL_FIELDS_TYPES
+		)
+
+	def post(self):
+
+		print "\nDataModelAddFieldHandler.post ..."
+		
+		### TO DO : form validation
+		print "DataModelAddFieldHandler.post / request.arguments ... "
+		# print self.request 
+		pprint.pprint( self.request.arguments )
+
+		### add field to datamodel 
+		
+		# add complementary infos to create a full field
+		new_field = {
+			"field_name" 	: self.get_argument("field_name"),
+			"field_type" 	: self.get_argument("field_type"),
+			"added_by" 		: self.get_current_user(),
+			"field_class" 	: "custom",
+		}
+		print "DataModelAddFieldHandler.post / new_field : ", new_field
+
+		### insert new field to db
+		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
+		coll_model.insert_one(new_field)
+
+
+		self.redirect("/datamodel/edit")
+
+
 
 #####################################
 ### CONTRIBUTOR lists / edit handlers
@@ -352,99 +537,25 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 
 
-#####################################
-### DATA MODEL lists / edit handlers
-
-class DataModelViewHandler(BaseHandler):
-	"""
-	list the fields of your data model from db.data_model
-	"""
-	def get(self) : 
-
-		print "\nDataModelHandler.get... "
-
-		### retrieve datamodel from DB
-		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
-		# data_model = list(coll_model.find())
-		data_model_custom = list(coll_model.find({"field_class" : "custom"}))
-		print "DataModelHandler.get / data_model_custom :"
-		pprint.pprint (data_model_custom)
-
-		data_model_core = list(coll_model.find({"field_class" : "core"}))
-		print "DataModelHandler.get / data_model_core :"
-		pprint.pprint (data_model_core)
-
-		### test printing object ID
-		print "DataModelHandler.get / data_model_core[0] object_ID :"
-		print str(data_model_core[0]["_id"])
-
-		self.render(
-			"datamodel_view.html",
-			page_title = app_main_texts["main_title"],
-			datamodel_custom = data_model_custom,
-			datamodel_core = data_model_core
-		)
-	
-
-class DataModelEditHandler(BaseHandler):
-	"""
-	list the fields of your data model from db.data_model
-	"""
-	def get(self) : 
-		print "\nDataModelHandler.get... "
-
-		### retrieve datamodel from DB
-		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
-		# data_model = list(coll_model.find())
-		data_model_custom = list(coll_model.find({"field_class" : "custom"}))
-		print "DataModelHandler.get / data_model_custom :"
-		pprint.pprint (data_model_custom)
-
-		self.render(
-			"datamodel_edit.html",
-			page_title = app_main_texts["main_title"],
-			datamodel_custom = data_model_custom,
-		)
-
-	def post(self):
-		### get fields + objectIDs
-		### TO DO  
-		pass
-
-
-class DataModelAddFieldHandler(BaseHandler) : 
-	"""
-	Add a new field to your data model 
-	"""
-	def get(self) : 
-
-		print "\DataModelAddFieldHandler.get... "
-
-		self.render(
-			"datamodel_new_field.html",
-			page_title = app_main_texts["main_title"],
-		)
-
-	def post(self):
-
-		### get fields + objectIDs
-
-		print "DataModelAddFieldHandler.post ..."
-
-		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
-
-		self.redirect("/datamodel/edit")
 
 #####################################
 ### DATA lists / edit handlers
 
-### TO DO 
+### TO DO - after item pipeline
+
 class DataScrapedHandler(BaseHandler):
 	"""
 	list all data scraped from db.data_scraped 
 	"""
 	def get (self):
-		pass
+		self.redirect("/404")
+
+class DataScrapedViewOneHandler(BaseHandler):
+	"""
+	list all data scraped from db.data_scraped 
+	"""
+	def get (self, spidername=None):
+		self.redirect("/404")
 
 
 ########################
