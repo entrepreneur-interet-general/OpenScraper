@@ -37,6 +37,10 @@ So let's say you have a list of different websites you want to scrap projects fr
 
 1. **check in your browser** at `localhost:8000`
 
+1. **create/update your datamodel** at `localhost:8000/datamodel/edit`
+
+1. **create/update your spiders** at `localhost:8000/contributors`
+
 1. **run the test spider in the browser** at `localhost:8000/crawl/testspider`
 
 ------
