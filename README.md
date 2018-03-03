@@ -18,56 +18,9 @@ So let's say you have a list of different websites you want to scrap projects fr
 - save the _contributor_ spider configuration, and click on the "run spider" button... 
 - the data will be stored in the OpenScraper database (MongoDB), so you could later retrieve the structured data (with an API endpoint or in a tabular file)
 
----- 
-### STACK
-- _Language_ : **Python**... because let's be honest, I don't manage so many languages for that kind of project
-- _Backend_ : **Tornado**... one of the few async/non-blocking Python frameworks
-- _Scraping_ : **Scrapy**...
-- _Frontend_ : pure HTML/Jinja to begin, then **Bulma** (to make it nice) + Vue.js (to make it async)
-
-### TECH GOALS
-- web interface to edit the data structure
-- Python asynchronous interface (Tornado) for Scrapy 
-- store a list of url sources + corresponding xpaths in a DB (Mongo)
-- web interface to edit the sources' xpath list
-- display the list of sources + for each add a button to run the scraper
-- store/extract results in the DB
-
------ 
-
-### ROADMAP
-1. understand basics of Tornado (reuse some tutorial material)
-1. basic Tornado + MongoDB setup
-1. understand basics of Scrapy
-1. create a generic spider (class) + generic item to fill, both callable from handlers
-1. make Tornado and a basic scrapy spider work together (non-blocking)
-1. integrate generic spider + tests + run
-1. add a GUI to configure the data structure you expect from the scraping
-1. make a nice front in Bulma 
-1. ... nicer front in vue.js
-1. GUI to edit also fields' names (structure of the scrapping)
-
-
-------
-
-### Notes / issues
-... work in progress @step 1. : for now I'm just trying to adapt some Tornado tutorial into a server where Scrapy and Tornado are working well together (no CSS for now)
-
-### CURRENTLY... 
-
-- clean/adapt Tornado tutorial to OpenScraper goals
-- running scrapy from browser with a basic generic crawler
-- create item to fill on the fly (genericItem)
-- ...
-
 -------
 
-## Contact
-Julien Paris (JPy)
-
--------
-
-## WALKTHROUGH
+## INSTALLATION WALKTHROUGH
 
 1. **clone or download the repo**
 1. **install MongoDB locally** or get the URI of the MongoDB you're using
@@ -85,4 +38,57 @@ Julien Paris (JPy)
 1. **check in your browser** at `localhost:8000`
 
 1. **run the test spider in the browser** at `localhost:8000/crawl/testspider`
+
+------
+
+### STACK
+- _Language_ : **Python**... because let's be honest, I don't manage so many languages for that kind of project
+- _Backend_  : **Tornado**... one of the few async/non-blocking Python frameworks
+- _Scraping_ : **Scrapy**, perhaps with **Selenium** inside or **splash** for jquery follow-up...
+- _Frontend_ : **Bulma** (to make it nice) and then **Vue.js** (to make it async)
+
+### TECH GOALS
+- web interface to edit the data structure
+- Python asynchronous interface (Tornado) for Scrapy 
+- store a list of url sources + corresponding xpaths in a DB (Mongo)
+- web interface to edit the sources' xpath list
+- display the list of sources + for each add a button to run the scraper
+- store/extract results in the DB
+
+----- 
+
+### ROADMAP FOR MVP
+1. understand basics of Tornado (reuse some tutorial material)
+1. basic Tornado + MongoDB setup
+1. understand basics of Scrapy
+1. UI to create user (register), create/update a datamodel, create/update a spider configuration
+1. create a generic spider (class) + generic item to fill, both callable from handlers
+1. integrate generic spider + tests + run
+1. make Tornado and a basic scrapy spider work together (non-blocking)
+1. add a GUI to configure the data structure you expect from the scraping
+1. make a nice front in Bulma 
+1. ... nicer front in vue.js
+1. GUI to edit also fields' names (structure of the scrapping)
+
+
+------
+
+### CURRENTLY... 
+- currently at step /4 - /5
+- running scrapy from browser with a basic generic crawler
+- create item to fill on the fly (genericItem)
+- ...
+
+### Notes / issues
+- the generic spider need to be tested on various websites configurations
+- must add a feature to use Selenium inside a spider if needed (ajax or .click function)
+
+
+
+-------
+
+## Contact
+Julien Paris (JPy)
+
+
 
