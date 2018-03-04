@@ -1,4 +1,5 @@
-# SocialConnect : project OpenScraper
+# OpenScraper
+#### a project by [SocialConnect](https://entrepreneur-interet-general.etalab.gouv.fr/defi/2017/09/26/socialconnect/)
 A generic Scrapy crawler wrapped in a Tornado framework with a nice interface, so almost anyone with very little technical knowledge could scrap public data and install/adapt it for its own purposes. 
 
 ... anyway that's the goal folks ! ...
@@ -6,7 +7,9 @@ A generic Scrapy crawler wrapped in a Tornado framework with a nice interface, s
 ----
 
 #### **To which needs this project aims to answer ?**
-Scraping can quickly become a mess, mostly if you need to scrap several websites in order to eventually get a structured dataset. Usually you need to set up several scrapers for every website, configure the spiders one by one, get the data from every website, and clean up the mess to get from this raw material one structured dataset you know that exists... So you have two choices : either use a proprietary and expensive service (like [Apify](https://www.apify.com/) or [import.io](https://www.apify.com/)) and depend on an external service, or write your own code (for instance based on BeautifulSoup or Scrapy), adapt it for your own purposes, and usually be the only one to be able to use/adapt it. 
+Scraping can quickly become a mess, mostly if you need to scrap several websites in order to eventually get a structured dataset. Usually you need to set up several scrapers for every website, configure the spiders one by one, get the data from every website, and clean up the mess to get from this raw material one structured dataset you know that exists... 
+
+So you have mainly two choices : either use a proprietary and expensive service (like [Apify](https://www.apify.com/) or [import.io](https://www.apify.com/)) and depend on an external service, or write your own code (for instance based on BeautifulSoup or Scrapy), adapt it for your own purposes, and usually be the only one to be able to use/adapt it. 
 
 To make that job a bit easier OpenScraper aims to display a GUI interface (a webapp on the client side) so you'll just have to set the field names (the data structure you expect), then enter a list of websites to scrap, for each one set up the xpath to scrap for each field, and finally click on a button to run the scraper configured for each website... and tadaaaa you'll have your data... 
 
@@ -90,9 +93,14 @@ So let's say you have a list of different websites you want to scrap projects fr
 
 
 -------
+## Credits 
+- the [SocialConnect](https://entrepreneur-interet-general.etalab.gouv.fr/defi/2017/09/26/socialconnect/) project, aka "Carrefour des Innovations Sociales"
+- the [EIG](https://entrepreneur-interet-general.etalab.gouv.fr/) program by [Etalab](https://www.etalab.gouv.fr/)
+- [CGET](http://www.cget.gouv.fr/)
 
-## Contact
-Julien Paris (JPy)
+--------
+## Contacts
+- [Julien Paris](<mailto:julien.paris@cget.gouv.fr>) (aka [JPy](https://twitter.com/jparis_py) on Twitter)
 
 
 
