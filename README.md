@@ -1,20 +1,26 @@
 
+
+
+<h1 align=center>  OpenScraper</h1>
+
+<h4 align=center> a public service for webscraping</h4>
+
 <h2 align=center>
 	<img src="./openscraper/static/images/logo_openscraper.png">
 </h2>
 
-# OpenScraper
-
-### a public service for webscraping
-
-An open source generic Scrapy crawler wrapped in a webapp (a Tornado framework) with a simple interface, **so almost anyone with very little technical knowledge could scrap public data** and install/adapt it for its own purposes... for free. 
+<p align=justify>
+OpenScraper is an open source webscraper with a simple interface, **so almost anyone with very little technical knowledge could scrap public data** and install/adapt it for its own purposes... for free.</p>
 
 <p align=center>... anyway, that's the goal folks ! ... <br>(it's a development phase for now)</p>
 
 
-##### OpenScraper is a project by [SocialConnect](https://entrepreneur-interet-general.etalab.gouv.fr/defi/2017/09/26/socialconnect/)
+<h4 align=center> OpenScraper is a project by <a href=https://entrepreneur-interet-general.etalab.gouv.fr/defi/2017/09/26/socialconnect/ >SocialConnect</a></h4>
+
+<p align=center>#python #tornado #scrapy #mongodb #bulma</p>
 
 ----
+## ARGUMENT
 
 #### **To which needs this project aims to answer ?**
 Scraping can quickly become a mess, mostly if you need to scrap several websites in order to eventually get a structured dataset. Usually you need to set up several scrapers for every website, configure the spiders one by one, get the data from every website, and clean up the mess to get from this raw material one structured dataset you know that exists... 
