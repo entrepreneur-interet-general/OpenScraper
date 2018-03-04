@@ -106,5 +106,11 @@ So let's say you have a list of different websites you want to scrap projects fr
 
 - [Julien Paris](<mailto:julien.paris@cget.gouv.fr>) (aka [JPy](https://twitter.com/jparis_py) on Twitter)
 
+---------
+
+## Screenshots
+
+![alt text](./screenshots/openscraper_v0.1_beta-index.png "index")
 
 
+![alt text](./screenshots/openscraper_v0.1_beta-list_scrapers.png "index")
