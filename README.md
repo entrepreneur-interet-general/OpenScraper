@@ -1,27 +1,49 @@
+
+<h2 align=center>
+	<img src="./openscraper/static/images/logo_openscraper.png">
+</h2>
+
 # OpenScraper
 
-### a project by [SocialConnect](https://entrepreneur-interet-general.etalab.gouv.fr/defi/2017/09/26/socialconnect/)
+### a public service for webscraping
 
-A generic Scrapy crawler wrapped in a Tornado framework with a nice interface, so almost anyone with very little technical knowledge could scrap public data and install/adapt it for its own purposes. 
+An open source generic Scrapy crawler wrapped in a webapp (a Tornado framework) with a simple interface, **so almost anyone with very little technical knowledge could scrap public data** and install/adapt it for its own purposes... for free. 
 
-... anyway that's the goal folks ! ...
+<p align=center>... anyway, that's the goal folks ! ... <br>(it's a development phase for now)</p>
+
+
+##### OpenScraper is a project by [SocialConnect](https://entrepreneur-interet-general.etalab.gouv.fr/defi/2017/09/26/socialconnect/)
 
 ----
 
 #### **To which needs this project aims to answer ?**
 Scraping can quickly become a mess, mostly if you need to scrap several websites in order to eventually get a structured dataset. Usually you need to set up several scrapers for every website, configure the spiders one by one, get the data from every website, and clean up the mess to get from this raw material one structured dataset you know that exists... 
 
-So you have mainly two choices : either use a proprietary and expensive service (like [Apify](https://www.apify.com/) or [import.io](https://www.apify.com/)) and depend on an external service, or write your own code (for instance based on BeautifulSoup or Scrapy), adapt it for your own purposes, and usually be the only one to be able to use/adapt it. 
-
-To make that job a bit easier OpenScraper aims to display a GUI interface (a webapp on the client side) so you'll just have to set the field names (the data structure you expect), then enter a list of websites to scrap, for each one set up the xpath to scrap for each field, and finally click on a button to run the scraper configured for each website... and tadaaaa you'll have your data... 
+#### **Yes, similar solutions already does exist... but...**
+So you have mainly three options when it come to scrap the web : 
+- either use a proprietary and quite expensive service (like [Apify](https://www.apify.com/) or [import.io](https://www.apify.com/)) and depend on an external service ;
+- ask a friend if you are lucky, ask a developer or a company to do it for you if you have money for that...
+- or if you have the know-how write your own code (for instance based on BeautifulSoup or Scrapy), adapt it for your own purposes, and usually be the only one (I mean the only developer around) to be able to use/adapt it.
 
 #### **A theoretical use case**
-So let's say you have a list of different websites you want to scrap projects from, each website having some urls where are listed projects (in my case social innovation projects). For every project you know it could be described with : a title, an abstract, an image, a list of tags, an url, and the name and url of the source website... So from OpenScraper you would have to : 
-- specify the data structure you expect ("title", "abstract", etc...) ;
+So let's say you are a **researcher**, a **journalist**, a **public servant** in an administration, a member of any **association** who want to survey some evolutions in the society... Let's say you need data not easy to get, and you can't afford to spend thousand of euros in using a private service for webscraping. 
+
+You'd have a list of different websites you want to scrap similar information from, each website having some urls where are listed those data (in our first case social innovation projects). For every information you know it could be similarly described with : a title, an abstract, an image, a list of tags, an url, and the name and url of the source website, and so on... 
+
+So from OpenScraper you would have to : 
+- specify the data structure you expect ("_title_", "_abstract_", etc...) ;
 - add a new _contributor_ (a source website) : at least its _name_ and the _start_url_ from which you'll do the scraping ; 
 - configure the spider for every _contributor_, i.e. specify the xpaths for every field (xpath for "title", xpath for "abstract", etc... );
 - save the _contributor_ spider configuration, and click on the "run spider" button... 
-- the data will be stored in the OpenScraper database (MongoDB), so you could later retrieve the structured data (with an API endpoint or in a tabular file)
+- the data will be stored in the OpenScraper database (MongoDB), so you could later retrieve the structured data (with an API endpoint or in a tabular format like a .csv file)
+
+#### **An open scraper for more digital commons**
+To make that job a bit easier (and far cheaper) OpenScraper aims to display an online GUI interface (a webapp on the client side) so you'll just have to set the field names (the data structure you expect), then enter a list of websites to scrap, for each one set up the xpath to scrap for each field, and finally click on a button to run the scraper configured for each website... 
+
+... and tadaaaa, you'll have your data : you will be able able to import it, share it, and visualize it (at least we're working on it as quickly as we can)... 
+
+OpenScraper is developped in open source, and will provide a documentation as much as a legal framework (licence and CGU) aiming to make the core system of OpenScraper fit the [RGPD](https://en.wikipedia.org/wiki/General_Data_Protection_Regulation), in the letter and in the spirit. 
+
 
 -------
 
@@ -50,13 +72,13 @@ So let's say you have a list of different websites you want to scrap projects fr
 
 ------
 
-### STACK
+### TECH STACK
 - _Language_ : **Python**... because let's be honest, I don't manage so many languages for that kind of project
 - _Backend_  : **Tornado** [(link)](http://www.tornadoweb.org/en/stable/)... one of the few async/non-blocking Python frameworks
 - _Scraping_ : **Scrapy** [(link)](https://scrapy.org/), perhaps with **Selenium for Python** [(link)](http://selenium-python.readthedocs.io/) inside or **splash** for jquery follow-up...
 - _Frontend_ : **Bulma** [(link)](https://bulma.io/) (to make it nice) and then **Vue.js** [(link)](https://vuejs.org/) (to make it async)
 
-### TECH GOALS
+### TECH GOALS FOR THE MVP
 - web interface to edit the data structure
 - Python asynchronous interface (Tornado) for Scrapy 
 - store a list of url sources + corresponding xpaths in a DB (Mongo)
