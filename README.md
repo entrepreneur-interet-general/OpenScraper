@@ -112,5 +112,6 @@ So let's say you have a list of different websites you want to scrap projects fr
 
 ![alt text](./screenshots/openscraper_v0.1_beta-index.png "index")
 
+![alt text](./screenshots/openscraper_v0.1_beta-edit_datamodel.png "index")
 
 ![alt text](./screenshots/openscraper_v0.1_beta-list_scrapers.png "index")
