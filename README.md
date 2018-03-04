@@ -10,7 +10,7 @@
 </h2>
 
 <p align=justify>
-OpenScraper is an open source webscraper with a simple interface, <b>so almost anyone with very little technical knowledge could scrap public data</b> and install/adapt it for its own purposes... for free.</p>
+OpenScraper is a minimalistic, open source webscraper with a simple interface, <b>so almost anyone with very little technical knowledge could scrap public data</b> and install/adapt it for its own purposes... for free.</p>
 
 <p align=center>... anyway, that's the goal folks ! ... <br>(it's a development phase for now)</p>
 
