@@ -11,6 +11,7 @@ from tornado import gen
 from config.app_infos import app_infos, app_main_texts
 from config.settings_example import * # MONGODB_COLL_CONTRIBUTORS, MONGODB_COLL_DATAMODEL, MONGODB_COLL_DATASCRAPPED
 from config.settings_corefields import *
+from config.core_classes import SpiderConfig, UserClass
 
 # ### import WTForms for validation
 # from wtforms import validators 
@@ -80,7 +81,6 @@ class BaseHandler(tornado.web.RequestHandler):
 	def get_user_from_db(self, user_email) :
 		""" get user from db"""
 		coll_users = self.application.db[ MONGODB_COLL_USERS ]
-		# user 	   = coll_users.find_one({"email": self.get_argument("email") })
 		user 	   = coll_users.find_one({"email": user_email })
 		return user 
 
@@ -99,17 +99,42 @@ class BaseHandler(tornado.web.RequestHandler):
 
 			self.set_secure_cookie("user_name", user_name )
 			self.set_secure_cookie("user_email", user_email )
-		else:
+		else :
 			self.clear_current_user()
 
 	def clear_current_user(self):
+		""" """
 		# if (self.get_argument("logout", None)):
 		self.clear_cookie("user_name")
 		self.clear_cookie("user_email")
 
+	def count_documents(self, db_name="datamodel", query=None ) : 
+		""" simple count of documents in the db collection db_name"""
+		
+		if db_name=="datamodel" :
+			coll = self.application.db[ MONGODB_COLL_DATAMODEL ]
+		if db_name=="contributors" :
+			coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ]
+		if db_name=="data" :
+			coll = self.application.db[ MONGODB_COLL_DATASCRAPPED ]
+		if db_name=="users" :
+			coll = self.application.db[ MONGODB_COLL_USERS ]
+
+		count = coll.find(query).count()
+		return count
+
 
 class PageNotFoundHandler(BaseHandler): 
+	"""
+	default handler to manage 404 errors
+	"""
 	def get(self):
+
+		print "\nPageNotFoundHandler.post / request : "
+		pprint.pprint (self.request )
+		print "\nPageNotFoundHandler.post / request.arguments : "
+		pprint.pprint( self.request.arguments )
+
 		self.render("404.html",
 					page_title  = app_main_texts["main_title"],
 		)
@@ -161,16 +186,6 @@ class LoginHandler(BaseHandler):
 				# set user
 				self.set_current_user(user)
 
-				# # retrieve user data 
-				# user_name		= user["username"]
-				# user_password	= user["password"]
-				# user_email		= user["email"]
-
-
-				# if self.get_argument("password") == user_password : 
-				# 	self.set_secure_cookie("user_name", user_name )
-				# 	self.set_secure_cookie("user_email", user_email )
-
 				self.redirect("/")
 			
 			else : 
@@ -184,7 +199,11 @@ class RegisterHandler(BaseHandler):
 
 	def get(self):
 	
-		print "\nRegisterHandler.get ... "
+		# print "\nRegisterHandler.post / request : "
+		# pprint.pprint (self.request )
+		# print "\nRegisterHandler.post / request.arguments : "
+		# pprint.pprint( self.request.arguments )
+
 
 		self.render('login.html',
 			page_title  = app_main_texts["main_title"],
@@ -208,33 +227,42 @@ class RegisterHandler(BaseHandler):
 		print self.request.arguments 
 
 		### get user from db
-		# coll_users = self.application.db[ MONGODB_COLL_USERS ]
-		# user 	   = coll_users.find_one({"email": self.get_argument("email") })
 		user = self.get_user_from_db( self.get_argument("email") )
 
 		if user == None : 
 
-			print "\RegisterHandler.post / adding user to DB "
+			print "\nRegisterHandler.post / adding user to DB "
 			
 			user_dict = { 
-				"username" 	: user_name,
-				"email" 	: user_email,
-				"password" 	: user_password,
-				"level_admin" : "user",
+				"username" 		: user_name,
+				"email" 		: user_email,
+				"password" 		: user_password,
+				"level_admin" 	: "user",
 				}
+			user_object = UserClass(**user_dict) 
+			print "\nRegisterHandler.post / user as UserClass instance "
+			print user_object.__dict__
+
 			self.add_user_to_db(user_dict)
-			# coll_users.insert_one( user_dict )
 
 			### set user
-			# self.set_secure_cookie("user_name", user_name )
-			# self.set_secure_cookie("user_email", user_email )
 			self.set_current_user(user_dict)
 
 			self.redirect("/")
 
 		else : 
+			### TO DO : add alert if user already exists
 			self.redirect("/register")
 
+### TO DO 
+class UserPreferences(BaseHandler):
+	""" get/update user's infos, preferences, public key... """
+
+	def get(self, user_id=None, token=None) : 
+		self.redirect("/404")
+
+	def post(self): 
+		self.redirect("/404")
 
 class LogoutHandler(BaseHandler):
 	def get(self):
@@ -252,11 +280,20 @@ class WelcomeHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self):
 		print "this is the welcome page requested from url..."
+
+		count_dm 			= self.count_documents(db_name="datamodel", query={"field_class" : "custom"})
+		count_contributors 	= self.count_documents(db_name="contributors")
+		count_data 			= self.count_documents(db_name="data")
+		count_users 		= self.count_documents(db_name="users")
+
 		self.render(
 			"index.html",
-			page_title  = app_main_texts["main_title"],
-			# header_text = app_main_texts["main_header"],
-			user=self.current_user
+			page_title  		= app_main_texts["main_title"],
+			count_dm 			= count_dm,
+			count_contributors 	= count_contributors,
+			count_data 			= count_data,
+			count_users 		= count_users,
+			user				= self.current_user
 		)
 
 	# def write_error(self, status_code, **kwargs):
@@ -432,6 +469,26 @@ class DataModelAddFieldHandler(BaseHandler) :
 #####################################
 ### CONTRIBUTOR lists / edit handlers
 
+
+class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
+	"""
+	list all contributors from db.contributors
+	"""
+	def get(self):
+
+		coll_contrib = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] #db.contributors
+		contributors = list(coll_contrib.find())
+		print "\nContributorsHandler.get / contributors list :"
+		pprint.pprint (contributors)
+		print '\n'
+
+		self.render(
+			"contributors_list.html",
+			page_title  	= app_main_texts["main_title"],
+			contributors 	= contributors
+		)
+
+
 class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 	"""
 	contributor edit handler
@@ -439,7 +496,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 	def get(self, spidername=None):
 		"""show infos on one contributor : get info in DB and prefill form"""
 
-		print "\nContributorEditHandler.get ... "
+		print "\nContributorEditHandler.get / spidername : ", spidername
 
 		### retrieve datamodel custom
 		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
@@ -460,9 +517,8 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		create_or_update = "create"
 
 		### retrieve contributor data from spidername
-		# core empty contributor structure to begin with
-		contributor = CONTRIBUTOR_CORE_FIELDS
-		
+
+
 		# spider exists : edit form
 		if spidername:
 			create_or_update = "update"
@@ -470,6 +526,9 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			contributor = coll.find_one({"scraper_config.spidername": spidername})
 		# new spider : add form
 		else :
+			# core empty contributor structure to begin with
+			contributor_object = SpiderConfig()
+			contributor = contributor_object.config_as_dict()
 			create_or_update = "create"
 
 		print "\n... ContributorEditHandler.get / contributor :"
@@ -488,18 +547,20 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 	def post(self, spidername=None):
 		"""update contributor in DB"""
 		
-
 		### TO DO : form validation
 
-		print "\nContributorEditHandler.post / request.arguments : "
 		# print self.request 
-		pprint.pprint( self.request.arguments )
+		spider_config_form = self.request.arguments
+		print "\nContributorEditHandler.post / spider_config_form : "
+		pprint.pprint( spider_config_form )
 
 		coll_spider = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] 
 
-		print "ContributorEditHandler.post / creating spider as document  ... "
-		contributor = CONTRIBUTOR_CORE_FIELDS
-		
+		print "\nContributorEditHandler.post / creating spider with SpiderConfig class  ... "
+
+
+		### TO DO : 
+
 		if spidername:
 			contributor = coll_spider.find_one({"scraper_config.spidername": spidername})
 
@@ -515,6 +576,10 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			# coll_spider.bulk_write(operations)
 
 		else :
+			contributor_object = SpiderConfig( 
+					form=spider_config_form, 
+					user=self.get_current_user )
+			contributor = contributor_object.config_as_dict()
 			# create a safe spidername
 			
 			# insert new spider to db
@@ -540,41 +605,16 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		self.redirect("/contributors")
 
 
-class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
-	"""
-	list all contributors from db.contributors
-	"""
-	def get(self):
-
-		coll_contrib = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] #db.contributors
-		contributors = list(coll_contrib.find())
-		print "\ContributorsHandler.get / contributors :"
-		pprint.pprint (contributors)
-
-		# ### retrieve datamodel from DB
-		# coll_dm = self.application.db[ MONGODB_COLL_DATAMODEL ]
-		# data_model = list(coll_dm.find())
-		# print "DataModelHandler.get / data_model :"
-		# pprint.pprint (data_model)
-
-		self.render(
-			"contributors_list.html",
-			page_title  	= app_main_texts["main_title"],
-			# header_text 	= "...",
-			# data_model		= data_model,
-			contributors 	= contributors
-		)
-
 class ContributorDeleteHandler(BaseHandler) : 
 	"""
 	delete a spider config
 	"""
 	def get(self, spidername=None):
-		print "\ContributorDeleteHandler.get / contributors :"
+		print "\nContributorDeleteHandler.get / contributors :"
 		self.redirect("/404")
 
 	def post(self):
-		print "\ContributorDeleteHandler.get / contributors :"
+		print "\nContributorDeleteHandler.get / contributors :"
 		self.redirect("/404")
 
 

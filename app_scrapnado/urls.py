@@ -2,6 +2,16 @@
 from controller import *
 
 ### all routing functions are in controller.py
+### for url mapping in Tornado cf : https://stackoverflow.com/questions/17166051/url-regex-mapping-in-tornado-web-server
+### cf :https://code.tutsplus.com/tutorials/8-regular-expressions-you-should-know--net-6149
+
+### cf : https://docs.python.org/2/library/re.html#regular-expression-syntax
+### "/(?P<your_arg>.*?)" - arg in url as kwarg
+### "/(\w+)" - string of letter
+### "/([0-9Xx\-]+)" - string of numbers
+### "/(.*)" - whatever comes
+### if url is like "/api/?q=this&r=that" --> self.request.arguments gets : {'q': ['pants'], 'r': ['tata']} 
+
 urls = [
 
 	### index, login, register, logout
@@ -9,6 +19,7 @@ urls = [
 	(r'/login', LoginHandler),
 	(r'/register', RegisterHandler),
 	(r'/logout', LogoutHandler),
+	(r'/preferences/', UserPreferences),
 
 	### forms : just for test
 	(r"/datamodel/form", FormHandler),
@@ -20,8 +31,8 @@ urls = [
 
 	### contributors : websites to crawl
 	(r"/contributors", ContributorsHandler),
-	(r"/contributor/edit/(\w+)", ContributorEditHandler), # ([0-9Xx\-]+) # for regex numbers and dashes
 	(r"/contributor/add", ContributorEditHandler),
+	(r"/contributor/edit/(\w+)", ContributorEditHandler), # ([0-9Xx\-]+) # for regex numbers and dashes
 	(r"/contributor/delete/(\w+)", ContributorDeleteHandler), # ([0-9Xx\-]+) # for regex numbers and dashes
 
 	### spider launchers
@@ -31,6 +42,11 @@ urls = [
 	(r"/data", DataScrapedHandler),
 	(r"/data/view/(\w+)", DataScrapedViewOneHandler),
 	# (r"/data/api/search?=()", DataApiHandler),
+	
+	### API routes
+	(r"/api/.*", PageNotFoundHandler),
+	(r"/api/(?P<page_n>[0-9]+)/$", PageNotFoundHandler),
+	(r"/api/(?P<project>.*?)/?$", PageNotFoundHandler),
 	
 	### error route : 404
 	(r'.*', PageNotFoundHandler),
