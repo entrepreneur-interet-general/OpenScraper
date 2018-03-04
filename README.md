@@ -1,5 +1,7 @@
 # OpenScraper
-#### a project by [SocialConnect](https://entrepreneur-interet-general.etalab.gouv.fr/defi/2017/09/26/socialconnect/)
+
+### a project by [SocialConnect](https://entrepreneur-interet-general.etalab.gouv.fr/defi/2017/09/26/socialconnect/)
+
 A generic Scrapy crawler wrapped in a Tornado framework with a nice interface, so almost anyone with very little technical knowledge could scrap public data and install/adapt it for its own purposes. 
 
 ... anyway that's the goal folks ! ...
@@ -94,12 +96,14 @@ So let's say you have a list of different websites you want to scrap projects fr
 
 -------
 ## Credits 
+
 - the [SocialConnect](https://entrepreneur-interet-general.etalab.gouv.fr/defi/2017/09/26/socialconnect/) project, aka "Carrefour des Innovations Sociales"
 - the [EIG](https://entrepreneur-interet-general.etalab.gouv.fr/) program by [Etalab](https://www.etalab.gouv.fr/)
 - [CGET](http://www.cget.gouv.fr/)
 
 --------
 ## Contacts
+
 - [Julien Paris](<mailto:julien.paris@cget.gouv.fr>) (aka [JPy](https://twitter.com/jparis_py) on Twitter)
 
 
