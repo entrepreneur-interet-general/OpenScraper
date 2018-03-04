@@ -36,7 +36,7 @@ So let's say you are a **researcher**, a **journalist**, a **public servant** in
 
 You'd have a list of different websites you want to scrap similar information from, each website having some urls where are listed those data (in our first case social innovation projects). For every information you know it could be similarly described with : a title, an abstract, an image, a list of tags, an url, and the name and url of the source website, and so on... 
 
-So from OpenScraper you would have to : 
+So to use OpenScraper you would have to : 
 - specify the data structure you expect ("_title_", "_abstract_", etc...) ;
 - add a new _contributor_ (a source website) : at least its _name_ and the _start_url_ from which you'll do the scraping ; 
 - configure the spider for every _contributor_, i.e. specify the xpaths for every field (xpath for "title", xpath for "abstract", etc... );
@@ -55,10 +55,10 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 
 ## INSTALLATION WALKTHROUGH
 
-1. **clone or download the repo**
-1. **install MongoDB locally** or get the URI of the MongoDB you're using
+1. **clone or [download](https://github.com/entrepreneur-interet-general/OpenScraper/archive/master.zip) the repo**
+1. **[install MongoDB](https://docs.mongodb.com/manual/installation/) locally** or get the URI of the MongoDB you're using
 1. **go to your openscraper folder**
-1. **setup (without virtual environment)**
+1. **install the libraries (without [virtual environment](https://pypi.python.org/pypi/virtualenv))**
 
 	> $ pip install -r requirements.txt
 
@@ -78,13 +78,15 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 
 ------
 
-### TECH STACK
-- _Language_ : **Python**... because let's be honest, I don't manage so many languages for that kind of project
-- _Backend_  : **Tornado** [(link)](http://www.tornadoweb.org/en/stable/)... one of the few async/non-blocking Python frameworks
-- _Scraping_ : **Scrapy** [(link)](https://scrapy.org/), perhaps with **Selenium for Python** [(link)](http://selenium-python.readthedocs.io/) inside or **splash** for jquery follow-up...
-- _Frontend_ : **Bulma** [(link)](https://bulma.io/) (to make it nice) and then **Vue.js** [(link)](https://vuejs.org/) (to make it async)
+## TECHNICAL POINTS
 
-### TECH GOALS FOR THE MVP
+#### Tech stack
+- _Language_ : **Python**... because let's be honest, I don't manage so many languages for that kind of project
+- _Backend_  : **[Tornado](http://www.tornadoweb.org/en/stable/)**... one of the few async/non-blocking Python frameworks
+- _Scraping_ : **[Scrapy](https://scrapy.org/)**, perhaps with **[Selenium](http://selenium-python.readthedocs.io/) for Python**  inside specific instances of the generic spider, or **Splash** for jquery follow-up...
+- _Frontend_ : **[Bulma](https://bulma.io/)**  (to make it nice) and then **[Vue.js](https://vuejs.org/)** (to make it async)
+
+#### Tech goals for a MVP
 - web interface to edit the data structure
 - Python asynchronous interface (Tornado) for Scrapy 
 - store a list of url sources + corresponding xpaths in a DB (Mongo)
@@ -92,9 +94,7 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 - display the list of sources + for each add a button to run the scraper
 - store/extract results in the DB
 
------ 
-
-### ROADMAP FOR MVP
+#### Roadmap to a MVP
 1. understand basics of Tornado (reuse some tutorial material)
 1. basic Tornado + MongoDB setup
 1. understand basics of Scrapy
@@ -110,33 +110,32 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 
 ------
 
-### CURRENTLY... 
+## CURRENTLY... 
 - currently at step /4 - /5
 - running scrapy from browser with a basic generic crawler
 - create item to fill on the fly (genericItem)
 - ...
 
-### Notes / issues
+#### Notes / issues
 - the generic spider need to be tested on various websites configurations
 - must add a feature to use Selenium inside a spider if needed (ajax or .click function)
 
 
 
 -------
-## Credits 
+## CREDITS 
 
 - the [SocialConnect](https://entrepreneur-interet-general.etalab.gouv.fr/defi/2017/09/26/socialconnect/) project, aka "Carrefour des Innovations Sociales"
 - the [EIG](https://entrepreneur-interet-general.etalab.gouv.fr/) program by [Etalab](https://www.etalab.gouv.fr/)
 - [CGET](http://www.cget.gouv.fr/)
 
---------
-## Contacts
+#### Contacts
 
 - [Julien Paris](<mailto:julien.paris@cget.gouv.fr>) (aka [JPy](https://twitter.com/jparis_py) on Twitter)
 
 ---------
 
-## Screenshots
+## SCREENSHOTS
 
 ![alt text](./screenshots/openscraper_v0.1_beta-index.png "index")
 
