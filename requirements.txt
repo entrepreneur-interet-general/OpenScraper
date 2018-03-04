@@ -8,7 +8,7 @@ certifi==2018.1.18
 cffi==1.11.4
 chardet==3.0.4
 constantly==15.1.0
-cryptography==2.1.4
+cryptography==1.7.2
 cssselect==1.0.3
 docutils==0.14
 enum34==1.1.6
@@ -18,6 +18,7 @@ imagesize==1.0.0
 incremental==17.5.0
 ipaddress==1.0.19
 Jinja2==2.10
+jwt==0.5.2
 lxml==4.1.1
 MarkupSafe==1.0
 packaging==16.8
@@ -28,6 +29,7 @@ pycparser==2.18
 pycurl==7.43.0.1
 PyDispatcher==2.0.5
 Pygments==2.2.0
+PyJWT==1.6.0
 pymongo==3.6.0
 pyOpenSSL==17.5.0
 pyparsing==2.2.0

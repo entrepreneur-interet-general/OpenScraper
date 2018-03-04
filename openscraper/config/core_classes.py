@@ -3,13 +3,16 @@ import pprint
 import copy
 from copy import deepcopy
 
+### for JWT in Python, cf : https://github.com/jpadilla/pyjwt
+import jwt
+
 from .settings_corefields import * 
 
 
 class UserClass :
 	"""
 	a generic user class 
-	can be sent to db as document once iniated with .__dict__()
+	can be sent to db as a document once iniated with .__dict__()
 	"""
 	def __init__(self, **kwargs) :
 
