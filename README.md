@@ -84,7 +84,7 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 - _Language_ : **Python**... because let's be honest, I don't manage so many languages for that kind of project
 - _Backend_  : **[Tornado](http://www.tornadoweb.org/en/stable/)**... one of the few async/non-blocking Python frameworks
 - _Scraping_ : **[Scrapy](https://scrapy.org/)**, perhaps with **[Selenium](http://selenium-python.readthedocs.io/) for Python**  inside specific instances of the generic spider, or **Splash** for jquery follow-up...
-- _Frontend_ : **[Bulma](https://bulma.io/)**  (to make it nice) and then **[Vue.js](https://vuejs.org/)** (to make it async)
+- _Frontend_ : **[Bulma](https://bulma.io/)**  (to make it nice) and then **[Vue.js](https://vuejs.org/)** (to make it even nicer and bi-directional)
 
 #### Tech goals for a MVP
 - web interface to edit the data structure
@@ -135,7 +135,7 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 
 ---------
 
-## SCREENSHOTS
+## SCREENSHOTS (development)
 
 ![alt text](./screenshots/openscraper_v0.1_beta-index.png "index")
 

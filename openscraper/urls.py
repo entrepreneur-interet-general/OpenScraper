@@ -36,7 +36,7 @@ urls = [
 	(r"/contributor/delete/(\w+)", 	ContributorDeleteHandler), 
 
 	### spider launchers
-	(r"/crawl/(\w+)", SpiderHandler), ### get spidername as input
+	(r"/crawl/(\w+)", 			SpiderHandler), ### get spidername as input
 
 	### data routes
 	(r"/data", 					DataScrapedHandler),
@@ -44,11 +44,11 @@ urls = [
 	
 	### API routes
 	(r"/api/.*", 					PageNotFoundHandler),
-	(r"/api/search?=(.*)", 		PageNotFoundHandler),
-	(r"/api/(?P<page_n>[0-9]+)/$", 	PageNotFoundHandler),
-	(r"/api/(?P<project>.*?)/?$", 	PageNotFoundHandler),
+	(r"/api/search?=(.*)", 			PageNotFoundHandler),
+	(r"/api/(?P<page_n>[0-9]+)", 	PageNotFoundHandler),
+	(r"/api/(?P<project>.*?)", 		PageNotFoundHandler),
 	
 	### error route : 404
-	(r'.*', PageNotFoundHandler),
+	(r'.*', 						PageNotFoundHandler),
 
 ]
