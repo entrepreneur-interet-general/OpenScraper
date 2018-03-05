@@ -8,12 +8,20 @@
 <section class="section">
 	
 	<div class="container has-text-centered">
-		<h1 class="title">
-			EDIT/ADD A NEW SPIDER
-		</h1>
-		<h2 class="subtitle">
-			Fill the form to create a new spider.
-		</h2>
+		{% if create_or_update == "create" %}
+			<h1 class="title">
+				ADD A NEW SPIDER
+			</h1>
+			<h2 class="subtitle">
+				Fill the form to create a new spider.
+			</h2>
+		{% else %}
+			<h1 class="title">
+			EDIT THE SPIDER <br> 
+			"{{ escape (contributor['infos']['name']) }}"
+			</h1>
+		{% end %}
+
 	</div>
 
 
@@ -119,7 +127,7 @@
 					{# XPATHS fields #}
 					<div class="content has-text-centered">
 						<h3> custom fields</h3>
-						<p class="is-small">where do you find your data on the pages you crawl (add xpaths) ?
+						<p class="is-small">where do you find your data on the pages you will crawl (add xpaths) ?
 						<br>you can also modify the data model <a href="/datamodel/edit">here </a></p>
 					</div>
 
@@ -163,7 +171,7 @@
 							<div class="field">
 								<textarea class="textarea is-small" 
 											name="notes"
-											rows="3"
+											rows="1"
 											placeholder="your notes on this spider">
 											{{ escape (contributor['infos'].get('notes', ''))  }}
 											{# value="{{ escape (contributor['infos'].get('notes', '') ) }}"> #}

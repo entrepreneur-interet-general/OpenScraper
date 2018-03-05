@@ -32,11 +32,12 @@ urls = [
 	### contributors : websites to crawl
 	(r"/contributors", 				ContributorsHandler),
 	(r"/contributor/add", 			ContributorEditHandler),
-	(r"/contributor/edit/([\w\_\d]+)", 	ContributorEditHandler), 
-	(r"/contributor/delete/([\w\_\d]+)", 	ContributorDeleteHandler), 
+	(r"/contributor/edit/([\w\_\d]+)",	ContributorEditHandler), 
+	(r"/contributor/delete/([\w\_\d]+)", ContributorDeleteHandler), 
 
 	### spider launchers
-	(r"/crawl/(\w+)", 			SpiderHandler), ### get spidername as input
+	# (r"/crawl/(\w+)", 			SpiderHandler), ### get spidername as input
+	(r"/crawl/([\w\_\d]+)",			SpiderHandler), ### get spidername as input
 
 	### data routes
 	(r"/data", 					DataScrapedHandler),

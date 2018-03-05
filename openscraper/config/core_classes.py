@@ -47,7 +47,8 @@ class SpiderConfig :
 		print "\n*** SpiderConfig ... new_spider : ", new_spider
 
 		### begin instance with empty CONTRIBUTOR_CORE_FIELDS
-		self.spider_config = deepcopy(CONTRIBUTOR_CORE_FIELDS)
+		self.user 			= user
+		self.spider_config 	= deepcopy(CONTRIBUTOR_CORE_FIELDS)
 		
 		### begin with no spidername
 		spidername = ""
@@ -55,14 +56,16 @@ class SpiderConfig :
 		### form exists 
 		if form!=None : 
 			# create a spidername and clean/escape it
-			spidername = re.escape(form["name"][0])
 			# del _id and _xsrf
 			del form['_id']
 			del form['_xsrf']
 			# cleaning post dict
 			form = { k : v[0] for k,v in form.iteritems() }
-			form['notes'] = re.escape(form['notes'] )
-			form['notes'] = form['notes'].split('\r\n')		
+			# form['notes'] = re.escape(form['notes'] )
+			spidername 			= re.escape(form["name"])
+			form['start_urls'] 	= form['start_urls'].split(',')		
+			form['notes'] 		= form['notes'].replace("\n", "")
+			form['notes'] 		= form['notes'].replace("\r", "")
 
 		### getting all the config args from spider_config (i.e. next_page_xpath, ...)
 		print "*** SpiderConfig / form :"
@@ -88,8 +91,8 @@ class SpiderConfig :
 						self.spider_config["scraper_config_xpaths"][field_custom] = form[field_custom]
 
 		### add specifics in infos / scraperconfig
+		self.spider_config["scraper_config"]["spidername"]	= spidername
 		if new_spider == True :
-			self.spider_config["scraper_config"]["spidername"]	= spidername
 			self.spider_config["scraper_log"]["added_by"] 		= user
 			self.spider_config["scraper_log"]["modified_by"] 	= user
 
@@ -98,5 +101,16 @@ class SpiderConfig :
 		print "\n***\n"
 
 
-	def config_as_dict(self):
+	def full_config_as_dict(self):
 		return self.spider_config
+
+	def partial_config_as_dict(self, previous_config=None ) : 
+
+		print previous_config
+		partial_config = { k : v for k,v in self.spider_config.iteritems() if k in ["infos", "scraper_config", "scraper_config_xpaths"]}
+		# reset scraper log
+		partial_config["scraper_log"] = deepcopy(CONTRIBUTOR_CORE_FIELDS["scraper_log"])
+		partial_config["scraper_log"]["modified_by"]	= self.user 
+		partial_config["scraper_log"]["added_by"] 		= previous_config["scraper_log"]["added_by"]
+
+		return partial_config

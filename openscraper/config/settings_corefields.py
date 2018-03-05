@@ -98,7 +98,7 @@ CONTRIBUTOR_CORE_FIELDS = {
 		"name" 			: "" , 	# real name contributor
 		"page_url" 		: "" ,
 		"contact" 		: "",
-		"notes" 		: "",
+		"notes" 		: " ",
 		# "added_by" 		: "",
 		# "modified_by" 		: "",
 		# "is_working" 	: False
@@ -143,4 +143,6 @@ CONTRIBUTOR_CORE_FIELDS = {
 NOT_CUSTOM_DATAMODEL_FIELDS = []
 for k, v in CONTRIBUTOR_CORE_FIELDS.iteritems() : 
 	l = v.keys()
-	NOT_CUSTOM_DATAMODEL_FIELDS.append(l)
+	for i in l : 
+		NOT_CUSTOM_DATAMODEL_FIELDS.append(i)
+# print "NOT_CUSTOM_DATAMODEL_FIELDS :", NOT_CUSTOM_DATAMODEL_FIELDS

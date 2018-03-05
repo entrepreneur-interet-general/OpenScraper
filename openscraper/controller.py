@@ -76,8 +76,7 @@ def print_separate(debug) :
 
 
 
-
-#### NOT WORKING FOR NOW
+#### DECORATORS NOT WORKING FOR NOW
 
 def time_this(original_function):
 	print "decorating"
@@ -361,6 +360,7 @@ class WelcomeHandler(BaseHandler):
 	"""
 	handler for index page
 	"""
+	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
 	def get(self):
 		print "this is the welcome page requested from url..."
@@ -391,6 +391,8 @@ class DataModelViewHandler(BaseHandler):
 	"""
 	list the fields of your data model from db.data_model
 	"""
+	
+	@print_separate(APP_DEBUG)
 	def get(self) : 
 
 		print "\nDataModelHandler.get... "
@@ -420,6 +422,7 @@ class DataModelEditHandler(BaseHandler):
 	"""
 	list the fields of your data model from db.data_model
 	"""
+	@print_separate(APP_DEBUG)
 	def get(self) : 
 		print "\nDataModelHandler.get... "
 
@@ -435,6 +438,7 @@ class DataModelEditHandler(BaseHandler):
 			datamodel_custom = data_model_custom,
 		)
 
+	@print_separate(APP_DEBUG)
 	def post(self):
 
 		### get fields + objectIDs
@@ -505,6 +509,7 @@ class DataModelAddFieldHandler(BaseHandler) :
 	"""
 	Add a new field to your data model 
 	"""
+	@print_separate(APP_DEBUG)
 	def get(self) : 
 
 		print "\nDataModelAddFieldHandler.get... "
@@ -515,6 +520,7 @@ class DataModelAddFieldHandler(BaseHandler) :
 			field_types = DATAMODEL_FIELDS_TYPES
 		)
 
+	@print_separate(APP_DEBUG)
 	def post(self):
 
 		print "\nDataModelAddFieldHandler.post ..."
@@ -602,7 +608,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		else :
 			# core empty contributor structure to begin with
 			contributor_object 	= SpiderConfig()
-			contributor 		= contributor_object.config_as_dict()
+			contributor 		= contributor_object.full_config_as_dict()
 			create_or_update	= "create"
 
 		print "\nContributorEditHandler.get / contributor :"
@@ -617,6 +623,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			datamodel				= data_model,
 		)
 
+
 	@print_separate(APP_DEBUG)
 	def post(self, spider_id=None):
 		"""update or create new contributor spider in DB"""
@@ -630,21 +637,25 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		print "\nContributorEditHandler.post / spider_config_form : "
 		pprint.pprint( spider_config_form )
 
-		# id
+		is_new = True
+		# check if spider already exists
 		if spider_id != None : 
 			spider_id = spider_config_form["_id"][0]
+			is_new = False
+
+		# TO DO : check if website is already crawled by another spider
+		similar_spider = self.application.coll_spiders.find( {"infos.page_url": spider_config_form["page_url"]} )
+		if similar_spider and is_new :
+			print "\nContributorEditHandler.post / already a similar spider ... "
+			self.redirect("/contributors")
 
 		# populate a contributor object
 		print "\nContributorEditHandler.post / creating spider with SpiderConfig class  ... "
 		contributor_object = SpiderConfig( 
 				form 		= spider_config_form,
-				new_spider 	= True,
+				new_spider 	= is_new,
 				user		= self.get_current_user_email() 
 		)
-		contributor = contributor_object.config_as_dict()
-		print "\nContributorEditHandler.post / contributor :"
-		pprint.pprint(contributor)
-
 
 		### get spider identifier from form
 		pprint.pprint(spider_config_form)
@@ -657,26 +668,30 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			spider_oid = ObjectId(spider_id)
 
 			# getting back spider config from db but from its _id
-			# contributor = coll_spider.find_one({"scraper_config.spidername": spidername})
-			# contributor = self.application.coll_spiders.find_one( {"_id": spider_oid} )
+			contributor = self.application.coll_spiders.find_one( {"_id": ObjectId(spider_oid)} )
+			new_config 	= contributor_object.partial_config_as_dict( previous_config = contributor )
 
 			# update contributor
-			# self.application.coll_spiders.update_one( {"_id": spider_oid},  )
+			old_fields = {"infos" :1 , "scraper_config" : 1 , "scraper_config_xpaths" : 1 }
+			self.application.coll_spiders.update_one( {"_id": spider_oid}, { "$unset": old_fields } )
+			self.application.coll_spiders.update_one( {"_id": spider_oid}, { "$set": new_config  } , upsert=True )
 
 		else :
-
+			contributor = contributor_object.full_config_as_dict()
 			# insert new spider to db
-			# coll_spider.insert_one(contributor)
-			pass
-		
+			self.application.coll_spiders.insert_one(contributor)
+
+		print "\nContributorEditHandler.post / contributor :"
+		pprint.pprint(contributor)
+
 		### redirections for debugging purposes
-		if spider_id and spider_id!= "new_spider" :
-			self.redirect("/contributor/edit/{}".format(spider_id))
-		else : 
-			self.redirect("/contributor/add")
+		# if spider_id and spider_id!= "new_spider" :
+		# 	self.redirect("/contributor/edit/{}".format(spider_id))
+		# else : 
+		# 	self.redirect("/contributor/add")
 		
 		### real redirection
-		# self.redirect("/contributors")
+		self.redirect("/contributors")
 
 
 ### TO DO 
