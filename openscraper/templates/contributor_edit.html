@@ -165,7 +165,7 @@
 											name="notes"
 											rows="3"
 											placeholder="your notes on this spider">
-											{% raw contributor['infos'].get('notes', '') %}
+											{{ escape (contributor['infos'].get('notes', ''))  }}
 											{# value="{{ escape (contributor['infos'].get('notes', '') ) }}"> #}
 								</textarea>
 							</div>

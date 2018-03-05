@@ -1,6 +1,7 @@
-import pprint 
-from bson import ObjectId
-import time
+import 	pprint 
+from 	bson import ObjectId
+import 	time
+from 	functools import wraps
 
 from pymongo import UpdateOne
 
@@ -32,13 +33,11 @@ from scraper import GenericItem
 
 ########################
 ########################
-### DEFAULT / UTILS --- NOT TESTED
+### DEFAULT / UTILS --- SOME STILL NOT TESTED
 
 def create_generic_custom_fields():
 	"""create default custom fields in DB """
 	
-	coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
-
 	default_fields_list = []
 	for default_field in DATAMODEL_DEFAULT_CUSTOM_FIELDS :
 		new_field = {
@@ -49,13 +48,73 @@ def create_generic_custom_fields():
 		}
 		default_fields_list.append(new_field)
 	
-	coll_model.insert_many(default_fields_list)
+	self.application.coll_model.insert_many(default_fields_list)
 
 def reset_fields_to_default():
 	"""reset datamodel to default : core fields and default custom fields"""
-	coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
-	coll_model.remove({})
+
+	self.application.coll_model.remove({})
 	create_generic_custom_fields()
+
+### DECORATORS / UTILS 
+# cf : https://www.saltycrane.com/blog/2010/03/simple-python-decorator-examples/
+# cf : https://www.codementor.io/sheena/advanced-use-python-decorators-class-function-du107nxsv
+# cf : for requests : https://mrcoles.com/blog/3-decorator-examples-and-awesome-python/
+# cf : https://stackoverflow.com/questions/6394511/python-functools-wraps-equivalent-for-classes
+
+def print_separate(debug) :
+	def print_sep(f):
+		"""big up and self high-five ! it's the first real decorator I wrote my self, uuuh !!! """
+		@wraps(f)
+		def wrapped(*args, **kwargs):
+			if debug == True :
+				print "\n{}".format("---"*10)
+			r = f(*args, **kwargs)
+			return r
+		return wrapped
+	return print_sep
+
+
+
+
+#### NOT WORKING FOR NOW
+
+def time_this(original_function):
+	print "decorating"
+	def new_function(*args,**kwargs):
+		print "starting decoration"
+		x = original_function(*args,**kwargs)
+		return x
+	return new_function  
+
+def time_all_class_methods(Cls):
+	class NewCls(object):
+		def __init__(self, *args, **kwargs):
+			print args
+			print kwargs
+			self.oInstance = Cls(*args,**kwargs)
+		def __getattribute__(self,s):
+			"""
+			this is called whenever any attribute of a NewCls object is accessed. This function first tries to 
+			get the attribute off NewCls. If it fails then it tries to fetch the attribute from self.oInstance (an
+			instance of the decorated class). If it manages to fetch the attribute from self.oInstance, and 
+			the attribute is an instance method then `time_this` is applied.
+			"""
+			try:    
+				x = super(NewCls,self).__getattribute__(s)
+			except AttributeError:
+				pass
+			else:
+				return x
+			x = self.oInstance.__getattribute__(s)
+			if type(x) == type(self.__init__): 	# it is an instance method
+				return time_this(x)				# this is equivalent of just decorating the method with time_this
+			else:
+				return x
+	return NewCls
+
+
+
 
 
 ########################
@@ -70,6 +129,13 @@ Tornado supports any valid HTTP method (GET,POST,PUT,DELETE,HEAD,OPTIONS)
 
 class BaseHandler(tornado.web.RequestHandler):
 	
+	"""
+	Base class for all routes : 
+	all handler wil inheritate the following functions if writtent like this
+	MyNewHandler(BaseHandler)
+	"""
+
+	### user functions
 	def get_current_user(self):
 		""" return user_name"""
 		return self.get_secure_cookie("user_name")
@@ -80,14 +146,12 @@ class BaseHandler(tornado.web.RequestHandler):
 
 	def get_user_from_db(self, user_email) :
 		""" get user from db"""
-		coll_users = self.application.db[ MONGODB_COLL_USERS ]
-		user 	   = coll_users.find_one({"email": user_email })
+		user 	   = self.application.coll_users.find_one({"email": user_email })
 		return user 
 
 	def add_user_to_db(self, user): 
 
-		coll_users = self.application.db[ MONGODB_COLL_USERS ]
-		coll_users.insert_one( user )
+		self.application.coll_users.insert_one( user )
 
 	def set_current_user(self, user) :
 		""" set cookie from user infos """
@@ -108,17 +172,37 @@ class BaseHandler(tornado.web.RequestHandler):
 		self.clear_cookie("user_name")
 		self.clear_cookie("user_email")
 
+	### DB functions
+	def get_contributors_fields(self, q_fields="custom"):
+		"""return fields from query as list"""
+		
+		fields =[]
+
+		if q_fields=="custom":
+			custom_fields = list(self.application.coll_model.find( {"field_class" : "custom"}))
+			fields = [ str(f["_id"]) for f in custom_fields ]
+			# equivalent to :
+			# for custom_field in custom_fields :
+			# 	custom_field_id = str(custom_field["_id"])
+			# 	fields.append(custom_field_id)
+
+		### get fields 
+		if q_fields in ["infos", "scraper_config"] : 
+			pass
+
+		return fields
+
 	def count_documents(self, db_name="datamodel", query=None ) : 
 		""" simple count of documents in the db collection db_name"""
 		
 		if db_name=="datamodel" :
-			coll = self.application.db[ MONGODB_COLL_DATAMODEL ]
+			coll = self.application.coll_model
 		if db_name=="contributors" :
-			coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ]
+			coll = self.application.coll_spiders
 		if db_name=="data" :
-			coll = self.application.db[ MONGODB_COLL_DATASCRAPPED ]
+			coll = self.application.coll_data
 		if db_name=="users" :
-			coll = self.application.db[ MONGODB_COLL_USERS ]
+			coll = self.application.coll_users
 
 		count = coll.find(query).count()
 		return count
@@ -168,8 +252,6 @@ class LoginHandler(BaseHandler):
 		print self.request.arguments 
 
 		### get user from db
-		# coll_users = self.application.db[ MONGODB_COLL_USERS ]
-		# user 	   = coll_users.find_one({"email": self.get_argument("email") })
 		user = self.get_user_from_db( self.get_argument("email") )
 		print "LoginHandler.post / user :"
 		print user
@@ -254,6 +336,14 @@ class RegisterHandler(BaseHandler):
 			### TO DO : add alert if user already exists
 			self.redirect("/register")
 
+
+class LogoutHandler(BaseHandler):
+	def get(self):
+		
+		self.clear_current_user()
+		self.redirect("/")
+
+
 ### TO DO 
 class UserPreferences(BaseHandler):
 	""" get/update user's infos, preferences, public key... """
@@ -263,12 +353,6 @@ class UserPreferences(BaseHandler):
 
 	def post(self): 
 		self.redirect("/404")
-
-class LogoutHandler(BaseHandler):
-	def get(self):
-		
-		self.clear_current_user()
-		self.redirect("/")
 
 
 ########################
@@ -301,7 +385,7 @@ class WelcomeHandler(BaseHandler):
 
 
 #####################################
-### DATA MODEL lists / edit handlers
+### DATAMODEL lists / edit handlers
 
 class DataModelViewHandler(BaseHandler):
 	"""
@@ -312,13 +396,11 @@ class DataModelViewHandler(BaseHandler):
 		print "\nDataModelHandler.get... "
 
 		### retrieve datamodel from DB
-		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
-		# data_model = list(coll_model.find())
-		data_model_custom = list(coll_model.find({"field_class" : "custom"}))
+		data_model_custom = list(self.application.coll_model.find({"field_class" : "custom"}))
 		print "DataModelHandler.get / data_model_custom :"
 		pprint.pprint (data_model_custom)
 
-		data_model_core = list(coll_model.find({"field_class" : "core"}))
+		data_model_core = list(self.application.coll_model.find({"field_class" : "core"}))
 		print "DataModelHandler.get / data_model_core :"
 		pprint.pprint (data_model_core)
 
@@ -342,9 +424,7 @@ class DataModelEditHandler(BaseHandler):
 		print "\nDataModelHandler.get... "
 
 		### retrieve datamodel from DB
-		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
-		# data_model = list(coll_model.find())
-		data_model_custom = list(coll_model.find({"field_class" : "custom"}))
+		data_model_custom = list(self.application.coll_model.find({"field_class" : "custom"}))
 		print "DataModelHandler.get / data_model_custom :"
 		pprint.pprint (data_model_custom)
 
@@ -394,8 +474,6 @@ class DataModelEditHandler(BaseHandler):
 
 
 		### DELETE / UPDATE FIELDS
-		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
-
 
 		# first : update fields in DB
 		print "DataModelEditHandler.post / updating fields :  "
@@ -408,7 +486,7 @@ class DataModelEditHandler(BaseHandler):
 			}, 
 			upsert=True ) for field in updated_fields 
 		]
-		coll_model.bulk_write(operations)
+		self.application.coll_model.bulk_write(operations)
 
 		# then : delete fields in db 
 		print "DataModelEditHandler.post / deleting fields :  "
@@ -416,7 +494,7 @@ class DataModelEditHandler(BaseHandler):
 			if field["field_keep"] == "delete" :
 				field_in_db = coll_model.find_one({"_id" : field["_id"]})
 				print field_in_db
-				coll_model.delete_one({"_id" : field["_id"]})
+				self.application.coll_model.delete_one({"_id" : field["_id"]})
 				# coll_model.remove({"_id" : field["_id"]})
 
 		### redirect once finished
@@ -458,8 +536,7 @@ class DataModelAddFieldHandler(BaseHandler) :
 		print "DataModelAddFieldHandler.post / new_field : ", new_field
 
 		### insert new field to db
-		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
-		coll_model.insert_one(new_field)
+		self.application.coll_model.insert_one(new_field)
 
 
 		self.redirect("/datamodel/edit")
@@ -469,16 +546,17 @@ class DataModelAddFieldHandler(BaseHandler) :
 #####################################
 ### CONTRIBUTOR lists / edit handlers
 
-
 class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 	"""
 	list all contributors from db.contributors
 	"""
+	@print_separate(APP_DEBUG)
 	def get(self):
 
-		coll_contrib = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] #db.contributors
-		contributors = list(coll_contrib.find())
-		print "\nContributorsHandler.get / contributors list :"
+		print "\nContributorsHandler.get ..."
+
+		contributors = list(self.application.coll_spiders.find())
+		print "\nContributorsHandler.get / contributors :"
 		pprint.pprint (contributors)
 		print '\n'
 
@@ -493,118 +571,115 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 	"""
 	contributor edit handler
 	"""
-	def get(self, spidername=None):
+
+	@print_separate(APP_DEBUG)
+	def get(self, spider_id=None):
 		"""show infos on one contributor : get info in DB and prefill form"""
+		
+		print "\nContributorEditHandler.get / spider_id : ", spider_id
 
-		print "\nContributorEditHandler.get / spidername : ", spidername
-
-		### retrieve datamodel custom
-		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
-		data_model = list(coll_model.find( {"field_class" : "custom"})) #, {"field_name":1, "_id":1} ))
+		### retrieve datamodel - custom fields
+		data_model = list(self.application.coll_model.find( {"field_class" : "custom"})) #, {"field_name":1, "_id":1} ))
 		data_model = [ { k : str(v) for k,v in i.iteritems() } for i in data_model ]
-		print "\n... ContributorEditHandler.get / data_model : "
-		pprint.pprint(data_model)
-
-		# data_model_next_page = coll_model.find_one( {"field_name" : "next_page"}) #, {"field_name":1, "_id":1} )
-		# data_model_next_page = { k : str(v) for k,v in data_model_next_page.iteritems() }
-		# print "\n... ContributorEditHandler.get / data_model_next_page : "
-		# pprint.pprint(data_model_next_page)
+		# print "\nContributorEditHandler.get / data_model : "
+		# pprint.pprint(data_model)
 
 		contributor_edit_fields = CONTRIBUTOR_EDIT_FIELDS
-		print "\n... ContributorEditHandler.get / contributor_edit_fields :"
-		pprint.pprint(contributor_edit_fields)
-
-		create_or_update = "create"
+		# print "\nContributorEditHandler.get / contributor_edit_fields :"
+		# pprint.pprint(contributor_edit_fields)
 
 		### retrieve contributor data from spidername
 
+		# spider exists ( edit form ) 
+		if spider_id :
+			try : 
+				create_or_update	= "update"
+				contributor			= self.application.coll_spiders.find_one({"_id": ObjectId(spider_id)})
+			except :
+				self.redirect("/404")
 
-		# spider exists : edit form
-		if spidername:
-			create_or_update = "update"
-			coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] 
-			contributor = coll.find_one({"scraper_config.spidername": spidername})
-		# new spider : add form
+		# spider doesn't exist : add form
 		else :
 			# core empty contributor structure to begin with
-			contributor_object = SpiderConfig()
-			contributor = contributor_object.config_as_dict()
-			create_or_update = "create"
+			contributor_object 	= SpiderConfig()
+			contributor 		= contributor_object.config_as_dict()
+			create_or_update	= "create"
 
-		print "\n... ContributorEditHandler.get / contributor :"
+		print "\nContributorEditHandler.get / contributor :"
 		pprint.pprint(contributor)
 
 		### render page
 		self.render("contributor_edit.html",
-			page_title 			= app_main_texts["main_title"],
-			create_or_update 	= create_or_update,
+			page_title 				= app_main_texts["main_title"],
+			create_or_update 		= create_or_update,
 			contributor_edit_fields = contributor_edit_fields,
-			contributor 		= contributor,
-			datamodel			= data_model,
-			# datamodel_next_page	= data_model_next_page,
+			contributor 			= contributor,
+			datamodel				= data_model,
 		)
 
-	def post(self, spidername=None):
-		"""update contributor in DB"""
+	@print_separate(APP_DEBUG)
+	def post(self, spider_id=None):
+		"""update or create new contributor spider in DB"""
+
+		print "\nContributorEditHandler.post... spider_id : ", spider_id
 		
 		### TO DO : form validation
-
-		# print self.request 
+		
+		### get form back from client
 		spider_config_form = self.request.arguments
 		print "\nContributorEditHandler.post / spider_config_form : "
 		pprint.pprint( spider_config_form )
 
-		coll_spider = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] 
+		# id
+		if spider_id != None : 
+			spider_id = spider_config_form["_id"][0]
 
+		# populate a contributor object
 		print "\nContributorEditHandler.post / creating spider with SpiderConfig class  ... "
+		contributor_object = SpiderConfig( 
+				form 		= spider_config_form,
+				new_spider 	= True,
+				user		= self.get_current_user_email() 
+		)
+		contributor = contributor_object.config_as_dict()
+		print "\nContributorEditHandler.post / contributor :"
+		pprint.pprint(contributor)
 
 
-		### TO DO : 
+		### get spider identifier from form
+		pprint.pprint(spider_config_form)
 
-		if spidername:
-			contributor = coll_spider.find_one({"scraper_config.spidername": spidername})
+		if spider_id and spider_id != "new_spider":
+			
+			print "\nContributorEditHandler.post / spidername already exists : "
 
-			# operations =[ UpdateOne( 
-			# 	{"_id" : contributor["_id"]},
-			# 	{'$set':  { 
-			# 			"field_type" 	: contributor["field_type"],
-			# 			"field_name" 	: contributor["field_name"],
-			# 			} 
-			# 	}, 
-			# 	upsert=True )
-			# ]
-			# coll_spider.bulk_write(operations)
+			# getting id from form
+			spider_oid = ObjectId(spider_id)
+
+			# getting back spider config from db but from its _id
+			# contributor = coll_spider.find_one({"scraper_config.spidername": spidername})
+			# contributor = self.application.coll_spiders.find_one( {"_id": spider_oid} )
+
+			# update contributor
+			# self.application.coll_spiders.update_one( {"_id": spider_oid},  )
 
 		else :
-			contributor_object = SpiderConfig( 
-					form=spider_config_form, 
-					user=self.get_current_user )
-			contributor = contributor_object.config_as_dict()
-			# create a safe spidername
-			
+
 			# insert new spider to db
-			# coll_spider = self.application.db[ MONGODB_COLL_DATAMODEL ]
-			# coll_spider.insert_one(new_spider)
+			# coll_spider.insert_one(contributor)
 			pass
-
-		print "ContributorEditHandler.post / contributor :"
-		pprint.pprint(contributor)
 		
-
-
-		# if spidername:
-		# 	# coll.save(contributor)
-		# 	pass
-		# else:
-		# 	# contributor['date_added'] = int(time.time())
-		# 	coll.insert_one(contributor)
-		# 	pass
+		### redirections for debugging purposes
+		if spider_id and spider_id!= "new_spider" :
+			self.redirect("/contributor/edit/{}".format(spider_id))
+		else : 
+			self.redirect("/contributor/add")
 		
-		
+		### real redirection
 		# self.redirect("/contributors")
-		self.redirect("/contributors")
 
 
+### TO DO 
 class ContributorDeleteHandler(BaseHandler) : 
 	"""
 	delete a spider config
@@ -767,8 +842,7 @@ class SpiderHandler(BaseHandler) :
 		print "\nSpiderHandler.get... "
 
 		### retrieve spider config from its name in the db
-		coll = self.application.db[ MONGODB_COLL_CONTRIBUTORS ] #.contributors
-		spider_config = coll.find_one({"scraper_config.spidername": spidername})
+		spider_config = self.application.coll_spiders.find_one({"scraper_config.spidername": spidername})
 		
 		### redirect / set default runner if no spider_config
 		if spider_config == None : 
@@ -812,8 +886,7 @@ class SpiderHandler(BaseHandler) :
 
 		print "SpiderHandler.run_spider --- creating data model list from fields in db "
 		### getting data_model list (this will come from DB later)
-		coll_model = self.application.db[ MONGODB_COLL_DATAMODEL ]
-		data_model = coll_model.distinct("field_name")
+		data_model = self.application.coll_model.distinct("field_name")
 		print "SpiderHandler.run_spider --- data_model from db :" 
 		pprint.pprint(data_model)
 		

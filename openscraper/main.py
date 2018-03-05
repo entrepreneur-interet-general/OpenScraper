@@ -76,6 +76,12 @@ class Application(tornado.web.Application):
 					port = MONGODB_PORT
 		)
 		self.db = client[ MONGODB_DB ]
+		
+		# predefine collection names as .self objects
+		self.coll_users 	= self.db[ MONGODB_COLL_USERS ]
+		self.coll_model 	= self.db[ MONGODB_COLL_DATAMODEL ]
+		self.coll_spiders 	= self.db[ MONGODB_COLL_CONTRIBUTORS ]
+		self.coll_data		= self.db[ MONGODB_COLL_DATASCRAPPED ]
 
 		### instantiate db.datamodel with core fields (for internal use)
 		core_fields = [ 

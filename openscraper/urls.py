@@ -32,8 +32,8 @@ urls = [
 	### contributors : websites to crawl
 	(r"/contributors", 				ContributorsHandler),
 	(r"/contributor/add", 			ContributorEditHandler),
-	(r"/contributor/edit/(\w+)", 	ContributorEditHandler), 
-	(r"/contributor/delete/(\w+)", 	ContributorDeleteHandler), 
+	(r"/contributor/edit/([\w\_\d]+)", 	ContributorEditHandler), 
+	(r"/contributor/delete/([\w\_\d]+)", 	ContributorDeleteHandler), 
 
 	### spider launchers
 	(r"/crawl/(\w+)", 			SpiderHandler), ### get spidername as input

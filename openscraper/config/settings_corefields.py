@@ -54,51 +54,7 @@ DATAMODEL_DEFAULT_CUSTOM_FIELDS = [
 	{"field_name" : "url", 		"field_type" : "url"},
 ]
 
-
-### to instantiate contributor core fields in mongoDB
-CONTRIBUTOR_CORE_FIELDS = {
-	
-	# scraper - custom infos 
-	"infos" : {
-		"name" 			: "" , 	# real name contributor
-		"page_url" 		: "" ,
-		"contact" 		: "",
-		"notes" 		: "",
-		"added_by" 		: "",
-		"is_working" 	: False
-	},
-
-	# scraper - custom for scraping basics
-	 "scraper_config" : {
-		"spidername" 	: "",
-		"start_urls" 	: [],
-		"parse_follow" 	: False,
-		"next_page" 	: "",
-		"follow_xpath" 	: "",
-		"page_needs_splash" : False,
-	},
-
-	# scraper - custom for scraping xpaths
-	"scraper_config_xpaths" : {
-		# "next_page_xpath" : None,
-	},
-
-	# scraper - global settings	
-	"scraper_settings" : {
-		"LIMIT" 			: 100,
-		"download_delay" 	: 0,
-		"page_count" 		: 1,
-	},
-
-	# scraper stats	
-	"stats" : {
-		"error_array" 			: [],
-		"item_count" 			: 0,
-		"item_count_depth_1" 	: 0
-	},
-
-}
-
+### to display form for edit contributor
 CONTRIBUTOR_EDIT_FIELDS = {
 
 	### fields displayed in edit contributor page
@@ -121,7 +77,7 @@ CONTRIBUTOR_EDIT_FIELDS = {
 	# scraper - custom for scraping basics
 	 "scraper_config" : {
 		"needed" : [
-			"spidername" ,
+			# "spidername" ,
 			"start_urls",
 			"next_page",
 			"parse_follow",
@@ -133,3 +89,58 @@ CONTRIBUTOR_EDIT_FIELDS = {
 	 },
 
 }
+
+### to instantiate contributor core fields in mongoDB
+CONTRIBUTOR_CORE_FIELDS = {
+	
+	# scraper - custom infos 
+	"infos" : {
+		"name" 			: "" , 	# real name contributor
+		"page_url" 		: "" ,
+		"contact" 		: "",
+		"notes" 		: "",
+		# "added_by" 		: "",
+		# "modified_by" 		: "",
+		# "is_working" 	: False
+	},
+
+	# scraper - custom for scraping basics
+	 "scraper_config" : {
+		"spidername" 		: "",
+		"start_urls" 		: [],
+		"parse_follow" 		: False,
+		"next_page" 		: "",
+		"follow_xpath" 		: "",
+		"page_needs_splash" : False,
+	},
+
+	# scraper - custom for scraping xpaths
+	"scraper_config_xpaths" : {
+		# "next_page_xpath" : None,
+	},
+
+	# scraper - global settings	
+	"scraper_settings" : {
+		"LIMIT" 			: 100,
+		"download_delay" 	: 0,
+		"page_count" 		: 1,
+	},
+
+	# scraper - log and stats	
+	"scraper_log" : {
+		"added_by" 				: "",
+		"modified_by" 			: "",
+		"is_working" 			: False,
+		"error_array" 			: [],
+		"item_count" 			: 0,
+		"item_count_depth_1" 	: 0
+	},
+
+}
+
+### create list of not fully customazible fields 
+# NOT_CUSTOM_DATAMODEL_FIELDS = CONTRIBUTOR_CORE_FIELDS["scraper_config"].keys() +  CONTRIBUTOR_CORE_FIELDS["infos"].keys()
+NOT_CUSTOM_DATAMODEL_FIELDS = []
+for k, v in CONTRIBUTOR_CORE_FIELDS.iteritems() : 
+	l = v.keys()
+	NOT_CUSTOM_DATAMODEL_FIELDS.append(l)
