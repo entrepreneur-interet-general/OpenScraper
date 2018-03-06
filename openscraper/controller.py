@@ -14,9 +14,7 @@ from config.settings_example import * # MONGODB_COLL_CONTRIBUTORS, MONGODB_COLL_
 from config.settings_corefields import *
 from config.core_classes import SpiderConfig, UserClass
 
-# ### import WTForms for validation
-# from wtforms import validators 
-# from tornadotools.forms import Form
+### import WTForms for validation
 from forms import *
 
 ### import contributor generic class
@@ -115,7 +113,6 @@ def time_all_class_methods(Cls):
 
 
 
-
 ########################
 ########################
 ### REQUEST HANDLERS ###
@@ -148,8 +145,12 @@ class BaseHandler(tornado.web.RequestHandler):
 		user 	   = self.application.coll_users.find_one({"email": user_email })
 		return user 
 
-	def add_user_to_db(self, user): 
+	def get_current_user_id(self):
+		user_email = self.get_current_user_email()
+		user 	   = self.application.coll_users.find_one({"email": user_email })
+		return str(user["_id"])
 
+	def add_user_to_db(self, user): 
 		self.application.coll_users.insert_one( user )
 
 	def set_current_user(self, user) :
@@ -398,11 +399,11 @@ class DataModelViewHandler(BaseHandler):
 		print "\nDataModelHandler.get... "
 
 		### retrieve datamodel from DB
-		data_model_custom = list(self.application.coll_model.find({"field_class" : "custom"}))
+		data_model_custom = list(self.application.coll_model.find({"field_class" : "custom"}).sort("field_name",1) )
 		print "DataModelHandler.get / data_model_custom :"
 		pprint.pprint (data_model_custom)
 
-		data_model_core = list(self.application.coll_model.find({"field_class" : "core"}))
+		data_model_core = list(self.application.coll_model.find({"field_class" : "core"}).sort("field_name",1) )
 		print "DataModelHandler.get / data_model_core :"
 		pprint.pprint (data_model_core)
 
@@ -416,7 +417,7 @@ class DataModelViewHandler(BaseHandler):
 			datamodel_custom = data_model_custom,
 			datamodel_core = data_model_core
 		)
-	
+
 
 class DataModelEditHandler(BaseHandler):
 	"""
@@ -486,6 +487,7 @@ class DataModelEditHandler(BaseHandler):
 			{'$set':  { 
 					"field_type" 	: field["field_type"],
 					"field_name" 	: field["field_name"],
+					"modified_by"	: self.get_current_user_email()	
 					 } 
 			}, 
 			upsert=True ) for field in updated_fields 
@@ -536,7 +538,7 @@ class DataModelAddFieldHandler(BaseHandler) :
 		new_field = {
 			"field_name" 	: self.get_argument("field_name"),
 			"field_type" 	: self.get_argument("field_type"),
-			"added_by" 		: self.get_current_user(),
+			"added_by" 		: self.get_current_user_email(),
 			"field_class" 	: "custom",
 		}
 		print "DataModelAddFieldHandler.post / new_field : ", new_field
@@ -563,8 +565,8 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 		contributors = list(self.application.coll_spiders.find())
 		print "\nContributorsHandler.get / contributors :"
-		pprint.pprint (contributors)
-		print '\n'
+		pprint.pprint (contributors[0])
+		print '.....\n'
 
 		self.render(
 			"contributors_list.html",
@@ -643,7 +645,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			spider_id = spider_config_form["_id"][0]
 			is_new = False
 
-		# TO DO : check if website is already crawled by another spider
+		# check if website is already crawled by another spider
 		similar_spider = self.application.coll_spiders.find( {"infos.page_url": spider_config_form["page_url"]} )
 		if similar_spider and is_new :
 			print "\nContributorEditHandler.post / already a similar spider ... "
@@ -929,11 +931,31 @@ class FormHandler(BaseHandler) :
 
 		print "\FormHandler.get... "
 
+		form = SampleForm()
+
+		if form.validate():
+			# do something with form.username or form.email
+			pass
+
 		self.render(
 			"form_instance.html",
 			page_title = app_main_texts["main_title"],
+			form = form
 		)
 
+		# self.write(templates.load("simpleform.html").generate(
+		# 		compiled=compiled, 
+		# 		page_title = app_main_texts["main_title"],
+		# 		form=form))
+
+	def post(self):
+		
+		print "\FormHandler.post... "
+
+		### get form back from client
+		form = SampleForm(self.request.arguments)
+		print "\nFormHandler.post / spider_config_form : "
+		pprint.pprint( form )
 
 
 ########################

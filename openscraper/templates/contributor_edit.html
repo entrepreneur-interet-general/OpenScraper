@@ -64,13 +64,15 @@
 										{% if needed not in ["page_needs_splash", "follow_xpath","parse_follow" ]%}
 											<p class="control is-expanded has-icons-left">
 												<input class="input" type="text" 
-														placeholder="{{ needed }}"
+														placeholder="{% if needed =='next_page' %}xpath for {% end %}{{ needed }}"
 														name="{{ needed }}"
 
 														{% if needed == "start_urls" %}
-															value="{% for i in contributor[field].get(needed, '') %}{{ escape(i) }}, {% end %}"
+															value="{% for i in contributor[field].get(needed, '') %}{{ escape(i) }} {% end %}"
+														
 														{% else %}
 															value="{{ escape (contributor[field].get(needed, '')) }}"
+														
 														{% end %}
 														
 														>

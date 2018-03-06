@@ -12,6 +12,41 @@
 		<div class="columns is-centered">
 			<div class="column is-half">
 
+				<form action="/datamodel/form" method="POST">
+					{% module xsrf_form_html() %}
+
+
+					<div class="field">
+						<label class="label">Name</label>
+						<div class="control">
+							{% raw form.name %}
+						</div>
+					</div>
+
+
+
+					{# submit button #}
+					<br>
+					<div class="field is-grouped is-grouped-centered">
+						<p class="control">
+							<input 	class="button is-primary is-rounded" 
+									type="submit" 
+									value="submit form"
+								>
+							</input>
+						</p>
+						<p class="control">
+							<a class="button is-light is-rounded" href="/">
+								Cancel
+							</a>
+						</p>
+					</div>
+
+
+				</form>
+
+				<hr>
+
 
 				<div class="field">
 					<label class="label">Name</label>

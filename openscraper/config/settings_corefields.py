@@ -31,6 +31,7 @@ USER_CORE_FIELDS = [
 DATAMODEL_FIELDS_TYPES = [
 	"url", 
 	"text", 
+	"email", 
 	"image", 
 	"adress", 
 	"date", 
@@ -42,10 +43,16 @@ DATAMODEL_CORE_FIELDS = [
 	{"field_name" : "follow_xpath", 	"field_type" : "url"}, 
 	{"field_name" : "link_data", 		"field_type" : "url"},
 	{"field_name" : "link_src", 		"field_type" : "url"},
-	{"field_name" : "added_by", 		"field_type" : "text"}, 
-	{"field_name" : "item_created_at", 	"field_type" : "date"},
+
+	{"field_name" : "spider_id", 		"field_type" : "text"},
+
+	{"field_name" : "added_by", 		"field_type" : "email"}, 
+	{"field_name" : "added_at", 		"field_type" : "date"},
+
+	{"field_name" : "modified_by", 		"field_type" : "email"}, 
+	{"field_name" : "modified_at", 		"field_type" : "date"}, 
 	
-	{"field_name" : "testClass", "field_type" : "text"}
+	{"field_name" : "testClass", 		"field_type" : "text"}
 ]
 DATAMODEL_DEFAULT_CUSTOM_FIELDS = [
 	{"field_name" : "author",	"field_type" : "text"},

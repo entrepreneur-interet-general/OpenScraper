@@ -63,7 +63,12 @@ class SpiderConfig :
 			form = { k : v[0] for k,v in form.iteritems() }
 			# form['notes'] = re.escape(form['notes'] )
 			spidername 			= re.escape(form["name"])
-			form['start_urls'] 	= form['start_urls'].split(',')		
+			spidername			= spidername.replace('\\', '')
+
+			form['start_urls'] 	= form['start_urls'].replace(',', ' ')		
+			form['start_urls'] 	= form['start_urls'].split(' ')
+			form['start_urls']  = [ i for i in form['start_urls'] if i!="" ]
+			
 			form['notes'] 		= form['notes'].replace("\n", "")
 			form['notes'] 		= form['notes'].replace("\r", "")
 
@@ -91,7 +96,7 @@ class SpiderConfig :
 						self.spider_config["scraper_config_xpaths"][field_custom] = form[field_custom]
 
 		### add specifics in infos / scraperconfig
-		self.spider_config["scraper_config"]["spidername"]	= spidername
+		self.spider_config["scraper_config"]["spidername"]	= unicode(spidername)
 		if new_spider == True :
 			self.spider_config["scraper_log"]["added_by"] 		= user
 			self.spider_config["scraper_log"]["modified_by"] 	= user

@@ -94,6 +94,7 @@ class Application(tornado.web.Application):
 		print ">>> Application.__init__ / datamodel - core_fields : "
 		# pprint.pprint(core_fields)
 		
+		
 		# upsert fields as bulk job in mongoDB
 		# cf : https://stackoverflow.com/questions/5292370/fast-or-bulk-upsert-in-pymongo
 		operations =[ UpdateOne( 
@@ -107,7 +108,7 @@ class Application(tornado.web.Application):
 			upsert=True ) for field in core_fields 
 		]
 		# self.db[ "test_coll" ].bulk_write(operations)
-		self.db[ MONGODB_COLL_DATAMODEL ].bulk_write(operations)
+		self.coll_spiders.bulk_write(operations)
 
 		
 
