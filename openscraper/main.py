@@ -107,10 +107,8 @@ class Application(tornado.web.Application):
 			}, 
 			upsert=True ) for field in core_fields 
 		]
-		# self.db[ "test_coll" ].bulk_write(operations)
-		self.coll_spiders.bulk_write(operations)
+		self.coll_model.bulk_write(operations)
 
-		
 
 		### retrieve handlers from urls.py
 		handlers = urls.urls

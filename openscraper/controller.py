@@ -1,3 +1,6 @@
+# -*- encoding: utf-8 -*-
+
+
 import 	pprint 
 from 	bson import ObjectId
 import 	time
@@ -131,7 +134,7 @@ class BaseHandler(tornado.web.RequestHandler):
 	MyNewHandler(BaseHandler)
 	"""
 
-	### user functions
+	### user functions for all pages
 	def get_current_user(self):
 		""" return user_name"""
 		return self.get_secure_cookie("user_name")
@@ -172,14 +175,14 @@ class BaseHandler(tornado.web.RequestHandler):
 		self.clear_cookie("user_name")
 		self.clear_cookie("user_email")
 
-	### DB functions
-	def get_contributors_fields(self, q_fields="custom"):
+	### DB functions for all pages
+	def get_datamodel_fields(self, query=None):
 		"""return fields from query as list"""
 		
 		fields =[]
 
-		if q_fields=="custom":
-			custom_fields = list(self.application.coll_model.find( {"field_class" : "custom"}))
+		if query=="custom":
+			custom_fields = list(self.application.coll_model.find( { "field_class" : "custom" }))
 			fields = [ str(f["_id"]) for f in custom_fields ]
 			# equivalent to :
 			# for custom_field in custom_fields :
@@ -187,7 +190,7 @@ class BaseHandler(tornado.web.RequestHandler):
 			# 	fields.append(custom_field_id)
 
 		### get fields 
-		if q_fields in ["infos", "scraper_config"] : 
+		if query in ["infos", "scraper_config"] : 
 			pass
 
 		return fields
@@ -206,6 +209,12 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		count = coll.find(query).count()
 		return count
+
+	def count_all_documents(self):
+		"""count all collections' documents in db"""
+		collections_to_count = ["datamodel", "contributors", "data", "users" ]
+		counts 	= { "count_{}".format(k) : self.count_documents(k) for k in collections_to_count }
+		return counts
 
 
 class PageNotFoundHandler(BaseHandler): 
@@ -227,6 +236,8 @@ class PageNotFoundHandler(BaseHandler):
 
 ######################################
 ### Login - logout - register handlers 
+# cf : https://guillaumevincent.github.io/2013/02/12/Basic-authentication-on-Tornado-with-a-decorator.html
+# cf : http://tornado-web.blogspot.fr/2014/05/tornado-user-authentication-example.html
 
 class LoginHandler(BaseHandler):
 	
@@ -364,20 +375,25 @@ class WelcomeHandler(BaseHandler):
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
 	def get(self):
-		print "this is the welcome page requested from url..."
+		
+		print "\nWelcomeHandler.get... "
 
-		count_dm 			= self.count_documents(db_name="datamodel", query={"field_class" : "custom"})
-		count_contributors 	= self.count_documents(db_name="contributors")
-		count_data 			= self.count_documents(db_name="data")
-		count_users 		= self.count_documents(db_name="users")
+		### count collections' documents
+		# count_dm 			= self.count_documents(db_name="datamodel", query={"field_class" : "custom"})
+		# count_contributors 	= self.count_documents(db_name="contributors")
+		# count_data 			= self.count_documents(db_name="data")
+		# count_users 		= self.count_documents(db_name="users")
+		counts = self.count_all_documents() 
+		print "\nWelcomeHandler.get / counts :", counts
 
 		self.render(
 			"index.html",
 			page_title  		= app_main_texts["main_title"],
-			count_dm 			= count_dm,
-			count_contributors 	= count_contributors,
-			count_data 			= count_data,
-			count_users 		= count_users,
+			# count_dm 			= count_dm,
+			# count_contributors 	= count_contributors,
+			# count_data 			= count_data,
+			# count_users 		= count_users,
+			counts 				= counts,
 			user				= self.current_user
 		)
 
@@ -413,9 +429,10 @@ class DataModelViewHandler(BaseHandler):
 
 		self.render(
 			"datamodel_view.html",
-			page_title = app_main_texts["main_title"],
-			datamodel_custom = data_model_custom,
-			datamodel_core = data_model_core
+			page_title 			= app_main_texts["main_title"],
+			datamodel_custom 	= data_model_custom,
+			datamodel_core 		= data_model_core,
+
 		)
 
 
@@ -498,8 +515,8 @@ class DataModelEditHandler(BaseHandler):
 		print "DataModelEditHandler.post / deleting fields :  "
 		for field in updated_fields :
 			if field["field_keep"] == "delete" :
-				field_in_db = coll_model.find_one({"_id" : field["_id"]})
-				print field_in_db
+				# field_in_db = self.application.coll_model.find_one({"_id" : field["_id"]})
+				# print field_in_db
 				self.application.coll_model.delete_one({"_id" : field["_id"]})
 				# coll_model.remove({"_id" : field["_id"]})
 
@@ -852,14 +869,17 @@ class SpiderHandler(BaseHandler) :
 	"""
 	launch the run spider from client side and from url arg
 	"""
+	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
 	@gen.coroutine
-	def get(self, spidername = None ):
+	def get(self, spider_id = None ):
 		
 		print "\nSpiderHandler.get... "
+		counts = self.count_all_documents() 
 
 		### retrieve spider config from its name in the db
-		spider_config = self.application.coll_spiders.find_one({"scraper_config.spidername": spidername})
+		# spider_config = self.application.coll_spiders.find_one({"scraper_config.spidername": spidername})
+		spider_config = self.application.coll_spiders.find_one({"_id": ObjectId(spider_id) })
 		
 		### redirect / set default runner if no spider_config
 		if spider_config == None : 
@@ -870,51 +890,63 @@ class SpiderHandler(BaseHandler) :
 			# 	 } 
 			# (this will come from DB later)
 			# spider_config = test_spider_config
+			
 			# self.redirect("/")			
 			self.render(
 				"index.html",
-				page_title = app_main_texts["main_title"],
-				header_text = "ERROR !!! there is no ''%s'' spider configuration in the DB ..." %(spidername),
-				user = self.current_user
+				page_title 	= app_main_texts["main_title"],
+				serv_msg 	= "ERROR !!! there is no ''%s'' spider configuration in the DB ..." %(spider_id),
+				user 		= self.current_user,
+				counts 		= counts
 			)
 		
 		else : 
-			print "SpiderHandler.get --- spidername : ", spidername
+			print "SpiderHandler.get --- spider_id : ", spider_id
 			print "SpiderHandler.get --- spider_config :"
 			pprint.pprint(spider_config)
 
 			print "SpiderHandler.get --- starting spider runner --- "
 			### TO DO : CHECK IF REALLY WORKING : asynchronous run the corresponding spider
 			# run_generic_spider( run_spider_config = spider_config ) # synchronous
-			yield self.run_spider( spidername, spider_config=spider_config ) # asynchronous
+			yield self.run_spider( spider_id, spider_config=spider_config ) # asynchronous
+
+			### update scraper_log.is_working
+			self.application.coll_spiders.update_one( {"_id": ObjectId(spider_id) }, {"$set" : {"scraper_log.is_working" : True}})
 
 			### TO DO : redirect to a page showing crawling status / results
 			# self.redirect("/contributors/")
 			self.render(
 				"index.html",
-				page_title = app_main_texts["main_title"],
-				header_text = "crawling of -%s- launched ..." %(spidername),
-				user = self.current_user
+				page_title 	= app_main_texts["main_title"],
+				serv_msg 	= "crawling of -%s- launched ..." %(spider_id),
+				user 		= self.current_user,
+				counts 		= counts
 			)
 
+	@print_separate(APP_DEBUG)
 	@gen.coroutine
-	def run_spider (self, spidername, spider_config) :
+	def run_spider (self, spider_id, spider_config) :
+		
 		print "\nSpiderHandler.run_spider --- "
 
+		### getting data_model lists
 		print "SpiderHandler.run_spider --- creating data model list from fields in db "
-		### getting data_model list (this will come from DB later)
-		data_model = self.application.coll_model.distinct("field_name")
-		print "SpiderHandler.run_spider --- data_model from db :" 
-		pprint.pprint(data_model)
+		# data_model 			= self.application.coll_model.distinct("field_name")
+		data_model 			= list(self.application.coll_model.find({}))
+		# data_model_custom 	= list(self.application.coll_model.find({"field_type" : "custom" }))
+		# data_model_core 	= list(self.application.coll_model.find({"field_type" : "core" }))
+		
+		# print "SpiderHandler.run_spider --- data_model from db :" 
+		# pprint.pprint(data_model)
 		
 		### for debugging
 		# data_model = test_data_model 
 
-		### run spider 
+		### run spider --- check masterspider.py --> function run_generic_spider()
 		result = run_generic_spider( 
-									spidername=spidername, 
-									datamodel=data_model, 
-									run_spider_config=spider_config 
+									spider_id			= spider_id, 
+									datamodel			= data_model, 
+									run_spider_config	= spider_config 
 									)
 		raise gen.Return(result)
 

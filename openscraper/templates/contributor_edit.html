@@ -129,8 +129,12 @@
 					{# XPATHS fields #}
 					<div class="content has-text-centered">
 						<h3> custom fields</h3>
-						<p class="is-small">where do you find your data on the pages you will crawl (add xpaths) ?
-						<br>you can also modify the data model <a href="/datamodel/edit">here </a></p>
+						<p class="is-small">
+							where do you find your data on the pages you will crawl (add xpaths) ?
+							<br>you can also modify the data model 
+								<a href="/datamodel/edit">here </a>
+								or add a field <a href="/datamodel/add_field">here </a>
+						</p>
 					</div>
 
 					{# other XPATH fields from custom datamodel #}
@@ -195,9 +199,20 @@
 						</p>
 						<p class="control">
 							<a class="button is-light is-rounded" href="/contributors">
-								Cancel
+								<span class="icon"><i class="fas fa-times"></i></span>
+								<span>Cancel</span>
 							</a>
 						</p>
+
+						{% if create_or_update == "update" %}
+						<p class="control">
+							<a class="has-text-centered button is-warning is-rounded"
+									href="/crawl/{{ escape (str(contributor[u'_id'])) }}" >
+								<span class="icon is-small"><i class="fas fa-play"></i></span>
+								<span>run spider</span>
+							</a> 
+						</p>
+						{% end %}
 					</div>
 
 

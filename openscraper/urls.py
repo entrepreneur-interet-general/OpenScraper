@@ -4,6 +4,8 @@ from controller import *
 ### all routing functions are in controller.py
 ### for url mapping in Tornado cf : https://stackoverflow.com/questions/17166051/url-regex-mapping-in-tornado-web-server
 ### cf :https://code.tutsplus.com/tutorials/8-regular-expressions-you-should-know--net-6149
+### cf : https://gist.github.com/c4urself/1028897
+### cf : http://www.lexev.org/en/2014/set-url-for-tornado-handlers/
 
 ### cf : https://docs.python.org/2/library/re.html#regular-expression-syntax
 ### "/(?P<your_arg>.*?)" - arg in url as kwarg

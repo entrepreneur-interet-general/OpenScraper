@@ -9,6 +9,7 @@ from scrapy import Item
 from scrapy.item import DictItem, Field
 
 '''
+# basic scrapy Item instance
 class ScrapedItem(scrapy.Item):
 	"""inherited from Makina Corpus' POC"""
 
@@ -47,12 +48,12 @@ class GenericItem(Item) :
 
 
 ### cf : https://github.com/scrapy/scrapy/issues/398
-def create_item_class(class_name, field_list):
+def create_item_class(class_name, fields_list):
 
 	"""generic Item class creator populated from a list"""
 
-	field_dict = {}
-	for field_name in field_list:
-		field_dict[field_name] = Field()
-	return type(str(class_name), (DictItem,), {'fields': field_dict})
+	fields_dict = {}
+	for field_name in fields_list:
+		fields_dict[field_name] = Field()
+	return type( str(class_name), (DictItem,), {'fields': fields_dict} )
 

@@ -38,7 +38,11 @@
 			<div class="level">
 				<div class="level-item">
 					<h2 class="subtitle">
-						welcome back, {{ user }}
+						{% if 'serv_msg' in globals() %}
+							{{ serv_msg }}
+						{% else %}
+							welcome back, {{ user }}
+						{% end %}
 					</h2>
 				</div>
 			</div>
@@ -70,7 +74,7 @@
 				<div class="level-item has-text-centered">
 					<div>
 						<p class="heading">data model</p>
-						<p class="title">{{ count_dm }} custom fields</p>
+						<p class="title">{{ counts["count_datamodel"] }} custom fields</p>
 					</div>
 				</div>
 				<div class="level-item has-text-centered">
@@ -82,7 +86,7 @@
 				<div class="level-item has-text-centered">
 					<div>
 						<p class="heading">scrapped from </p>
-						<p class="title">{{ count_contributors }} websites</p>
+						<p class="title">{{ counts["count_contributors"] }} websites</p>
 					</div>
 				</div>
 			</div>
