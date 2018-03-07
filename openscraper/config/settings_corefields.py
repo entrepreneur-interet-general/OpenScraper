@@ -78,6 +78,10 @@ DATAMODEL_DEFAULT_CUSTOM_FIELDS = [
 ]
 
 ### CONTRIBUTORS
+### radio buttons in form for edit contributor
+CONTRIBUTOR_EDIT_FIELDS_RADIO = [
+	"parse_follow",
+]
 ### to display form for edit contributor
 CONTRIBUTOR_EDIT_FIELDS = {
 
@@ -103,10 +107,10 @@ CONTRIBUTOR_EDIT_FIELDS = {
 		"needed" : [
 			# "spidername" ,
 			"start_urls",
+			"item_xpath",
 			"next_page",
 			"parse_follow",
 			"follow_xpath",
-			"item_xpath",
 		], 
 		"optional": [
 			"page_needs_splash",

@@ -36,7 +36,7 @@ class SpiderConfig :
 	"""
 	a spider config object that can be created from form...
 	this class uses CONTRIBUTOR_CORE_FIELDS as base...
-	this config could be then stored in db...
+	this config would be then stored in db...
 	"""
 
 	def __init__(self, 
@@ -53,15 +53,17 @@ class SpiderConfig :
 		### begin with no spidername
 		spidername = ""
 
-		### form exists 
-		if form!=None : 
-			# create a spidername and clean/escape it
+		### form exists so clean it
+		if form!=None : 			
 			# del _id and _xsrf
 			del form['_id']
 			del form['_xsrf']
+
 			# cleaning post dict
 			form = { k : v[0] for k,v in form.iteritems() }
 			# form['notes'] = re.escape(form['notes'] )
+
+			# create a spidername and clean/escape it
 			spidername 			= re.escape(form["name"])
 			spidername			= spidername.replace('\\', '')
 
@@ -71,6 +73,12 @@ class SpiderConfig :
 			
 			form['notes'] 		= form['notes'].replace("\n", "")
 			form['notes'] 		= form['notes'].replace("\r", "")
+			
+			for radio_field in CONTRIBUTOR_EDIT_FIELDS_RADIO : 
+				if form[radio_field] == "true" : 
+					form[radio_field] = True
+				else :
+					form[radio_field] = False
 
 		### getting all the config args from spider_config (i.e. next_page_xpath, ...)
 		print "*** SpiderConfig / form :"

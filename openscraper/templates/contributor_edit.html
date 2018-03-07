@@ -8,6 +8,7 @@
 <section class="section">
 	
 	<div class="container has-text-centered">
+		
 		{% if create_or_update == "create" %}
 			<h1 class="title">
 				ADD A NEW SPIDER
@@ -15,11 +16,13 @@
 			<h2 class="subtitle">
 				Fill the form to create a new spider.
 			</h2>
+		
 		{% else %}
 			<h1 class="title">
 			EDIT THE SPIDER <br> 
 			"{{ escape (contributor['infos']['name']) }}"
 			</h1>
+		
 		{% end %}
 
 	</div>
@@ -61,7 +64,7 @@
 								<div class="field-body">
 									<div class="field">
 										
-										{% if needed not in ["page_needs_splash", "follow_xpath","parse_follow" ]%}
+										{% if needed not in ["page_needs_splash","parse_follow" ]%}
 											<p class="control is-expanded has-icons-left">
 												<input class="input" type="text" 
 														placeholder="{% if needed =='next_page' %}xpath for {% end %}{{ needed }}"
@@ -78,42 +81,31 @@
 														>
 											</p>
 
-										{% elif needed == "parse_follow"  %}
+										{% elif needed in ["parse_follow"]  %}
+											{# radio buttons #}
 											<div class="control">
+												
+												{# fill radio "checked" value in contributor data #}
+												{% set checked = contributor[field][needed] %}
 												<label class="radio">
-													
-													{# TO DO : fill radio "checked" value in contributor data #}
-													<input type="radio" name="{{ needed }}" 
-															checked
+													<input 	type="radio" name="{{ needed }}" value="false"
+															{% if not checked %} checked {% end %}
 													>
 													The data is complete in the list  
-												</label><br>
+												</label>
+												
+												<br>
+
 												<label class="radio">
-													<input type="radio" name="{{ needed }}">
+													<input 	type="radio" name="{{ needed }}" value="true"
+															{% if checked %} checked {% end %}
+													>
 													I need to click to have the complete data
 												</label>
 
 											</div>
-										
-										{% elif needed == "follow_xpath" %}
-											<p class="control is-expanded has-icons-left">
-												<input class="input" type="text" 
-														placeholder="{{ needed }}"
-														name="{{ needed }}"
-
-														{% if needed == "start_urls" %}
-															value="{% for i in contributor[field].get(needed, '') %}{{ escape(i) }}, {% end %}"
-														{% else %}
-															value="{{ escape (contributor[field].get(needed, '')) }}"
-														{% end %}
-														
-														>
-											</p>
 
 										{% end %}
-
-
-
 
 									</div>
 								</div>
@@ -126,7 +118,7 @@
 
 					<hr>
 
-					{# XPATHS fields #}
+					{# XPATH fields from custom datamodel #}
 					<div class="content has-text-centered">
 						<h3> custom fields</h3>
 						<p class="is-small">
@@ -137,7 +129,6 @@
 						</p>
 					</div>
 
-					{# other XPATH fields from custom datamodel #}
 					{% for dm in datamodel %}
 						<div class="field is-horizontal">
 
@@ -186,8 +177,8 @@
 						</div>
 					</div>
 
-
 					<br>
+
 					{# submit button #}
 					<div class="field is-grouped is-grouped-centered">
 						<p class="control">

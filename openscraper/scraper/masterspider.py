@@ -214,11 +214,8 @@ class GenericSpider(Spider) :
 						item[ d_model ] = raw_data.xpath(self.spider_config_flat[ d_model ]).extract()
 
 
-
-
-
 			print "\nGenericSpider.parse - item : \n", item.items()
-			print item.keys()
+			# print item.keys()
 			yield item
 
 			### if need to follow to extract all data

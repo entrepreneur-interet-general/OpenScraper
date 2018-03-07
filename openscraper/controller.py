@@ -196,7 +196,11 @@ class BaseHandler(tornado.web.RequestHandler):
 		return fields
 
 	def count_documents(self, db_name="datamodel", query=None ) : 
-		""" simple count of documents in the db collection db_name"""
+		""" 
+		simple count of documents in the db collection db_name
+		passed "query" arg must be with the form : {"<field>" : "<value>"}
+		ex : query={"field_class" : "custom"}
+		"""
 		
 		if db_name=="datamodel" :
 			coll = self.application.coll_model
@@ -210,10 +214,15 @@ class BaseHandler(tornado.web.RequestHandler):
 		count = coll.find(query).count()
 		return count
 
-	def count_all_documents(self):
+	def count_all_documents(self, q_datamodel=None, q_contributors=None, q_data=None, q_users=None):
 		"""count all collections' documents in db"""
-		collections_to_count = ["datamodel", "contributors", "data", "users" ]
-		counts 	= { "count_{}".format(k) : self.count_documents(k) for k in collections_to_count }
+		collections_to_count = {
+			"datamodel"		: q_datamodel, 
+			"contributors"	: q_contributors, 
+			"data"			: q_data, 
+			"users"			: q_users
+		}
+		counts 	= { "count_{}".format(k) : self.count_documents(db_name=k, query=v) for k,v in collections_to_count.iteritems() }
 		return counts
 
 
@@ -221,6 +230,7 @@ class PageNotFoundHandler(BaseHandler):
 	"""
 	default handler to manage 404 errors
 	"""
+	@print_separate(APP_DEBUG)
 	def get(self):
 
 		print "\nPageNotFoundHandler.post / request : "
@@ -241,6 +251,7 @@ class PageNotFoundHandler(BaseHandler):
 
 class LoginHandler(BaseHandler):
 	
+	@print_separate(APP_DEBUG)
 	def get(self):
 
 		print "\nLoginHandler.get ... "
@@ -252,6 +263,7 @@ class LoginHandler(BaseHandler):
 			login_or_register = "login"
 		)
 	
+	@print_separate(APP_DEBUG)
 	def post(self):
 		""" check if user exists in db and set cookie"""
 		self.check_xsrf_cookie()
@@ -290,6 +302,7 @@ class LoginHandler(BaseHandler):
 class RegisterHandler(BaseHandler):
 	""" register a user (check if exists in db first)  and set cookie"""
 
+	@print_separate(APP_DEBUG)
 	def get(self):
 	
 		# print "\nRegisterHandler.post / request : "
@@ -303,6 +316,7 @@ class RegisterHandler(BaseHandler):
 			login_or_register = "register"
 		)
 
+	@print_separate(APP_DEBUG)
 	def post(self):
 		""" check if user exists in db, insert it in db, and set cookie"""
 		
@@ -349,8 +363,9 @@ class RegisterHandler(BaseHandler):
 
 
 class LogoutHandler(BaseHandler):
+	@print_separate(APP_DEBUG)
 	def get(self):
-		
+		"""simple logout function to clear cookies"""
 		self.clear_current_user()
 		self.redirect("/")
 
@@ -359,9 +374,11 @@ class LogoutHandler(BaseHandler):
 class UserPreferences(BaseHandler):
 	""" get/update user's infos, preferences, public key... """
 
+	@print_separate(APP_DEBUG)
 	def get(self, user_id=None, token=None) : 
 		self.redirect("/404")
 
+	@print_separate(APP_DEBUG)
 	def post(self): 
 		self.redirect("/404")
 
@@ -383,7 +400,7 @@ class WelcomeHandler(BaseHandler):
 		# count_contributors 	= self.count_documents(db_name="contributors")
 		# count_data 			= self.count_documents(db_name="data")
 		# count_users 		= self.count_documents(db_name="users")
-		counts = self.count_all_documents() 
+		counts = self.count_all_documents(q_datamodel={"field_class" : "custom"}) 
 		print "\nWelcomeHandler.get / counts :", counts
 
 		self.render(
@@ -693,7 +710,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			# update contributor
 			old_fields = {"infos" :1 , "scraper_config" : 1 , "scraper_config_xpaths" : 1 }
 			self.application.coll_spiders.update_one( {"_id": spider_oid}, { "$unset": old_fields } )
-			self.application.coll_spiders.update_one( {"_id": spider_oid}, { "$set": new_config  } , upsert=True )
+			self.application.coll_spiders.update_one( {"_id": spider_oid}, { "$set"	 : new_config }, upsert=True )
 
 		else :
 			contributor = contributor_object.full_config_as_dict()
@@ -718,10 +735,12 @@ class ContributorDeleteHandler(BaseHandler) :
 	"""
 	delete a spider config
 	"""
+	@print_separate(APP_DEBUG)
 	def get(self, spidername=None):
 		print "\nContributorDeleteHandler.get / contributors :"
 		self.redirect("/404")
 
+	@print_separate(APP_DEBUG)
 	def post(self):
 		print "\nContributorDeleteHandler.get / contributors :"
 		self.redirect("/404")
@@ -736,6 +755,7 @@ class DataScrapedHandler(BaseHandler):
 	"""
 	list all data scraped from db.data_scraped 
 	"""
+	@print_separate(APP_DEBUG)
 	def get (self):
 		self.redirect("/404")
 
@@ -743,6 +763,7 @@ class DataScrapedViewOneHandler(BaseHandler):
 	"""
 	list all data scraped from db.data_scraped 
 	"""
+	@print_separate(APP_DEBUG)
 	def get (self, spidername=None):
 		self.redirect("/404")
 
@@ -907,7 +928,7 @@ class SpiderHandler(BaseHandler) :
 
 			print "SpiderHandler.get --- starting spider runner --- "
 			### TO DO : CHECK IF REALLY WORKING : asynchronous run the corresponding spider
-			# run_generic_spider( run_spider_config = spider_config ) # synchronous
+			# self.run_generic_spider( run_spider_config = spider_config ) # synchronous
 			yield self.run_spider( spider_id, spider_config=spider_config ) # asynchronous
 
 			### update scraper_log.is_working
@@ -918,7 +939,7 @@ class SpiderHandler(BaseHandler) :
 			self.render(
 				"index.html",
 				page_title 	= app_main_texts["main_title"],
-				serv_msg 	= "crawling of -%s- launched ..." %(spider_id),
+				serv_msg 	= "crawling of -%s- finished ..." %(spider_id),
 				user 		= self.current_user,
 				counts 		= counts
 			)
@@ -959,6 +980,7 @@ class FormHandler(BaseHandler) :
 	"""
 	test with basic Bulma Form
 	"""
+	@print_separate(APP_DEBUG)
 	def get(self):
 
 		print "\FormHandler.get... "
@@ -980,6 +1002,7 @@ class FormHandler(BaseHandler) :
 		# 		page_title = app_main_texts["main_title"],
 		# 		form=form))
 
+	@print_separate(APP_DEBUG)
 	def post(self):
 		
 		print "\FormHandler.post... "
