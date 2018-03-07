@@ -23,13 +23,13 @@ from twisted.internet 		import reactor, defer
 from scrapy.utils.log 		import configure_logging
 from scrapy.utils.project 	import get_project_settings
 
+from scrapy.settings 	import Settings
 
 from scrapy 			import Spider
-from scrapy.spiders 	import SitemapSpider, CrawlSpider
 from scrapy.crawler 	import CrawlerProcess, CrawlerRunner
-import scrapy.crawler 	as 	   crawler
+# from scrapy.spiders 	import SitemapSpider, CrawlSpider
+# import scrapy.crawler 	as 	   crawler
 
-from scrapy.settings 	import Settings
 
 
 ### settings scrapy
@@ -58,14 +58,9 @@ settings.set( "ITEM_PIPELINES"	, { 'scraper.pipelines.MongodbPipeline' : 300 } )
 print "\n>>> settings scrapy : "
 pprint.pprint(dict(settings))
 
-
-# settings.update(dict(ITEM_PIPELINES = {
-# 	'scraper.pipelines.MongodbPipeline' : 100,
-# }))
 # settings.update(dict(USER_AGENT=
 # 	'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
 # ))
-# ITEM_PIPELINES = {'scraper.pipelines.MongodbPipeline' : 100 }
 
 print "\n"
 print "--- run_generic_spider / BOT_NAME : "	
@@ -179,8 +174,8 @@ class GenericSpider(Spider) :
 
 		### getting data model for later use in item
 		print "--- GenericSpider / datamodel :"
-		self.datamodel = datamodel 
-		pprint.pprint (self.datamodel[:3])
+		# self.datamodel = datamodel 
+		pprint.pprint (datamodel[:3])
 		print "..."
 
 		## storing correspondance dict from datamodel
@@ -189,10 +184,11 @@ class GenericSpider(Spider) :
 		# self.datamodel_dict = dictFromDataModelList(datamodel)
 		# pprint.pprint(self.datamodel_dict)
 
-		self.dm_core 				= { i["field_name"] : i for i in datamodel if i["field_class"] == "core" }
-		self.dm_core_item_related 	= DATAMODEL_CORE_FIELDS_ITEM
-		self.dm_custom 				= { str(i["_id"]) 	: i for i in datamodel if i["field_class"] == "custom" }
-		self.dm_custom_list 		= self.dm_custom.keys()
+		self.dm_core 					= { i["field_name"] : { "field_type" : i["field_type"] } for i in datamodel if i["field_class"] == "core" }
+		self.dm_core_item_related 		= DATAMODEL_CORE_FIELDS_ITEM
+		# self.dm_core_item_related_dict	= DATAMODEL_CORE_FIELDS_ITEM
+		self.dm_custom 					= { str(i["_id"]) 	: { "field_type" : i["field_type"] } for i in datamodel if i["field_class"] == "custom" }
+		self.dm_custom_list 			= self.dm_custom.keys()
 
 		print "--- GenericSpider / dm_item_related :"
 		self.dm_item_related 		= self.dm_custom_list + self.dm_core_item_related
@@ -221,7 +217,7 @@ class GenericSpider(Spider) :
 	def get_next_page(self, response, no_page_url):
 		has_next_page = True
 		has_not_next_page = False
-		'''
+	'''
 
 	def parse(self, response):
 		"""
@@ -231,7 +227,6 @@ class GenericSpider(Spider) :
 		print "--- GenericSpider.parse ..."
 
 		### loop through data items in page in response
-		# for raw_data in response.xpath('//div[@class="quote"]'):
 		for raw_data in response.xpath(self.item_xpath):
 			
 			### instantiate Item to fill from datamodel
@@ -239,28 +234,26 @@ class GenericSpider(Spider) :
 			item 		= itemclass()
 			
 			# just for debugging purposes
-			item[ 'testClass' ]	= "item class is tested : item['testClass']"
+			item[ 'testClass' ]	= "item class is tested"
 
-			# add global info to item
+			# add global info to item : i.e. core fields in dm_core_item_related list
 			item[ 'spider_id' ]	= self.spider_id
 			item[ 'added_by'  ]	= self.user_id 
 			item[ 'added_at'  ]	= time.time()		# timestamp
+			# TO DO 
+			item[ 'link_data']	= ""
+			item[ 'link_src' ]	= ""
 
-
-			### extract data and feed it to item based on spider_config_flat
-			# for d_model, d_xpath in self.datamodel_dict.iteritems() : 
+			### extract data and feed it to Item instance based on spider_config_flat
 			for d_model in self.dm_custom_list : 
 
 				### first, checks if xpath exists in spider_config_flat
-				# if d_xpath in self.spider_config_flat : 
 				if d_model in self.spider_config_flat : 
 					
 					### check if field is not empty
-					# if self.spider_config_flat[ d_xpath ] != [] and self.spider_config_flat[ d_xpath ] != "" :
 					if self.spider_config_flat[ d_model ] != [] and self.spider_config_flat[ d_model ] != "" :
 						
 						### fill item field corresponding to xpath
-						# item[ d_model ] = raw_data.xpath(self.spider_config_flat[ d_xpath ]).extract()
 						item[ d_model ] = raw_data.xpath(self.spider_config_flat[ d_model ]).extract()
 
 
@@ -286,6 +279,7 @@ class GenericSpider(Spider) :
 			yield response.follow(next_page, callback=self.parse)
 
 
+	### TO DO : good follow up and callbacks
 	def get_next_page(self, response):
 		"""tries to find a new page to scrap.
 		if it finds one, returns it along with a True value"""
@@ -331,7 +325,7 @@ class GenericSpider(Spider) :
 
 
 
-### define spider runner
+### define the spider runner
 ### cf : https://stackoverflow.com/questions/13437402/how-to-run-scrapy-from-within-a-python-script
 ### cf : https://doc.scrapy.org/en/latest/topics/practices.html
 ### solution chosen from : https://stackoverflow.com/questions/41495052/scrapy-reactor-not-restartable 

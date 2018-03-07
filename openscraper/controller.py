@@ -971,7 +971,7 @@ class SpiderHandler(BaseHandler) :
 
 		### run spider --- check masterspider.py --> function run_generic_spider()
 		result = run_generic_spider( 
-									user_id				= self.get_current_user_id,
+									user_id				= self.get_current_user_id(),
 									spider_id			= spider_id, 
 									datamodel			= data_model, 
 									run_spider_config	= spider_config 

@@ -14,7 +14,7 @@ USER_CORE_FIELDS = [
 	
 	"username",
 	"email",
-	"password", 	# needs to be hashed
+	"password", 		# TO DO : needs to be hashed
 
 	"level_admin",
 
@@ -61,6 +61,7 @@ DATAMODEL_CORE_FIELDS = [
 	{"field_name" : "modified_by", 		"field_type" : "email"}, 	# spider-related
 	{"field_name" : "modified_at", 		"field_type" : "date"}, 	# spider-related
 	
+	# just for debugging purposes
 	{"field_name" : "testClass", 		"field_type" : "text"}		# item-related = to be stored in item
 ]
 # item-related fields to be used for Item in GenericSpider, in addition to custom fields 

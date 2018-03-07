@@ -47,6 +47,7 @@
 					<tbody>
 
 					{% for field in datamodel_custom %}
+						{% if field["is_visible"]==True %}
 						<tr >
 							<th> {{ escape (field["field_name"]) }} </th>
 							<td> {{ escape (field["field_type"]) }} </td>
@@ -54,9 +55,11 @@
 							<td> {{ escape (field["field_class"]) }} field</td>
 							<td> {{ escape (str(field["_id"])) }} </td>
 						</tr>
+						{% end %}
 					{% end %}
 
 					{% for field in datamodel_core %}
+						{% if field["is_visible"]==True %}
 						<tr >
 							<td> {{ escape (field["field_name"]) }} </td>
 							<td> {{ escape (field["field_type"]) }} </td>
@@ -64,6 +67,7 @@
 							<td> {{ escape (field["field_class"]) }} field</td>
 							<td> {{ escape (str(field["_id"])) }} </td>
 						</tr>
+						{% end %}
 					{% end %}
 
 					</tbody>

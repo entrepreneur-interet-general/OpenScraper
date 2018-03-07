@@ -74,7 +74,7 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 
 1. **create/update your spiders** at `localhost:8000/contributors`
 
-1. **run the test spider in the browser** at `localhost:8000/crawl/testspider`
+1. **run the test spider in the browser** by clicking on the test spider at  `localhost:8000/contributors`
 
 ------
 
