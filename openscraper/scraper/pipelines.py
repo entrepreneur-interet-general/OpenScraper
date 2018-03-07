@@ -13,7 +13,7 @@ class JsonWriterPipeline(object):
 		line = json.dumps(dict(item)) + "\n"
 		self.file.write(line)
 	
-	return item
+		return item
 
 
 # define a Restexport pipeline
@@ -39,19 +39,18 @@ class MongodbPipeline(object):
 
 	@classmethod
 	def from_crawler(cls, crawler):
+		print "\n>>> MongodbPipeline / classmethod ..."
 		pipeline = cls()
-		crawler.signals.connect(pipeline.spider_opened, signals.spider_opened)
-		crawler.signals.connect(pipeline.spider_closed, signals.spider_closed)
+		# crawler.signals.connect(pipeline.spider_opened, signals.spider_opened)
+		# crawler.signals.connect(pipeline.spider_closed, signals.spider_closed)
 		return pipeline
 
 	def process_item(self, item, spider):
 		print "\n>>> MongodbPipeline / process_item ..."
 
 		# check if already exists
-
+		
 		# insert / update in db
 
-
-
-	return item
+		return item
 

@@ -40,7 +40,8 @@ from scrapy.settings 	import Settings
 settings = Settings()
 settings.set( "BOT_NAME"		, "OpenScraper")
 settings.set( "USER_AGENT"		, "Open Scraper (+https://github.com/entrepreneur-interet-general/OpenScraper)")
-# settings.set( "ITEM_PIPELINES"	, { 'scraper.pipelines.MongodbPipeline' : 300 } )
+settings.set( "ITEM_PIPELINES"	, { 'scraper.pipelines.MongodbPipeline' : 300 } )
+# settings.set( "ITEM_PIPELINES"	, { '__main__.scraper.pipelines.MongodbPipeline' : 300 } )
 
 print "\n>>> settings scrapy : "
 pprint.pprint(dict(settings))
