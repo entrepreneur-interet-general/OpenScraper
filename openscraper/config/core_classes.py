@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 
 import 	pprint
 import 	copy
@@ -74,6 +75,7 @@ class SpiderConfig :
 			form['notes'] 		= form['notes'].replace("\n", "")
 			form['notes'] 		= form['notes'].replace("\r", "")
 			
+			# clean radio field values
 			for radio_field in CONTRIBUTOR_EDIT_FIELDS_RADIO : 
 				if form[radio_field] == "true" : 
 					form[radio_field] = True

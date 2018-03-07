@@ -2,6 +2,7 @@
 
 import time
 import pprint
+import os 
 
 ### import scrapy utilities
 import scrapy
@@ -11,6 +12,14 @@ from twisted.internet 		import reactor, defer
 
 from scrapy.utils.log 		import configure_logging
 from scrapy.utils.project 	import get_project_settings
+
+
+from scrapy 			import Spider
+from scrapy.spiders 	import SitemapSpider, CrawlSpider
+from scrapy.crawler 	import CrawlerProcess, CrawlerRunner
+import scrapy.crawler 	as 	   crawler
+
+from scrapy.settings 	import Settings
 
 
 ### settings scrapy
@@ -25,7 +34,36 @@ from scrapy.utils.project 	import get_project_settings
 # print "\nupdated settings scrapy : "
 # pprint.pprint(dict(s))
 
-# runner = crawler.CrawlerRunner(settings=s)
+
+# TO DO : PIPELINES....
+# update setting to use the pipeline which write result in json file
+settings = Settings()
+settings.set( "BOT_NAME"		, "OpenScraper")
+settings.set( "USER_AGENT"		, "Open Scraper (+https://github.com/entrepreneur-interet-general/OpenScraper)")
+# settings.set( "ITEM_PIPELINES"	, { 'scraper.pipelines.MongodbPipeline' : 300 } )
+
+print "\n>>> settings scrapy : "
+pprint.pprint(dict(settings))
+
+
+# settings.update(dict(ITEM_PIPELINES = {
+# 	'scraper.pipelines.MongodbPipeline' : 100,
+# }))
+# settings.update(dict(USER_AGENT=
+# 	'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
+# ))
+# ITEM_PIPELINES = {'scraper.pipelines.MongodbPipeline' : 100 }
+
+print "\n"
+print "--- run_generic_spider / BOT_NAME : "	
+print settings.get('BOT_NAME')
+print "--- run_generic_spider / USER_AGENT : "	
+print settings.get('USER_AGENT')
+print "--- run_generic_spider / ITEM_PIPELINES : " 	
+print settings.get('ITEM_PIPELINES').__dict__
+
+
+
 
 
 ### import main args fom config
@@ -63,12 +101,6 @@ from items import * # GenericItem #, StackItem #ScrapedItem
 #####################################################
 ### define generic spider
 ### cf : https://blog.scrapinghub.com/2016/02/24/scrapy-tips-from-the-pros-february-2016-edition/
-
-
-from scrapy 			import Spider
-from scrapy.spiders 	import SitemapSpider, CrawlSpider
-from scrapy.crawler 	import CrawlerProcess, CrawlerRunner
-import scrapy.crawler 	as crawler
 
 # process = crawler.CrawlerRunner()
 
@@ -149,7 +181,7 @@ class GenericSpider(Spider) :
 		self.dm_custom_list 		= self.dm_custom.keys()
 
 		print "--- GenericSpider / dm_item_related :"
-		self.dm_item_related = self.dm_custom_list + self.dm_core_item_related
+		self.dm_item_related 		= self.dm_custom_list + self.dm_core_item_related
 		pprint.pprint(self.dm_item_related)
 
 	'''
@@ -181,6 +213,9 @@ class GenericSpider(Spider) :
 		"""
 		parse pages to scrap data
 		"""
+
+		print "--- GenericSpider.parse ..."
+
 		### loop through data items in page in response
 		# for raw_data in response.xpath('//div[@class="quote"]'):
 		for raw_data in response.xpath(self.item_xpath):
@@ -293,22 +328,9 @@ def run_generic_spider( spider_id=None, datamodel=None, run_spider_config=None )
 
 	print "\n--- run_generic_spider / spider_id : ", spider_id
 	
-	### instantiate settings and provide a custom configuration
-	# settings = Settings()
-	# settings.set('ITEM_PIPELINES', {
-	# 	'__main__.JsonWriterPipeline': 100
-	# })
-
-	### initiating crawler process
-	# process = CrawlerRunner() #CrawlerProcess()
-	process = CrawlerRunner({
-		'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)',
-		# 'ITEM_PIPELINES' : '',
-	})
-	settings = get_project_settings()
-	print "--- run_generic_spider / Your USER_AGENT is:\n%s" % (settings.get('USER_AGENT'))
-	print "--- run_generic_spider / Your ITEM_PIPELINES is:\n%s" % (settings.get('ITEM_PIPELINES'))
-
+	# !!! spider is launched from main.py level !!! 
+	# all relative routes referring to this...
+	print "\n--- run_generic_spider / os.getcwd() : ", os.getcwd() 
 
 	### flattening run_spider_config : from nested to flat dict 
 	# print "--- run_generic_spider / run_spider_config : "
@@ -317,6 +339,32 @@ def run_generic_spider( spider_id=None, datamodel=None, run_spider_config=None )
 	spider_config_flat = flattenSpiderConfig(run_spider_config)
 	# print "--- run_generic_spider / spider_config_flat : "
 	# pprint.pprint(spider_config_flat)
+
+	### instantiate settings and provide a custom configuration
+	# settings = Settings()
+	# settings.set('ITEM_PIPELINES', {
+	# 	'__main__.JsonWriterPipeline': 100
+	# })
+
+	### initiating crawler process
+	# process = CrawlerRunner() 
+	# process = CrawlerProcess()
+	# process = CrawlerRunner({
+	# 	'USER_AGENT'		: 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)',
+	# 	# 'ITEM_PIPELINES' 	: {'scraper.pipelines.MongodbPipeline' : 100 },
+	# })
+
+
+
+	print "--- run_generic_spider / BOT_NAME : "	
+	print settings.get('BOT_NAME')
+	print "--- run_generic_spider / USER_AGENT : "	
+	print settings.get('USER_AGENT')
+	print "--- run_generic_spider / ITEM_PIPELINES : " 	
+	print settings.get('ITEM_PIPELINES').__dict__
+
+	print "\n--- run_generic_spider / instance process ..." 	
+	process = CrawlerRunner( settings = settings )
 
 	### adding crawler.runner as deferred
 	def f(q):

@@ -708,7 +708,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			new_config 	= contributor_object.partial_config_as_dict( previous_config = contributor )
 
 			# update contributor
-			old_fields = {"infos" :1 , "scraper_config" : 1 , "scraper_config_xpaths" : 1 }
+			old_fields = {"infos" : 1 , "scraper_config" : 1 , "scraper_config_xpaths" : 1 }
 			self.application.coll_spiders.update_one( {"_id": spider_oid}, { "$unset": old_fields } )
 			self.application.coll_spiders.update_one( {"_id": spider_oid}, { "$set"	 : new_config }, upsert=True )
 
@@ -935,14 +935,14 @@ class SpiderHandler(BaseHandler) :
 			self.application.coll_spiders.update_one( {"_id": ObjectId(spider_id) }, {"$set" : {"scraper_log.is_working" : True}})
 
 			### TO DO : redirect to a page showing crawling status / results
-			# self.redirect("/contributors/")
-			self.render(
-				"index.html",
-				page_title 	= app_main_texts["main_title"],
-				serv_msg 	= "crawling of -%s- finished ..." %(spider_id),
-				user 		= self.current_user,
-				counts 		= counts
-			)
+			self.redirect("/contributors")
+			# self.render(
+			# 	"index.html",
+			# 	page_title 	= app_main_texts["main_title"],
+			# 	serv_msg 	= "crawling of -%s- finished ..." %(spider_id),
+			# 	user 		= self.current_user,
+			# 	counts 		= counts
+			# )
 
 	@print_separate(APP_DEBUG)
 	@gen.coroutine
