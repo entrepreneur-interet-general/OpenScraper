@@ -1,8 +1,18 @@
 # -*- encoding: utf-8 -*-
 
-import time
-import pprint
-import os 
+import 	pprint
+import 	os 
+
+import 	time
+from 	datetime import datetime
+
+# cf : http://blog.jmoz.co.uk/python-convert-datetime-to-timestamp/
+"""
+import datetime
+readable = datetime.datetime.fromtimestamp(1520437834).isoformat()
+print(readable)
+# 2018-03-07T16:50:34+01:00
+"""
 
 ### import scrapy utilities
 import scrapy
@@ -35,13 +45,15 @@ from scrapy.settings 	import Settings
 # pprint.pprint(dict(s))
 
 
-# TO DO : PIPELINES....
+# PIPELINES....
 # update setting to use the pipeline which write result in json file
+# cf self-contained scrapy : https://gist.github.com/alecxe/fc1527d6d9492b59c610
+# cf self-contained scrapy : https://github.com/kirankoduru/scrapy-programmatically/
+
 settings = Settings()
 settings.set( "BOT_NAME"		, "OpenScraper")
 settings.set( "USER_AGENT"		, "Open Scraper (+https://github.com/entrepreneur-interet-general/OpenScraper)")
 settings.set( "ITEM_PIPELINES"	, { 'scraper.pipelines.MongodbPipeline' : 300 } )
-# settings.set( "ITEM_PIPELINES"	, { '__main__.scraper.pipelines.MongodbPipeline' : 300 } )
 
 print "\n>>> settings scrapy : "
 pprint.pprint(dict(settings))
@@ -144,13 +156,14 @@ class GenericSpider(Spider) :
 	### spider class needs a default name
 	name = "genericspider"
 
-	def __init__(self, datamodel=None, spider_id=None, spider_config_flat=None, *args, **kwargs) : 
+	def __init__(self, user_id=None, datamodel=None, spider_id=None, spider_config_flat=None, *args, **kwargs) : 
 		
 		### super init/override spider class with current args 
 		print "\n--- GenericSpider / __init__ :"
 		super(GenericSpider, self).__init__(*args, **kwargs)
 		
-		self.spider_id = spider_id
+		self.user_id	= user_id
+		self.spider_id 	= spider_id
 
 		### store spider_config_flat
 		print "--- GenericSpider / spider_config_flat :"
@@ -229,8 +242,9 @@ class GenericSpider(Spider) :
 			item[ 'testClass' ]	= "item class is tested : item['testClass']"
 
 			# add global info to item
-			item[ 'added_by'  ]	= self.spider_id 
-			item[ 'added_at'  ]	= "now" 
+			item[ 'spider_id' ]	= self.spider_id
+			item[ 'added_by'  ]	= self.user_id 
+			item[ 'added_at'  ]	= time.time()		# timestamp
 
 
 			### extract data and feed it to item based on spider_config_flat
@@ -322,7 +336,11 @@ class GenericSpider(Spider) :
 ### cf : https://doc.scrapy.org/en/latest/topics/practices.html
 ### solution chosen from : https://stackoverflow.com/questions/41495052/scrapy-reactor-not-restartable 
 
-def run_generic_spider( spider_id=None, datamodel=None, run_spider_config=None ):
+def run_generic_spider( user_id				= None, 
+						spider_id			= None, 
+						datamodel			= None, 
+						run_spider_config	= None 
+						):
 	"""
 	just launch run_generic_spider() from any handler in controller
 	"""
@@ -374,6 +392,7 @@ def run_generic_spider( spider_id=None, datamodel=None, run_spider_config=None )
 			### cf : https://stackoverflow.com/questions/35662146/dynamic-spider-generation-with-scrapy-subclass-init-error
 			
 			deferred = process.crawl(GenericSpider, 
+										user_id				= user_id,
 										datamodel 			= datamodel , 
 										spider_id 			= spider_id ,
 										spider_config_flat	= spider_config_flat 

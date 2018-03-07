@@ -79,12 +79,16 @@
 									<p class="control">
 										<span class="select is-rounded" >
 											<select name="field_keep">
-												<option selected >
-													keep
-												</option>
-												<option>
-													delete
-												</option>
+												
+												{% for vis in field_keep_vars %}
+													<option  
+													{% if field[u'is_visible']==True and vis=="keep"  %} selected {% end %}
+													{% if field[u'is_visible']==False and vis=="not visible"  %} selected {% end %}
+													>
+														{{vis}}
+													</option>
+												{% end %}
+
 											</select>
 										</span>
 									</p>

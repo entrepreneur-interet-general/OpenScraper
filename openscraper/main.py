@@ -88,7 +88,8 @@ class Application(tornado.web.Application):
 			{ 	"field_name" 	: field["field_name"], 
 				"field_type" 	: field["field_type"],
 				"field_class" 	: "core" ,
-				"added_by" 		: "admin"
+				"added_by" 		: "admin",
+				"is_visible"	: False
 			} for field in DATAMODEL_CORE_FIELDS
 		]
 		print ">>> Application.__init__ / datamodel - core_fields : "
@@ -102,8 +103,9 @@ class Application(tornado.web.Application):
 			{'$set':  { 
 					"field_type" 	: field["field_type"],
 					"field_class" 	: field["field_class"],
-					"added_by" 		: field["added_by"],
-					 } 
+					"added_by" 		: field["added_by"], 	# "admin",
+					"is_visible"	: field["is_visible"], 	# False
+					} 
 			}, 
 			upsert=True ) for field in core_fields 
 		]

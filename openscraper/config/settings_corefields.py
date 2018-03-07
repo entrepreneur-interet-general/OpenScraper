@@ -41,6 +41,9 @@ DATAMODEL_FIELDS_TYPES = [
 	"tags", 
 	"price"
 ]
+DATAMODEL_FIELD_KEEP_VARS = [
+	"keep", "not visible", "delete", 
+]
 # fields to keep always as db backbone - mainly fields necessary to create a spider
 DATAMODEL_CORE_FIELDS = [
 	{"field_name" : "next_page", 		"field_type" : "text"},	# spider-related
@@ -64,7 +67,9 @@ DATAMODEL_CORE_FIELDS = [
 DATAMODEL_CORE_FIELDS_ITEM = [
 	"link_data", 
 	"link_src", 
+	
 	"spider_id", 
+
 	"added_by", 
 	"added_at", 
 

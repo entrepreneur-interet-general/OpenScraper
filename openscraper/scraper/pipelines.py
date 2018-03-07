@@ -46,9 +46,9 @@ class MongodbPipeline(object):
 		return pipeline
 
 	def process_item(self, item, spider):
-		print "\n>>> MongodbPipeline / process_item ..."
+		print ">>> MongodbPipeline / process_item ..."
 
-		# check if already exists
+		# check if already exists in db
 		
 		# insert / update in db
 

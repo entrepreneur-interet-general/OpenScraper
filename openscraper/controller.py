@@ -12,10 +12,10 @@ import tornado.web, tornado.template
 from tornado import gen
 
 ### import app settings / infos 
-from config.app_infos import app_infos, app_main_texts
-from config.settings_example import * # MONGODB_COLL_CONTRIBUTORS, MONGODB_COLL_DATAMODEL, MONGODB_COLL_DATASCRAPPED
+from config.app_infos 			import app_infos, app_main_texts
+from config.settings_example 	import * # MONGODB_COLL_CONTRIBUTORS, MONGODB_COLL_DATAMODEL, MONGODB_COLL_DATASCRAPPED
 from config.settings_corefields import *
-from config.core_classes import SpiderConfig, UserClass
+from config.core_classes		import SpiderConfig, UserClass
 
 ### import WTForms for validation
 from forms import *
@@ -54,7 +54,7 @@ def create_generic_custom_fields():
 def reset_fields_to_default():
 	"""reset datamodel to default : core fields and default custom fields"""
 
-	self.application.coll_model.remove({})
+	self.application.coll_model.remove({ "field_class" : "custom" })
 	create_generic_custom_fields()
 
 ### DECORATORS / UTILS 
@@ -370,7 +370,7 @@ class LogoutHandler(BaseHandler):
 		self.redirect("/")
 
 
-### TO DO 
+### TO DO : add form to show and edit user preferences
 class UserPreferences(BaseHandler):
 	""" get/update user's infos, preferences, public key... """
 
@@ -470,6 +470,7 @@ class DataModelEditHandler(BaseHandler):
 			"datamodel_edit.html",
 			page_title 	= app_main_texts["main_title"],
 			field_types = DATAMODEL_FIELDS_TYPES,
+			field_keep_vars	 = DATAMODEL_FIELD_KEEP_VARS,
 			datamodel_custom = data_model_custom,
 		)
 
@@ -507,7 +508,8 @@ class DataModelEditHandler(BaseHandler):
 			updated_fields.append(field)
 		# _id back to object id
 		for field in updated_fields : 
-			field["_id"] = ObjectId(field["_id"])
+			field["_id"] 		= ObjectId(field["_id"])
+			field["is_visible"] = True
 		print "DataModelEditHandler.post / updated_fields :  "
 		pprint.pprint(updated_fields)
 
@@ -521,6 +523,7 @@ class DataModelEditHandler(BaseHandler):
 			{'$set':  { 
 					"field_type" 	: field["field_type"],
 					"field_name" 	: field["field_name"],
+					"is_visible" 	: True,
 					"modified_by"	: self.get_current_user_email()	
 					 } 
 			}, 
@@ -536,7 +539,9 @@ class DataModelEditHandler(BaseHandler):
 				# print field_in_db
 				self.application.coll_model.delete_one({"_id" : field["_id"]})
 				# coll_model.remove({"_id" : field["_id"]})
-
+			if field["field_keep"] == "not visible":
+				self.application.coll_model.update_one({"_id" : field["_id"]}, {"$set" : { "is_visible" : False }})
+				
 		### redirect once finished
 		self.redirect("/datamodel/view")
 
@@ -574,6 +579,7 @@ class DataModelAddFieldHandler(BaseHandler) :
 			"field_type" 	: self.get_argument("field_type"),
 			"added_by" 		: self.get_current_user_email(),
 			"field_class" 	: "custom",
+			"is_visible" 	: True,
 		}
 		print "DataModelAddFieldHandler.post / new_field : ", new_field
 
@@ -965,6 +971,7 @@ class SpiderHandler(BaseHandler) :
 
 		### run spider --- check masterspider.py --> function run_generic_spider()
 		result = run_generic_spider( 
+									user_id				= self.get_current_user_id,
 									spider_id			= spider_id, 
 									datamodel			= data_model, 
 									run_spider_config	= spider_config 
