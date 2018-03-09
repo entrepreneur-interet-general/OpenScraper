@@ -55,6 +55,7 @@ from controller import *
 # cf : db.getCollection('contributors').update({}, {$set:{"infos.added_by" : "admin"} }, {upsert:true, multi:true})
 
 
+### UTILS AT MAIN LEVEL
 def create_datamodel_fields( coll_model, fields_list, field_class ) : 
 	"""
 	create datamodel fields from list of field basic dict like DATAMODEL_CORE_FIELDS
@@ -100,7 +101,7 @@ def create_datamodel_fields( coll_model, fields_list, field_class ) :
 
 
 
-### main Tornado application wrapper
+### MAIN TORNADO APPLICATION WRAPPER
 class Application(tornado.web.Application):
 	"""
 	main Tornado application wrapper :
@@ -117,7 +118,7 @@ class Application(tornado.web.Application):
 
 		timestamp = time.time()
 
-		### connect to MongoDB
+		### connect to MongoDB with variables from config.settings.py
 		client = MongoClient(
 					host = MONGODB_HOST, 
 					port = MONGODB_PORT

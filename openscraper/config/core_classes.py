@@ -132,7 +132,8 @@ class SpiderConfig :
 
 		print previous_config
 		partial_config = { k : v for k,v in self.spider_config.iteritems() if k in ["infos", "scraper_config", "scraper_config_xpaths"]}
-		# reset scraper log
+		
+		# reset scraper_log
 		partial_config["scraper_log"] = deepcopy(CONTRIBUTOR_CORE_FIELDS["scraper_log"])
 		partial_config["scraper_log"]["modified_by"]	= self.user
 		partial_config["scraper_log"]["modified_at"]	= self.timestamp

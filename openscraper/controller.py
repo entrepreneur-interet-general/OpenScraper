@@ -152,6 +152,7 @@ class BaseHandler(tornado.web.RequestHandler):
 	def get_current_user_id(self):
 		user_email = self.get_current_user_email()
 		user 	   = self.application.coll_users.find_one({"email": user_email })
+		# return unicode(str(user["_id"]))
 		return str(user["_id"])
 
 	def add_user_to_db(self, user): 
@@ -476,7 +477,7 @@ class DataModelEditHandler(BaseHandler):
 			field_types = DATAMODEL_FIELDS_TYPES,
 			field_keep_vars	 = DATAMODEL_FIELD_KEEP_VARS,
 			datamodel_custom = data_model_custom,
-		)
+		) 
 
 	@print_separate(APP_DEBUG)
 	def post(self):
@@ -984,7 +985,7 @@ class SpiderHandler(BaseHandler) :
 		### run spider --- check masterspider.py --> function run_generic_spider()
 		result = run_generic_spider( 
 									user_id				= self.get_current_user_id(),
-									spider_id			= spider_id, 
+									spider_id			= str(spider_id), 
 									datamodel			= data_model, 
 									run_spider_config	= spider_config 
 									)

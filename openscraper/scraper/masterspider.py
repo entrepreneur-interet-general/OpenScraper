@@ -60,11 +60,14 @@ settings = Settings()
 # settings.set( "BOT_NAME"		, "OpenScraper")
 # settings.set( "USER_AGENT"		, "Open Scraper (+https://github.com/entrepreneur-interet-general/OpenScraper)")
 # settings.set( "ITEM_PIPELINES"	, { 'scraper.pipelines.MongodbPipeline' : 300 } )
-settings.set( "BOT_NAME"		, BOT_NAME )
-settings.set( "USER_AGENT"		, USER_AGENT )
-settings.set( "ITEM_PIPELINES"	, ITEM_PIPELINES )
-settings.set( "MONGO_URI" 		, MONGO_URI )
-settings.set( "MONGO_DATABASE" 	, MONGO_DATABASE )
+settings.set( "BOT_NAME"					, BOT_NAME )
+settings.set( "USER_AGENT"					, USER_AGENT )
+settings.set( "ITEM_PIPELINES"				, ITEM_PIPELINES )
+settings.set( "MONGO_URI" 					, MONGO_URI )
+settings.set( "MONGO_DATABASE" 				, MONGO_DATABASE )
+settings.set( "DOWNLOAD_DELAY" 				, DOWNLOAD_DELAY )
+settings.set( "RANDOMIZE_DOWNLOAD_DELAY"	, RANDOMIZE_DOWNLOAD_DELAY )
+
 
 print "\n>>> settings scrapy : "
 pprint.pprint(dict(settings))
@@ -124,7 +127,7 @@ from items import * # GenericItem #, StackItem #ScrapedItem
 
 # to be used in run_generic_spider function
 def flattenSpiderConfig(run_spider_config) :
-	"""creates a flat dict from nest spider_config dict"""
+	"""creates a flat dict from nested spider_config dict"""
 	spider_config_flat = {}
 	for conf_class, conf_set in run_spider_config.iteritems() :
 		if conf_class != "_id" :
@@ -168,19 +171,19 @@ class GenericSpider(Spider) :
 		self.spider_id 	= spider_id
 
 		### store spider_config_flat
-		print "--- GenericSpider / spider_config_flat :"
+		print "\n--- GenericSpider / spider_config_flat :"
 		pprint.pprint(spider_config_flat)
 		self.spider_config_flat = spider_config_flat
 
 		### getting all the config args from spider_config_flat (i.e. next_page, ...)
-		print "--- GenericSpider / passing kwargs..."
+		print "\n--- GenericSpider / passing kwargs..."
 		for k, v in spider_config_flat.iteritems() : 
 			print "   - ", k, ":", v
 			self.__dict__[k] = v
 
 
 		### getting data model for later use in item
-		print "--- GenericSpider / datamodel :"
+		print "\n--- GenericSpider / datamodel :"
 		# self.datamodel = datamodel 
 		pprint.pprint (datamodel[:3])
 		print "..."
@@ -197,8 +200,8 @@ class GenericSpider(Spider) :
 		self.dm_custom 					= { str(i["_id"]) 	: { "field_type" : i["field_type"] } for i in datamodel if i["field_class"] == "custom" }
 		self.dm_custom_list 			= self.dm_custom.keys()
 
-		print "--- GenericSpider / dm_item_related :"
-		self.dm_item_related 		= self.dm_custom_list + self.dm_core_item_related
+		print "\n--- GenericSpider / dm_item_related :"
+		self.dm_item_related 			= self.dm_custom_list + self.dm_core_item_related
 		pprint.pprint(self.dm_item_related)
 
 	'''
@@ -266,7 +269,8 @@ class GenericSpider(Spider) :
 						item[ d_model ] = raw_data.xpath(self.spider_config_flat[ d_model ]).extract()
 
 
-			print "\nGenericSpider.parse - item : \n", item.items()
+			### item completion is finished - yield and so spark pipeline for item (store in db for instance)
+			# print "\nGenericSpider.parse - item : \n", item.items()
 			# print item.keys()
 			yield item
 
@@ -274,6 +278,7 @@ class GenericSpider(Spider) :
 			if self.spider_config_flat["parse_follow"] == True : 
 				url = item['link']
 				yield scrapy.Request(url, callback=self.parse_detailed_page, meta={'item': item})
+
 
 		### get and go to next page 
 		# next_page_url = response.xpath(self.spider_config_flat[ "next_page_xpath" ]).extract_first()
@@ -402,7 +407,7 @@ def run_generic_spider( user_id				= None,
 	### flattening run_spider_config : from nested to flat dict 
 	# print "--- run_generic_spider / run_spider_config : "
 	# pprint.pprint(run_spider_config)
-	print "--- run_generic_spider / flattening run_spider_config"
+	print "--- run_generic_spider / flattening run_spider_config --> spider_config_flat"
 	spider_config_flat = flattenSpiderConfig(run_spider_config)
 	# print "--- run_generic_spider / spider_config_flat : "
 	# pprint.pprint(spider_config_flat)
@@ -423,14 +428,11 @@ def run_generic_spider( user_id				= None,
 
 
 
-	print "--- run_generic_spider / BOT_NAME : "	
-	print settings.get('BOT_NAME')
-	print "--- run_generic_spider / USER_AGENT : "	
-	print settings.get('USER_AGENT')
-	print "--- run_generic_spider / ITEM_PIPELINES : " 	
-	print settings.get('ITEM_PIPELINES').__dict__
+	print "--- run_generic_spider / BOT_NAME :       ", settings.get('BOT_NAME')
+	print "--- run_generic_spider / USER_AGENT :     ", settings.get('USER_AGENT')
+	print "--- run_generic_spider / ITEM_PIPELINES : ", settings.get('ITEM_PIPELINES').__dict__
 
-	print "\n--- run_generic_spider / instance process ..." 	
+	print "\n--- run_generic_spider / instanciate process ..." 	
 	process = CrawlerRunner( settings = settings )
 
 	### adding crawler.runner as deferred
@@ -444,9 +446,7 @@ def run_generic_spider( user_id				= None,
 										datamodel 			= datamodel , 
 										spider_id 			= spider_id ,
 										spider_config_flat	= spider_config_flat 
-									)
-			# deferred = process.crawl(ToScrapeSpiderXPath )
-			
+									)			
 			deferred.addBoth(lambda _: reactor.stop())
 			reactor.run()
 			q.put(None)

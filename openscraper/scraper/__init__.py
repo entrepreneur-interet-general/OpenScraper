@@ -2,27 +2,19 @@
 # -*- coding: utf-8 -*-
 
 """ 
-TOWARDS A GENERIC SPIDER 
+TOWARDS A GENERIC SCRAPER 
 -------------------------
-imports generic Item creator
-imports generic spider 
+the goal of this part of OpenScraper is to use 
+the Scrapy library but free of its usual/out-of-the-box configuration
+
+all the scraping is rewritten to be used in a self-contained manner
+so to be run from the python script and not from bash
+
 """
 
-### need to be flexible : user set it and store structure in DB
-### this common structure needs is to be used in  : 
-### - scrapy item    : class ScrapedItem(scrapy.Item):
-### - scrapy mixin   : class GenericSpiderMix : 
-### - generic spider : class GenericSpider(scrapy.Spider, GenericSpiderMix):
-
-### temporary solution (static list) 
-# base_fields = [
-# 		"img_xpath" ,
-# 		"link_xpath" ,
-# 		"abstract_xpath" ,
-# 		"title_xpath" ,
-# 		"date_xpath" ,
-# ]
 
 ### needs imports here to be called from controller.py
-from items import *
-from masterspider import *
+from items          import *
+from masterspider   import *
+from pipelines      import *
+from settings_scrapy	import *

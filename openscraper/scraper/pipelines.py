@@ -1,6 +1,10 @@
 # -*- encoding: utf-8 -*-
-
+import os
 import json 
+import pprint
+import pymongo
+from pymongo import MongoClient
+
 
 ### TO DO 
 
@@ -35,44 +39,64 @@ class RestExportPipeline(object):
 class MongodbPipeline(object):
 	
 
-	def __init__(self, mongo_uri=None, mongo_db=None):
-
-		print "\n>>> MongodbPipeline / __init__ ..."
-		self.mongo_db	= mongo_db
-		self.mongo_uri	= mongo_uri
-
-	
 	@classmethod
 	def from_crawler(cls, crawler):
 		
-		print "\n>>> MongodbPipeline / classmethod ..."
+		print "\n>>> MongodbPipeline / @classmethod + from_crawler ..."
 		
 		## pull in information from settings.py
-
 		pipeline = cls(
-			mongo_uri	=	crawler.settings.get('MONGO_URI'),
-			mongo_db	=	crawler.settings.get('MONGO_DATABASE')
+			mongo_uri			= crawler.settings.get('MONGO_URI'),
+			mongo_db			= crawler.settings.get('MONGO_DATABASE'),
+			mongo_coll_scrap 	= crawler.settings.get('MONGO_COLL_SCRAP')
 		)
 		# crawler.signals.connect(pipeline.spider_opened, signals.spider_opened)
 		# crawler.signals.connect(pipeline.spider_closed, signals.spider_closed)
-		return pipeline
-		# return cls()
+		return pipeline # equivalent to : return cls(*args, **kwargs)
 
+	def __init__(self, mongo_uri=None, mongo_db=None, mongo_coll_scrap=None):
 
+		print "\n>>> MongodbPipeline / __init__ ..."
+		# self.mongo_uri			= mongo_uri
+		# self.mongo_db			= mongo_db
+		# self.mongo_coll_scrap 	= mongo_coll_scrap
+		print "--- MongodbPipeline / os.getcwd() : ", os.getcwd() 
+		# client 	= MongoClient( 
+		# 			mongo_uri
+		# 			# host = MONGODB_HOST, 
+		# 			# port = MONGODB_PORT
+		# )
+		# db 		= client[mongo_db]
+		# self.coll_data = db[ mongo_coll_scrap ]
 
+	def open_spider(self, spider):
+		## initializing spider
+		## opening db connection
+		print "\n>>> MongodbPipeline / open_spider ..."
+
+		# self.client = pymongo.MongoClient(self.mongo_uri)
+		# self.db = self.client[self.mongo_db]
+		pass
+
+	def close_spider(self, spider) :
+        ## clean up when spider is closed
+		print "\n>>> MongodbPipeline / close_spider ..."
+		pass
+		
 	def process_item(self, item, spider):
 		"""handle each item and post it to db"""
 
-		print ">>> MongodbPipeline / process_item ..."
+		print "\n>>> MongodbPipeline / process_item ..."
 
 		# item object to dict
-		item_dict = "test" # item.__dict__
-		print ">>> MongodbPipeline / item_dict : ", item_dict
+		item_dict = dict(item)
+		print ">>> MongodbPipeline / item_dict : "
+		pprint.pprint(item_dict)
 
 		# check if already exists in db
 		# self.application.coll_data.find({})
 
 		# insert / update in db
-		# self.db[self.collection_name].insert(dict(item))
+		# self.coll_data.insert(dict(item))
 
 		return item
