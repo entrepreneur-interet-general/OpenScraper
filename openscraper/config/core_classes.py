@@ -4,6 +4,8 @@ import 	pprint
 import 	copy
 from 	copy import deepcopy
 import 	re
+import 	time
+from 	datetime import datetime
 
 ### for JWT in Python, cf : https://github.com/jpadilla/pyjwt
 import 	jwt
@@ -33,6 +35,10 @@ class UserClass :
 			except : 
 				pass
 
+	### TO DO : hash password
+	def hash_password(self) : 
+		pass
+
 class SpiderConfig :
 	"""
 	a spider config object that can be created from form...
@@ -46,6 +52,8 @@ class SpiderConfig :
 		user		= "admin" ) :
 
 		print "\n*** SpiderConfig ... new_spider : ", new_spider
+
+		self.timestamp = time.time()
 
 		### begin instance with empty CONTRIBUTOR_CORE_FIELDS
 		self.user 			= user
@@ -110,6 +118,7 @@ class SpiderConfig :
 		if new_spider == True :
 			self.spider_config["scraper_log"]["added_by"] 		= user
 			self.spider_config["scraper_log"]["modified_by"] 	= user
+			self.spider_config["scraper_log"]["added_at"] 		= self.timestamp
 
 		print "\n*** SpiderConfig / finishing instance / contributor as self.spider_config : "
 		# pprint.pprint (self.spider_config )
@@ -125,7 +134,8 @@ class SpiderConfig :
 		partial_config = { k : v for k,v in self.spider_config.iteritems() if k in ["infos", "scraper_config", "scraper_config_xpaths"]}
 		# reset scraper log
 		partial_config["scraper_log"] = deepcopy(CONTRIBUTOR_CORE_FIELDS["scraper_log"])
-		partial_config["scraper_log"]["modified_by"]	= self.user 
+		partial_config["scraper_log"]["modified_by"]	= self.user
+		partial_config["scraper_log"]["modified_at"]	= self.timestamp
 		partial_config["scraper_log"]["added_by"] 		= previous_config["scraper_log"]["added_by"]
 
 		return partial_config

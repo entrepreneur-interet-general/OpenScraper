@@ -14,6 +14,11 @@ print(readable)
 # 2018-03-07T16:50:34+01:00
 """
 
+# import app settings
+from config.settings_example import * 
+# from config.settings import * 
+from config.settings_scrapy import * 
+
 ### import scrapy utilities
 import scrapy
 
@@ -50,17 +55,19 @@ from scrapy.crawler 	import CrawlerProcess, CrawlerRunner
 # cf self-contained scrapy : https://gist.github.com/alecxe/fc1527d6d9492b59c610
 # cf self-contained scrapy : https://github.com/kirankoduru/scrapy-programmatically/
 
+### set scrapy from settings_scrapy
 settings = Settings()
-settings.set( "BOT_NAME"		, "OpenScraper")
-settings.set( "USER_AGENT"		, "Open Scraper (+https://github.com/entrepreneur-interet-general/OpenScraper)")
-settings.set( "ITEM_PIPELINES"	, { 'scraper.pipelines.MongodbPipeline' : 300 } )
+# settings.set( "BOT_NAME"		, "OpenScraper")
+# settings.set( "USER_AGENT"		, "Open Scraper (+https://github.com/entrepreneur-interet-general/OpenScraper)")
+# settings.set( "ITEM_PIPELINES"	, { 'scraper.pipelines.MongodbPipeline' : 300 } )
+settings.set( "BOT_NAME"		, BOT_NAME )
+settings.set( "USER_AGENT"		, USER_AGENT )
+settings.set( "ITEM_PIPELINES"	, ITEM_PIPELINES )
+settings.set( "MONGO_URI" 		, MONGO_URI )
+settings.set( "MONGO_DATABASE" 	, MONGO_DATABASE )
 
 print "\n>>> settings scrapy : "
 pprint.pprint(dict(settings))
-
-# settings.update(dict(USER_AGENT=
-# 	'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
-# ))
 
 print "\n"
 print "--- run_generic_spider / BOT_NAME : "	
@@ -226,6 +233,8 @@ class GenericSpider(Spider) :
 
 		print "--- GenericSpider.parse ..."
 
+		print response.xpath(self.item_xpath)[0]
+
 		### loop through data items in page in response
 		for raw_data in response.xpath(self.item_xpath):
 			
@@ -322,6 +331,51 @@ class GenericSpider(Spider) :
 		print "\nGenericSpider.parse - item : \n", item.items()
 		# print item.keys()
 		yield item
+
+
+
+	### TO DO : generic functions linked with DATAMODEL_FIELDS_TYPES
+	def get_type_text(self, response) :
+		"""
+		for field_type : "text"
+		"""
+		value = ""
+		return value
+
+	def get_type_tags(self, response) :
+		"""
+		for field_type : "tags"
+		"""
+		value = ""
+		return value
+
+	def get_type_url(self, response) :
+		"""
+		for field_type : "url", "email"
+		"""
+		value = ""
+		return value
+
+	def get_type_adress(self, response) : 
+		"""
+		for field_type : "adress"
+		"""
+		value = ""
+		return value
+
+	def get_type_image(self, response) : 
+		"""
+		fields : "image"
+		"""
+		value = ""
+		return value
+
+	def get_type_date(self, response) : 
+		"""
+		for field_type : "date"
+		"""
+		value = ""
+		return value
 
 
 

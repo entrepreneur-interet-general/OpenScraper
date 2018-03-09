@@ -11,6 +11,9 @@ XSRF_ENABLED  = True
 MONGODB_HOST 		= "localhost"
 MONGODB_PORT 		= 27017
 MONGODB_DB          = "openscraper" ####
+
+MONGODB_APP_URI     = "mongodb://{}:{}".format(MONGODB_HOST, MONGODB_PORT)
+
 # collections
 MONGODB_COLL_CONTRIBUTORS = "contributors" ####
 MONGODB_COLL_DATAMODEL	  = "data_model"

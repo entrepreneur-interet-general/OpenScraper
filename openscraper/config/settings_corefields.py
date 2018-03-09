@@ -16,6 +16,9 @@ USER_CORE_FIELDS = [
 	"email",
 	"password", 		# TO DO : needs to be hashed
 
+	"added_at",
+	"modified_at",
+
 	"level_admin",
 
 	"organization",
@@ -74,6 +77,9 @@ DATAMODEL_CORE_FIELDS_ITEM = [
 	"added_by", 
 	"added_at", 
 
+	"modified_by",
+	"modified_at",
+
 	"testClass"
 ]
 # TO DO / IMPLEMENT AT MAIN.PY : default fields for first 
@@ -82,6 +88,7 @@ DATAMODEL_DEFAULT_CUSTOM_FIELDS = [
 	{"field_name" : "abstract", "field_type" : "text"},
 	{"field_name" : "tags", 	"field_type" : "tags"},
 	{"field_name" : "url", 		"field_type" : "url"},
+	{"field_name" : "image", 	"field_type" : "image"},
 ]
 
 ### CONTRIBUTORS
@@ -169,7 +176,9 @@ CONTRIBUTOR_CORE_FIELDS = {
 	# scraper - log and stats	
 	"scraper_log" : {
 		"added_by" 				: "",		# 
+		"added_at" 				: None,		# 
 		"modified_by" 			: "",		# 
+		"modified_at" 			: None,		# 
 		"is_working" 			: False,	# 
 		"error_array" 			: [],		# 
 		"item_count" 			: 0,		# 

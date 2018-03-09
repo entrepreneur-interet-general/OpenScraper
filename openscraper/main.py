@@ -55,6 +55,51 @@ from controller import *
 # cf : db.getCollection('contributors').update({}, {$set:{"infos.added_by" : "admin"} }, {upsert:true, multi:true})
 
 
+def create_datamodel_fields( coll_model, fields_list, field_class ) : 
+	"""
+	create datamodel fields from list of field basic dict like DATAMODEL_CORE_FIELDS
+	"""
+
+	timestamp = time.time()
+
+	if field_class == "core":
+		is_visible = False
+	if field_class == "custom":
+		is_visible = True
+		
+
+	### instantiate db.datamodel with core fields (for internal use)
+	fields_ = [ 
+		{ 	"field_name" 	: field["field_name"], 
+			"field_type" 	: field["field_type"],
+			"field_class" 	: field_class ,
+			"added_by" 		: "admin",
+			"added_at"		: timestamp,
+			"is_visible"	: is_visible
+		} for field in fields_list
+	]
+	print ">>> Application.__init__ / datamodel - fields_ : "
+	# pprint.pprint(fields_)
+
+	# upsert fields as bulk job in mongoDB
+	# cf : https://stackoverflow.com/questions/5292370/fast-or-bulk-upsert-in-pymongo
+	operations =[ UpdateOne( 
+		{"field_name" : field["field_name"]},
+		{'$set':  { 
+				# "field_type" 		: field["field_type"],
+				# "field_class" 	: field["field_class"],
+				# "added_by" 		: field["added_by"], 	# "admin",
+				# "added_at" 		: field["added_at"], 	# timestamp,
+				# "is_visible"		: field["is_visible"], 	# False
+				k : v for k,v in field.iteritems() if k != "field_name" 
+				} 
+		}, 
+		upsert=True ) for field in fields_ 
+	]
+	coll_model.bulk_write(operations)
+
+
+
 ### main Tornado application wrapper
 class Application(tornado.web.Application):
 	"""
@@ -70,6 +115,8 @@ class Application(tornado.web.Application):
 
 		print "\n>>> Application.__init__ ... "
 
+		timestamp = time.time()
+
 		### connect to MongoDB
 		client = MongoClient(
 					host = MONGODB_HOST, 
@@ -84,33 +131,39 @@ class Application(tornado.web.Application):
 		self.coll_data		= self.db[ MONGODB_COLL_DATASCRAPPED ]
 
 		### instantiate db.datamodel with core fields (for internal use)
-		core_fields = [ 
-			{ 	"field_name" 	: field["field_name"], 
-				"field_type" 	: field["field_type"],
-				"field_class" 	: "core" ,
-				"added_by" 		: "admin",
-				"is_visible"	: False
-			} for field in DATAMODEL_CORE_FIELDS
-		]
-		print ">>> Application.__init__ / datamodel - core_fields : "
+		# core_fields = [ 
+		# 	{ 	"field_name" 	: field["field_name"], 
+		# 		"field_type" 	: field["field_type"],
+		# 		"field_class" 	: "core" ,
+		# 		"added_by" 		: "admin",
+		# 		"added_at"		: timestamp,
+		# 		"is_visible"	: False
+		# 	} for field in DATAMODEL_CORE_FIELDS
+		# ]
+		# print ">>> Application.__init__ / datamodel - core_fields : "
 		# pprint.pprint(core_fields)
-		
-		
+
 		# upsert fields as bulk job in mongoDB
 		# cf : https://stackoverflow.com/questions/5292370/fast-or-bulk-upsert-in-pymongo
-		operations =[ UpdateOne( 
-			{"field_name" : field["field_name"]},
-			{'$set':  { 
-					"field_type" 	: field["field_type"],
-					"field_class" 	: field["field_class"],
-					"added_by" 		: field["added_by"], 	# "admin",
-					"is_visible"	: field["is_visible"], 	# False
-					} 
-			}, 
-			upsert=True ) for field in core_fields 
-		]
-		self.coll_model.bulk_write(operations)
+		# operations =[ UpdateOne( 
+		# 	{"field_name" : field["field_name"]},
+		# 	{'$set':  { 
+		# 			"field_type" 	: field["field_type"],
+		# 			"field_class" 	: field["field_class"],
+		# 			"added_by" 		: field["added_by"], 	# "admin",
+		# 			"added_at" 		: field["added_at"], 	# timestamp,
+		# 			"is_visible"	: field["is_visible"], 	# False
+		# 			} 
+		# 	}, 
+		# 	upsert=True ) for field in core_fields 
+		# ]
+		# self.coll_model.bulk_write(operations)
+		create_datamodel_fields( self.coll_model, DATAMODEL_CORE_FIELDS, "core" )
 
+		### instantiate core and default custom fields if no custom field at all in db
+		existing_custom_fields = self.coll_model.find({"field_type" : "custom"})
+		if existing_custom_fields == None : 
+			create_datamodel_fields( self.coll_model, DATAMODEL_DEFAULT_CUSTOM_FIELDS, "custom" )
 
 		### retrieve handlers from urls.py
 		handlers = urls.urls

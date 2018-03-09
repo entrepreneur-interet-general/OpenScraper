@@ -1,6 +1,6 @@
 app_infos = {
-	"app_name"  : "scrapnado",
-	"project"   : "openscraper",
+	"app_name"  : "openscraper",
+	"project"   : "openscraper.beta",
 	"licence"   : "MIT",
 	"authors"   : [ "Julien Paris (aka JPy)"],
 	"version"   : "0.1",
@@ -10,6 +10,6 @@ app_infos = {
 }
 
 app_main_texts = {
-	"main_title"  : "CIS | open scraper" ,
+	"main_title"  : "CIS | open scraper beta" ,
 	"main_header" : "Welcome to CIS's Open Scraper !" ,
 }

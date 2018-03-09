@@ -4,6 +4,7 @@
 import 	pprint 
 from 	bson import ObjectId
 import 	time
+from 	datetime import datetime
 from 	functools import wraps
 
 from pymongo import UpdateOne
@@ -319,8 +320,10 @@ class RegisterHandler(BaseHandler):
 	@print_separate(APP_DEBUG)
 	def post(self):
 		""" check if user exists in db, insert it in db, and set cookie"""
-		
-		self.check_xsrf_cookie()
+
+		timestamp = time.time()
+
+		# self.check_xsrf_cookie()
 		print "\nRegisterHandler.post ... "
 
 		### get user infos + data validation
@@ -345,6 +348,7 @@ class RegisterHandler(BaseHandler):
 				"email" 		: user_email,
 				"password" 		: user_password,
 				"level_admin" 	: "user",
+				"added_at"		: timestamp
 				}
 			user_object = UserClass(**user_dict) 
 			print "\nRegisterHandler.post / user as UserClass instance "
@@ -480,8 +484,9 @@ class DataModelEditHandler(BaseHandler):
 		### get fields + objectIDs
 		print "\nDataModelEditHandler.post ..."
 
-		raw_updated_fields = self.request.arguments
-
+		raw_updated_fields 	= self.request.arguments
+		timestamp			= time.time()
+		
 		### TO DO : form validation
 
 		# print "DataModelEditHandler.post / raw_updated_fields : "
@@ -524,7 +529,8 @@ class DataModelEditHandler(BaseHandler):
 					"field_type" 	: field["field_type"],
 					"field_name" 	: field["field_name"],
 					"is_visible" 	: True,
-					"modified_by"	: self.get_current_user_email()	
+					"modified_by"	: self.get_current_user_email(),
+					"modified_at"	: timestamp
 					 } 
 			}, 
 			upsert=True ) for field in updated_fields 
@@ -566,6 +572,8 @@ class DataModelAddFieldHandler(BaseHandler) :
 
 		print "\nDataModelAddFieldHandler.post ..."
 		
+		timestamp			= time.time()
+
 		### TO DO : form validation
 		print "DataModelAddFieldHandler.post / request.arguments ... "
 		# print self.request 
@@ -577,6 +585,7 @@ class DataModelAddFieldHandler(BaseHandler) :
 		new_field = {
 			"field_name" 	: self.get_argument("field_name"),
 			"field_type" 	: self.get_argument("field_type"),
+			"added_at"		: timestamp,
 			"added_by" 		: self.get_current_user_email(),
 			"field_class" 	: "custom",
 			"is_visible" 	: True,
@@ -672,6 +681,8 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 		print "\nContributorEditHandler.post... spider_id : ", spider_id
 		
+		timestamp = time.time()
+		
 		### TO DO : form validation
 		
 		### get form back from client
@@ -679,8 +690,8 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		print "\nContributorEditHandler.post / spider_config_form : "
 		pprint.pprint( spider_config_form )
 
-		is_new = True
 		# check if spider already exists
+		is_new = True
 		if spider_id != None : 
 			spider_id = spider_config_form["_id"][0]
 			is_new = False
@@ -689,6 +700,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		similar_spider = self.application.coll_spiders.find( {"infos.page_url": spider_config_form["page_url"]} )
 		if similar_spider and is_new :
 			print "\nContributorEditHandler.post / already a similar spider ... "
+			# TO DO : add alert
 			self.redirect("/contributors")
 
 		# populate a contributor object
