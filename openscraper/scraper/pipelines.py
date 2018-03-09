@@ -4,6 +4,7 @@ import json
 import pprint
 import pymongo
 from pymongo import MongoClient
+from scrapy import signals
 
 
 ### TO DO 
@@ -39,12 +40,27 @@ class RestExportPipeline(object):
 class MongodbPipeline(object):
 	
 
+	def __init__(	self, 
+					mongo_uri=None,
+					mongo_db=None, 
+					mongo_coll_scrap=None
+					):
+
+		print "\n>>> MongodbPipeline / __init__ ..."
+		
+		self.mongo_uri			= mongo_uri
+		self.mongo_db			= mongo_db
+		self.mongo_coll_scrap 	= mongo_coll_scrap
+		
+		print "--- MongodbPipeline / os.getcwd() : ", os.getcwd() 
+
+
 	@classmethod
 	def from_crawler(cls, crawler):
 		
 		print "\n>>> MongodbPipeline / @classmethod + from_crawler ..."
 		
-		## pull in information from settings.py
+		## pull in information from settings.py 
 		pipeline = cls(
 			mongo_uri			= crawler.settings.get('MONGO_URI'),
 			mongo_db			= crawler.settings.get('MONGO_DATABASE'),
@@ -54,34 +70,28 @@ class MongodbPipeline(object):
 		# crawler.signals.connect(pipeline.spider_closed, signals.spider_closed)
 		return pipeline # equivalent to : return cls(*args, **kwargs)
 
-	def __init__(self, mongo_uri=None, mongo_db=None, mongo_coll_scrap=None):
-
-		print "\n>>> MongodbPipeline / __init__ ..."
-		# self.mongo_uri			= mongo_uri
-		# self.mongo_db			= mongo_db
-		# self.mongo_coll_scrap 	= mongo_coll_scrap
-		print "--- MongodbPipeline / os.getcwd() : ", os.getcwd() 
-		# client 	= MongoClient( 
-		# 			mongo_uri
-		# 			# host = MONGODB_HOST, 
-		# 			# port = MONGODB_PORT
-		# )
-		# db 		= client[mongo_db]
-		# self.coll_data = db[ mongo_coll_scrap ]
 
 	def open_spider(self, spider):
 		## initializing spider
-		## opening db connection
+
 		print "\n>>> MongodbPipeline / open_spider ..."
 
-		# self.client = pymongo.MongoClient(self.mongo_uri)
-		# self.db = self.client[self.mongo_db]
-		pass
+		## opening db connection
+		self.client 	= MongoClient( 
+					self.mongo_uri
+					# host = mongo_host, 
+					# port = mongo_port
+		)
+		self.db 		= self.client[ self.mongo_db]
+		self.coll_data  = self.db[ self.mongo_coll_scrap ]
+
+		### remove all previous items scraped from same spider
+		# item_exists = self.application.coll_data.find({ "spider_id" : item["spider_id"]})
 
 	def close_spider(self, spider) :
-        ## clean up when spider is closed
+		## clean up when spider is closed
 		print "\n>>> MongodbPipeline / close_spider ..."
-		pass
+		self.client.close()
 		
 	def process_item(self, item, spider):
 		"""handle each item and post it to db"""
@@ -94,9 +104,9 @@ class MongodbPipeline(object):
 		pprint.pprint(item_dict)
 
 		# check if already exists in db
-		# self.application.coll_data.find({})
+		# item_exists = self.application.coll_data.find({ "field_name" : item["field_name"]})
 
 		# insert / update in db
-		# self.coll_data.insert(dict(item))
+		self.coll_data.insert(item_dict)
 
 		return item

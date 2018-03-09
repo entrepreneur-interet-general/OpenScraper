@@ -63,8 +63,11 @@ settings = Settings()
 settings.set( "BOT_NAME"					, BOT_NAME )
 settings.set( "USER_AGENT"					, USER_AGENT )
 settings.set( "ITEM_PIPELINES"				, ITEM_PIPELINES )
+
 settings.set( "MONGO_URI" 					, MONGO_URI )
 settings.set( "MONGO_DATABASE" 				, MONGO_DATABASE )
+settings.set( "MONGO_COLL_SCRAP" 			, MONGO_COLL_SCRAP )
+
 settings.set( "DOWNLOAD_DELAY" 				, DOWNLOAD_DELAY )
 settings.set( "RANDOMIZE_DOWNLOAD_DELAY"	, RANDOMIZE_DOWNLOAD_DELAY )
 
