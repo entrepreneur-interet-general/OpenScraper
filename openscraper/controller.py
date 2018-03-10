@@ -671,6 +671,8 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			page_title 				= app_main_texts["main_title"],
 			create_or_update 		= create_or_update,
 			contributor_edit_fields = contributor_edit_fields,
+			contributor_edit_radio 	= CONTRIBUTOR_EDIT_FIELDS_RADIO,
+			contributor_edit_numbers = CONTRIBUTOR_EDIT_FIELDS_NUMBER,
 			contributor 			= contributor,
 			datamodel				= data_model,
 		)
@@ -713,6 +715,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		)
 
 		### get spider identifier from form
+		print "\nContributorEditHandler.post / spider_config_form : "
 		pprint.pprint(spider_config_form)
 
 		if spider_id and spider_id != "new_spider":
@@ -727,7 +730,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			new_config 	= contributor_object.partial_config_as_dict( previous_config = contributor )
 
 			# update contributor
-			old_fields = {"infos" : 1 , "scraper_config" : 1 , "scraper_config_xpaths" : 1 }
+			old_fields = {"infos" : 1 , "scraper_config" : 1 , "scraper_config_xpaths" : 1, "scraper_settings" : 1 }
 			self.application.coll_spiders.update_one( {"_id": spider_oid}, { "$unset": old_fields } )
 			self.application.coll_spiders.update_one( {"_id": spider_oid}, { "$set"	 : new_config }, upsert=True )
 

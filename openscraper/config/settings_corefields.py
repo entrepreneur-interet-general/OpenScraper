@@ -33,7 +33,7 @@ USER_CORE_FIELDS = [
 
 ### DATAMODEL 
 ### to initiate datamodel core fields in mongoDB
-# fields type
+# field_type options in form and db
 DATAMODEL_FIELDS_TYPES = [
 	"url", 
 	"text", 
@@ -44,6 +44,7 @@ DATAMODEL_FIELDS_TYPES = [
 	"tags", 
 	"price"
 ]
+# field_keep options in form only
 DATAMODEL_FIELD_KEEP_VARS = [
 	"keep", "not visible", "delete", 
 ]
@@ -65,7 +66,7 @@ DATAMODEL_CORE_FIELDS = [
 	{"field_name" : "modified_at", 		"field_type" : "date"}, 	# spider-related
 	
 	# just for debugging purposes
-	{"field_name" : "testClass", 		"field_type" : "text"}		# item-related = to be stored in item
+	# {"field_name" : "testClass", 		"field_type" : "text"}		# item-related = to be stored in item
 ]
 # item-related fields to be used for Item in GenericSpider, in addition to custom fields 
 DATAMODEL_CORE_FIELDS_ITEM = [
@@ -80,7 +81,7 @@ DATAMODEL_CORE_FIELDS_ITEM = [
 	"modified_by",
 	"modified_at",
 
-	"testClass"
+	# "testClass"
 ]
 # TO DO / IMPLEMENT AT MAIN.PY : default fields for first 
 DATAMODEL_DEFAULT_CUSTOM_FIELDS = [
@@ -91,10 +92,14 @@ DATAMODEL_DEFAULT_CUSTOM_FIELDS = [
 	{"field_name" : "image", 	"field_type" : "image"},
 ]
 
+
 ### CONTRIBUTORS
-### radio buttons in form for edit contributor
+### radio buttons in 'edit contributor' form
 CONTRIBUTOR_EDIT_FIELDS_RADIO = [
-	"parse_follow",
+	"parse_follow", "page_needs_splash"
+]
+CONTRIBUTOR_EDIT_FIELDS_NUMBER = [
+	"LIMIT", "download_delay", "page_count"
 ]
 ### to display form for edit contributor
 CONTRIBUTOR_EDIT_FIELDS = {
@@ -131,7 +136,19 @@ CONTRIBUTOR_EDIT_FIELDS = {
 		]
 	 },
 
+	# scraper - global advanced settings	
+	"scraper_settings" : {
+		"needed" : [
+		],
+		"optional" : [
+			"LIMIT" 			,	# max number of pages to be crawled
+			"download_delay" 	,	# delay
+			"page_count" 		,	# keep track of how many pages were crawled
+		]
+	},
+
 }
+CONTRIBUTOR_CUSTOMAZIBLE_FIELDS = CONTRIBUTOR_EDIT_FIELDS.keys()
 
 ### to instantiate contributor core fields in mongoDB
 CONTRIBUTOR_CORE_FIELDS = {
@@ -163,12 +180,12 @@ CONTRIBUTOR_CORE_FIELDS = {
 
 	# scraper - custom for scraping xpaths 
 	"scraper_config_xpaths" : {
-		# ... will be filled with custom fields _ids from db.datamodel.find({"field_type":"custom"})
+		# ... will be filled with custom fields _id from "db.datamodel.find({"field_type":"custom"})"
 	},
 
 	# scraper - global settings	
 	"scraper_settings" : {
-		"LIMIT" 			: 100,	# number of pages to be crawled
+		"LIMIT" 			: 100,	# max number of pages to be crawled
 		"download_delay" 	: 0,	# delay
 		"page_count" 		: 1,	# keep track of how many pages were crawled
 	},
@@ -188,7 +205,6 @@ CONTRIBUTOR_CORE_FIELDS = {
 }
 
 ### create list of not fully customazible fields 
-# NOT_CUSTOM_DATAMODEL_FIELDS = CONTRIBUTOR_CORE_FIELDS["scraper_config"].keys() +  CONTRIBUTOR_CORE_FIELDS["infos"].keys()
 NOT_CUSTOM_DATAMODEL_FIELDS = []
 for k, v in CONTRIBUTOR_CORE_FIELDS.iteritems() : 
 	l = v.keys()

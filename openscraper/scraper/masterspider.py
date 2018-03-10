@@ -7,11 +7,11 @@ import 	time
 from 	datetime import datetime
 
 # cf : http://blog.jmoz.co.uk/python-convert-datetime-to-timestamp/
-"""
-import datetime
-readable = datetime.datetime.fromtimestamp(1520437834).isoformat()
-print(readable)
-# 2018-03-07T16:50:34+01:00
+""" # snippet datetime and timestamp
+	import datetime
+	readable = datetime.datetime.fromtimestamp(1520437834).isoformat()
+	print(readable)
+	# 2018-03-07T16:50:34+01:00
 """
 
 # import app settings
@@ -33,7 +33,7 @@ from scrapy.settings 	import Settings
 from scrapy 			import Spider
 from scrapy.crawler 	import CrawlerProcess, CrawlerRunner
 # from scrapy.spiders 	import SitemapSpider, CrawlSpider
-# import scrapy.crawler 	as 	   crawler
+# import scrapy.crawler as 	   crawler
 
 
 
@@ -51,25 +51,20 @@ from scrapy.crawler 	import CrawlerProcess, CrawlerRunner
 
 
 # PIPELINES....
-# update setting to use the pipeline which write result in json file
+# update setting to use the pipeline which will write results (items) in the database or files
 # cf self-contained scrapy : https://gist.github.com/alecxe/fc1527d6d9492b59c610
 # cf self-contained scrapy : https://github.com/kirankoduru/scrapy-programmatically/
 
-### set scrapy from settings_scrapy
+### set scrapy from settings_scrapy.py
 settings = Settings()
-# settings.set( "BOT_NAME"		, "OpenScraper")
-# settings.set( "USER_AGENT"		, "Open Scraper (+https://github.com/entrepreneur-interet-general/OpenScraper)")
-# settings.set( "ITEM_PIPELINES"	, { 'scraper.pipelines.MongodbPipeline' : 300 } )
+
 settings.set( "BOT_NAME"					, BOT_NAME )
 settings.set( "USER_AGENT"					, USER_AGENT )
 settings.set( "ITEM_PIPELINES"				, ITEM_PIPELINES )
 
-settings.set( "MONGO_URI" 					, MONGO_URI )
-settings.set( "MONGO_DATABASE" 				, MONGO_DATABASE )
-settings.set( "MONGO_COLL_SCRAP" 			, MONGO_COLL_SCRAP )
-
-settings.set( "DOWNLOAD_DELAY" 				, DOWNLOAD_DELAY )
-settings.set( "RANDOMIZE_DOWNLOAD_DELAY"	, RANDOMIZE_DOWNLOAD_DELAY )
+settings.set( "DB_DATA_URI" 				, DB_DATA_URI )
+settings.set( "DB_DATA_DATABASE" 			, DB_DATA_DATABASE )
+settings.set( "DB_DATA_COLL_SCRAP" 			, DB_DATA_COLL_SCRAP )
 
 
 print "\n>>> settings scrapy : "
@@ -86,13 +81,9 @@ print settings.get('ITEM_PIPELINES').__dict__
 
 
 
-
-### import main args fom config
-from config.settings_corefields import * # mainly for DATAMODEL_CORE_FIELDS_ITEM
-
 ### import base_fields ###############
-### inherit fields (data model) from somewhere (static dict or DB)
-# from . import base_fields
+### import main args fom config.settings_corefields.py
+from config.settings_corefields import * # mainly for DATAMODEL_CORE_FIELDS_ITEM
 
 ### import items
 from items import * # GenericItem #, StackItem #ScrapedItem
@@ -191,12 +182,7 @@ class GenericSpider(Spider) :
 		pprint.pprint (datamodel[:3])
 		print "..."
 
-		## storing correspondance dict from datamodel
-		# print "--- GenericSpider / datamodel_dict :"
-		# self.datamodel_dict = dictFromDataModelList(datamodel)
-		# self.datamodel_dict = dictFromDataModelList(datamodel)
-		# pprint.pprint(self.datamodel_dict)
-
+		### storing correspondance dict from datamodel
 		self.dm_core 					= { i["field_name"] : { "field_type" : i["field_type"] } for i in datamodel if i["field_class"] == "core" }
 		self.dm_core_item_related 		= DATAMODEL_CORE_FIELDS_ITEM
 		# self.dm_core_item_related_dict	= DATAMODEL_CORE_FIELDS_ITEM
@@ -249,13 +235,13 @@ class GenericSpider(Spider) :
 			item 		= itemclass()
 			
 			# just for debugging purposes
-			item[ 'testClass' ]	= "item class is tested"
+			# item[ 'testClass' ]	= "item class is tested"
 
 			# add global info to item : i.e. core fields in dm_core_item_related list
 			item[ 'spider_id' ]	= self.spider_id
 			item[ 'added_by'  ]	= self.user_id 
 			item[ 'added_at'  ]	= time.time()		# timestamp
-			# TO DO 
+			# TO DO : store urls for this item
 			item[ 'link_data']	= ""
 			item[ 'link_src' ]	= ""
 
@@ -411,40 +397,33 @@ def run_generic_spider( user_id				= None,
 	# print "--- run_generic_spider / run_spider_config : "
 	# pprint.pprint(run_spider_config)
 	print "--- run_generic_spider / flattening run_spider_config --> spider_config_flat"
-	spider_config_flat = flattenSpiderConfig(run_spider_config)
+	spider_config_flat = flattenSpiderConfig( run_spider_config )
 	# print "--- run_generic_spider / spider_config_flat : "
 	# pprint.pprint(spider_config_flat)
 
-	### instantiate settings and provide a custom configuration
-	# settings = Settings()
-	# settings.set('ITEM_PIPELINES', {
-	# 	'__main__.JsonWriterPipeline': 100
-	# })
-
-	### initiating crawler process
-	# process = CrawlerRunner() 
-	# process = CrawlerProcess()
-	# process = CrawlerRunner({
-	# 	'USER_AGENT'		: 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)',
-	# 	# 'ITEM_PIPELINES' 	: {'scraper.pipelines.MongodbPipeline' : 100 },
-	# })
-
-
-
+	### settings for crawler
+	# gllobal settings for scrapy processes (see upper)
 	print "--- run_generic_spider / BOT_NAME :       ", settings.get('BOT_NAME')
 	print "--- run_generic_spider / USER_AGENT :     ", settings.get('USER_AGENT')
 	print "--- run_generic_spider / ITEM_PIPELINES : ", settings.get('ITEM_PIPELINES').__dict__
+	# specific settings for this scrapy process
+	settings.set( "CURRENT_SPIDER_ID" 				, spider_id )
+	settings.set( "DOWNLOAD_DELAY" 					, DOWNLOAD_DELAY )
+	settings.set( "RANDOMIZE_DOWNLOAD_DELAY"		, RANDOMIZE_DOWNLOAD_DELAY )
 
+	### initiating crawler process
 	print "\n--- run_generic_spider / instanciate process ..." 	
+	# process = CrawlerRunner() 
+	# process = CrawlerProcess()
 	process = CrawlerRunner( settings = settings )
 
-	### adding crawler.runner as deferred
+	### adding CrawlerRunner as deferred
 	def f(q):
 		try:
-			### send custom spider config from run_spider_config
+			### send/create custom spider from run_spider_config
 			### cf : https://stackoverflow.com/questions/35662146/dynamic-spider-generation-with-scrapy-subclass-init-error
 			
-			deferred = process.crawl(GenericSpider, 
+			deferred = process.crawl( GenericSpider, 
 										user_id				= user_id,
 										datamodel 			= datamodel , 
 										spider_id 			= spider_id ,

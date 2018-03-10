@@ -72,7 +72,7 @@ class SpiderConfig :
 			form = { k : v[0] for k,v in form.iteritems() }
 			# form['notes'] = re.escape(form['notes'] )
 
-			# create a spidername and clean/escape it
+			# optional : create a spidername and clean/escape it
 			spidername 			= re.escape(form["name"])
 			spidername			= spidername.replace('\\', '')
 
@@ -85,17 +85,25 @@ class SpiderConfig :
 			
 			# clean radio field values
 			for radio_field in CONTRIBUTOR_EDIT_FIELDS_RADIO : 
-				if form[radio_field] == "true" : 
-					form[radio_field] = True
-				else :
-					form[radio_field] = False
+				if radio_field in form.keys() : 
+					if form[radio_field] == "true" : 
+						form[radio_field] = True
+					else :
+						form[radio_field] = False
+			
+			# clean number field values
+			for radio_field in CONTRIBUTOR_EDIT_FIELDS_NUMBER :
+				if radio_field in form.keys() : 
+					form[radio_field] = int(form[radio_field])
 
 		### getting all the config args from spider_config (i.e. next_page_xpath, ...)
-		print "*** SpiderConfig / form :"
+		print "*** SpiderConfig / cleaned form :"
 		pprint.pprint(form)
 
 		### update core contributor fields from spider_config
-		for key in ["infos", "scraper_config"] :
+		
+		# for key in ["infos", "scraper_config", "scraper_settings"] :
+		for key in CONTRIBUTOR_CUSTOMAZIBLE_FIELDS :
 			print "\n*** SpiderConfig / self.spider_config / key : ", key
 			for field in self.spider_config[key]:
 				print "field : ", field
@@ -110,8 +118,7 @@ class SpiderConfig :
 			for field_custom in form.keys() :
 				if field_custom not in NOT_CUSTOM_DATAMODEL_FIELDS :
 					print "field_custom : ", field_custom
-					if form!=None :  
-						self.spider_config["scraper_config_xpaths"][field_custom] = form[field_custom]
+					self.spider_config["scraper_config_xpaths"][field_custom] = form[field_custom]
 
 		### add specifics in infos / scraperconfig
 		self.spider_config["scraper_config"]["spidername"]	= unicode(spidername)
@@ -130,8 +137,13 @@ class SpiderConfig :
 
 	def partial_config_as_dict(self, previous_config=None ) : 
 
+		print "\n*** SpiderConfig.partial_config_as_dict / previous_config : "
 		print previous_config
-		partial_config = { k : v for k,v in self.spider_config.iteritems() if k in ["infos", "scraper_config", "scraper_config_xpaths"]}
+
+		all_custom_fields = CONTRIBUTOR_CUSTOMAZIBLE_FIELDS + ["scraper_config_xpaths"]
+		partial_config = { k : v for k,v in self.spider_config.iteritems() if k in all_custom_fields }
+		# print "\n*** SpiderConfig.partial_config_as_dict / partial_config : "
+		# print partial_config
 		
 		# reset scraper_log
 		partial_config["scraper_log"] = deepcopy(CONTRIBUTOR_CORE_FIELDS["scraper_log"])

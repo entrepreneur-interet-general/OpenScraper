@@ -7,6 +7,7 @@
 <br>
 <section class="section">
 	
+	{# TITLE #}
 	<div class="container has-text-centered">
 		
 		{% if create_or_update == "create" %}
@@ -27,7 +28,7 @@
 
 	</div>
 
-
+	{# CONTRIBUTOR EDIT FORM #}
 	<div class="container">
 
 		<div class="columns is-centered">
@@ -48,6 +49,8 @@
 						<h3> global fields</h3>
 						<p class="is-small">describe the website you want to crawl</p>
 					</div>
+
+					{# loop through contributor_edit_fields #}
 					{% for field, value in contributor_edit_fields.items() %}
 
 						{# needed values #}
@@ -62,17 +65,30 @@
 								</div>
 
 								<div class="field-body">
+									
 									<div class="field">
 										
-										{% if needed not in ["page_needs_splash","parse_follow" ]%}
+										{# except radio buttons #}
+										{% if needed not in contributor_edit_radio  %}
+
 											<p class="control is-expanded has-icons-left">
-												<input class="input" type="text" 
+												<input 	class="input" 
+														
+														{% if needed not in contributor_edit_numbers %}
+														type="text" 
+														{% else %}
+														type="number"
+														{% end %}
+												
 														placeholder="{% if needed =='next_page' %}xpath for {% end %}{{ needed }}"
 														name="{{ needed }}"
 
 														{% if needed == "start_urls" %}
 															value="{% for i in contributor[field].get(needed, '') %}{{ escape(i) }} {% end %}"
-														
+
+														{% elif needed in contributor_edit_numbers %}
+															value="{{ contributor[field].get(needed, '') }}"
+
 														{% else %}
 															value="{{ escape (contributor[field].get(needed, '')) }}"
 														
@@ -81,7 +97,9 @@
 														>
 											</p>
 
-										{% elif needed in ["parse_follow"]  %}
+
+										{% elif needed in contributor_edit_radio  %}
+
 											{# radio buttons #}
 											<div class="control">
 												
@@ -116,7 +134,96 @@
 
 					{% end %}
 
+
+					{# advanced settings fields for spider #}
 					<hr>
+					<div class="content has-text-centered">
+						<h3> advanced settings</h3>
+						<p class="is-small">those settings need to be in a dropdown</p>
+					</div>
+
+					{% set contributor_adv = contributor["scraper_settings"] %}
+					{% for advanced_setting in contributor_edit_fields["scraper_settings"]["optional"] %}
+
+							<div class="field has-addons is-horizontal">
+							
+								<div class="field-label button is-static is-small">
+									<label class="label">
+										{{ advanced_setting }} *
+									</label>
+								</div>
+
+								<div class="field-body">
+									
+									<div class="field ">
+										
+										{% if advanced_setting not in contributor_edit_radio %}
+
+											<p class="control is-expanded has-icons-left">
+												<input 	class="input is-small" 
+														
+														{% if advanced_setting not in contributor_edit_numbers %}
+														type="text" 
+														{% else %}
+														type="number"
+														{% end %}
+												
+														placeholder="{% if advanced_setting =='next_page' %}xpath for {% end %}{{ advanced_setting }}"
+														name="{{ advanced_setting }}"
+
+														{% if advanced_setting == "start_urls" %}
+															value="{% for i in contributor_adv.get(advanced_setting, '') %}{{ escape(i) }} {% end %}"
+
+														{% elif advanced_setting in contributor_edit_numbers %}
+															value="{{ contributor_adv.get(advanced_setting, '') }}"
+
+														{% else %}
+															value="{{ escape (contributor_adv.get(advanced_setting, '')) }}"
+														
+														{% end %}
+														
+														>
+											</p>
+
+										{% elif advanced_setting in contributor_edit_radio  %}
+
+											{# radio buttons #}
+											<div class="control">
+												
+												{# fill radio "checked" value in contributor data #}
+												{% set checked = contributor_adv[advanced_setting] %}
+												<label class="radio">
+													<input 	type="radio" class="is-small" name="{{ advanced_setting }}" value="false"
+															{% if not checked %} checked {% end %}
+													>
+													false
+												</label>
+												
+												<br>
+
+												<label class="radio" disabled>
+													<input 	type="radio" class="is-small" name="{{ advanced_setting }}" value="true"
+															{% if checked %} checked {% end %} 
+													>
+													true
+												</label>
+
+											</div>
+
+										{% end %}
+
+									</div>
+								</div>
+							</div>
+
+
+					{% end %}
+
+
+
+					<hr>
+
+
 
 					{# XPATH fields from custom datamodel #}
 					<div class="content has-text-centered">
@@ -130,6 +237,7 @@
 					</div>
 
 					{% for dm in datamodel %}
+
 						<div class="field is-horizontal">
 
 							<div class="field-label button is-static is-small">
@@ -152,7 +260,10 @@
 
 					{% end %}
 
+
+
 					<hr>
+
 
 
 					{# notes on spider #}
@@ -177,7 +288,11 @@
 						</div>
 					</div>
 
+
+
 					<br>
+
+
 
 					{# submit button #}
 					<div class="field is-grouped is-grouped-centered">
