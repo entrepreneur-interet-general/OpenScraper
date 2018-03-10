@@ -62,7 +62,7 @@ class SpiderConfig :
 		### begin with no spidername
 		spidername = ""
 
-		### form exists so clean it
+		### form exists --> clean it
 		if form!=None : 			
 			# del _id and _xsrf
 			del form['_id']
@@ -92,9 +92,13 @@ class SpiderConfig :
 						form[radio_field] = False
 			
 			# clean number field values
-			for radio_field in CONTRIBUTOR_EDIT_FIELDS_NUMBER :
-				if radio_field in form.keys() : 
-					form[radio_field] = int(form[radio_field])
+			for num_field in CONTRIBUTOR_EDIT_FIELDS_NUMBER :
+				if num_field in form.keys() : 
+					if num_field in CONTRIBUTOR_EDIT_FIELDS_FLOAT :
+						form[num_field] = float(form[num_field])
+					else :
+						form[num_field] = int(form[num_field])
+						
 
 		### getting all the config args from spider_config (i.e. next_page_xpath, ...)
 		print "*** SpiderConfig / cleaned form :"

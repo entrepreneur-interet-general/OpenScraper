@@ -673,6 +673,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			contributor_edit_fields = contributor_edit_fields,
 			contributor_edit_radio 	= CONTRIBUTOR_EDIT_FIELDS_RADIO,
 			contributor_edit_numbers = CONTRIBUTOR_EDIT_FIELDS_NUMBER,
+			contributor_edit_floats = CONTRIBUTOR_EDIT_FIELDS_FLOAT,
 			contributor 			= contributor,
 			datamodel				= data_model,
 		)

@@ -164,17 +164,18 @@
 														
 														{% if advanced_setting not in contributor_edit_numbers %}
 														type="text" 
+														
 														{% else %}
-														type="number"
+														type="number" min="0" 
+															{% if advanced_setting in contributor_edit_floats %}
+															step="0.1"
+															{% end %}
 														{% end %}
 												
-														placeholder="{% if advanced_setting =='next_page' %}xpath for {% end %}{{ advanced_setting }}"
+														placeholder="{{ advanced_setting }}"
 														name="{{ advanced_setting }}"
 
-														{% if advanced_setting == "start_urls" %}
-															value="{% for i in contributor_adv.get(advanced_setting, '') %}{{ escape(i) }} {% end %}"
-
-														{% elif advanced_setting in contributor_edit_numbers %}
+														{% if advanced_setting in contributor_edit_numbers %}
 															value="{{ contributor_adv.get(advanced_setting, '') }}"
 
 														{% else %}

@@ -101,6 +101,9 @@ CONTRIBUTOR_EDIT_FIELDS_RADIO = [
 CONTRIBUTOR_EDIT_FIELDS_NUMBER = [
 	"LIMIT", "download_delay", "page_count"
 ]
+CONTRIBUTOR_EDIT_FIELDS_FLOAT = [
+	"download_delay"
+]
 ### to display form for edit contributor
 CONTRIBUTOR_EDIT_FIELDS = {
 
