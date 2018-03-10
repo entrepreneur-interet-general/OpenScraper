@@ -235,8 +235,12 @@ class PageNotFoundHandler(BaseHandler):
 	@print_separate(APP_DEBUG)
 	def get(self):
 
+		print "\nPageNotFoundHandler.post / uri : "
+		pprint.pprint (self.request.uri )
+
 		print "\nPageNotFoundHandler.post / request : "
 		pprint.pprint (self.request )
+		
 		print "\nPageNotFoundHandler.post / request.arguments : "
 		pprint.pprint( self.request.arguments )
 
@@ -779,8 +783,60 @@ class DataScrapedHandler(BaseHandler):
 	list all data scraped from db.data_scraped 
 	"""
 	@print_separate(APP_DEBUG)
-	def get (self):
-		self.redirect("/404")
+	def get (self, slug):
+
+		print "\nDataScrapedHandler.get ... : "
+
+		print "\nDataScrapedHandler.get / slug : "
+		pprint.pprint(slug)
+
+		print "\nDataScrapedHandler.get / request : "
+		pprint.pprint (self.request )
+
+		print "\nDataScrapedHandler.get / slug_ : "
+		slug_ = self.request.arguments
+		pprint.pprint( slug_ )
+
+		### retrieve datamodel from DB
+		data_model_custom = list( self.application.coll_model.find({"field_class" : "custom", "is_visible" : True }).sort("field_name",1) )
+		print "\nDataModelHandler.get / data_model_custom :"
+		pprint.pprint (data_model_custom)
+		data_model_custom_ids = [ str(dmc["_id"]) for dmc in data_model_custom ]
+		print "\nDataModelHandler.get / data_model_custom_ids :"
+		pprint.pprint (data_model_custom_ids)
+
+		### retrieve all spiders from db
+		spiders_list = list( self.application.coll_spiders.find({}) )
+		print "\nDataModelHandler.get / spiders_list :"
+		pprint.pprint (spiders_list[0])
+		print "..."
+		# make a dict from it
+
+		### get items from db
+		### recreate query from slug
+		query = { }
+		condition = { }
+		limit_results = 50
+		items_from_db = list( self.application.coll_data.find( query ).limit(limit_results) )
+		print "\nDataModelHandler.get / items_from_db :"
+		# clean items 
+		for item in items_from_db : 
+			item["added_by"] = "toto"
+			# for k,v in item.iteritems() : 
+			# 	if k in data_model_custom_ids : 
+			# 		item[k] = str(v) 
+		pprint.pprint(items_from_db[0])
+		print "..."
+
+		self.render(
+			"data_view.html",
+			page_title			= app_main_texts["main_title"],
+			datamodel_custom 	= data_model_custom,
+			# spiders_list		= spiders_list,
+			items				= items_from_db
+		)
+
+		# self.redirect("/404")
 
 class DataScrapedViewOneHandler(BaseHandler):
 	"""

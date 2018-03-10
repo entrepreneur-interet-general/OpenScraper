@@ -214,3 +214,11 @@ for k, v in CONTRIBUTOR_CORE_FIELDS.iteritems() :
 	for i in l : 
 		NOT_CUSTOM_DATAMODEL_FIELDS.append(i)
 # print "NOT_CUSTOM_DATAMODEL_FIELDS :", NOT_CUSTOM_DATAMODEL_FIELDS
+
+
+### DATA QUERIES FROM URL - reconstruct from slug
+QUERIES_ALLOWED = [
+	"page", 
+	"token", 
+	"contributor", "complete", 
+]

@@ -1,0 +1,93 @@
+{% extends "main.html" %}
+{% autoescape None %}
+
+{% block body %}
+
+
+<br>
+<section class="section">
+	
+	<br>
+
+	<div class="container has-text-centered">
+		<h1 class="title">
+			Data set overview
+		</h1>
+		<h2 class="subtitle">
+			this is the data you have scraped. 
+			<br>...
+		</h2>
+	</div>
+
+	<br>
+
+
+
+	<div class="container">
+
+		<div class="columns is-centered">
+			
+
+			<div class="column">
+
+				<table id="t_dataset" class="table display" width="100%" cellspacing="0">
+					<thead>
+						<tr>
+							<th>link_src</th>
+							
+							<th>spider used</th>
+							
+							{% for field in datamodel_custom %}
+								<th>{{ field["field_name"] }}</th>
+							{% end %}
+
+						</tr>
+					</thead>
+
+					{# displaying data #}
+					<tbody>
+
+						{% for item in items %}
+
+							<tr >
+
+								<th> {{ escape (
+									item["link_src"]
+									) }} 
+								</th>
+
+								<td> {{ escape (item["added_by"]) }} </td>
+								
+								{% for field in datamodel_custom %}
+									{% set id_f = str(field[u"_id"]) %}
+
+									{% if id_f in item.keys() %}
+										<td> {{ item[ id_f ]  }} </td>
+										{# <td>{ { id_f }}</td> #}
+									{% else %}
+										<td> - </td>
+									{% end %}
+
+								{% end %}
+
+							</tr>
+
+						{% end %}
+
+
+					</tbody>
+
+
+				</table>
+
+			</div>
+		</div>
+
+
+	</div>
+
+
+	
+</section>
+
+{% end %}
