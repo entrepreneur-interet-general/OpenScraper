@@ -56,13 +56,21 @@
 									) }} 
 								</th>
 
-								<td> {{ escape (item["added_by"]) }} </td>
+								<td> 
+									<a href="/contributors" >
+										{{ escape (item["spider_name"]) }} 
+									</a>
+								</td>
 								
 								{% for field in datamodel_custom %}
 									{% set id_f = str(field[u"_id"]) %}
 
 									{% if id_f in item.keys() %}
-										<td> {{ item[ id_f ]  }} </td>
+										<td>
+											{% for i in item[ id_f ]  %} 
+											{{ escape (i) }} 
+											{% end %}
+										</td>
 										{# <td>{ { id_f }}</td> #}
 									{% else %}
 										<td> - </td>

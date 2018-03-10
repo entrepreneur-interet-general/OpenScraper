@@ -806,22 +806,29 @@ class DataScrapedHandler(BaseHandler):
 		pprint.pprint (data_model_custom_ids)
 
 		### retrieve all spiders from db
-		spiders_list = list( self.application.coll_spiders.find({}) )
+		spiders_list = list( self.application.coll_spiders.find( {}, {"infos" : 1 } ) )
 		print "\nDataModelHandler.get / spiders_list :"
 		pprint.pprint (spiders_list[0])
 		print "..."
 		# make a dict from it
+		spiders_dict = { str(s["_id"]) : s["infos"]["name"] for s in spiders_list }
+		print "\nDataModelHandler.get / spiders_dict :"
+		pprint.pprint (spiders_dict)
 
 		### get items from db
-		### recreate query from slug
+		# recreate query from slug
 		query = { }
 		condition = { }
-		limit_results = 50
+		limit_results = 100
 		items_from_db = list( self.application.coll_data.find( query ).limit(limit_results) )
 		print "\nDataModelHandler.get / items_from_db :"
+		pprint.pprint(items_from_db[0])
+
 		# clean items 
 		for item in items_from_db : 
-			item["added_by"] = "toto"
+			# put spider name instead of spider _id
+			print item["spider_id"]
+			item["spider_name"] = spiders_dict[ item["spider_id"] ]
 			# for k,v in item.iteritems() : 
 			# 	if k in data_model_custom_ids : 
 			# 		item[k] = str(v) 
