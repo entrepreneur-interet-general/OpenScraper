@@ -23,7 +23,7 @@
 			<div class="container has-text-centered">
 				<p>new on Open Scraper ?</p><br>
 				<a class="button is-info is-rounded"
-				href="/register">
+				href="/register/">
 					<span class="icon is-small"><i class="fas fa-sign-in-alt"></i></span>
 					<span>register</span>
 				</a>
@@ -39,10 +39,12 @@
 				<div class="column is-4">
 
 
-					<form action="/{{ login_or_register}}" method="POST">
+					<form 	id="{{ login_or_register}}_form"
+							action="/{{ login_or_register}}/?next={{ next_url }}" 
+							method="POST">
+						
 						{% module xsrf_form_html() %}
 						
-
 						{% if login_or_register == "register" %}
 
 						{# username field #}

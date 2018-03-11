@@ -172,8 +172,9 @@ class BaseHandler(tornado.web.RequestHandler):
 		else :
 			self.clear_current_user()
 
+	### TO DO / TO DEBUG
 	def clear_current_user(self):
-		""" """
+		""" clear cookies """
 		# if (self.get_argument("logout", None)):
 		self.clear_cookie("user_name")
 		self.clear_cookie("user_email")
@@ -192,6 +193,8 @@ class BaseHandler(tornado.web.RequestHandler):
 			coll = self.application.coll_data
 		if coll_name=="users" :
 			coll = self.application.coll_users
+		# else : 
+		# 	self.set_status(404)
 
 		print "\nchoose_collection / coll_name : "
 		print coll_name
@@ -283,7 +286,7 @@ class BaseHandler(tornado.web.RequestHandler):
 			}
 		page_n 			= query_obj["page_n"]
 		limit_results 	= query_obj["results_per_page"]
-		results_start	= page_n * limit_results 
+		results_start	= ( page_n-1 ) * limit_results 
 		results_stop	= ( results_start + limit_results ) - 1
 		print "... get_data_from_query / results_start :", results_start
 		print "... get_data_from_query / results_stop  :", results_stop
@@ -296,6 +299,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		results_count = cursor.count()
 		print "... get_data_from_query / results_cout :", results_count
 
+		# count results
 		if results_count < results_stop : 		
 			items_from_db = list(cursor)
 		else : 
@@ -304,7 +308,28 @@ class BaseHandler(tornado.web.RequestHandler):
 		# pprint.pprint(items_from_db[0])
 		print "..."
 
-		return items_from_db
+		# flag if the cursor is empty
+		is_data = False
+		if items_from_db != [] :
+			is_data = True
+
+		return items_from_db, is_data
+
+	def wrap_pagination (self, query_obj):
+		""" wrap all pagination args in a dict """
+		
+		pagination = {
+			"prev" 				: None,
+			"next"				: None,
+			"max_page_n"		: 1,
+			"current_page_n"	: query_obj["page_n"],
+		}
+
+		if query_obj["page_n"] > 1 : 
+			pagination["prev"] = query_obj["page_n"] - 1
+			pagination["next"] = query_obj["page_n"] + 1
+			
+		return pagination
 
 
 class PageNotFoundHandler(BaseHandler): 
@@ -323,6 +348,7 @@ class PageNotFoundHandler(BaseHandler):
 		print "\nPageNotFoundHandler.post / request.arguments : "
 		pprint.pprint( self.request.arguments )
 
+		self.set_status(404)
 		self.render("404.html",
 					page_title  = app_main_texts["main_title"],
 		)
@@ -341,19 +367,37 @@ class LoginHandler(BaseHandler):
 
 		print "\nLoginHandler.get ... "
 
+		print "\nLoginHandler.get / next : "
+		next_url = self.get_argument('next', '/')
+		print next_url
+
+		try:
+			errormessage = self.get_argument("error")
+		except:
+			errormessage = ""
+		print "\nLoginHandler.get / errormessage : "
+		print errormessage
+
 		### TO DO : add WTForms as form 
 
 		self.render('login.html',
-			page_title  = app_main_texts["main_title"],
-			login_or_register = "login"
+			page_title  		= app_main_texts["main_title"],
+			login_or_register 	= "login",
+			next_url			= next_url,
+			errormessage		= errormessage
 		)
 	
 	@print_separate(APP_DEBUG)
 	def post(self):
 		""" check if user exists in db and set cookie"""
-		self.check_xsrf_cookie()
+		
+		# self.check_xsrf_cookie()
 
 		print "\nLoginHandler.post ... "
+		
+		print "\nLoginHandler.post / next_url : "
+		next_url = self.get_argument('next', u'/')
+		print next_url
 
 		print "\nLoginHandler.post / request.arguments ... "
 		# print self.request 
@@ -370,18 +414,24 @@ class LoginHandler(BaseHandler):
 		if user : 
 
 			user_password	= user["password"]
+			
 			# check password 
+			# TO DO : hash and/or decrypt
 			if self.get_argument("password") == user_password : 
 				
 				# set user
 				self.set_current_user(user)
 
-				self.redirect("/")
+				# self.redirect("/")
+				self.redirect( next_url )
 			
 			else : 
-				self.redirect("/login")
+				error_msg = u"?error=" + tornado.escape.url_escape("Login incorrect")
+				self.redirect("/login/" + error_msg )
+		
 		else : 
-			self.redirect("/login")
+			error_msg = u"?error=" + tornado.escape.url_escape("Login incorrect")
+			self.redirect("/login/" + error_msg)
 	
 
 class RegisterHandler(BaseHandler):
@@ -515,6 +565,7 @@ class DataModelViewHandler(BaseHandler):
 	"""
 	
 	@print_separate(APP_DEBUG)
+	@tornado.web.authenticated
 	def get(self) : 
 
 		print "\nDataModelHandler.get... "
@@ -546,6 +597,7 @@ class DataModelEditHandler(BaseHandler):
 	list the fields of your data model from db.data_model
 	"""
 	@print_separate(APP_DEBUG)
+	@tornado.web.authenticated
 	def get(self) : 
 		print "\nDataModelHandler.get... "
 
@@ -563,6 +615,7 @@ class DataModelEditHandler(BaseHandler):
 		) 
 
 	@print_separate(APP_DEBUG)
+	@tornado.web.authenticated
 	def post(self):
 
 		### get fields + objectIDs
@@ -641,6 +694,7 @@ class DataModelAddFieldHandler(BaseHandler) :
 	Add a new field to your data model 
 	"""
 	@print_separate(APP_DEBUG)
+	@tornado.web.authenticated
 	def get(self) : 
 
 		print "\nDataModelAddFieldHandler.get... "
@@ -652,6 +706,7 @@ class DataModelAddFieldHandler(BaseHandler) :
 		)
 
 	@print_separate(APP_DEBUG)
+	@tornado.web.authenticated
 	def post(self):
 
 		print "\nDataModelAddFieldHandler.post ..."
@@ -692,9 +747,13 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 	list all contributors from db.contributors
 	"""
 	@print_separate(APP_DEBUG)
-	def get(self, slug):
+	@tornado.web.authenticated
+	def get(self, slug=None):
 
 		print "\nContributorsHandler.get ..."
+
+		print "\nContributorsHandler.get / slug :"
+		print slug
 
 		print "\nContributorsHandler.get / slug_ : "
 		slug_ = self.request.arguments
@@ -706,22 +765,17 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 		print query_contrib
 
 		# get data 
-		contributors = self.get_data_from_query( query_contrib, coll_name="contributors")
-		# contributors = list(self.application.coll_spiders.find())
+		contributors, is_data = self.get_data_from_query( query_contrib, coll_name="contributors")
 		print "\nContributorsHandler.get / contributors :"
-		pprint.pprint (contributors)
+		# pprint.pprint (contributors[0])
 		print '.....\n'
-
-		is_contributors = False
-		if contributors != [] :
-			is_contributors = True
 
 		self.render(
 			"contributors_list.html",
 			page_title  	= app_main_texts["main_title"],
 			query_obj		= query_contrib,
 			contributors 	= contributors,
-			is_contributors = is_contributors
+			is_contributors = is_data
 		)
 
 
@@ -731,6 +785,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 	"""
 
 	@print_separate(APP_DEBUG)
+	@tornado.web.authenticated
 	def get(self, spider_id=None):
 		"""show infos on one contributor : get info in DB and prefill form"""
 		
@@ -780,6 +835,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 
 	@print_separate(APP_DEBUG)
+	@tornado.web.authenticated
 	def post(self, spider_id=None):
 		"""update or create new contributor spider in DB"""
 
@@ -859,11 +915,13 @@ class ContributorDeleteHandler(BaseHandler) :
 	delete a spider config
 	"""
 	@print_separate(APP_DEBUG)
+	@tornado.web.authenticated
 	def get(self, spidername=None):
 		print "\nContributorDeleteHandler.get / contributors :"
 		self.redirect("/404")
 
 	@print_separate(APP_DEBUG)
+	@tornado.web.authenticated
 	def post(self):
 		print "\nContributorDeleteHandler.get / contributors :"
 		self.redirect("/404")
@@ -918,18 +976,24 @@ class DataScrapedHandler(BaseHandler):
 		print query_data
 
 		### get items from db
-		items_from_db = self.get_data_from_query( query_data, coll_name="data" )
+		items_from_db, is_data = self.get_data_from_query( query_data, coll_name="data" )
 
-		# clean items 
-		for item in items_from_db : 
-			# put spider name instead of spider _id
-			# print item["spider_id"]
-			item["spider_name"] = spiders_dict[ item["spider_id"] ]
-			# for k,v in item.iteritems() : 
-			# 	if k in data_model_custom_ids : 
-			# 		item[k] = str(v) 
-		pprint.pprint(items_from_db[0])
-		print "..."
+		### operations if there is data
+		if is_data : 
+			
+			# make pagination 
+			pagination = self.wrap_pagination(query_data)
+			print "\nDataScrapedHandler / pagination :"
+			print pagination
+
+			# clean items 
+			for item in items_from_db : 
+				# put spider name instead of spider _id
+				item["spider_name"] = spiders_dict[ item["spider_id"] ]
+
+			print "\nDataScrapedHandler / items_from_db[0] :"
+			pprint.pprint(items_from_db[0])
+			print "..."
 
 		self.render(
 			"data_view.html",
@@ -937,7 +1001,9 @@ class DataScrapedHandler(BaseHandler):
 			query_obj			= query_data,
 			datamodel_custom 	= data_model_custom,
 			# spiders_list		= spiders_list,
-			items				= items_from_db
+			items				= items_from_db,
+			is_data				= is_data,
+			pagination 			= pagination
 		)
 
 		# self.redirect("/404")

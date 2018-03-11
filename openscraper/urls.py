@@ -6,6 +6,8 @@ from controller import *
 ### cf : https://code.tutsplus.com/tutorials/8-regular-expressions-you-should-know--net-6149
 ### cf : https://gist.github.com/c4urself/1028897
 ### cf : http://www.lexev.org/en/2014/set-url-for-tornado-handlers/
+### cf : https://makandracards.com/theogfx/11605-python-+-tornado-variable-length-url-parameters
+### cf : https://stackoverflow.com/questions/10726486/tornado-url-query-parameters
 
 ### cf : https://docs.python.org/2/library/re.html#regular-expression-syntax
 ### "/( ?P<your_arg>.*? )" - arg in url as kwarg
@@ -20,9 +22,11 @@ urls = [
 
 	### index, login, register, logout
 	(r"/", 				WelcomeHandler),
-	(r'/login', 		LoginHandler),
-	(r'/register', 		RegisterHandler),
-	(r'/logout', 		LogoutHandler),
+	# (r'/login/(?P<next>.*?)', 		LoginHandler),
+	(r'/login/', 		LoginHandler),
+	(r'/register/', 	RegisterHandler),
+	(r'/logout/', 		LogoutHandler),
+	# TO DO 
 	(r'/preferences/', 	UserPreferences),
 
 	### forms : just for test
@@ -34,10 +38,10 @@ urls = [
 	(r"/datamodel/add_field", 	DataModelAddFieldHandler),
 
 	### contributors : websites to crawl
-	(r"/contributors([^/]*)", 		ContributorsHandler),
-	(r"/contributor/add", 			ContributorEditHandler),
-	(r"/contributor/edit/([\w\_\d]+)",	ContributorEditHandler), 
-	(r"/contributor/delete/([\w\_\d]+)", ContributorDeleteHandler), 
+	(r"/contributors?([^/]*)?", 			ContributorsHandler),
+	(r"/contributor/add", 					ContributorEditHandler),
+	(r"/contributor/edit/([\w\_\d]+)",		ContributorEditHandler), 
+	(r"/contributor/delete/([\w\_\d]+)", 	ContributorDeleteHandler), 
 
 	### spider launchers
 	# (r"/crawl/(\w+)", 			SpiderHandler), ### get spidername as input
@@ -48,6 +52,7 @@ urls = [
 	(r"/dataset/view([^/]*)", 		DataScrapedHandler), 	### get optional(*) parameters in slug like : dataset/view?page=0&stuff=3
 	# (r"/dataset/view/(\w+)",		DataScrapedViewOneHandler),
 	
+	# TO DO 
 	### API routes
 	(r"/api/.*", 					PageNotFoundHandler),
 	(r"/api/([^/]*)",				PageNotFoundHandler),

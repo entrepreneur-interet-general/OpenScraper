@@ -218,7 +218,7 @@ for k, v in CONTRIBUTOR_CORE_FIELDS.iteritems() :
 
 ### DATA QUERIES FROM URL - reconstruct from slug
 QUERY_DATA_BY_DEFAULT = {
-	"page_n"			: 0,		# page number
+	"page_n"			: 1,		# page number
 	"results_per_page" 	: 25,		# self-explanatory
 	"token"				: None, 	# TO DO LATER : client's JWT (token) to check permissions 
 	"spider_id"			: ["all"], 	# spider_id for contributor(s)
@@ -238,7 +238,7 @@ QUERIES_DATA_ALLOWED_BOOLEAN = [
 
 ### SPIDER QUERIES FROM URL - reconstruct from slug
 QUERY_SPIDER_BY_DEFAULT = {
-	"page_n"			: 0,		# page number
+	"page_n"			: 1,		# page number
 	"results_per_page" 	: 25,		# self-explanatory
 	"token"				: None, 	# TO DO LATER : client's JWT (token) to check permissions 
 	"spider_id"			: ["all"], 	# spider_id for contributor(s)

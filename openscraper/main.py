@@ -177,7 +177,7 @@ class Application(tornado.web.Application):
 				"Contributor": ContributorModule,
 			},
 
-			login_url		= "/login",
+			login_url		= "/login/",
 
 			debug 			= APP_DEBUG ,
 			cookie_secret 	= COOKIE_SECRET , ### example / store real key in ignored config.py

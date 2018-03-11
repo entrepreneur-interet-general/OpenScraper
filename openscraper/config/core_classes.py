@@ -217,9 +217,9 @@ class QueryFromSlug :
 
 					# value should be a boolean 
 					elif q_field in self.default_bool :
-						if self.query[q_field] in ["yes", "true", "True", "TRUE"] :
+						if self.query[q_field] in ["yes", "true", "True", "TRUE", "1", "t", "T"] :
 							self.query[q_field] = True
-						elif self.query[q_field] in ["no", "false", "False", "FALSE"] : 
+						elif self.query[q_field] in ["no", "false", "False", "FALSE", "0", "f", "F"] : 
 							self.query[q_field] = False
 						else : 
 							# keep original value if neither
