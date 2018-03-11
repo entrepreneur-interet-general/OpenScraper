@@ -44,6 +44,7 @@
 
 			<div class="column is-two-third">
 
+				{% if is_contributors == True %}
 				<table id="t_contributors" class="table display" width="100%" cellspacing="0">
 					
 					<thead>
@@ -72,8 +73,9 @@
 						</tr>
 					</thead>
 
-					{# displaying data #}
+					{# displaying data if any #}
 					<tbody>
+					
 					{% for contrib in contributors %}
 						
 						{% set is_working = contrib["scraper_log"]["is_working"] %}
@@ -135,7 +137,7 @@
 
 							<td> 
 								<a class="has-text-centered button is-info is-rounded is-small"
-									href="/data/view/{{ escape (contrib['scraper_config']['spidername']) }}" >
+									href="/dataset/view?spider_id={{ escape (str(contrib['_id'])) }}" >
 									<span class="icon is-small"><i class="fas fa-table"></i></span>
 									<span>view data</span>
 								</a> 
@@ -162,6 +164,10 @@
 					</tfoot> #}
 
 				</table>
+				{% else %}
+				<p> no results </p>
+				{% end %}
+
 
 			</div>
 		</div>

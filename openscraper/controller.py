@@ -15,8 +15,8 @@ from tornado import gen
 ### import app settings / infos 
 from config.app_infos 			import app_infos, app_main_texts
 from config.settings_example 	import * # MONGODB_COLL_CONTRIBUTORS, MONGODB_COLL_DATAMODEL, MONGODB_COLL_DATASCRAPPED
-from config.settings_corefields import *
-from config.core_classes		import SpiderConfig, UserClass
+from config.settings_corefields import * # USER_CORE_FIELDS, etc...
+from config.core_classes		import * # SpiderConfig, UserClass, QuerySlug
 
 ### import WTForms for validation
 from forms import *
@@ -135,7 +135,8 @@ class BaseHandler(tornado.web.RequestHandler):
 	MyNewHandler(BaseHandler)
 	"""
 
-	### user functions for all pages
+	### user functions for all handlers
+
 	def get_current_user(self):
 		""" return user_name"""
 		return self.get_secure_cookie("user_name")
@@ -177,7 +178,65 @@ class BaseHandler(tornado.web.RequestHandler):
 		self.clear_cookie("user_name")
 		self.clear_cookie("user_email")
 
-	### DB functions for all pages
+
+	### DB functions for all handlers
+
+	def choose_collection(self, coll_name=None ) :
+		""" choose a db collection """
+
+		if coll_name=="datamodel" :
+			coll = self.application.coll_model
+		if coll_name=="contributors" :
+			coll = self.application.coll_spiders
+		if coll_name=="data" :
+			coll = self.application.coll_data
+		if coll_name=="users" :
+			coll = self.application.coll_users
+
+		print "\nchoose_collection / coll_name : "
+		print coll_name
+		print ""
+
+		return coll
+
+	def count_documents(self, coll_name="datamodel", query=None ) : 
+		""" 
+		simple count of documents in the db collection db_name
+		passed "query" arg must be with the form : {"<field>" : "<value>"}
+		ex : query={"field_class" : "custom"}
+		"""
+		
+		# if coll_name=="datamodel" :
+		# 	coll = self.application.coll_model
+		# if coll_name=="contributors" :
+		# 	coll = self.application.coll_spiders
+		# if coll_name=="data" :
+		# 	coll = self.application.coll_data
+		# if coll_name=="users" :
+		# 	coll = self.application.coll_users
+
+		print "\ncount_documents / coll_name : "
+		print coll_name
+
+		coll  = self.choose_collection ( coll_name=coll_name )
+		count = coll.find(query).count()
+
+		return count
+
+	def count_all_documents(self, q_datamodel=None, q_contributors=None, q_data=None, q_users=None):
+		"""count all collections' documents in db"""
+		
+		collections_to_count = {
+			"datamodel"		: q_datamodel, 
+			"contributors"	: q_contributors, 
+			"data"			: q_data, 
+			"users"			: q_users
+		}
+		print "\ncount_all_documents / collections_to_count : "
+		print collections_to_count 
+		counts 	= { "count_{}".format(k) : self.count_documents(coll_name=k, query=v) for k,v in collections_to_count.iteritems() }
+		return counts
+
 	def get_datamodel_fields(self, query=None):
 		"""return fields from query as list"""
 		
@@ -197,35 +256,55 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		return fields
 
-	def count_documents(self, db_name="datamodel", query=None ) : 
-		""" 
-		simple count of documents in the db collection db_name
-		passed "query" arg must be with the form : {"<field>" : "<value>"}
-		ex : query={"field_class" : "custom"}
-		"""
+	def filter_slug(self, slug, slug_class=None) : 
+		""" filter args from slug """
 		
-		if db_name=="datamodel" :
-			coll = self.application.coll_model
-		if db_name=="contributors" :
-			coll = self.application.coll_spiders
-		if db_name=="data" :
-			coll = self.application.coll_data
-		if db_name=="users" :
-			coll = self.application.coll_users
+		print "\n... filter_slug / slug : "
+		print slug
 
-		count = coll.find(query).count()
-		return count
+		# recreate query from slug
+		raw_query = QueryFromSlug( slug, slug_class )	# from settings_corefields
+		print "\n... filter_slug / raw_query.query :"
+		# print raw_query.query
 
-	def count_all_documents(self, q_datamodel=None, q_contributors=None, q_data=None, q_users=None):
-		"""count all collections' documents in db"""
-		collections_to_count = {
-			"datamodel"		: q_datamodel, 
-			"contributors"	: q_contributors, 
-			"data"			: q_data, 
-			"users"			: q_users
-		}
-		counts 	= { "count_{}".format(k) : self.count_documents(db_name=k, query=v) for k,v in collections_to_count.iteritems() }
-		return counts
+		return raw_query.query
+
+	def get_data_from_query(self, query_obj, coll_name ) :
+		""" get items from db """
+
+		print "\n... get_data_from_query / query_obj :"
+		print query_obj
+		
+		if query_obj["spider_id"] == ["all"]:
+			query = { }
+		else : 
+			query = { 
+				"spider_id" : query_obj["spider_id"][0] 
+			}
+		page_n 			= query_obj["page_n"]
+		limit_results 	= query_obj["results_per_page"]
+		results_start	= page_n * limit_results 
+		results_stop	= ( results_start + limit_results ) - 1
+		print "... get_data_from_query / results_start :", results_start
+		print "... get_data_from_query / results_stop  :", results_stop
+
+		# retrieve docs from db
+		# items_from_db = list( self.application.coll_data.find( query ).limit(limit_results) )
+		print "... get_data_from_query / cursor :"
+		coll 	= self.choose_collection( coll_name=coll_name )
+		cursor 	= coll.find( query )
+		results_count = cursor.count()
+		print "... get_data_from_query / results_cout :", results_count
+
+		if results_count < results_stop : 		
+			items_from_db = list(cursor)
+		else : 
+			items_from_db = list(cursor[ results_start : results_stop ])
+		print "... get_data_from_query / items_from_db :"
+		# pprint.pprint(items_from_db[0])
+		print "..."
+
+		return items_from_db
 
 
 class PageNotFoundHandler(BaseHandler): 
@@ -409,7 +488,7 @@ class WelcomeHandler(BaseHandler):
 		# count_contributors 	= self.count_documents(db_name="contributors")
 		# count_data 			= self.count_documents(db_name="data")
 		# count_users 		= self.count_documents(db_name="users")
-		counts = self.count_all_documents(q_datamodel={"field_class" : "custom"}) 
+		counts = self.count_all_documents( q_datamodel={"field_class" : "custom"} ) 
 		print "\nWelcomeHandler.get / counts :", counts
 
 		self.render(
@@ -613,19 +692,36 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 	list all contributors from db.contributors
 	"""
 	@print_separate(APP_DEBUG)
-	def get(self):
+	def get(self, slug):
 
 		print "\nContributorsHandler.get ..."
 
-		contributors = list(self.application.coll_spiders.find())
+		print "\nContributorsHandler.get / slug_ : "
+		slug_ = self.request.arguments
+		print slug_
+
+		# filter slug
+		query_contrib = self.filter_slug( slug_, slug_class="contributors" )
+		print "\nContributorsHandler.get / query_contrib : "
+		print query_contrib
+
+		# get data 
+		contributors = self.get_data_from_query( query_contrib, coll_name="contributors")
+		# contributors = list(self.application.coll_spiders.find())
 		print "\nContributorsHandler.get / contributors :"
-		pprint.pprint (contributors[0])
+		pprint.pprint (contributors)
 		print '.....\n'
+
+		is_contributors = False
+		if contributors != [] :
+			is_contributors = True
 
 		self.render(
 			"contributors_list.html",
 			page_title  	= app_main_texts["main_title"],
-			contributors 	= contributors
+			query_obj		= query_contrib,
+			contributors 	= contributors,
+			is_contributors = is_contributors
 		)
 
 
@@ -783,12 +879,12 @@ class DataScrapedHandler(BaseHandler):
 	list all data scraped from db.data_scraped 
 	"""
 	@print_separate(APP_DEBUG)
-	def get (self, slug):
+	def get (self, slug ):
 
 		print "\nDataScrapedHandler.get ... : "
 
-		print "\nDataScrapedHandler.get / slug : "
-		pprint.pprint(slug)
+		# print "\nDataScrapedHandler.get / slug : "
+		# pprint.pprint(slug)
 
 		print "\nDataScrapedHandler.get / request : "
 		pprint.pprint (self.request )
@@ -813,21 +909,21 @@ class DataScrapedHandler(BaseHandler):
 		# make a dict from it
 		spiders_dict = { str(s["_id"]) : s["infos"]["name"] for s in spiders_list }
 		print "\nDataModelHandler.get / spiders_dict :"
-		pprint.pprint (spiders_dict)
+		print (spiders_dict)
+
+
+		### clean slug as data query
+		query_data = self.filter_slug( slug_, slug_class="data" )
+		print "\nDataScrapedHandler / query_data :"
+		print query_data
 
 		### get items from db
-		# recreate query from slug
-		query = { }
-		condition = { }
-		limit_results = 100
-		items_from_db = list( self.application.coll_data.find( query ).limit(limit_results) )
-		print "\nDataModelHandler.get / items_from_db :"
-		pprint.pprint(items_from_db[0])
+		items_from_db = self.get_data_from_query( query_data, coll_name="data" )
 
 		# clean items 
 		for item in items_from_db : 
 			# put spider name instead of spider _id
-			print item["spider_id"]
+			# print item["spider_id"]
 			item["spider_name"] = spiders_dict[ item["spider_id"] ]
 			# for k,v in item.iteritems() : 
 			# 	if k in data_model_custom_ids : 
@@ -838,6 +934,7 @@ class DataScrapedHandler(BaseHandler):
 		self.render(
 			"data_view.html",
 			page_title			= app_main_texts["main_title"],
+			query_obj			= query_data,
 			datamodel_custom 	= data_model_custom,
 			# spiders_list		= spiders_list,
 			items				= items_from_db

@@ -12,8 +12,9 @@ from controller import *
 ### "/( \w+ )" - string of letter
 ### "/( [0-9Xx\-]+ )" - string of numbers  numbers and dashes
 ### "/( .* )" - whatever comes
-### "( [^/]+ )"
-### if url is like "/api/?q=this&r=that" --> self.request.arguments gets : {'q': ['pants'], 'r': ['tata']} 
+
+### "( [^/]+ )" - as slug
+### if url is like "/api/?q=this&r=that" --> self.request.arguments gets : {'q': ['this'], 'r': ['that']} 
 
 urls = [
 
@@ -33,7 +34,7 @@ urls = [
 	(r"/datamodel/add_field", 	DataModelAddFieldHandler),
 
 	### contributors : websites to crawl
-	(r"/contributors", 				ContributorsHandler),
+	(r"/contributors([^/]*)", 		ContributorsHandler),
 	(r"/contributor/add", 			ContributorEditHandler),
 	(r"/contributor/edit/([\w\_\d]+)",	ContributorEditHandler), 
 	(r"/contributor/delete/([\w\_\d]+)", ContributorDeleteHandler), 
@@ -45,7 +46,7 @@ urls = [
 	### dataset routes
 	# cf : https://stackoverflow.com/questions/10726486/tornado-url-query-parameters 
 	(r"/dataset/view([^/]*)", 		DataScrapedHandler), 	### get optional(*) parameters in slug like : dataset/view?page=0&stuff=3
-	(r"/dataset/view/(\w+)",		DataScrapedViewOneHandler),
+	# (r"/dataset/view/(\w+)",		DataScrapedViewOneHandler),
 	
 	### API routes
 	(r"/api/.*", 					PageNotFoundHandler),

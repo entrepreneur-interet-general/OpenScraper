@@ -9,6 +9,7 @@ from settings_example import *
 BOT_NAME		= 	"OpenScraper"
 USER_AGENT		= 	"Open Scraper (+https://github.com/entrepreneur-interet-general/OpenScraper)"
 					# 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
+ROBOTSTXT_OBEY 	= True
 
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay

@@ -156,3 +156,75 @@ class SpiderConfig :
 		partial_config["scraper_log"]["added_by"] 		= previous_config["scraper_log"]["added_by"]
 
 		return partial_config
+
+
+### TO DO ?
+class QueryFromSlug : 
+	"""
+	slug cleaner to translate complete or incomplete slug into a clean mongodb query
+	"""
+
+	def __init__(self, slug, slug_class ) : 
+
+		self.slug 		= slug
+		self.slug_class = slug_class
+
+		self.default_query 		= {}
+		self.default_uniques 	= []
+		self.default_integers 	= []
+		self.default_bool 		= []
+		
+		# choose default query depending on slug_class
+		if self.slug_class == "data" : 
+			self.default_query 		= QUERY_DATA_BY_DEFAULT
+			self.default_uniques 	= QUERIES_DATA_ALLOWED_UNIQUE
+			self.default_integers 	= QUERIES_DATA_ALLOWED_INTEGERS
+			self.default_bool 		= QUERIES_DATA_ALLOWED_BOOLEAN
+		elif self.slug_class == "contributors" : 
+			self.default_query 		= QUERY_SPIDER_BY_DEFAULT
+			self.default_uniques 	= QUERIES_SPIDER_ALLOWED_UNIQUE
+			self.default_integers 	= QUERIES_SPIDER_ALLOWED_INTEGERS
+			self.default_bool 		= QUERIES_SPIDER_ALLOWED_BOOLEAN
+
+
+		# copy chosen default query as backbone
+		self.query 		= deepcopy(self.default_query)
+
+		# populate default query with args from slug if a slug
+		if slug != {} and self.slug_class in ["data", "contributors"] :
+			self.populate_query()
+		
+
+	def populate_query(self) : 
+		""" populate default query """
+
+		for q_field, q_arg in self.slug.iteritems() : 
+			
+			# only get allowed query fields from slug so to ignore others
+			if q_field in self.default_query.keys() :
+
+				if q_field in self.default_uniques : 
+					
+					# select one unique value for this arg (not a list)
+					self.query[q_field] = q_arg[0]
+					
+					# value should be an integer 
+					if q_field in self.default_integers :
+						try : 
+							self.query[q_field] = int(self.query[q_field])
+						except : 
+							self.query[q_field] = self.default_query[q_field]
+
+					# value should be a boolean 
+					elif q_field in self.default_bool :
+						if self.query[q_field] in ["yes", "true", "True", "TRUE"] :
+							self.query[q_field] = True
+						elif self.query[q_field] in ["no", "false", "False", "FALSE"] : 
+							self.query[q_field] = False
+						else : 
+							# keep original value if neither
+							pass
+
+				else : 
+					self.query[q_field] = q_arg
+				
