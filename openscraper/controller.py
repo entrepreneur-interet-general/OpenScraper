@@ -534,20 +534,12 @@ class WelcomeHandler(BaseHandler):
 		print "\nWelcomeHandler.get... "
 
 		### count collections' documents
-		# count_dm 			= self.count_documents(db_name="datamodel", query={"field_class" : "custom"})
-		# count_contributors 	= self.count_documents(db_name="contributors")
-		# count_data 			= self.count_documents(db_name="data")
-		# count_users 		= self.count_documents(db_name="users")
 		counts = self.count_all_documents( q_datamodel={"field_class" : "custom"} ) 
 		print "\nWelcomeHandler.get / counts :", counts
 
 		self.render(
 			"index.html",
 			page_title  		= app_main_texts["main_title"],
-			# count_dm 			= count_dm,
-			# count_contributors 	= count_contributors,
-			# count_data 			= count_data,
-			# count_users 		= count_users,
 			counts 				= counts,
 			user				= self.current_user
 		)
