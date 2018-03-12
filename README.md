@@ -99,10 +99,10 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 1. basic Tornado + MongoDB setup
 1. understand basics of Scrapy
 1. UI to create user (register), create/update a datamodel, create/update a spider configuration
+1. add a GUI to configure the data structure you expect from the scraping
 1. create a generic spider (class) + generic item to fill, both callable from handlers
 1. integrate generic spider + tests + run
 1. make Tornado and a basic scrapy spider work together (non-blocking)
-1. add a GUI to configure the data structure you expect from the scraping
 1. make a nice front in Bulma 
 1. ... nicer front in vue.js
 1. GUI to edit also fields' names (structure of the scrapping)
@@ -111,12 +111,13 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 ------
 
 ## CURRENTLY... 
-- currently at step /4 - /5
-- running scrapy from browser with a basic generic crawler
-- create item to fill on the fly (genericItem)
+- currently at step /6 - /7
+- running scrapy from browser with a basic generic crawler and saving to db
+- api-like urls for pagination, contributors, dataset...
+- working on several generic spider scenarios
 - ...
 
-#### Notes / issues
+#### Notes for later / issues
 - the generic spider need to be tested on various websites configurations
 - must add a feature to use Selenium inside a spider if needed (ajax or .click function)
 
