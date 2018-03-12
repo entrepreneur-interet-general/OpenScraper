@@ -218,14 +218,20 @@ class QueryFromSlug :
 
 					# value should be a boolean 
 					elif q_field in self.default_bool :
-						if self.query[q_field] in ["yes", "true", "True", "TRUE", "1", "t", "T"] :
+						if self.query[q_field] in ["yes", "YES", "true", "True", "TRUE", "1", "t", "T"] :
 							self.query[q_field] = True
-						elif self.query[q_field] in ["no", "false", "False", "FALSE", "0", "f", "F"] : 
+						elif self.query[q_field] in ["no", "NO", "false", "False", "FALSE", "0", "f", "F"] : 
 							self.query[q_field] = False
 						else : 
 							# keep original value if neither
 							pass
 
 				else : 
-					self.query[q_field] = q_arg
-				
+					# split query list by space (if + sign is notified)
+					# self.query[q_field] = q_arg
+					raw_q_list = []
+					for q in q_arg :  	# for every list if q_arg is repeated
+						q_ = q.split()	# split string content into list when args are separated by a space
+						for i in q_ : 	# for every arg add it to raw_q_list
+							raw_q_list.append(i)
+					self.query[q_field] = raw_q_list

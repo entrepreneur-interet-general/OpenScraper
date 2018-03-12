@@ -7,10 +7,10 @@ import 	time
 from 	datetime import datetime
 from 	functools import wraps
 
-from pymongo import UpdateOne
+from 	pymongo import UpdateOne
 
-import tornado.web, tornado.template
-from tornado import gen
+import 	tornado.web, tornado.template, tornado.escape
+from 	tornado import gen
 
 ### import app settings / infos 
 from config.app_infos 			import app_infos, app_main_texts
@@ -129,10 +129,9 @@ Tornado supports any valid HTTP method (GET,POST,PUT,DELETE,HEAD,OPTIONS)
 ### BASE handler
 
 class BaseHandler(tornado.web.RequestHandler):
-	
 	"""
-	Base class for all routes : 
-	all handler wil inheritate the following functions if writtent like this
+	Base class for all routes/handlers : 
+	each handler wil inheritate those following functions if writtent like this
 	MyNewHandler(BaseHandler)
 	"""
 
@@ -197,7 +196,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		# else : 
 		# 	self.set_status(404)
 
-		print "\nchoose_collection / coll_name : "
+		print "\n... choose_collection / coll_name : "
 		print coll_name
 		print ""
 
@@ -219,7 +218,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		# if coll_name=="users" :
 		# 	coll = self.application.coll_users
 
-		print "\ncount_documents / coll_name : "
+		print "\n...count_documents / coll_name : "
 		print coll_name
 
 		coll  = self.choose_collection ( coll_name=coll_name )
@@ -236,7 +235,7 @@ class BaseHandler(tornado.web.RequestHandler):
 			"data"			: q_data, 
 			"users"			: q_users
 		}
-		print "\ncount_all_documents / collections_to_count : "
+		print "\n...count_all_documents / collections_to_count : "
 		print collections_to_count 
 		counts 	= { "count_{}".format(k) : self.count_documents(coll_name=k, query=v) for k,v in collections_to_count.iteritems() }
 		return counts
@@ -279,11 +278,25 @@ class BaseHandler(tornado.web.RequestHandler):
 		print "\n... get_data_from_query / query_obj :"
 		print query_obj
 		
+		# check if query wants all results 
+		all_results		= query_obj["all_results"]
+		
+		# TO DO : check if user has right to retrieve all results at once 
+		user_token		= query_obj["token"]
+		if all_results==True : 
+			if user_token != None : # and 
+				pass
+			else : 
+				all_results = False
+				
+
+
+		### WORK ON THAT !
 		if query_obj["spider_id"] == ["all"]:
 			query = { }
 		else : 
 			query = { 
-				"spider_id" : query_obj["spider_id"][0] 
+				"spider_id" : q for q in query_obj["spider_id"]
 			}
 		page_n 			= query_obj["page_n"]
 		limit_results 	= query_obj["results_per_page"]
@@ -292,43 +305,74 @@ class BaseHandler(tornado.web.RequestHandler):
 		print "... get_data_from_query / results_start :", results_start
 		print "... get_data_from_query / results_stop  :", results_stop
 
+
 		# retrieve docs from db
-		# items_from_db = list( self.application.coll_data.find( query ).limit(limit_results) )
 		print "... get_data_from_query / cursor :"
 		coll 	= self.choose_collection( coll_name=coll_name )
 		cursor 	= coll.find( query )
-		results_count = cursor.count()
-		print "... get_data_from_query / results_cout :", results_count
+
+
 
 		# count results
-		if results_count < results_stop : 		
-			items_from_db = list(cursor)
+		results_count = cursor.count()
+		print "... get_data_from_query / results_cout :", results_count
+		if results_count < results_stop or all_results==True : 		
+			docs_from_db = list(cursor)
 		else : 
-			items_from_db = list(cursor[ results_start : results_stop ])
+			docs_from_db = list(cursor[ results_start : results_stop ])
 		print "... get_data_from_query / items_from_db :"
 		# pprint.pprint(items_from_db[0])
 		print "..."
 
 		# flag if the cursor is empty
 		is_data = False
-		if items_from_db != [] :
+		if docs_from_db != [] :
 			is_data = True
 
-		return items_from_db, is_data
+		return docs_from_db, is_data
 
+	### WORK ON THAT !!!
 	def wrap_pagination (self, query_obj):
 		""" wrap all pagination args in a dict """
-		
-		pagination = {
-			"prev" 				: None,
-			"next"				: None,
-			"max_page_n"		: 1,
-			"current_page_n"	: query_obj["page_n"],
+
+		print "\n...wrap_pagination : ... "
+		print "... wrap_pagination / request.path : ", self.request.path
+		print "... wrap_pagination / request.uri  : ", self.request.uri
+		print "... wrap_pagination / slug_ : "
+		slug_ = self.request.arguments
+		pprint.pprint( slug_ )
+
+		base_uri		= self.request.uri
+		base_path		= self.request.path
+
+		# print tornado.escape.url_unescape(self.request.uri)
+
+		page_n 			= query_obj["page_n"]
+		limit_results 	= query_obj["results_per_page"]
+		results_start	= ( page_n-1 ) * limit_results 
+		results_stop	= ( results_start + limit_results ) - 1
+
+		# backbone of pagination 
+		pagination 	= {
+			"prev_n" 			: None,
+			"prev_uri" 			: None,
+
+			"next_n"			: None,
+			"next_uri" 			: None,
+
+			"last_page_n"		: 1,
+			"last_page_uri"		: None,
+
+			"current_page_n"	: page_n,
 		}
 
-		if query_obj["page_n"] > 1 : 
-			pagination["prev"] = query_obj["page_n"] - 1
-			pagination["next"] = query_obj["page_n"] + 1
+		if page_n > 1 : 
+			pagination["prev_n"] = query_obj["page_n"] - 1
+			if page_n >= results_stop :
+				pagination["next_n"] = results_stop
+			else : 
+				pagination["next_n"] = query_obj["page_n"] + 1
+				
 			
 		return pagination
 
@@ -767,12 +811,21 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 		# pprint.pprint (contributors[0])
 		print '.....\n'
 
+		### operations if there is data
+		pagination_dict = None
+		if is_data : 
+			# make pagination 
+			pagination_dict = self.wrap_pagination(query_contrib)
+			print "\nDataScrapedHandler / pagination_dict :"
+			print pagination_dict
+
 		self.render(
-			"contributors_list.html",
+			"contributors_view.html",
 			page_title  	= app_main_texts["main_title"],
 			query_obj		= query_contrib,
 			contributors 	= contributors,
-			is_contributors = is_data
+			is_contributors = is_data,
+			pagination_dict	= pagination_dict
 		)
 
 
@@ -944,24 +997,29 @@ class DataScrapedHandler(BaseHandler):
 		print "\nDataScrapedHandler.get / request : "
 		pprint.pprint (self.request )
 
+		print "\nDataScrapedHandler.get : ... "
+		print "... request.path : ", self.request.path
+		print "... request.uri  : ", self.request.uri
+
 		print "\nDataScrapedHandler.get / slug_ : "
 		slug_ = self.request.arguments
 		pprint.pprint( slug_ )
 
-		### retrieve datamodel from DB
+		### retrieve datamodel from DB top make correspondances field's _id --> field_name
 		data_model_custom = list( self.application.coll_model.find({"field_class" : "custom", "is_visible" : True }).sort("field_name",1) )
 		print "\nDataModelHandler.get / data_model_custom :"
 		pprint.pprint (data_model_custom)
 		data_model_custom_ids = [ str(dmc["_id"]) for dmc in data_model_custom ]
-		print "\nDataModelHandler.get / data_model_custom_ids :"
-		pprint.pprint (data_model_custom_ids)
+		print "\nDataModelHandler.get / data_model_custom_ids[:2] :"
+		pprint.pprint (data_model_custom_ids[:2])
+		print "..."
 
-		### retrieve all spiders from db
+		### retrieve all spiders from db to make correspondances spider_id --> spider_name
 		spiders_list = list( self.application.coll_spiders.find( {}, {"infos" : 1 } ) )
-		print "\nDataModelHandler.get / spiders_list :"
+		print "\nDataModelHandler.get / spiders_list[0] :"
 		pprint.pprint (spiders_list[0])
 		print "..."
-		# make a dict from it
+		# make a dict from spiders_list
 		spiders_dict = { str(s["_id"]) : s["infos"]["name"] for s in spiders_list }
 		print "\nDataModelHandler.get / spiders_dict :"
 		print (spiders_dict)
@@ -976,12 +1034,13 @@ class DataScrapedHandler(BaseHandler):
 		items_from_db, is_data = self.get_data_from_query( query_data, coll_name="data" )
 
 		### operations if there is data
+		pagination_dict = None
 		if is_data : 
 			
 			# make pagination 
-			pagination = self.wrap_pagination(query_data)
-			print "\nDataScrapedHandler / pagination :"
-			print pagination
+			pagination_dict = self.wrap_pagination(query_data)
+			print "\nDataScrapedHandler / pagination_dict :"
+			print pagination_dict
 
 			# clean items 
 			for item in items_from_db : 
@@ -1000,7 +1059,7 @@ class DataScrapedHandler(BaseHandler):
 			# spiders_list		= spiders_list,
 			items				= items_from_db,
 			is_data				= is_data,
-			pagination 			= pagination
+			pagination_dict		= pagination_dict
 		)
 
 		# self.redirect("/404")
@@ -1263,6 +1322,18 @@ class FormHandler(BaseHandler) :
 ########################
 ########################
 ### TORNADO MODULES
+
+class PaginationModule(tornado.web.UIModule):
+	"""
+	module for pagination
+	"""
+	def render( self, query_obj, pagination_dict ):
+		return self.render_string(
+			"modules/pagination.html", 
+			pagination_dict = pagination_dict,
+			query_obj		= query_obj
+		)
+
 
 class ContributorModule(tornado.web.UIModule):
 	"""

@@ -8,6 +8,7 @@ from controller import *
 ### cf : http://www.lexev.org/en/2014/set-url-for-tornado-handlers/
 ### cf : https://makandracards.com/theogfx/11605-python-+-tornado-variable-length-url-parameters
 ### cf : https://stackoverflow.com/questions/10726486/tornado-url-query-parameters
+### cf : https://stackoverflow.com/questions/6038061/regular-expression-to-find-urls-within-a-string
 
 ### cf : https://docs.python.org/2/library/re.html#regular-expression-syntax
 ### "/( ?P<your_arg>.*? )" - arg in url as kwarg

@@ -38,12 +38,19 @@
 	<br>
 
 	<div class="container">
+		
+		{% if is_contributors == True %}
 
 		<div class="columns is-centered">
-			
-			{% if is_contributors == True %}
+			<div class="column is-half">
+				{% module Pagination( query_obj, pagination_dict ) %}
+			</div>
+		</div>
+
+		<div class="columns is-centered">
 
 			<div class="column is-two-third">
+
 
 				<table id="t_contributors" class="table display" width="100%" cellspacing="0">
 					
@@ -166,23 +173,23 @@
 				</table>
 
 			</div>
-
-			{% else %}
-			
-			<hr>
-			<div class="container has-text-centered">
-				<p class="is-centered"> no results </p>
-			</div>
-			
-			{% end %}
-
-
+		
 		</div>
 
+		{% else %}
+			
+		<hr>
+		<div class="container has-text-centered">
+			<p class="is-centered"> no results </p>
+		</div>
+		<br>
+	
+		{% end %}
 
 	</div>
 
 
+	{% if is_contributors == True %}
 	<div class="container has-text-centered">
 		{# <a class="button is-primary is-rounded">save changes</a> #}
 		<a class="button is-danger is-rounded" disabled>
@@ -190,6 +197,7 @@
 			<span>run all spiders</span>
 		</a>
 	</div>
+	{% end %}
 
 
 </section>

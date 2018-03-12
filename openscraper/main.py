@@ -175,7 +175,8 @@ class Application(tornado.web.Application):
 			template_path	= os.path.join(os.path.dirname(__file__), "templates"),
 			static_path		= os.path.join(os.path.dirname(__file__), "static"),
 			ui_modules		= {
-				"Contributor": ContributorModule,
+				"Contributor"	: ContributorModule,
+				"Pagination"	: PaginationModule
 			},
 
 			login_url		= "/login/",
