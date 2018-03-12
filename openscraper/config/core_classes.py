@@ -10,7 +10,8 @@ from 	datetime import datetime
 ### for JWT in Python, cf : https://github.com/jpadilla/pyjwt
 import 	jwt
 
-from .settings_corefields import * 
+from .settings_corefields 	import * 
+from .settings_queries 		import * 
 
 
 class UserClass :

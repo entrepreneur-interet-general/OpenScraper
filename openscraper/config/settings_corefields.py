@@ -221,6 +221,9 @@ for k, v in CONTRIBUTOR_CORE_FIELDS.iteritems() :
 # print "NOT_CUSTOM_DATAMODEL_FIELDS :", NOT_CUSTOM_DATAMODEL_FIELDS
 
 
+"""
+### !!! all those variables were deplaced in settings_queries.py
+
 ### DATA QUERIES FROM URL - reconstruct from slug
 QUERY_DATA_BY_DEFAULT = {
 	"page_n"			: 1,		# page number
@@ -230,9 +233,10 @@ QUERY_DATA_BY_DEFAULT = {
 	"is_complete"		: False, 	# only complete records
 	"search_for"		: [],		# list of words to search in data collection
 	"search_in"			: [],		# list of fields to search in
+	"open_level"		: ["all"]	# fields of data to be shown -> "all" == "opendata" + "commons" + "private"
 }
 QUERIES_DATA_ALLOWED_UNIQUE = [
-	"page_n", "results_per_page", "token", "is_complete"
+	"page_n", "results_per_page", "token", "is_complete", "open_level"
 ]
 QUERIES_DATA_ALLOWED_INTEGERS  	= [
 	"page_n", "results_per_page"
@@ -258,3 +262,4 @@ QUERIES_SPIDER_ALLOWED_INTEGERS  	= [
 QUERIES_SPIDER_ALLOWED_BOOLEAN = [
 	
 ]
+"""

@@ -16,6 +16,7 @@ from tornado import gen
 from config.app_infos 			import app_infos, app_main_texts
 from config.settings_example 	import * # MONGODB_COLL_CONTRIBUTORS, MONGODB_COLL_DATAMODEL, MONGODB_COLL_DATASCRAPPED
 from config.settings_corefields import * # USER_CORE_FIELDS, etc...
+from config.settings_queries 	import * # QUERY_DATA_BY_DEFAULT, etc...
 from config.core_classes		import * # SpiderConfig, UserClass, QuerySlug
 
 ### import WTForms for validation
