@@ -603,6 +603,7 @@ class DataModelEditHandler(BaseHandler):
 			page_title 	= app_main_texts["main_title"],
 			field_types = DATAMODEL_FIELDS_TYPES,
 			field_keep_vars	 = DATAMODEL_FIELD_KEEP_VARS,
+			field_open_vars	 = DATAMODEL_FIELD_OPEN_VARS,
 			datamodel_custom = data_model_custom,
 		) 
 
@@ -657,6 +658,7 @@ class DataModelEditHandler(BaseHandler):
 			{'$set':  { 
 					"field_type" 	: field["field_type"],
 					"field_name" 	: field["field_name"],
+					"field_open" 	: field["field_open"],
 					"is_visible" 	: True,
 					"modified_by"	: self.get_current_user_email(),
 					"modified_at"	: timestamp
@@ -693,8 +695,9 @@ class DataModelAddFieldHandler(BaseHandler) :
 
 		self.render(
 			"datamodel_new_field.html",
-			page_title = app_main_texts["main_title"],
-			field_types = DATAMODEL_FIELDS_TYPES
+			page_title 		= app_main_texts["main_title"],
+			field_types		= DATAMODEL_FIELDS_TYPES,
+			field_open_vars	= DATAMODEL_FIELD_OPEN_VARS,
 		)
 
 	@print_separate(APP_DEBUG)
@@ -716,6 +719,7 @@ class DataModelAddFieldHandler(BaseHandler) :
 		new_field = {
 			"field_name" 	: self.get_argument("field_name"),
 			"field_type" 	: self.get_argument("field_type"),
+			"field_open" 	: self.get_argument("field_open"),
 			"added_at"		: timestamp,
 			"added_by" 		: self.get_current_user_email(),
 			"field_class" 	: "custom",

@@ -48,22 +48,27 @@ DATAMODEL_FIELDS_TYPES = [
 DATAMODEL_FIELD_KEEP_VARS = [
 	"keep", "not visible", "delete", 
 ]
+DATAMODEL_FIELD_OPEN_VARS = [
+	"opendata", # pure open data - all publics can access
+	"commons", 	# data only visible by the collectif - i.e. all users of the platform
+	"private", 	# personal data - only accessible by logged specific user
+]
 # fields to keep always as db backbone - mainly fields necessary to create a spider
 DATAMODEL_CORE_FIELDS = [
-	{"field_name" : "next_page", 		"field_type" : "text"},	# spider-related
-	{"field_name" : "follow_xpath", 	"field_type" : "url"}, 	# spider-related
-	{"field_name" : "item_xpath", 		"field_type" : "url"}, 	# spider-related
+	{"field_name" : "next_page", 	"field_type" : "text",	"field_open" : "commons" },	# spider-related
+	{"field_name" : "follow_xpath",	"field_type" : "url", 	"field_open" : "commons" }, 	# spider-related
+	{"field_name" : "item_xpath", 	"field_type" : "url",	"field_open" : "commons" }, 	# spider-related
 
-	{"field_name" : "spider_id", 		"field_type" : "text"},		# item-related = to be stored in item
+	{"field_name" : "spider_id", 	"field_type" : "text", 	"field_open" : "commons" },			# item-related = to be stored in item
 
-	{"field_name" : "link_data", 		"field_type" : "url"},		# item-related = to be stored in item
-	{"field_name" : "link_src", 		"field_type" : "url"},		# item-related = to be stored in item
+	{"field_name" : "link_data", 	"field_type" : "url",	"field_open" : "opendata" },		# item-related = to be stored in item
+	{"field_name" : "link_src", 	"field_type" : "url",	"field_open" : "opendata" },		# item-related = to be stored in item
 
-	{"field_name" : "added_by", 		"field_type" : "email"},	# item-related = to be stored in item
-	{"field_name" : "added_at", 		"field_type" : "date"},		# item-related = to be stored in item
+	{"field_name" : "added_by", 	"field_type" : "email",	"field_open" : "private" },			# item-related = to be stored in item
+	{"field_name" : "added_at", 	"field_type" : "date",	"field_open" : "opendata" },		# item-related = to be stored in item
 
-	{"field_name" : "modified_by", 		"field_type" : "email"}, 	# spider-related
-	{"field_name" : "modified_at", 		"field_type" : "date"}, 	# spider-related
+	{"field_name" : "modified_by", 	"field_type" : "email",	"field_open" : "opendata" }, 	# spider-related
+	{"field_name" : "modified_at", 	"field_type" : "date", 	"field_open" : "opendata" }, 	# spider-related
 	
 	# just for debugging purposes
 	# {"field_name" : "testClass", 		"field_type" : "text"}		# item-related = to be stored in item
@@ -85,11 +90,11 @@ DATAMODEL_CORE_FIELDS_ITEM = [
 ]
 # TO DO / IMPLEMENT AT MAIN.PY : default fields for first 
 DATAMODEL_DEFAULT_CUSTOM_FIELDS = [
-	{"field_name" : "author",	"field_type" : "text"},
-	{"field_name" : "abstract", "field_type" : "text"},
-	{"field_name" : "tags", 	"field_type" : "tags"},
-	{"field_name" : "url", 		"field_type" : "url"},
-	{"field_name" : "image", 	"field_type" : "image"},
+	{"field_name" : "author",	"field_type" : "text", 	"field_open" : "opendata" },
+	{"field_name" : "abstract", "field_type" : "text", 	"field_open" : "opendata" },
+	{"field_name" : "tags", 	"field_type" : "tags", 	"field_open" : "opendata" },
+	{"field_name" : "url", 		"field_type" : "url", 	"field_open" : "opendata" },
+	{"field_name" : "image", 	"field_type" : "image", "field_open" : "opendata" },
 ]
 
 

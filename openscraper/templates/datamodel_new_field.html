@@ -25,7 +25,7 @@
 
 		<div class="columns is-centered">
 			
-			<div class="column is-4">
+			<div class="column is-6">
 
 				<br>
 				
@@ -33,28 +33,59 @@
 				{% module xsrf_form_html() %}
 
 
-					<div class="field has-addons">
-						<p class="control is-expanded has-icons-left">
-							<input class="input" type="text" 
-									placeholder="the name of your new field"
-									name="field_name"
-									value="">
-						</p>
-						<p class="control">
-							<span class="select" >
-								<select name="field_type">
-									{% for ft in field_types %}
-										<option 
-											{% if str(ft) == 'text' %} selected {% end %}
-											>
-											{{ ft }}
-										</option>
-									{% end %}
-								</select>
-							</span>
-						</p>
-					</div>
+				<div class="field is-grouped is-horizontal">
+					<div class="field-body">
 
+						{# field name and type #}
+						<div class="field has-addons">
+							
+							{# name of the fields #}
+							<p class="control is-expanded has-icons-left">
+								<input class="input" type="text" 
+										placeholder="the name of your new field"
+										name="field_name"
+										value="">
+							</p>
+							
+							{# type of the field #}
+							<p class="control">
+								<span class="select" >
+									<select name="field_type">
+										{% for ft in field_types %}
+											<option 
+												{% if str(ft) == 'text' %} selected {% end %}
+												>
+												{{ ft }}
+											</option>
+										{% end %}
+									</select>
+								</span>
+							</p>
+
+						</div>
+
+						{# open level of the field #}
+						<div class="field">
+
+							<p class="control">
+								<span class="select is-rounded" >
+									
+									<select name="field_open">
+										{% for fo in field_open_vars %}
+											<option 
+												{% if str(fo) == 'commons' %} selected {% end %}
+												>
+												{{ fo }}
+											</option>
+										{% end %}
+									</select>
+								</span>
+							</p>
+
+						</div>
+
+					</div>
+				</div>
 
 					<br>
 					{# submit button #}

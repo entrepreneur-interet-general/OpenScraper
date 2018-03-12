@@ -54,12 +54,16 @@
 							<div class="field-body">
 								
 								<div class="field has-addons">
+									
+									{# field name #}
 									<p class="control is-expanded has-icons-left">
 										<input class="input" type="text" 
 												placeholder="test"
 												name="field_name"
 												value="{{ escape (field[u'field_name']) }}">
 									</p>
+
+									{# field type #}
 									<p class="control">
 										<span class="select" >
 											<select name="field_type">
@@ -73,11 +77,14 @@
 											</select>
 										</span>
 									</p>
+
 								</div>
 
+								{# is_visible field #}
 								<div class="field">
 									<p class="control">
 										<span class="select is-rounded" >
+											
 											<select name="field_keep">
 												
 												{% for vis in field_keep_vars %}
@@ -93,6 +100,31 @@
 										</span>
 									</p>
 								</div>
+
+								{# open level field #}
+								<div class="field">
+									<p class="control">
+										<span class="select is-rounded" >
+
+											<select name="field_open">
+												
+												{% for open_level in field_open_vars %}
+													<option  
+													{% if open_level==field[u'field_open']  %} selected {% end %}
+													>
+
+														{{ open_level }}
+
+													</option>
+												{% end %}
+
+											</select>
+										</span>
+									</p>
+								</div>
+
+
+
 
 							</div>
 

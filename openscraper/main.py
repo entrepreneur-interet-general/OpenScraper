@@ -73,6 +73,7 @@ def create_datamodel_fields( coll_model, fields_list, field_class ) :
 	fields_ = [ 
 		{ 	"field_name" 	: field["field_name"], 
 			"field_type" 	: field["field_type"],
+			"field_open" 	: field["field_open"],
 			"field_class" 	: field_class ,
 			"added_by" 		: "admin",
 			"added_at"		: timestamp,
