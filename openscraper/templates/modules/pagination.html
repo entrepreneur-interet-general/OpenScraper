@@ -1,7 +1,8 @@
 
 
 {# pagination #}
-<nav class="pagination is-centered" role="navigation" aria-label="pagination">
+
+<nav class="pagination is-small is-rounded is-centered" role="navigation" aria-label="pagination">
 	
 	<a 	class="pagination-previous" 
 		{% if pagination_dict['is_prev'] == False %}
@@ -10,7 +11,7 @@
 		href="{{ pagination_dict['prev_uri'] }}"
 		{% end %}
 		>
-		Previous
+		Previous page
 	</a>
 
 

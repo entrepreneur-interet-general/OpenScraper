@@ -353,8 +353,6 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		return docs_from_db, is_data, page_n_max
 
-
-	### WORK ON THAT !!!
 	def wrap_pagination (self, page_n, page_n_max ):
 		""" wrap all pagination args in a dict """
 
@@ -373,8 +371,9 @@ class BaseHandler(tornado.web.RequestHandler):
 		print "... wrap_pagination / slug_without_page : "
 		print slug_without_page
 
-		base_uri		= self.request.uri
+		# base_uri		= self.request.uri
 		base_path		= self.request.path
+		base_slug		= ""
 		# print tornado.escape.url_unescape(self.request.uri)
 		# cf : https://stackoverflow.com/questions/1233539/python-dictionary-to-url-parameters
 		# print urllib.urlencode({'p': [1, 2, 3]}, doseq=True)
@@ -420,11 +419,12 @@ class BaseHandler(tornado.web.RequestHandler):
 			"next_uri" 			: base_path + next_slug_s ,
 			"is_next"			: True,
 
-			"last_n"		: page_n_max,
-			"last_uri"		: base_path + last_slug_s,
+			"last_n"			: page_n_max,
+			"last_uri"			: base_path + last_slug_s,
 			"is_last"			: True,
 
 			"current_page_n"	: page_n,
+
 		}
 			
 		# handle specific cases

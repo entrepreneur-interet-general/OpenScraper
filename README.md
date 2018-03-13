@@ -140,6 +140,22 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 
 ![alt text](./screenshots/openscraper_v0.1_beta-index.png "index")
 
-![alt text](./screenshots/openscraper_v0.1_beta-edit_datamodel.png "index")
+-------
 
-![alt text](./screenshots/openscraper_v0.1_beta-list_scrapers.png "index")
+![alt text](./screenshots/openscraper_v0.1_beta-edit_datamodel.png "edit datamodel")
+
+-------
+
+![alt text](./screenshots/openscraper_v0.1_beta-add_datamodel.png "edit datamodel")
+
+-------
+
+![alt text](./screenshots/openscraper_v0.1_beta-list_scrapers.png "list scrapers")
+
+-------
+
+![alt text](./screenshots/openscraper_v0.1_beta-edit_scrapers.png "list scrapers")
+
+-------
+
+![alt text](./screenshots/openscraper_v0.1_beta-list_data.png "data")
