@@ -3,24 +3,108 @@
 {# pagination #}
 <nav class="pagination is-centered" role="navigation" aria-label="pagination">
 	
-	{# TO DO  #}
-	{# get back query_obj #}
-
-	<a class="pagination-previous" href="">
+	<a 	class="pagination-previous" 
+		{% if pagination_dict['is_prev'] == False %}
+		disabled
+		{% else %}
+		href="{{ pagination_dict['prev_uri'] }}"
+		{% end %}
+		>
 		Previous
 	</a>
-	<a class="pagination-next" href="" >
+
+
+	<a 	class="pagination-next" 
+		{% if pagination_dict['is_next'] == False %}
+		disabled
+		{% else %}
+		href="{{ pagination_dict['next_uri'] }}" 
+		{% end %}
+		>
 		Next page
 	</a>
 	
+
 	<ul class="pagination-list">
-		<li><a class="pagination-link" aria-label="Goto page 1">1</a></li>
-		<li><span class="pagination-ellipsis">&hellip;</span></li>
-		<li><a class="pagination-link" aria-label="Goto page 45">45</a></li>
-		<li><a class="pagination-link is-current" aria-label="Page 46" aria-current="page">46</a></li>
-		<li><a class="pagination-link" aria-label="Goto page 47">47</a></li>
-		<li><span class="pagination-ellipsis">&hellip;</span></li>
-		<li><a class="pagination-link" aria-label="Goto page 86">86</a></li>
+
+
+		{% if pagination_dict['first_n'] != pagination_dict['current_page_n'] %}
+			
+			{# first page #}
+			<li>
+				<a 	class="pagination-link" 
+					aria-label="Goto page {{ pagination_dict['first_n'] }}"
+					href="{{ pagination_dict['first_uri'] }}"
+				>
+				{{ pagination_dict['first_n'] }}
+				</a>
+			</li>
+
+
+
+
+			{# previous page #}
+			{% if pagination_dict['is_prev'] == True and pagination_dict['prev_n'] > pagination_dict['first_n']  %}
+			
+			<li><span class="pagination-ellipsis">&hellip;</span></li>
+			
+			<li>
+				<a 	class="pagination-link" 
+					aria-label="Goto page {{ pagination_dict['prev_n'] }}"
+					href="{{ pagination_dict['prev_uri'] }}"
+				>
+				{{ pagination_dict['prev_n'] }}
+				</a>
+			</li>
+
+			{% end %}
+	
+		{% end %}
+
+
+
+		{# current page #}
+		<li>
+			<a 	class="pagination-link is-current" 
+				aria-label="Page {{ pagination_dict['current_page_n'] }}" 
+				aria-current="page">
+			{{ pagination_dict['current_page_n'] }}
+			</a>
+		</li>
+	
+
+
+		{% if pagination_dict['last_n'] != pagination_dict['current_page_n'] %}
+			
+			{# next page #}
+			{% if pagination_dict['is_next'] == True and pagination_dict['last_n'] > pagination_dict['next_n'] %}
+			
+			<li>
+				<a 	class="pagination-link" 
+					aria-label="Goto page {{ pagination_dict['next_n'] }}"
+					href="{{ pagination_dict['next_uri'] }}"
+					>
+				{{ pagination_dict['next_n'] }}
+				</a>
+			</li>
+
+			<li><span class="pagination-ellipsis">&hellip;</span></li>
+
+			{% end %}
+
+
+			<li>
+				<a 	class="pagination-link" 
+					aria-label="Goto page {{ pagination_dict['last_n'] }}"
+					href="{{ pagination_dict['last_uri'] }}"
+					>
+				{{ pagination_dict['last_n'] }}
+				</a>
+			</li>
+
+		{% end %}	
+	
+
 	</ul>
 
 </nav>

@@ -180,11 +180,13 @@ class QueryFromSlug :
 			self.default_query 		= QUERY_DATA_BY_DEFAULT
 			self.default_uniques 	= QUERIES_DATA_ALLOWED_UNIQUE
 			self.default_integers 	= QUERIES_DATA_ALLOWED_INTEGERS
+			self.default_positives 	= QUERIES_DATA_ALLOWED_POSITIVES
 			self.default_bool 		= QUERIES_DATA_ALLOWED_BOOLEAN
 		elif self.slug_class == "contributors" : 
 			self.default_query 		= QUERY_SPIDER_BY_DEFAULT
 			self.default_uniques 	= QUERIES_SPIDER_ALLOWED_UNIQUE
 			self.default_integers 	= QUERIES_SPIDER_ALLOWED_INTEGERS
+			self.default_positives 	= QUERIES_SPIDER_ALLOWED_POSITIVES
 			self.default_bool 		= QUERIES_SPIDER_ALLOWED_BOOLEAN
 
 
@@ -200,7 +202,8 @@ class QueryFromSlug :
 		""" populate default query """
 
 		for q_field, q_arg in self.slug.iteritems() : 
-			
+			print "=== QueryFromSlug.populate_query / q_field : ", q_field
+
 			# only get allowed query fields from slug so to ignore others
 			if q_field in self.default_query.keys() :
 
@@ -213,6 +216,14 @@ class QueryFromSlug :
 					if q_field in self.default_integers :
 						try : 
 							self.query[q_field] = int(self.query[q_field])
+							
+							# value should be positive, keep default value if not
+							if q_field in self.default_positives :
+								if self.query[q_field] < 0 :
+									# deprecated : absolute value 
+									# self.query[q_field] = abs(self.query[q_field]) # for absolute value
+									# reset to zero
+									self.query[q_field] = 0
 						except : 
 							self.query[q_field] = self.default_query[q_field]
 
@@ -235,3 +246,7 @@ class QueryFromSlug :
 						for i in q_ : 	# for every arg add it to raw_q_list
 							raw_q_list.append(i)
 					self.query[q_field] = raw_q_list
+
+
+		# print "=== QueryFromSlug.populate_query / self.query : "
+		# print self.query

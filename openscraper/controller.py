@@ -4,8 +4,11 @@
 import 	pprint 
 from 	bson import ObjectId
 import 	time
+import 	math
 from 	datetime import datetime
 from 	functools import wraps
+import	urllib
+from 	copy import deepcopy
 
 from 	pymongo import UpdateOne
 
@@ -268,7 +271,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		# recreate query from slug
 		raw_query = QueryFromSlug( slug, slug_class )	# from settings_corefields
 		print "\n... filter_slug / raw_query.query :"
-		# print raw_query.query
+		print raw_query.query
 
 		return raw_query.query
 
@@ -281,7 +284,9 @@ class BaseHandler(tornado.web.RequestHandler):
 		# check if query wants all results 
 		all_results		= query_obj["all_results"]
 		
-		# TO DO : check if user has right to retrieve all results at once 
+
+		# TO DO : check if user has right to use specific query fields
+		# retrieve all results at once 
 		user_token		= query_obj["token"]
 		if all_results==True : 
 			if user_token != None : # and 
@@ -290,90 +295,147 @@ class BaseHandler(tornado.web.RequestHandler):
 				all_results = False
 				
 
-
+		### DB OPERATIONS
 		### WORK ON THAT !
-		if query_obj["spider_id"] == ["all"]:
+		# if query_obj["spider_id"] == ["all"]:
+		if "all" in query_obj["spider_id"] :
 			query = { }
 		else : 
 			query = { 
 				"spider_id" : q for q in query_obj["spider_id"]
 			}
-		page_n 			= query_obj["page_n"]
-		limit_results 	= query_obj["results_per_page"]
-		results_start	= ( page_n-1 ) * limit_results 
-		results_stop	= ( results_start + limit_results ) - 1
-		print "... get_data_from_query / results_start :", results_start
-		print "... get_data_from_query / results_stop  :", results_stop
-
-
 		# retrieve docs from db
 		print "... get_data_from_query / cursor :"
 		coll 	= self.choose_collection( coll_name=coll_name )
 		cursor 	= coll.find( query )
-
-
-
 		# count results
 		results_count = cursor.count()
 		print "... get_data_from_query / results_cout :", results_count
-		if results_count < results_stop or all_results==True : 		
+
+		### compute max_pages, start index, stop index
+		page_n 			= query_obj["page_n"]
+		limit_results 	= query_obj["results_per_page"]
+
+		page_n_max 		= int(math.ceil( results_count / float(limit_results)  ))
+		print "... get_data_from_query / page_n_max :", page_n_max
+
+		# if page queried if negative retrieve first page
+		# if page_n <= 0 :
+		# 	page_n = 1
+		# if page_n > page_n_max :
+		# 	page_n = page_n_max
+		print "... get_data_from_query / page_n :", page_n
+
+
+		### select items to retrieve from list and indices start and stop
+		# all results case
+		if all_results==True : 		
 			docs_from_db = list(cursor)
+		# page queried is higher than page_n_max or inferior to 1
+		if page_n > page_n_max or page_n < 1 :
+			docs_from_db = []	
+		# slice cursor : get documents from start index to stop index
 		else : 
-			docs_from_db = list(cursor[ results_start : results_stop ])
-		print "... get_data_from_query / items_from_db :"
-		# pprint.pprint(items_from_db[0])
+			results_i_start	= ( page_n-1 ) * limit_results 
+			results_i_stop	= ( results_i_start + limit_results ) - 1
+			print "... get_data_from_query / results_i_start :", results_i_start
+			print "... get_data_from_query / results_i_stop  :", results_i_stop
+			docs_from_db = list(cursor[ results_i_start : results_i_stop ])
+		print "... get_data_from_query / docs_from_db :"
+		# pprint.pprint(docs_from_db[0])
 		print "..."
 
 		# flag if the cursor is empty
 		is_data = False
 		if docs_from_db != [] :
 			is_data = True
+		print "... get_data_from_query / is_data :", is_data
 
-		return docs_from_db, is_data
+		return docs_from_db, is_data, page_n_max
+
 
 	### WORK ON THAT !!!
-	def wrap_pagination (self, query_obj):
+	def wrap_pagination (self, page_n, page_n_max ):
 		""" wrap all pagination args in a dict """
 
-		print "\n...wrap_pagination : ... "
+		print "\n... wrap_pagination : ... "
 		print "... wrap_pagination / request.path : ", self.request.path
-		print "... wrap_pagination / request.uri  : ", self.request.uri
+		# print "... wrap_pagination / request.uri  : ", self.request.uri
 		print "... wrap_pagination / slug_ : "
 		slug_ = self.request.arguments
 		pprint.pprint( slug_ )
 
+		slug_without_page = deepcopy(slug_)
+		try : 
+			del slug_without_page["page_n"]
+		except :
+			pass
+		print "... wrap_pagination / slug_without_page : "
+		print slug_without_page
+
 		base_uri		= self.request.uri
 		base_path		= self.request.path
-
 		# print tornado.escape.url_unescape(self.request.uri)
+		# cf : https://stackoverflow.com/questions/1233539/python-dictionary-to-url-parameters
+		# print urllib.urlencode({'p': [1, 2, 3]}, doseq=True)
+		if slug_without_page !={} : 
+			base_slug		= "?" + urllib.urlencode( slug_without_page, doseq=True)
+		print "... wrap_pagination / base_slug : "
+		print base_slug
 
-		page_n 			= query_obj["page_n"]
-		limit_results 	= query_obj["results_per_page"]
-		results_start	= ( page_n-1 ) * limit_results 
-		results_stop	= ( results_start + limit_results ) - 1
+		path_slug 		= base_path + base_slug
+		print "... wrap_pagination / path_slug : "
+		print path_slug
+
+		# recreate url strings
+		first_slug	= { "page_n" : 1 }
+		first_slug.update( slug_without_page )
+		first_slug_s = "?" + urllib.urlencode( first_slug, doseq=True)
+
+		prev_n 		=  page_n - 1
+		prev_slug	= { "page_n" : prev_n }
+		prev_slug.update( slug_without_page )
+		prev_slug_s = "?" + urllib.urlencode( prev_slug, doseq=True)
+		
+		next_n 		=  page_n + 1
+		next_slug	= { "page_n" : next_n }
+		next_slug.update( slug_without_page )
+		next_slug_s = "?" + urllib.urlencode( next_slug, doseq=True)
+		
+		last_n 		=  page_n_max
+		last_slug	= { "page_n" : last_n }
+		last_slug.update( slug_without_page )
+		last_slug_s = "?" + urllib.urlencode( last_slug, doseq=True)
 
 		# backbone of pagination 
 		pagination 	= {
-			"prev_n" 			: None,
-			"prev_uri" 			: None,
+			"first_n"			: 1,
+			"first_uri"			: base_path + first_slug_s,
+			
+			"prev_n" 			: page_n - 1,
+			"prev_uri" 			: base_path + prev_slug_s ,
+			"is_prev"			: True,
 
-			"next_n"			: None,
-			"next_uri" 			: None,
+			"next_n"			: page_n + 1,
+			"next_uri" 			: base_path + next_slug_s ,
+			"is_next"			: True,
 
-			"last_page_n"		: 1,
-			"last_page_uri"		: None,
+			"last_n"		: page_n_max,
+			"last_uri"		: base_path + last_slug_s,
+			"is_last"			: True,
 
 			"current_page_n"	: page_n,
 		}
-
-		if page_n > 1 : 
-			pagination["prev_n"] = query_obj["page_n"] - 1
-			if page_n >= results_stop :
-				pagination["next_n"] = results_stop
-			else : 
-				pagination["next_n"] = query_obj["page_n"] + 1
-				
 			
+		# handle specific cases
+		if page_n <= 1 :
+			pagination["is_first"] 	= False
+			pagination["is_prev"] 	= False
+
+		if page_n >= page_n_max :
+			pagination["is_last"] 	= False
+			pagination["is_next"] 	= False
+
 		return pagination
 
 
@@ -806,7 +868,7 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 		print query_contrib
 
 		# get data 
-		contributors, is_data = self.get_data_from_query( query_contrib, coll_name="contributors")
+		contributors, is_data, page_n_max = self.get_data_from_query( query_contrib, coll_name="contributors")
 		print "\nContributorsHandler.get / contributors :"
 		# pprint.pprint (contributors[0])
 		print '.....\n'
@@ -814,8 +876,12 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 		### operations if there is data
 		pagination_dict = None
 		if is_data : 
+			print "\nContributorsHandler.get / is_data :", is_data
 			# make pagination 
-			pagination_dict = self.wrap_pagination(query_contrib)
+			pagination_dict = self.wrap_pagination( 
+									page_n=query_contrib["page_n"], 
+									page_n_max=page_n_max
+									)
 			print "\nDataScrapedHandler / pagination_dict :"
 			print pagination_dict
 
@@ -1031,16 +1097,19 @@ class DataScrapedHandler(BaseHandler):
 		print query_data
 
 		### get items from db
-		items_from_db, is_data = self.get_data_from_query( query_data, coll_name="data" )
+		items_from_db, is_data, page_n_max = self.get_data_from_query( query_data, coll_name="data" )
 
 		### operations if there is data
 		pagination_dict = None
 		if is_data : 
 			
 			# make pagination 
-			pagination_dict = self.wrap_pagination(query_data)
+			pagination_dict = self.wrap_pagination( 
+									page_n		= query_data["page_n"], 
+									page_n_max	= page_n_max
+									)
 			print "\nDataScrapedHandler / pagination_dict :"
-			print pagination_dict
+			pprint.pprint (pagination_dict)
 
 			# clean items 
 			for item in items_from_db : 
@@ -1062,7 +1131,6 @@ class DataScrapedHandler(BaseHandler):
 			pagination_dict		= pagination_dict
 		)
 
-		# self.redirect("/404")
 
 class DataScrapedViewOneHandler(BaseHandler):
 	"""
@@ -1327,11 +1395,10 @@ class PaginationModule(tornado.web.UIModule):
 	"""
 	module for pagination
 	"""
-	def render( self, query_obj, pagination_dict ):
+	def render( self, pagination_dict ):
 		return self.render_string(
 			"modules/pagination.html", 
-			pagination_dict = pagination_dict,
-			query_obj		= query_obj
+			pagination_dict = pagination_dict
 		)
 
 

@@ -24,6 +24,9 @@ QUERIES_DATA_ALLOWED_UNIQUE = [
 QUERIES_DATA_ALLOWED_INTEGERS  	= [
 	"page_n", "results_per_page"
 ]
+QUERIES_DATA_ALLOWED_POSITIVES 	= [
+	"page_n", "results_per_page"
+]
 QUERIES_DATA_ALLOWED_BOOLEAN = [
 	"is_complete", "all_results"
 ]
@@ -47,6 +50,9 @@ QUERIES_SPIDER_ALLOWED_UNIQUE = [
 	 "all_results"
 ]
 QUERIES_SPIDER_ALLOWED_INTEGERS  	= [
+	"page_n", "results_per_page"
+]
+QUERIES_SPIDER_ALLOWED_POSITIVES  	= [
 	"page_n", "results_per_page"
 ]
 QUERIES_SPIDER_ALLOWED_BOOLEAN = [

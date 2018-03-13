@@ -26,7 +26,7 @@ OpenScraper is a minimalistic, open source webscraper with a simple interface, <
 Scraping can quickly become a mess, mostly if you need to scrap several websites in order to eventually get a structured dataset. Usually you need to set up several scrapers for every website, configure the spiders one by one, get the data from every website, and clean up the mess to get from this raw material one structured dataset you know that exists... 
 
 #### **Yes, similar solutions already does exist... but...**
-So you have mainly three options when it come to scrap the web : 
+So you have mainly three options when it comes to scrap the web : 
 - either use a proprietary and quite expensive service (like [Apify](https://www.apify.com/) or [import.io](https://www.apify.com/)) and depend on an external service ;
 - ask a friend if you are lucky, ask a developer or a company to do it for you if you have money for that...
 - or if you have the know-how write your own code (for instance based on BeautifulSoup or Scrapy), adapt it for your own purposes, and usually be the only one (I mean the only developer around) to be able to use/adapt it.
