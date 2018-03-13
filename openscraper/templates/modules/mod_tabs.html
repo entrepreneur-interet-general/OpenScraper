@@ -1,0 +1,82 @@
+
+
+{# main tabs #}
+
+{# <div class="tabs is-centered is-boxed">
+	<ul>
+		<li class="is-active">
+			<a>
+				<span>datamodel</span>
+			</a>
+		</li>
+		
+		<li>
+			<a>
+				<span>contributors</span>
+			</a>
+		</li>
+		
+		<li>
+			<a>
+				<span>dataset</span>
+			</a>
+		</li>
+
+	</ul>
+</div> #}
+
+<nav class="breadcrumb has-succeeds-separator is-centered" aria-label="breadcrumbs">
+	<ul>
+		
+		<li 	{% if site_section == "datamodel" %}class="is-active"{% end %}	>
+			<a 	href="/datamodel/view"
+				{% if site_section == "datamodel" %}aria-current="page"{% end %}
+				>
+				datamodel
+			</a>
+		</li>
+		
+		<li 	{% if site_section == "contributors" %}class="is-active"{% end %}	>
+			<a 	href="/contributors"
+				{% if site_section == "contributors" %}aria-current="page"{% end %}	
+				>
+				contributors
+			</a>
+		</li>
+		
+		<li 	{% if site_section == "data" %}class="is-active"{% end %}	>
+			<a 	href="/dataset/view" 
+				{% if site_section == "data" %}aria-current="page"{% end %}
+				>
+				dataset
+			</a>
+		</li>
+	
+	</ul>
+</nav>
+
+
+{# <div class="tabs is-centered">
+	<ul>
+		
+		<li>
+			<a 	href="/datamodel/view">
+				datamodel
+			</a>
+		</li>
+		
+		<li>
+			<a 	href="/contributors">
+				contributors
+			</a>
+		</li>
+		
+		<li class="is-active">
+			<a 	href="/dataset/view" 
+				aria-current="page">
+				dataset
+			</a>
+		</li>
+	
+	</ul>
+</div> #}

@@ -5,21 +5,75 @@
 
 
 <br>
+
 <section class="section">
 
-	<br>
 	<div class="container has-text-centered">
-		<h1 class="title">
+		
+		{# <h1 class="title">
 			Edit your data structure
 		</h1>
 		<h2 class="subtitle">
 			this is the data model you are using. 
 			<br>You can modify the custom fields in the form and then click on "save"
-		</h2>
+		</h2> #}
+
+
+		<div class="dropdown is-hoverable">
+			
+			<div class="dropdown-trigger"> 
+				
+				<button class="button is-large is-rounded" aria-haspopup="true" aria-controls="dropdown-menu-datamodel-edit">
+					<span>
+						<b>Edit your data structure</b>  
+					</span>
+				</button>
+				
+				<button class="button  is-text" aria-haspopup="true" aria-controls="dropdown-menu-datamodel-edit">
+					<span class="icon">
+						<i class="fas fa-question-circle"></i>
+					</span>
+				</button>
+				
+				{# tabs #}
+				<div class="has-text-weight-light"> {% module MainTabs(site_section) %}</div>
+			
+			</div>
+
+			<div class="dropdown-menu" id="dropdown-menu-datamodel-edit" role="menu">
+			<div class="dropdown-content">
+				<div class="dropdown-item">
+					<p>
+						this is the data model you are using. 
+						<br>
+						You can modify the custom fields in the form and then click on "save"
+					</p>
+				</div>
+			</div>
+			</div>
+
+		</div>
+
+		<br><br>
+
+		{# add a new fields #}
+		<div class="content has-text-centered">
+			<a class="button is-info is-rounded"
+				href="/datamodel/add_field" >
+				<span class="icon is-small">
+					<i class="fas fa-plus-circle"></i>
+				</span>
+				<span>add a new field</span>		
+			</a>
+		</div>
+
+		<hr>
+
 
 	</div>
 
-	<br>
+
+	
 
 
 	<div class="container">
@@ -32,17 +86,6 @@
 
 				<form method="POST" action="/datamodel/edit">
 				{% module xsrf_form_html() %}
-
-					{# add a new fields #}
-					<div class="content has-text-centered">
-						<a class="button is-info is-rounded"
-							href="/datamodel/add_field" >
-							<span class="icon is-small">
-								<i class="fas fa-plus-circle"></i>
-							</span>
-							<span>add a new field</span>		
-						</a>
-					</div>
 
 					{# custom fields #}
 					{% for field in datamodel_custom %}
@@ -138,18 +181,19 @@
 					{# submit button #}
 					<div class="field is-grouped is-grouped-centered">
 						<p class="control">
+							<a class="button is-light is-rounded" href="/datamodel/view">
+								<span class="icon"><i class="fas fa-times"></i></span>
+								<span>Cancel</span>
+							</a>
+						</p>
+						<p class="control">
 							<input 	class="button is-primary is-rounded" 
 									type="submit" 
 									value="Save changes"
 								>
 							</input>
 						</p>
-						<p class="control">
-							<a class="button is-light is-rounded" href="/datamodel/view">
-								<span class="icon"><i class="fas fa-times"></i></span>
-								<span>Cancel</span>
-							</a>
-						</p>
+
 					</div>
 
 

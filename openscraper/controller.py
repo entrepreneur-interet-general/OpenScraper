@@ -487,7 +487,7 @@ class LoginHandler(BaseHandler):
 
 		### TO DO : add WTForms as form 
 
-		self.render('login.html',
+		self.render('login_register.html',
 			page_title  		= app_main_texts["main_title"],
 			login_or_register 	= "login",
 			next_url			= next_url,
@@ -523,7 +523,7 @@ class LoginHandler(BaseHandler):
 			user_password	= user["password"]
 			
 			# check password 
-			# TO DO : hash and/or decrypt
+			# TO DO : hash and/or decrypt password
 			if self.get_argument("password") == user_password : 
 				
 				# set user
@@ -552,15 +552,23 @@ class RegisterHandler(BaseHandler):
 		# print "\nRegisterHandler.post / request.arguments : "
 		# pprint.pprint( self.request.arguments )
 
+		print "\nRegisterHandler.post / next_url : "
+		next_url = self.get_argument('next', u'/')
+		print next_url
 
-		self.render('login.html',
-			page_title  = app_main_texts["main_title"],
-			login_or_register = "register"
+		self.render('login_register.html',
+			page_title  		= app_main_texts["main_title"],
+			next_url 			= next_url,
+			login_or_register 	= "register"
 		)
 
 	@print_separate(APP_DEBUG)
 	def post(self):
 		""" check if user exists in db, insert it in db, and set cookie"""
+
+		print "\nRegisterHandler.post / next_url : "
+		next_url = self.get_argument('next', u'/')
+		print next_url
 
 		timestamp = time.time()
 
@@ -600,7 +608,8 @@ class RegisterHandler(BaseHandler):
 			### set user
 			self.set_current_user(user_dict)
 
-			self.redirect("/")
+			# self.redirect("/")
+			self.redirect( next_url )
 
 		else : 
 			### TO DO : add alert if user already exists
@@ -669,6 +678,8 @@ class DataModelViewHandler(BaseHandler):
 
 		print "\nDataModelHandler.get... "
 
+		site_section = "datamodel"
+
 		### retrieve datamodel from DB
 		data_model_custom = list(self.application.coll_model.find({"field_class" : "custom"}).sort("field_name",1) )
 		print "DataModelHandler.get / data_model_custom :"
@@ -685,9 +696,9 @@ class DataModelViewHandler(BaseHandler):
 		self.render(
 			"datamodel_view.html",
 			page_title 			= app_main_texts["main_title"],
+			site_section		= site_section,
 			datamodel_custom 	= data_model_custom,
 			datamodel_core 		= data_model_core,
-
 		)
 
 
@@ -700,6 +711,8 @@ class DataModelEditHandler(BaseHandler):
 	def get(self) : 
 		print "\nDataModelHandler.get... "
 
+		site_section = "datamodel"
+
 		### retrieve datamodel from DB
 		data_model_custom = list(self.application.coll_model.find({"field_class" : "custom"}))
 		print "DataModelHandler.get / data_model_custom :"
@@ -708,6 +721,7 @@ class DataModelEditHandler(BaseHandler):
 		self.render(
 			"datamodel_edit.html",
 			page_title 	= app_main_texts["main_title"],
+			site_section		= site_section,
 			field_types = DATAMODEL_FIELDS_TYPES,
 			field_keep_vars	 = DATAMODEL_FIELD_KEEP_VARS,
 			field_open_vars	 = DATAMODEL_FIELD_OPEN_VARS,
@@ -800,9 +814,12 @@ class DataModelAddFieldHandler(BaseHandler) :
 
 		print "\nDataModelAddFieldHandler.get... "
 
+		site_section = "datamodel"
+
 		self.render(
 			"datamodel_new_field.html",
 			page_title 		= app_main_texts["main_title"],
+			site_section	= site_section,
 			field_types		= DATAMODEL_FIELDS_TYPES,
 			field_open_vars	= DATAMODEL_FIELD_OPEN_VARS,
 		)
@@ -854,6 +871,8 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 	def get(self, slug=None):
 
 		print "\nContributorsHandler.get ..."
+		
+		site_section = "contributors"
 
 		print "\nContributorsHandler.get / slug :"
 		print slug
@@ -888,6 +907,7 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 		self.render(
 			"contributors_view.html",
 			page_title  	= app_main_texts["main_title"],
+			site_section	= site_section, 
 			query_obj		= query_contrib,
 			contributors 	= contributors,
 			is_contributors = is_data,
@@ -906,6 +926,8 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		"""show infos on one contributor : get info in DB and prefill form"""
 		
 		print "\nContributorEditHandler.get / spider_id : ", spider_id
+
+		site_section = "contributors"
 
 		### retrieve datamodel - custom fields
 		data_model = list(self.application.coll_model.find( {"field_class" : "custom"})) #, {"field_name":1, "_id":1} ))
@@ -940,6 +962,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		### render page
 		self.render("contributor_edit.html",
 			page_title 				= app_main_texts["main_title"],
+			site_section			= site_section,
 			create_or_update 		= create_or_update,
 			contributor_edit_fields = contributor_edit_fields,
 			contributor_edit_radio 	= CONTRIBUTOR_EDIT_FIELDS_RADIO,
@@ -1057,6 +1080,8 @@ class DataScrapedHandler(BaseHandler):
 
 		print "\nDataScrapedHandler.get ... : "
 
+		site_section = "data"
+
 		# print "\nDataScrapedHandler.get / slug : "
 		# pprint.pprint(slug)
 
@@ -1128,7 +1153,8 @@ class DataScrapedHandler(BaseHandler):
 			# spiders_list		= spiders_list,
 			items				= items_from_db,
 			is_data				= is_data,
-			pagination_dict		= pagination_dict
+			pagination_dict		= pagination_dict,
+			site_section		= site_section
 		)
 
 
@@ -1371,11 +1397,6 @@ class FormHandler(BaseHandler) :
 			form = form
 		)
 
-		# self.write(templates.load("simpleform.html").generate(
-		# 		compiled=compiled, 
-		# 		page_title = app_main_texts["main_title"],
-		# 		form=form))
-
 	@print_separate(APP_DEBUG)
 	def post(self):
 		
@@ -1397,11 +1418,22 @@ class PaginationModule(tornado.web.UIModule):
 	"""
 	def render( self, pagination_dict ):
 		return self.render_string(
-			"modules/pagination.html", 
+			"modules/mod_pagination.html", 
 			pagination_dict = pagination_dict
 		)
 
+class MainTabsModule(tornado.web.UIModule):
+	"""
+	module for main tabs
+	"""
+	def render( self, site_section ):
+		return self.render_string(
+			"modules/mod_tabs.html", 
+			# pagination_dict = pagination_dict
+			site_section = site_section
+		)
 
+'''
 class ContributorModule(tornado.web.UIModule):
 	"""
 	module for each contributor
@@ -1417,3 +1449,4 @@ class ContributorModule(tornado.web.UIModule):
 	
 	def javascript_files(self):
 		return "js/recommended.js"
+'''

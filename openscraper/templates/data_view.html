@@ -5,22 +5,60 @@
 
 
 <br>
+
 <section class="section">
 	
-	<br>
-
 	<div class="container has-text-centered">
-		<h1 class="title">
+		
+		{# <h1 class="title">
 			Data set overview
+			<div class="has-text-weight-light"> {% module MainTabs() %}</div>
 		</h1>
+		
 		<h2 class="subtitle">
 			this is the data you have scraped so far (add search engine here)
-		</h2>
+		</h2> #}
+
+		<div class="dropdown is-hoverable">
+			
+			<div class="dropdown-trigger"> 
+				
+				<button class="button is-large is-rounded" aria-haspopup="true" aria-controls="dropdown-menu-data">
+					<span>
+						<b>Data set overview</b>  
+					</span>
+				</button>
+				
+				<button class="button  is-text" aria-haspopup="true" aria-controls="dropdown-menu-data">
+					<span class="icon">
+						<i class="fas fa-question-circle"></i>
+					</span>
+				</button>
+				
+				{# tabs #}
+				<div class="has-text-weight-light"> {% module MainTabs(site_section) %}</div>
+			
+			</div>
+
+			<div class="dropdown-menu" id="dropdown-menu-data" role="menu">
+			<div class="dropdown-content">
+				<div class="dropdown-item">
+					<p>
+						this is the <b>data you have scraped</b> so far (add search engine here)
+					</p>
+				</div>
+			</div>
+			</div>
+
+		</div>
+
+
 	</div>
 
-	<br>
 
+	<hr>
 
+	{# data table container #}
 
 	<div class="container">
 

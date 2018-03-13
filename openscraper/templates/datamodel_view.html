@@ -5,25 +5,74 @@
 
 
 <br>
+
 <section class="section">
 	
-	<br>
 	<div class="container has-text-centered">
-		<h1 class="title">
+		
+		{# <h3 class="title">
 			Data structure overview
-		</h1>
-		<h2 class="subtitle">
+			<div class="has-text-weight-light"> {% module MainTabs() %}</div>
+		</h3> #}
+
+
+		{# <h5 class="subtitle">
 			this is the data model you are using, the names of the columns of your data set. 
 			<br>You can modify the custom fields clicking on "edit data model"
-		</h2>
-		<a class="button is-primary is-rounded"
-			href="/datamodel/edit" >
-			<span class="icon is-small"><i class="fas fa-list"></i></span>
-			<span>edit data model</span>		
-		</a>
+		</h5> #}
+
+
+		<div class="dropdown is-hoverable">
+			
+			<div class="dropdown-trigger"> 
+				
+				<button class="button is-large is-rounded" aria-haspopup="true" aria-controls="dropdown-menu-datamodel">
+					<span>
+						<b>Data structure overview</b>  
+					</span>
+				</button>
+				
+				<button class="button  is-text" aria-haspopup="true" aria-controls="dropdown-menu-datamodel">
+					<span class="icon">
+						<i class="fas fa-question-circle"></i>
+					</span>
+				</button>
+				
+				{# tabs #}
+				<div class="has-text-weight-light"> {% module MainTabs(site_section) %}</div>
+			
+			</div>
+
+			<div class="dropdown-menu" id="dropdown-menu-datamodel" role="menu">
+			<div class="dropdown-content">
+				<div class="dropdown-item">
+					<p>
+						this is the <b>data model</b> you are using : you set here the names of the columns of your data set. 
+						You can modify the custom fields clicking on <a href="/datamodel/edit">"edit data model"</a>
+					</p>
+				</div>
+			</div>
+			</div>
+
+		</div>
+
+
+		<br><br>
+
+
+		<div>
+			<a class="button is-primary is-rounded"
+				href="/datamodel/edit" >
+				<span class="icon is-small"><i class="fas fa-list"></i></span>
+				<span>edit data model</span>		
+			</a>
+		</div>
+
+
+		<hr>
+
 	</div>
 
-	<br>
 
 	<div class="container">
 

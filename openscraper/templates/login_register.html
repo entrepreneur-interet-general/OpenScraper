@@ -22,8 +22,8 @@
 			<hr>
 			<div class="container has-text-centered">
 				<p>new on Open Scraper ?</p><br>
-				<a class="button is-info is-rounded"
-				href="/register/">
+				<a 	class="button is-info is-rounded"
+					href="/register/{% if next_url != '/' %}?next={{next_url}}{% end %}">
 					<span class="icon is-small"><i class="fas fa-sign-in-alt"></i></span>
 					<span>register</span>
 				</a>
@@ -107,6 +107,14 @@
 						{# submit button #}
 						<br>
 						<div class="field is-grouped is-grouped-centered">
+
+							<p class="control">
+								<a class="button is-light is-rounded" href="/">
+									<span class="icon"><i class="fas fa-times"></i></span>
+									<span>Cancel</span>
+								</a>
+							</p>
+
 							<p class="control">
 								<input 	class="button is-primary is-rounded" 
 										type="submit" 
@@ -114,11 +122,7 @@
 									>
 								</input>
 							</p>
-							<p class="control">
-								<a class="button is-light is-rounded" href="/">
-									Cancel
-								</a>
-							</p>
+
 						</div>
 						
 					</form>

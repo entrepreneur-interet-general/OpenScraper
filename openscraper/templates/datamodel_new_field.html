@@ -5,16 +5,53 @@
 
 
 <br>
+
 <section class="section">
 
-	<br>
 	<div class="container has-text-centered">
-		<h1 class="title">
+		
+		{# <h1 class="title">
 			Add a new field to your data structure
 		</h1>
 		<h2 class="subtitle">
 			this will create a new column in your data set. 
-		</h2>
+		</h2> #}
+
+
+		<div class="dropdown is-hoverable">
+			
+			<div class="dropdown-trigger"> 
+				
+				<button class="button is-large is-rounded" aria-haspopup="true" aria-controls="dropdown-menu-datamodel-add">
+					<span>
+						<b>Add a new field to your data structure</b>  
+					</span>
+				</button>
+				
+				<button class="button  is-text" aria-haspopup="true" aria-controls="dropdown-menu-datamodel-add">
+					<span class="icon">
+						<i class="fas fa-question-circle"></i>
+					</span>
+				</button>
+				
+				{# tabs #}
+				<div class="has-text-weight-light"> {% module MainTabs(site_section) %}</div>
+			
+			</div>
+
+			<div class="dropdown-menu" id="dropdown-menu-datamodel-add" role="menu">
+			<div class="dropdown-content">
+				<div class="dropdown-item">
+					<p>
+						this will create a new column in your data set.
+					</p>
+				</div>
+			</div>
+			</div>
+
+		</div>
+
+
 
 	</div>
 
@@ -90,6 +127,14 @@
 					<br>
 					{# submit button #}
 					<div class="field is-grouped is-grouped-centered">
+
+						<p class="control">
+							<a class="button is-light is-rounded" href="/datamodel/edit">
+								<span class="icon"><i class="fas fa-times"></i></span>
+								<span>Cancel</span>
+							</a>
+						</p>
+						
 						<p class="control">
 							<input 	class="button is-primary is-rounded" 
 									type="submit" 
@@ -97,12 +142,7 @@
 								>
 							</input>
 						</p>
-						<p class="control">
-							<a class="button is-light is-rounded" href="/datamodel/edit">
-								<span class="icon"><i class="fas fa-times"></i></span>
-								<span>Cancel</span>
-							</a>
-						</p>
+
 					</div>
 
 				</form>

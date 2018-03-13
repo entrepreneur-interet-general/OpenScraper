@@ -4,38 +4,83 @@
 {% block body %}
 
 
-{# <h2>List contributors</h2>
-	{% for contributor in contributors %}
- 	 	{{ modules.Contributor(contributor) }}
-	{% end %} #}
-
-
-
 <br>
+
 <section class="section">
 	
+
 	<div class="container has-text-centered">
-		<h1 class="title">
+		
+		{# <h1 class="title">
 			List of contributors
+			<div class="has-text-weight-light"> {% module MainTabs() %}</div>
 		</h1>
+		
 		<h2 class="subtitle">
 			this is the list of websites you want to scrap from
-		</h2>
+		</h2> #}
+
+		<div class="dropdown is-hoverable">
+			
+			<div class="dropdown-trigger"> 
+				
+				<button class="button is-large is-rounded" aria-haspopup="true" aria-controls="dropdown-menu-contributors">
+					<span>
+						<b>List of contributors</b>  
+					</span>
+				</button>
+				
+				<button class="button  is-text" aria-haspopup="true" aria-controls="dropdown-menu-contributors">
+					<span class="icon">
+						<i class="fas fa-question-circle"></i>
+					</span>
+				</button>
+				
+				{# tabs #}
+				<div class="has-text-weight-light"> {% module MainTabs(site_section) %}</div>
+			
+			</div>
+
+			<div class="dropdown-menu" id="dropdown-menu-contributors" role="menu">
+			<div class="dropdown-content">
+				<div class="dropdown-item">
+					<p>
+						this is the <b>list of websites</b> you want to scrap from
+					</p>
+				</div>
+			</div>
+			</div>
+
+		</div>
+
+
 	</div>
 
 	<br>
 
 	<div class="container has-text-centered">
-		<a class="button is-info is-rounded"
+		<a class="button is-primary is-rounded"
 		   href="/contributor/add">
 			<span class="icon is-small"><i class="fas fa-plus-circle"></i></span>
 			<span>add a new spider</span>
 			
 		</a>
+	{# </div> #}
+
+
+	{% if is_contributors == True %}
+	{# <div class="container has-text-centered"> #}
+		{# <a class="button is-primary is-rounded">save changes</a> #}
+		<a class="button is-warning is-rounded" disabled>
+			<span class="icon is-small"><i class="fas fa-play"></i></span>
+			<span>run all spiders</span>
+		</a>
 	</div>
+	{% end %}
 
 
-	<br>
+
+	<hr>
 
 	<div class="container">
 		
@@ -120,7 +165,7 @@
 
 							<td class="has-text-centered"> 
 								{% if is_working %}
-									<span class="icon has-text-success">
+									<span class="icon has-text-primary">
 										<i class="fas fa-check-square"></i>
 									</span>
 								{% else %}
@@ -151,7 +196,7 @@
 							</td>
 
 							<td> 
-								<a class="has-text-centered button is-danger is-outlined is-rounded is-small"
+								<a class="has-text-centered button is-danger is-rounded is-small"
 									href="/contributor/delete/{{ escape (contrib['scraper_config']['spidername']) }}" 
 									disabled >
 									<span class="icon is-small"><i class="fas fa-times"></i></span>
@@ -188,16 +233,6 @@
 
 	</div>
 
-
-	{% if is_contributors == True %}
-	<div class="container has-text-centered">
-		{# <a class="button is-primary is-rounded">save changes</a> #}
-		<a class="button is-danger is-rounded" disabled>
-			<span class="icon is-small"><i class="fas fa-play"></i></span>
-			<span>run all spiders</span>
-		</a>
-	</div>
-	{% end %}
 
 
 </section>

@@ -5,12 +5,13 @@
 
 
 <br>
+
 <section class="section">
 	
 	{# TITLE #}
 	<div class="container has-text-centered">
 		
-		{% if create_or_update == "create" %}
+		{# { % if create_or_update == "create" %}
 			<h1 class="title">
 				ADD A NEW SPIDER
 			</h1>
@@ -18,13 +19,56 @@
 				Fill the form to create a new spider.
 			</h2>
 		
-		{% else %}
+		{ % else %}
 			<h1 class="title">
 			EDIT THE SPIDER <br> 
 			"{{ escape (contributor['infos']['name']) }}"
 			</h1>
 		
-		{% end %}
+		{ % end %} #}
+
+
+		<div class="dropdown is-hoverable">
+			
+			<div class="dropdown-trigger"> 
+				
+				<button class="button is-large is-rounded" aria-haspopup="true" aria-controls="dropdown-menu-contributors-edit">
+					<span>
+						<b>
+							{% if create_or_update == "create" %}
+								ADD A NEW SPIDER
+							{% else %}
+								EDIT THE SPIDER <br> 
+								"{{ escape (contributor['infos']['name']) }}"							
+							{% end %}						
+						</b>  
+					</span>
+				</button>
+				
+				<button class="button  is-text" aria-haspopup="true" aria-controls="dropdown-menu-contributors">
+					<span class="icon">
+						<i class="fas fa-question-circle"></i>
+					</span>
+				</button>
+				
+				{# tabs #}
+				<div class="has-text-weight-light"> {% module MainTabs(site_section) %}</div>
+			
+			</div>
+
+			<div class="dropdown-menu" id="dropdown-menu-contributors-edit" role="menu">
+			<div class="dropdown-content">
+				<div class="dropdown-item">
+					<p>
+						Fill the form to create a new spider.
+					</p>
+				</div>
+			</div>
+			</div>
+
+		</div>
+
+
 
 	</div>
 
@@ -297,6 +341,14 @@
 
 					{# submit button #}
 					<div class="field is-grouped is-grouped-centered">
+
+						<p class="control">
+							<a class="button is-light is-rounded" href="/contributors">
+								<span class="icon"><i class="fas fa-times"></i></span>
+								<span>Cancel</span>
+							</a>
+						</p>
+						
 						<p class="control">
 							<input 	class="button is-primary is-rounded" 
 									type="submit" 
@@ -304,12 +356,7 @@
 								>
 							</input>
 						</p>
-						<p class="control">
-							<a class="button is-light is-rounded" href="/contributors">
-								<span class="icon"><i class="fas fa-times"></i></span>
-								<span>Cancel</span>
-							</a>
-						</p>
+
 
 						{% if create_or_update == "update" %}
 						<p class="control">
