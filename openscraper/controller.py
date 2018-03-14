@@ -139,8 +139,20 @@ class BaseHandler(tornado.web.RequestHandler):
 	"""
 
 	### global vars for every handler
-	error_msg 		= ""
-	site_section 	= ""
+	# error_msg 			= ""
+	# site_section 		= ""
+	# is_user_connected 	= False
+
+	def __init__(self, *args, **kwargs) : 
+		
+		### super init/override tornado.web.RequestHandler with current args 
+		print "\n--- BaseHandler / __init__ :"
+		super(BaseHandler, self).__init__(*args, **kwargs)
+
+		### global vars for every handler
+		self.is_user_connected 	= self.get_if_user_connected()
+		self.error_msg 			= ""
+		self.site_section 		= ""
 
 	### global functions for all handlers
 
@@ -183,9 +195,22 @@ class BaseHandler(tornado.web.RequestHandler):
 			error_dict.update( slug_without_error )
 			error_slug = u"?" + urllib.urlencode( error_dict, doseq=True)		
 
+		print "... add_error_message_to_slug / error_slug : "
+		print error_slug
+
 		return error_slug
 
 	### user functions for all handlers
+
+	def get_if_user_connected(self) :
+		""" """
+		is_user = self.get_current_user()
+		if is_user != None :
+			is_connected = "Yes"
+		else : 
+			is_connected = "No"
+
+		return is_connected
 
 	def get_current_user(self):
 		""" return user_name"""
@@ -211,23 +236,30 @@ class BaseHandler(tornado.web.RequestHandler):
 
 	def set_current_user(self, user) :
 		""" set cookie from user infos """
+
 		if user : 
 			# retrieve user data 
 			user_name		= user["username"]
 			user_password	= user["password"]
 			user_email		= user["email"]
 
+			# store info in cookie
 			self.set_secure_cookie("user_name", user_name )
 			self.set_secure_cookie("user_email", user_email )
+			self.set_secure_cookie("user_is_connected", "Yes" )
+
 		else :
+			# clear user if no user
 			self.clear_current_user()
 
 	### TO DO / TO DEBUG
 	def clear_current_user(self):
 		""" clear cookies """
+
 		# if (self.get_argument("logout", None)):
 		self.clear_cookie("user_name")
 		self.clear_cookie("user_email")
+		self.clear_cookie("user_is_connected")
 
 
 	### DB functions for all handlers
@@ -509,6 +541,9 @@ class PageNotFoundHandler(BaseHandler):
 		print "\nPageNotFoundHandler.post / uri : "
 		pprint.pprint (self.request.uri )
 
+		print "\nPageNotFoundHandler.post / self.is_user_connected : "
+		print self.is_user_connected
+
 		print "\nPageNotFoundHandler.post / request : "
 		pprint.pprint (self.request )
 		
@@ -517,9 +552,10 @@ class PageNotFoundHandler(BaseHandler):
 
 		self.set_status(404)
 		self.render("404.html",
-					page_title  	= app_main_texts["main_title"],
-					site_section 	= self.site_section,
-					error_msg 		= self.error_msg
+					page_title  		= app_main_texts["main_title"],
+					site_section 		= self.site_section,
+					error_msg 			= self.error_msg,
+					is_user_connected 	= self.is_user_connected
 		)
 
 
@@ -555,7 +591,8 @@ class LoginHandler(BaseHandler):
 			site_section		= self.site_section,
 			login_or_register 	= "login",
 			next_url			= next_url,
-			error_msg			= self.error_msg
+			error_msg			= self.error_msg,
+			is_user_connected 	= self.is_user_connected
 		)
 	
 	@print_separate(APP_DEBUG)
@@ -567,8 +604,8 @@ class LoginHandler(BaseHandler):
 		print "\nLoginHandler.post ... "
 		
 		print "\nLoginHandler.post / next_url : "
-		next_url = self.get_argument('next', u'/')
-		print next_url
+		next_url = self.get_argument('next', '/')
+		print next_url, type(next_url)
 
 		print "\nLoginHandler.post / request.arguments ... "
 		# print self.request 
@@ -580,6 +617,8 @@ class LoginHandler(BaseHandler):
 		print user
 
 		### TO DO : form validation 
+		# form validation here....
+
 
 		### check if user exists in db
 		if user : 
@@ -597,11 +636,12 @@ class LoginHandler(BaseHandler):
 				self.redirect( next_url )
 			
 			else : 
-				# error_slug 		= u"?error=" + tornado.escape.url_escape("Login incorrect")
+				# add error message and redirect if user wrote wrong password
 				self.error_slug = self.add_error_message_to_slug("bad password or email mate ! no id stealing around here... mate !")
 				self.redirect("/login/" + self.error_slug )
 		
 		else : 
+			# add error message and redirect if no user registred in db
 			# error_slug 		= u"?error=" + tornado.escape.url_escape("Login incorrect")
 			self.error_slug = self.add_error_message_to_slug("incorrect login mate ! try again ")
 			self.redirect("/login/" + self.error_slug)
@@ -613,6 +653,8 @@ class RegisterHandler(BaseHandler):
 	@print_separate(APP_DEBUG)
 	def get(self):
 	
+		print "\nRegisterHandler.get ... "
+
 		self.site_section = "register"
 
 		# print "\nRegisterHandler.post / request : "
@@ -623,7 +665,7 @@ class RegisterHandler(BaseHandler):
 		# catch error message if any
 		self.catch_error_message()
 
-		print "\nRegisterHandler.post / next_url : "
+		print "\nRegisterHandler.get / next_url : "
 		next_url = self.get_argument('next', u'/')
 		print next_url
 
@@ -632,12 +674,17 @@ class RegisterHandler(BaseHandler):
 			site_section		= self.site_section,
 			next_url 			= next_url,
 			login_or_register 	= "register",
-			error_msg			= self.error_msg
+			error_msg			= self.error_msg,
+			is_user_connected 	= self.is_user_connected
+
 		)
 
 	@print_separate(APP_DEBUG)
 	def post(self):
 		""" check if user exists in db, insert it in db, and set cookie"""
+
+		# self.check_xsrf_cookie()
+		print "\nRegisterHandler.post ... "
 
 		print "\nRegisterHandler.post / next_url : "
 		next_url = self.get_argument('next', u'/')
@@ -645,57 +692,56 @@ class RegisterHandler(BaseHandler):
 
 		timestamp = time.time()
 
-		# self.check_xsrf_cookie()
-		print "\nRegisterHandler.post ... "
-
 		### get user infos + data validation
 		user_name 		= self.get_argument("username")
 		user_email 		= self.get_argument("email")
 		user_password 	= self.get_argument("password")
 
 		### TO DO : form validation
-		
 		# basic validation
-		if user_name != "" and user_email != "" and user_password != "" :
-			pass
+		if user_name != "" and user_email != "" and user_password != "" :		
+		
+			print "RegisterHandler.post / request.arguments ... "
+			# print self.request 
+			print self.request.arguments 
+
+			### get user from db
+			user = self.get_user_from_db( self.get_argument("email") )
+
+			if user == None : 
+
+				print "\nRegisterHandler.post / adding user to DB "
+				
+				user_dict = { 
+					"username" 		: user_name,
+					"email" 		: user_email,
+					"password" 		: user_password,
+					"level_admin" 	: "user",
+					"added_at"		: timestamp
+					}
+				user_object = UserClass(**user_dict) 
+				print "\nRegisterHandler.post / user as UserClass instance "
+				print user_object.__dict__
+
+				self.add_user_to_db(user_dict)
+
+				### set user
+				self.set_current_user(user_dict)
+
+				# self.redirect("/")
+				self.redirect( next_url )
+
+			else : 
+				### add alert and redirect if user already exists
+				self.error_slug = self.add_error_message_to_slug("user email already exists... mate !")
+				self.redirect("/register/" + self.error_slug )
+			
 		else : 
+			### add alert and redirect if user didn't fill some fields
 			self.error_slug = self.add_error_message_to_slug("put your glasses mate ! you missed fields in form !")
 			self.redirect("/register/" + self.error_slug )
 
-		print "RegisterHandler.post / request.arguments ... "
-		# print self.request 
-		print self.request.arguments 
 
-		### get user from db
-		user = self.get_user_from_db( self.get_argument("email") )
-
-		if user == None : 
-
-			print "\nRegisterHandler.post / adding user to DB "
-			
-			user_dict = { 
-				"username" 		: user_name,
-				"email" 		: user_email,
-				"password" 		: user_password,
-				"level_admin" 	: "user",
-				"added_at"		: timestamp
-				}
-			user_object = UserClass(**user_dict) 
-			print "\nRegisterHandler.post / user as UserClass instance "
-			print user_object.__dict__
-
-			self.add_user_to_db(user_dict)
-
-			### set user
-			self.set_current_user(user_dict)
-
-			# self.redirect("/")
-			self.redirect( next_url )
-
-		else : 
-			### TO DO : add alert if user already exists
-			self.error_slug = self.add_error_message_to_slug("user email already exists... mate !")
-			self.redirect("/register/" + self.error_slug )
 
 
 class LogoutHandler(BaseHandler):
@@ -744,11 +790,12 @@ class WelcomeHandler(BaseHandler):
 
 		self.render(
 			"index.html",
-			page_title  	= app_main_texts["main_title"],
-			site_section 	= self.site_section,
-			counts 			= counts,
-			user			= self.current_user,
-			error_msg		= self.error_msg
+			page_title  		= app_main_texts["main_title"],
+			site_section 		= self.site_section,
+			counts 				= counts,
+			user				= self.current_user,
+			error_msg			= self.error_msg,
+			is_user_connected 	= self.is_user_connected
 		)
 
 	# def write_error(self, status_code, **kwargs):
@@ -794,6 +841,7 @@ class DataModelViewHandler(BaseHandler):
 			datamodel_custom 	= data_model_custom,
 			datamodel_core 		= data_model_core,
 			error_msg			= self.error_msg,
+			is_user_connected 	= self.is_user_connected
 		)
 
 
@@ -825,6 +873,7 @@ class DataModelEditHandler(BaseHandler):
 			field_open_vars	 	= DATAMODEL_FIELD_OPEN_VARS,
 			datamodel_custom 	= data_model_custom,
 			error_msg			= self.error_msg,
+			is_user_connected 	= self.is_user_connected
 		) 
 
 	@print_separate(APP_DEBUG)
@@ -920,12 +969,12 @@ class DataModelAddFieldHandler(BaseHandler) :
 
 		self.render(
 			"datamodel_new_field.html",
-			page_title 		= app_main_texts["main_title"],
-			site_section	= self.site_section,
-			field_types		= DATAMODEL_FIELDS_TYPES,
-			field_open_vars	= DATAMODEL_FIELD_OPEN_VARS,
-			error_msg		= self.error_msg,
-
+			page_title 			= app_main_texts["main_title"],
+			site_section		= self.site_section,
+			field_types			= DATAMODEL_FIELDS_TYPES,
+			field_open_vars		= DATAMODEL_FIELD_OPEN_VARS,
+			error_msg			= self.error_msg,
+			is_user_connected 	= self.is_user_connected,
 		)
 
 	@print_separate(APP_DEBUG)
@@ -1014,13 +1063,14 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 		self.render(
 			"contributors_view.html",
-			page_title  	= app_main_texts["main_title"],
-			site_section	= self.site_section, 
-			query_obj		= query_contrib,
-			contributors 	= contributors,
-			is_contributors = is_data,
-			pagination_dict	= pagination_dict,
-			error_msg		= self.error_msg
+			page_title  		= app_main_texts["main_title"],
+			site_section		= self.site_section, 
+			query_obj			= query_contrib,
+			contributors 		= contributors,
+			is_contributors 	= is_data,
+			pagination_dict		= pagination_dict,
+			error_msg			= self.error_msg,
+			is_user_connected 	= self.is_user_connected
 		)
 
 
@@ -1082,7 +1132,8 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			contributor_edit_floats = CONTRIBUTOR_EDIT_FIELDS_FLOAT,
 			contributor 			= contributor,
 			datamodel				= data_model,
-			error_msg				= self.error_msg
+			error_msg				= self.error_msg,
+			is_user_connected 		= self.is_user_connected
 		)
 
 
@@ -1271,7 +1322,8 @@ class DataScrapedHandler(BaseHandler):
 			is_data				= is_data,
 			pagination_dict		= pagination_dict,
 			site_section		= self.site_section,
-			error_msg			= self.error_msg
+			error_msg			= self.error_msg,
+			is_user_connected 	= self.is_user_connected
 		)
 
 
@@ -1436,11 +1488,12 @@ class SpiderHandler(BaseHandler) :
 			# self.redirect("/")			
 			self.render(
 				"index.html",
-				page_title 	= app_main_texts["main_title"],
-				serv_msg 	= "ERROR !!! there is no ''%s'' spider configuration in the DB ..." %(spider_id),
-				user 		= self.current_user,
-				counts 		= counts,
-				error_msg	= self.error_msg
+				page_title 			= app_main_texts["main_title"],
+				serv_msg 			= "ERROR !!! there is no ''%s'' spider configuration in the DB ..." %(spider_id),
+				user 				= self.current_user,
+				counts 				= counts,
+				error_msg			= self.error_msg,
+				is_user_connected 	= self.is_user_connected
 			)
 		
 		else : 
