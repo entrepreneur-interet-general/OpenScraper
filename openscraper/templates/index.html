@@ -40,11 +40,17 @@
 			<div class="level">
 				<div class="level-item">
 					<h2 class="subtitle">
+
 						{% if 'serv_msg' in globals() %}
 							{{ serv_msg }}
 						{% else %}
+							{% if is_user_connected == "No"  %}
+							discover how to scrap for free
+							{% else %}
 							welcome back, {{ user }}
+							{% end %}
 						{% end %}
+
 					</h2>
 				</div>
 			</div>

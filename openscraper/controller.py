@@ -775,7 +775,7 @@ class WelcomeHandler(BaseHandler):
 	"""
 
 	@print_separate(APP_DEBUG)
-	@tornado.web.authenticated
+	# @tornado.web.authenticated
 	def get(self):
 		
 		print "\nWelcomeHandler.get... "
