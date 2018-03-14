@@ -138,6 +138,53 @@ class BaseHandler(tornado.web.RequestHandler):
 	MyNewHandler(BaseHandler)
 	"""
 
+	### global vars for every handler
+	error_msg 		= ""
+	site_section 	= ""
+
+	### global functions for all handlers
+
+	def catch_error_message (self):
+		""" get error message if any """
+		
+		try:
+			self.error_msg = self.get_argument("error")
+			print "\n... get_error_message / self.error_msg : "
+			print self.error_msg		
+		
+		except:
+			self.error_msg = ""
+
+	# NOT EXPERIMENTED YET
+	def add_error_message_to_slug(self, error_string ) : 
+		""" add a "error" arg to url slug """
+
+		print "... add_error_message_to_slug / slug_ : "
+		slug_ = self.request.arguments
+		pprint.pprint( slug_ )
+
+		# create a complete clean slug if no slug
+		if slug_ == {} :
+			error_slug = u"?" + u"error=" + tornado.escape.url_escape(error_string)
+		
+		# add error arg to existing slug
+		else : 
+			# clean existing slug from existing error arg if any
+			slug_without_error = deepcopy(slug_)
+			try : 
+				del slug_without_error["error"]
+			except :
+				pass
+			print "... add_error_message_to_slug / slug_without_error : "
+			print slug_without_error
+
+			# recreate slug
+			error_dict	= { "error" : error_string }
+			error_dict.update( slug_without_error )
+			error_slug = u"?" + urllib.urlencode( error_dict, doseq=True)		
+
+		return error_slug
+
 	### user functions for all handlers
 
 	def get_current_user(self):
@@ -363,11 +410,20 @@ class BaseHandler(tornado.web.RequestHandler):
 		slug_ = self.request.arguments
 		pprint.pprint( slug_ )
 
+		# copy raw slug
 		slug_without_page = deepcopy(slug_)
+		
+		# clean from page_n if any
 		try : 
 			del slug_without_page["page_n"]
 		except :
 			pass
+		# clean from error arg if any
+		try : 
+			del slug_without_page["error"]
+		except :
+			pass
+
 		print "... wrap_pagination / slug_without_page : "
 		print slug_without_page
 
@@ -443,9 +499,13 @@ class PageNotFoundHandler(BaseHandler):
 	"""
 	default handler to manage 404 errors
 	"""
+
 	@print_separate(APP_DEBUG)
 	def get(self):
 
+		self.site_section 	= "404"
+		# self.error_msg		= "404 - page not found"
+	
 		print "\nPageNotFoundHandler.post / uri : "
 		pprint.pprint (self.request.uri )
 
@@ -457,7 +517,9 @@ class PageNotFoundHandler(BaseHandler):
 
 		self.set_status(404)
 		self.render("404.html",
-					page_title  = app_main_texts["main_title"],
+					page_title  	= app_main_texts["main_title"],
+					site_section 	= self.site_section,
+					error_msg 		= self.error_msg
 		)
 
 
@@ -474,24 +536,26 @@ class LoginHandler(BaseHandler):
 
 		print "\nLoginHandler.get ... "
 
+		self.site_section 	= "login"
+
+		# catch error message if any
+		self.catch_error_message()
+
 		print "\nLoginHandler.get / next : "
 		next_url = self.get_argument('next', '/')
 		print next_url
 
-		try:
-			errormessage = self.get_argument("error")
-		except:
-			errormessage = ""
-		print "\nLoginHandler.get / errormessage : "
-		print errormessage
+		# catch error if any
+		self.catch_error_message()
 
 		### TO DO : add WTForms as form 
 
 		self.render('login_register.html',
 			page_title  		= app_main_texts["main_title"],
+			site_section		= self.site_section,
 			login_or_register 	= "login",
 			next_url			= next_url,
-			errormessage		= errormessage
+			error_msg			= self.error_msg
 		)
 	
 	@print_separate(APP_DEBUG)
@@ -533,12 +597,14 @@ class LoginHandler(BaseHandler):
 				self.redirect( next_url )
 			
 			else : 
-				error_msg = u"?error=" + tornado.escape.url_escape("Login incorrect")
-				self.redirect("/login/" + error_msg )
+				# error_slug 		= u"?error=" + tornado.escape.url_escape("Login incorrect")
+				self.error_slug = self.add_error_message_to_slug("bad password or email mate ! no id stealing around here... mate !")
+				self.redirect("/login/" + self.error_slug )
 		
 		else : 
-			error_msg = u"?error=" + tornado.escape.url_escape("Login incorrect")
-			self.redirect("/login/" + error_msg)
+			# error_slug 		= u"?error=" + tornado.escape.url_escape("Login incorrect")
+			self.error_slug = self.add_error_message_to_slug("incorrect login mate ! try again ")
+			self.redirect("/login/" + self.error_slug)
 	
 
 class RegisterHandler(BaseHandler):
@@ -547,10 +613,15 @@ class RegisterHandler(BaseHandler):
 	@print_separate(APP_DEBUG)
 	def get(self):
 	
+		self.site_section = "register"
+
 		# print "\nRegisterHandler.post / request : "
 		# pprint.pprint (self.request )
 		# print "\nRegisterHandler.post / request.arguments : "
 		# pprint.pprint( self.request.arguments )
+
+		# catch error message if any
+		self.catch_error_message()
 
 		print "\nRegisterHandler.post / next_url : "
 		next_url = self.get_argument('next', u'/')
@@ -558,8 +629,10 @@ class RegisterHandler(BaseHandler):
 
 		self.render('login_register.html',
 			page_title  		= app_main_texts["main_title"],
+			site_section		= self.site_section,
 			next_url 			= next_url,
-			login_or_register 	= "register"
+			login_or_register 	= "register",
+			error_msg			= self.error_msg
 		)
 
 	@print_separate(APP_DEBUG)
@@ -581,6 +654,14 @@ class RegisterHandler(BaseHandler):
 		user_password 	= self.get_argument("password")
 
 		### TO DO : form validation
+		
+		# basic validation
+		if user_name != "" and user_email != "" and user_password != "" :
+			pass
+		else : 
+			self.error_slug = self.add_error_message_to_slug("put your glasses mate ! you missed fields in form !")
+			self.redirect("/register/" + self.error_slug )
+
 		print "RegisterHandler.post / request.arguments ... "
 		# print self.request 
 		print self.request.arguments 
@@ -613,13 +694,16 @@ class RegisterHandler(BaseHandler):
 
 		else : 
 			### TO DO : add alert if user already exists
-			self.redirect("/register")
+			self.error_slug = self.add_error_message_to_slug("user email already exists... mate !")
+			self.redirect("/register/" + self.error_slug )
 
 
 class LogoutHandler(BaseHandler):
+
 	@print_separate(APP_DEBUG)
 	def get(self):
 		"""simple logout function to clear cookies"""
+
 		self.clear_current_user()
 		self.redirect("/")
 
@@ -643,11 +727,16 @@ class WelcomeHandler(BaseHandler):
 	"""
 	handler for index page
 	"""
+
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
 	def get(self):
 		
 		print "\nWelcomeHandler.get... "
+		self.site_section = "index"
+
+		# catch error message if any
+		self.catch_error_message()
 
 		### count collections' documents
 		counts = self.count_all_documents( q_datamodel={"field_class" : "custom"} ) 
@@ -655,9 +744,11 @@ class WelcomeHandler(BaseHandler):
 
 		self.render(
 			"index.html",
-			page_title  		= app_main_texts["main_title"],
-			counts 				= counts,
-			user				= self.current_user
+			page_title  	= app_main_texts["main_title"],
+			site_section 	= self.site_section,
+			counts 			= counts,
+			user			= self.current_user,
+			error_msg		= self.error_msg
 		)
 
 	# def write_error(self, status_code, **kwargs):
@@ -678,7 +769,10 @@ class DataModelViewHandler(BaseHandler):
 
 		print "\nDataModelHandler.get... "
 
-		site_section = "datamodel"
+		self.site_section = "datamodel"
+
+		# catch error message if any
+		self.catch_error_message()
 
 		### retrieve datamodel from DB
 		data_model_custom = list(self.application.coll_model.find({"field_class" : "custom"}).sort("field_name",1) )
@@ -696,9 +790,10 @@ class DataModelViewHandler(BaseHandler):
 		self.render(
 			"datamodel_view.html",
 			page_title 			= app_main_texts["main_title"],
-			site_section		= site_section,
+			site_section		= self.site_section,
 			datamodel_custom 	= data_model_custom,
 			datamodel_core 		= data_model_core,
+			error_msg			= self.error_msg,
 		)
 
 
@@ -711,7 +806,10 @@ class DataModelEditHandler(BaseHandler):
 	def get(self) : 
 		print "\nDataModelHandler.get... "
 
-		site_section = "datamodel"
+		self.site_section = "datamodel"
+
+		# catch error message if any
+		self.catch_error_message()
 
 		### retrieve datamodel from DB
 		data_model_custom = list(self.application.coll_model.find({"field_class" : "custom"}))
@@ -720,12 +818,13 @@ class DataModelEditHandler(BaseHandler):
 
 		self.render(
 			"datamodel_edit.html",
-			page_title 	= app_main_texts["main_title"],
-			site_section		= site_section,
-			field_types = DATAMODEL_FIELDS_TYPES,
-			field_keep_vars	 = DATAMODEL_FIELD_KEEP_VARS,
-			field_open_vars	 = DATAMODEL_FIELD_OPEN_VARS,
-			datamodel_custom = data_model_custom,
+			page_title 			= app_main_texts["main_title"],
+			site_section		= self.site_section,
+			field_types 		= DATAMODEL_FIELDS_TYPES,
+			field_keep_vars	 	= DATAMODEL_FIELD_KEEP_VARS,
+			field_open_vars	 	= DATAMODEL_FIELD_OPEN_VARS,
+			datamodel_custom 	= data_model_custom,
+			error_msg			= self.error_msg,
 		) 
 
 	@print_separate(APP_DEBUG)
@@ -814,14 +913,19 @@ class DataModelAddFieldHandler(BaseHandler) :
 
 		print "\nDataModelAddFieldHandler.get... "
 
-		site_section = "datamodel"
+		self.site_section = "datamodel"
+
+		# catch error message if any
+		self.catch_error_message()
 
 		self.render(
 			"datamodel_new_field.html",
 			page_title 		= app_main_texts["main_title"],
-			site_section	= site_section,
+			site_section	= self.site_section,
 			field_types		= DATAMODEL_FIELDS_TYPES,
 			field_open_vars	= DATAMODEL_FIELD_OPEN_VARS,
+			error_msg		= self.error_msg,
+
 		)
 
 	@print_separate(APP_DEBUG)
@@ -834,6 +938,7 @@ class DataModelAddFieldHandler(BaseHandler) :
 
 		### TO DO : form validation
 		print "DataModelAddFieldHandler.post / request.arguments ... "
+		
 		# print self.request 
 		pprint.pprint( self.request.arguments )
 
@@ -872,8 +977,11 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 		print "\nContributorsHandler.get ..."
 		
-		site_section = "contributors"
-
+		self.site_section = "contributors"
+		
+		# catch error message if any
+		self.catch_error_message()
+		
 		print "\nContributorsHandler.get / slug :"
 		print slug
 
@@ -907,11 +1015,12 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 		self.render(
 			"contributors_view.html",
 			page_title  	= app_main_texts["main_title"],
-			site_section	= site_section, 
+			site_section	= self.site_section, 
 			query_obj		= query_contrib,
 			contributors 	= contributors,
 			is_contributors = is_data,
-			pagination_dict	= pagination_dict
+			pagination_dict	= pagination_dict,
+			error_msg		= self.error_msg
 		)
 
 
@@ -927,7 +1036,10 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		
 		print "\nContributorEditHandler.get / spider_id : ", spider_id
 
-		site_section = "contributors"
+		self.site_section = "contributors"
+
+		# catch error message if any
+		self.catch_error_message()
 
 		### retrieve datamodel - custom fields
 		data_model = list(self.application.coll_model.find( {"field_class" : "custom"})) #, {"field_name":1, "_id":1} ))
@@ -962,7 +1074,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		### render page
 		self.render("contributor_edit.html",
 			page_title 				= app_main_texts["main_title"],
-			site_section			= site_section,
+			site_section			= self.site_section,
 			create_or_update 		= create_or_update,
 			contributor_edit_fields = contributor_edit_fields,
 			contributor_edit_radio 	= CONTRIBUTOR_EDIT_FIELDS_RADIO,
@@ -970,6 +1082,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			contributor_edit_floats = CONTRIBUTOR_EDIT_FIELDS_FLOAT,
 			contributor 			= contributor,
 			datamodel				= data_model,
+			error_msg				= self.error_msg
 		)
 
 
@@ -1048,7 +1161,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		self.redirect("/contributors")
 
 
-### TO DO 
+### TO DO : not ready yet
 class ContributorDeleteHandler(BaseHandler) : 
 	"""
 	delete a spider config
@@ -1080,7 +1193,10 @@ class DataScrapedHandler(BaseHandler):
 
 		print "\nDataScrapedHandler.get ... : "
 
-		site_section = "data"
+		self.site_section = "data"
+
+		# catch error message if any
+		self.catch_error_message()
 
 		# print "\nDataScrapedHandler.get / slug : "
 		# pprint.pprint(slug)
@@ -1154,7 +1270,8 @@ class DataScrapedHandler(BaseHandler):
 			items				= items_from_db,
 			is_data				= is_data,
 			pagination_dict		= pagination_dict,
-			site_section		= site_section
+			site_section		= self.site_section,
+			error_msg			= self.error_msg
 		)
 
 
@@ -1295,6 +1412,11 @@ class SpiderHandler(BaseHandler) :
 	def get(self, spider_id = None ):
 		
 		print "\nSpiderHandler.get... "
+
+		# catch error message if any
+		self.catch_error_message()
+
+		# count all docs
 		counts = self.count_all_documents() 
 
 		### retrieve spider config from its name in the db
@@ -1317,7 +1439,8 @@ class SpiderHandler(BaseHandler) :
 				page_title 	= app_main_texts["main_title"],
 				serv_msg 	= "ERROR !!! there is no ''%s'' spider configuration in the DB ..." %(spider_id),
 				user 		= self.current_user,
-				counts 		= counts
+				counts 		= counts,
+				error_msg	= self.error_msg
 			)
 		
 		else : 
@@ -1419,7 +1542,7 @@ class PaginationModule(tornado.web.UIModule):
 	def render( self, pagination_dict ):
 		return self.render_string(
 			"modules/mod_pagination.html", 
-			pagination_dict = pagination_dict
+			pagination_dict = pagination_dict,
 		)
 
 class MainTabsModule(tornado.web.UIModule):
@@ -1429,9 +1552,21 @@ class MainTabsModule(tornado.web.UIModule):
 	def render( self, site_section ):
 		return self.render_string(
 			"modules/mod_tabs.html", 
-			# pagination_dict = pagination_dict
-			site_section = site_section
+			site_section = site_section,
 		)
+
+class ErrorModalModule(tornado.web.UIModule):
+	"""
+	module for error messages
+	"""
+	def render( self, error_msg ):
+		return self.render_string(
+			"modules/mod_error_modal.html", 
+			error_msg = error_msg,
+		)
+
+	def javascript_files(self):
+		return "js/modal_error.js"
 
 '''
 class ContributorModule(tornado.web.UIModule):

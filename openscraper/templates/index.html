@@ -9,6 +9,7 @@
 
 		<div class="container has-text-centered">
 			
+			{# logo and tagline #}
 			<div class="level">
 				<div class="level-item">
 					<figure class="image is-128x128">
@@ -35,6 +36,7 @@
 			<br>
 			<hr>
 
+			{# message to user #}
 			<div class="level">
 				<div class="level-item">
 					<h2 class="subtitle">
@@ -47,22 +49,90 @@
 				</div>
 			</div>
 			
+			{# shortcut buttons #}
 			<div class="level">
 				<div class="container">
-					<div class="buttons has-addons is-centered">
+
+					{# <div class="buttons has-addons is-centered">
+
 						<a class="button is-primary is-inverted is-outlined "
 							href="/datamodel/view">
 							see your data model
 						</a>
+
 						<a class="button is-primary is-inverted is-outlined "
 							href="/contributors">
 							see the contributors
 						</a>
+
 						<a class="button is-primary is-inverted is-outlined "
 							href="/dataset/view">
 							see the data set
 						</a>
+
+					</div> #}
+
+					<div class="buttons is-centered" >
+						<div class="field is-grouped">
+						
+							<span>
+								<p class="control">
+									<a class="button is-primary is-inverted is-outlined "
+										href="/datamodel/view">
+										see your data model
+									</a>
+								</p>
+							</span>
+
+
+							<span>
+								<p class="control" style="pointer-events: none">
+									<span class="button is-text" style="color:white" >
+										<span class="icon" > 
+											<i class="fas fa-angle-right"></i> 
+										</span>
+									</span>
+								</p>
+							</span>
+
+							
+							<span>
+								<p class="control">
+									<a class="button is-primary is-inverted is-outlined "
+										href="/contributors">
+										see the contributors
+									</a>
+								</p>
+							</span>
+
+							
+							<span>
+								<p class="control" style="pointer-events: none">
+									<span class="button is-text" style="color:white" >
+										<span class="icon" > 
+											<i class="fas fa-angle-right"></i> 
+										</span>
+									</span>
+								</p>
+							</span>
+
+
+
+							<span>
+								<p class="control">
+									<a class="button is-primary is-inverted is-outlined "
+										href="/dataset/view">
+										see the data set
+									</a>
+								</p>
+							</span>
+
+
+						</div>
 					</div>
+
+
+
 				</div>
 			</div>
 
@@ -70,6 +140,7 @@
 
 			<hr>
 
+			{# counts #}
 			<div class="level">
 				<div class="level-item has-text-centered">
 					<div>

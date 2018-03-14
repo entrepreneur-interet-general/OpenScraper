@@ -177,7 +177,8 @@ class Application(tornado.web.Application):
 			ui_modules		= {
 				# "Contributor"	: ContributorModule,
 				"Pagination"	: PaginationModule,
-				"MainTabs"		: MainTabsModule
+				"MainTabs"		: MainTabsModule,
+				"ErrorModal"	: ErrorModalModule
 			},
 
 			login_url		= "/login/",

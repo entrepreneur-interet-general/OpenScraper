@@ -17,10 +17,9 @@
 		#}
 
 		{# JQUERY #}
-		{# 
 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script> 
-		#}
+		
 
 		{# CHARTS #}
 
@@ -36,16 +35,24 @@
 	{# MAIN CONTENT #}
 	<body>
 			
+			{# navbar #}
 			<header>
 				{% include "navbar.html" %}
 			</header>
 			
-			
+			{# error message #}
+			{% if "error_msg" in globals()  %}
+				{% if error_msg != "" %}
+					{% module ErrorModal( error_msg ) %}
+				{% end %}
+			{% end %}
+
+			{# content #}
 			{% block body %}
-			
 			{% end %}
 
 
+			{# footer #}
 			<footer class="footer">
 				{% include "footer.html" %}
 			</footer>
