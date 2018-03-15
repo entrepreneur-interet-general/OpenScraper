@@ -404,6 +404,7 @@ def run_generic_spider( user_id				= None,
 	# pprint.pprint(spider_config_flat)
 
 	### settings for crawler
+	# cf : https://hackernoon.com/how-to-crawl-the-web-politely-with-scrapy-15fbe489573d
 	# gllobal settings for scrapy processes (see upper)
 	print "--- run_generic_spider / BOT_NAME :       ", settings.get('BOT_NAME')
 	print "--- run_generic_spider / USER_AGENT :     ", settings.get('USER_AGENT')

@@ -16,14 +16,15 @@ from uuid import uuid4
 import pprint
 
 ### tornado imports
-import tornado.ioloop
-import tornado.web
-import tornado.auth
-import tornado.options
-import tornado.gen
+# from 	tornado.ioloop import IOLoop
+import 	tornado.web
+import 	tornado.auth
+import 	tornado.options
+import 	tornado.gen
+
 # from tornado import httpclient, gen, ioloop, queues
 from tornado.options import define, options
-from tornado.concurrent import Future
+# from tornado.concurrent import Future
 
 ### import app settings from .config.settings (keep that file confidential)
 from config.settings_corefields import * 
@@ -205,7 +206,10 @@ def main():
 	
 	http_server = tornado.httpserver.HTTPServer(Application())
 	http_server.listen(options.port)
+	
 	tornado.ioloop.IOLoop.instance().start()
+	# ioloop = IOLoop.instance()
+	# ioloop.start()
 	
 	# http_server.bind(options.port)
 	# http_server.start(0)  # Forks multiple sub-processes

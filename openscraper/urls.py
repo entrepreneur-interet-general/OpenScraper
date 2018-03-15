@@ -1,5 +1,7 @@
 
+
 from controller import *
+from spider_handler	import *
 
 ### all routing functions are in controller.py
 ### for url mapping in Tornado cf : https://stackoverflow.com/questions/17166051/url-regex-mapping-in-tornado-web-server
@@ -21,8 +23,10 @@ from controller import *
 
 urls = [
 
-	### index, login, register, logout
+	### index
 	(r"/", 				WelcomeHandler),
+
+	### login, register, logout
 	# (r'/login/(?P<next>.*?)', 		LoginHandler),
 	(r'/login/', 		LoginHandler),
 	(r'/register/', 	RegisterHandler),
@@ -44,15 +48,13 @@ urls = [
 	(r"/contributor/edit/([\w\_\d]+)",		ContributorEditHandler), 
 	(r"/contributor/delete/([\w\_\d]+)", 	ContributorDeleteHandler), 
 
-	### spider launchers
-	# (r"/crawl/(\w+)", 			SpiderHandler), ### get spidername as input
-	(r"/crawl/([\w\_\d]+)",			SpiderHandler), ### get spidername as input
-
 	### dataset routes
 	# cf : https://stackoverflow.com/questions/10726486/tornado-url-query-parameters 
 	(r"/dataset/view([^/]*)", 		DataScrapedHandler), 	### get optional(*) parameters in slug like : dataset/view?page=0&stuff=3
 	# (r"/dataset/view/(\w+)",		DataScrapedViewOneHandler),
 	
+
+
 	# TO DO 
 	### API routes
 	(r"/api/.*", 					PageNotFoundHandler),
@@ -61,7 +63,14 @@ urls = [
 	(r"/api/search?=(.*)", 			PageNotFoundHandler),
 	(r"/api/(?P<page_n>[0-9]+)", 	PageNotFoundHandler),
 	(r"/api/(?P<project>.*?)", 		PageNotFoundHandler),
-	
+
+
+
+	### spider launchers / runners
+	# (r"/crawl/(\w+)", 			SpiderHandler), ### get spidername as input
+	(r"/crawl/([\w\_\d]+)",			SpiderHandler), ### get spidername as input
+
+
 	### error route : 404
 	(r'.*', 						PageNotFoundHandler),
 
