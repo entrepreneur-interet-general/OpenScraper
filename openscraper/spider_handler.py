@@ -15,7 +15,9 @@ from scraper import run_generic_spider
 # cf : https://gist.github.com/marksilvis/ea1142680db66e2bb9b2a29e57306d76
 # cf : https://stackoverflow.com/questions/22082165/running-an-async-background-task-in-tornado
 # cf : https://gist.github.com/mivade/421c427db75c8c5fa1d1
-
+# cf : http://www.tornadoweb.org/en/stable/faq.html#my-code-is-asynchronous-but-it-s-not-running-in-parallel-in-two-browser-tabs
+# cf : http://www.tornadoweb.org/en/stable/guide/queues.html
+# cf : https://emptysqua.re/blog/refactoring-tornado-coroutines/
 
 """ prefilled fields for early tests
 

@@ -9,11 +9,18 @@ a project by ...
 
 
 ### global imports
-import os, os.path
-import json
-import datetime
-from uuid import uuid4
-import pprint
+import 	os, os.path
+import 	json
+import 	datetime
+from 	uuid import uuid4
+import 	pprint
+
+### import logger
+# cf : http://www.patricksoftwareblog.com/python-logging-tutorial/
+# cf : https://gitlab.com/patkennedy79/python_logging/blob/master/python_logging/__init__.py
+from 	os import path, remove
+import 	logging
+import 	logging.config
 
 ### tornado imports
 # from 	tornado.ioloop import IOLoop
@@ -120,6 +127,35 @@ class Application(tornado.web.Application):
 
 		timestamp = time.time()
 
+
+		### logger as self var
+		# create the Logger
+		self.logger = logging.getLogger(__name__)
+		self.logger.setLevel(logging.DEBUG)
+
+		# Create the Handler for logging data to a file
+		logger_handler = logging.FileHandler('openscraper_logging.log')
+		logger_handler.setLevel(logging.WARNING)
+		"""
+		logger has 5 severity level : 
+			DEBUG (lowest)
+			INFO
+			WARNING
+			ERROR
+			CRITICAL (highest)
+		"""
+		# Create a Formatter for formatting the log messages
+		logger_formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+		
+		# Add the Formatter to the Handler
+		logger_handler.setFormatter(logger_formatter)
+		
+		# Add the Handler to the Logger
+		self.logger.addHandler(logger_handler)
+		self.logger.info('Completed configuring logger()!')
+		self.logger.warning("Let's scrap untill we choke from data...")
+
+
 		### connect to MongoDB with variables from config.settings.py
 		client = MongoClient(
 					host = MONGODB_HOST, 
@@ -127,6 +163,7 @@ class Application(tornado.web.Application):
 		)
 		self.db = client[ MONGODB_DB ]
 		
+
 		# predefine collection names as .self objects
 		self.coll_users 	= self.db[ MONGODB_COLL_USERS ]
 		self.coll_model 	= self.db[ MONGODB_COLL_DATAMODEL ]
@@ -191,7 +228,7 @@ class Application(tornado.web.Application):
 		
 		### app init
 		tornado.web.Application.__init__(self, handlers, **settings )
-		print ">>> Application.__init__ end ... \n"
+		self.logger.info (">>> Application.__init__ end ... \n")
 
 
 

@@ -101,7 +101,8 @@ class WelcomeHandler(BaseHandler):
 	# @tornado.web.authenticated
 	def get(self):
 		
-		print "\nWelcomeHandler.get... "
+		self.application.logger.info("WelcomeHandler.get... ")
+
 		self.site_section = "index"
 
 		# catch error message if any
@@ -109,7 +110,7 @@ class WelcomeHandler(BaseHandler):
 
 		### count collections' documents
 		counts = self.count_all_documents( q_datamodel={"field_class" : "custom"} ) 
-		print "\nWelcomeHandler.get / counts :", counts
+		self.application.logger.info("WelcomeHandler.get / counts : %s" %(counts) )
 
 		self.render(
 			"index.html",
@@ -135,16 +136,16 @@ class LoginHandler(BaseHandler):
 	@print_separate(APP_DEBUG)
 	def get(self):
 
-		print "\nLoginHandler.get ... "
+		self.application.logger.info("LoginHandler.get ... ")
 
 		self.site_section 	= "login"
 
 		# catch error message if any
 		self.catch_error_message()
 
-		print "\nLoginHandler.get / next : "
+		self.application.logger.info("LoginHandler.get / next : ")
 		next_url = self.get_argument('next', '/')
-		print next_url
+		self.application.logger.info(next_url)
 
 		# catch error if any
 		self.catch_error_message()
@@ -166,19 +167,21 @@ class LoginHandler(BaseHandler):
 		
 		# self.check_xsrf_cookie()
 
-		print "\nLoginHandler.post ... "
+		self.application.logger.info("\nLoginHandler.post ... ")
 		
-		print "\nLoginHandler.post / next_url : "
+		self.application.logger.info("LoginHandler.post / next_url : ")
+		
 		next_url = self.get_argument('next', '/')
-		print next_url, type(next_url)
+		
+		self.application.logger.info( next_url, type(next_url) )
 
-		print "\nLoginHandler.post / request.arguments ... "
+		self.application.logger.info("LoginHandler.post / request.arguments ... ")
 		# print self.request 
-		print self.request.arguments 
+		self.application.logger.info( self.request.arguments )
 
 		### get user from db
 		user = self.get_user_from_db( self.get_argument("email") )
-		print "LoginHandler.post / user :"
+		self.application.logger.info("LoginHandler.post / user :")
 		print user
 
 		### TO DO : form validation 
