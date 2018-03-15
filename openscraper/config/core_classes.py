@@ -158,8 +158,6 @@ class SpiderConfig :
 
 		return partial_config
 
-
-### TO DO ?
 class QueryFromSlug : 
 	"""
 	slug cleaner to translate complete or incomplete slug into a clean mongodb query

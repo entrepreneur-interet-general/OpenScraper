@@ -10,6 +10,13 @@ from scraper import run_generic_spider
 ########################
 ### RUN SPIDER handlers as background tasks
 
+# threading for background tasks (spiders mainly)
+# cf : https://stackoverflow.com/questions/22082165/running-an-async-background-task-in-tornado/25304704
+# cf : https://gist.github.com/marksilvis/ea1142680db66e2bb9b2a29e57306d76
+# cf : https://stackoverflow.com/questions/22082165/running-an-async-background-task-in-tornado
+# cf : https://gist.github.com/mivade/421c427db75c8c5fa1d1
+
+
 """ prefilled fields for early tests
 
 	test_data_model = [
@@ -158,16 +165,12 @@ class SpiderHandler(BaseHandler) :
 		
 		### redirect / set default runner if no spider_config
 		if spider_config == None : 
+			
 			print "SpiderHandler.get --- !!! Spidername not found : test spider with test_config"
-			# test_config = {
-			# 		"name"  : "quote", 
-			# 		"start_urls" : ['http://quotes.toscrape.com/tag/humor/'],
-			# 	 } 
-			# (this will come from DB later)
-			# spider_config = test_spider_config
 			
 			error_slug = self.add_error_message_to_slug( "ERROR !!! there is no ''%s'' spider configuration in the DB ..." %(str(spider_id)) )
 
+			### TO DO : debug this error : "Cannot redirect after headers have been written"
 			self.redirect("/" + error_slug )			
 			# self.render(
 			# 	"index.html",
@@ -230,8 +233,12 @@ class SpiderHandler(BaseHandler) :
 					) :
 		
 		print "\nSpiderHandler.run_spider --- "
+		
+		print "\nSpiderHandler.run_spider / testing the non-blocking decorator with a time.sleep... "
 		time.sleep(5)
+
 		### run spider --- check masterspider.py --> function run_generic_spider()
+		print "\nSpiderHandler.run_spider / now let it run... "
 		result = run_generic_spider( 
 									user_id				= current_user_id,
 									spider_id			= str(spider_id), 

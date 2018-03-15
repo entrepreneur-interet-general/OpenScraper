@@ -20,11 +20,6 @@ from 	pymongo import UpdateOne
 
 # import 	tornado.web, tornado.template, tornado.escape
 
-
-# threading for background tasks (spiders mainly)
-# cf : https://stackoverflow.com/questions/22082165/running-an-async-background-task-in-tornado/25304704
-# cf : https://gist.github.com/marksilvis/ea1142680db66e2bb9b2a29e57306d76
-
 # import toro # deprecated it seems
 # from 	tornado.ioloop import IOLoop
 from 	tornado import gen, concurrent
@@ -45,11 +40,6 @@ from 	spider_threading import *
 ### import WTForms for validation
 from forms import *
 
-### import contributor generic class
-# from contributor import ContributorBaseClass
-
-### import item classes
-# from scraper import GenericItem
 
 
 
