@@ -122,6 +122,7 @@
 							<th></th>
 							<th></th>
 							<th></th>
+							<th></th>
 						</tr>
 					</thead>
 
@@ -196,11 +197,20 @@
 							</td>
 
 							<td> 
+								<a class="has-text-centered button is-info is-rounded is-small"
+									href="/dataset/view?spider_id={{ escape (str(contrib['_id'])) }}" 
+									disabled >
+									<span class="icon is-small"><i class="fas fa-redo"></i></span>
+									<span>reset data</span>
+								</a> 
+							</td>
+
+							<td> 
 								<a class="has-text-centered button is-danger is-rounded is-small"
 									href="/contributor/delete/{{ escape (contrib['scraper_config']['spidername']) }}" 
 									disabled >
 									<span class="icon is-small"><i class="fas fa-times"></i></span>
-									<span>delete</span>
+									<span>delete spider</span>
 								</a> 
 							</td>
 
