@@ -15,12 +15,22 @@ import 	datetime
 from 	uuid import uuid4
 import 	pprint
 
+# BDD imports and client
+# import pymongo
+from pymongo import MongoClient
+from pymongo import UpdateOne
+
+
 ### import logger
 # cf : http://www.patricksoftwareblog.com/python-logging-tutorial/
 # cf : https://gitlab.com/patkennedy79/python_logging/blob/master/python_logging/__init__.py
+# cf : http://docs.python-guide.org/en/latest/writing/logging/ 
 from 	os import path, remove
 import 	logging
 import 	logging.config
+from 	logging.config import dictConfig
+from 	config.settings_logging import logging_config
+
 
 ### tornado imports
 # from 	tornado.ioloop import IOLoop
@@ -28,7 +38,6 @@ import 	tornado.web
 import 	tornado.auth
 import 	tornado.options
 import 	tornado.gen
-
 # from tornado import httpclient, gen, ioloop, queues
 from tornado.options import define, options
 # from tornado.concurrent import Future
@@ -40,10 +49,6 @@ from config.settings_example import *
 
 define( "port", default=APP_PORT, help="run on the given port", type=int )
 
-# BDD imports and client
-# import pymongo
-from pymongo import MongoClient
-from pymongo import UpdateOne
 
 
 ### scrapy dependencies
@@ -64,7 +69,7 @@ from controller import *
 
 
 ### UTILS AT MAIN LEVEL
-def create_datamodel_fields( coll_model, fields_list, field_class ) : 
+def create_datamodel_fields( logger, coll_model, fields_list, field_class ) : 
 	"""
 	create datamodel fields from list of field basic dict like DATAMODEL_CORE_FIELDS
 	"""
@@ -88,7 +93,8 @@ def create_datamodel_fields( coll_model, fields_list, field_class ) :
 			"is_visible"	: is_visible
 		} for field in fields_list
 	]
-	print ">>> Application.__init__ / datamodel - fields_ : "
+
+	logger.info("... create_datamodel_fields / datamodel - fields_ : ")
 	# pprint.pprint(fields_)
 
 	# upsert fields as bulk job in mongoDB
@@ -96,11 +102,6 @@ def create_datamodel_fields( coll_model, fields_list, field_class ) :
 	operations =[ UpdateOne( 
 		{"field_name" : field["field_name"]},
 		{'$set':  { 
-				# "field_type" 		: field["field_type"],
-				# "field_class" 	: field["field_class"],
-				# "added_by" 		: field["added_by"], 	# "admin",
-				# "added_at" 		: field["added_at"], 	# timestamp,
-				# "is_visible"		: field["is_visible"], 	# False
 				k : v for k,v in field.iteritems() if k != "field_name" 
 				} 
 		}, 
@@ -123,14 +124,14 @@ class Application(tornado.web.Application):
 	
 	def __init__(self):  
 
-		print "\n>>> Application.__init__ ... "
 
 		timestamp = time.time()
 
-
 		### logger as self var
 		# create the Logger
+		# dictConfig(logging_config)
 		self.logger = logging.getLogger(__name__)
+		# self.logger = logging.getLogger()
 		self.logger.setLevel(logging.DEBUG)
 
 		# Create the Handler for logging data to a file
@@ -152,8 +153,10 @@ class Application(tornado.web.Application):
 		
 		# Add the Handler to the Logger
 		self.logger.addHandler(logger_handler)
-		self.logger.info('Completed configuring logger()!')
-		self.logger.warning("Let's scrap untill we choke from data...")
+		self.logger.info('>>> Completed configuring logger()!')
+		self.logger.warning(">>> Let's scrap untill we choke from data...")
+
+		self.logger.info('>>> Application.__init__ ... ')
 
 
 		### connect to MongoDB with variables from config.settings.py
@@ -198,7 +201,7 @@ class Application(tornado.web.Application):
 		# 	upsert=True ) for field in core_fields 
 		# ]
 		# self.coll_model.bulk_write(operations)
-		create_datamodel_fields( self.coll_model, DATAMODEL_CORE_FIELDS, "core" )
+		create_datamodel_fields( self.logger, self.coll_model, DATAMODEL_CORE_FIELDS, "core" )
 
 		### instantiate core and default custom fields if no custom field at all in db
 		existing_custom_fields = self.coll_model.find({"field_type" : "custom"})
@@ -237,7 +240,7 @@ def main():
 	"""
 	start / run app
 	"""
-	print "\n>>> MAIN / STARTING SERVER ... >>>"
+	print "\n\n>>> MAIN / STARTING SERVER ... >>>\n"
 
 	tornado.options.parse_command_line()
 	
