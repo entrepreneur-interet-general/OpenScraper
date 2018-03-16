@@ -101,7 +101,7 @@ class WelcomeHandler(BaseHandler):
 	# @tornado.web.authenticated
 	def get(self):
 		
-		self.application.logger.info("WelcomeHandler.get... ")
+		self.log.info("WelcomeHandler.get... \n")
 
 		self.site_section = "index"
 
@@ -110,7 +110,7 @@ class WelcomeHandler(BaseHandler):
 
 		### count collections' documents
 		counts = self.count_all_documents( q_datamodel={"field_class" : "custom"} ) 
-		self.application.logger.info("WelcomeHandler.get / counts : %s" %(counts) )
+		self.log.info("WelcomeHandler.get / counts : %s" %(counts) )
 
 		self.render(
 			"index.html",
@@ -135,17 +135,18 @@ class LoginHandler(BaseHandler):
 	
 	@print_separate(APP_DEBUG)
 	def get(self):
-
-		self.application.logger.info("LoginHandler.get ... ")
+		
+		print 
+		self.log.info("LoginHandler.get ... ")
 
 		self.site_section 	= "login"
 
 		# catch error message if any
 		self.catch_error_message()
 
-		self.application.logger.info("LoginHandler.get / next : ")
+		self.log.info("LoginHandler.get / next : ")
 		next_url = self.get_argument('next', '/')
-		self.application.logger.info(next_url)
+		self.log.info(next_url)
 
 		# catch error if any
 		self.catch_error_message()
@@ -167,22 +168,22 @@ class LoginHandler(BaseHandler):
 		
 		# self.check_xsrf_cookie()
 
-		self.application.logger.info("\nLoginHandler.post ... ")
+		print 
+		self.log.info("LoginHandler.post ...\n")
 		
-		self.application.logger.info("LoginHandler.post / next_url : ")
+		self.log.info("LoginHandler.post / next_url : ")
 		
 		next_url = self.get_argument('next', '/')
 		
-		self.application.logger.info( next_url, type(next_url) )
+		self.log.info( "%s - %s", next_url, type(next_url) )
 
-		self.application.logger.info("LoginHandler.post / request.arguments ... ")
-		# print self.request 
-		self.application.logger.info( self.request.arguments )
+		self.log.info("LoginHandler.post / request.arguments ... ")
+		self.log.info( self.request.arguments )
 
 		### get user from db
 		user = self.get_user_from_db( self.get_argument("email") )
-		self.application.logger.info("LoginHandler.post / user :")
-		print user
+		self.log.info("LoginHandler.post / user : %s", user)
+		# self.log.info( user )
 
 		### TO DO : form validation 
 		# form validation here....
@@ -559,42 +560,45 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 	# @gen.coroutine
 	def get(self, slug=None):
 
-		print "\nContributorsHandler.get ..."
-		
+		# print "\nContributorsHandler.get ..."
+		self.log.info("ContributorsHandler.get ...\n")
+
 		self.site_section = "contributors"
 		
 		# catch error message if any
 		self.catch_error_message()
 		
-		print "\nContributorsHandler.get / slug :"
-		print slug
+		self.log.info("ContributorsHandler.get / slug : %s", slug )
+		# self.log.info( slug ) 
 
-		print "\nContributorsHandler.get / slug_ : "
 		slug_ = self.request.arguments
-		print slug_
+		self.log.info("ContributorsHandler.get / slug_ : %s", slug_ )
+		# self.log.info( slug_ )
 
 		# filter slug
 		query_contrib = self.filter_slug( slug_, slug_class="contributors" )
-		print "\nContributorsHandler.get / query_contrib : "
-		print query_contrib
+		self.log.info("ContributorsHandler.get / query_contrib : %s ", query_contrib )
+		# print query_contrib
 
 		# get data 
-		contributors, is_data, page_n_max = self.get_data_from_query( query_contrib, coll_name="contributors")
-		print "\nContributorsHandler.get / contributors :"
-		# pprint.pprint (contributors[0])
+		contributors, is_data, page_n_max = self.get_data_from_query( query_contrib, coll_name="contributors", sort_by="infos.name")
+		self.log.info("ContributorsHandler.get / contributors : " )
+		pprint.pprint (contributors[0])
 		print '.....\n'
 
 		### operations if there is data
 		pagination_dict = None
 		if is_data : 
-			print "\nContributorsHandler.get / is_data :", is_data
+			
+			self.log.info("ContributorsHandler.get / is_data : %s ", is_data ) 
+			
 			# make pagination 
 			pagination_dict = self.wrap_pagination( 
 									page_n=query_contrib["page_n"], 
 									page_n_max=page_n_max
 									)
-			print "\nDataScrapedHandler / pagination_dict :"
-			print pagination_dict
+			self.log.info("DataScrapedHandler / pagination_dict : %s ", pagination_dict )
+			# print pagination_dict
 
 		self.render(
 			"contributors_view.html",
@@ -619,7 +623,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 	def get(self, spider_id=None):
 		"""show infos on one contributor : get info in DB and prefill form"""
 		
-		print "\nContributorEditHandler.get / spider_id : ", spider_id
+		self.log.info("\nContributorEditHandler.get / spider_id : {}".format( spider_id ) )
 
 		self.site_section = "contributors"
 
@@ -628,7 +632,9 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 		### retrieve datamodel - custom fields
 		data_model = list(self.application.coll_model.find( {"field_class" : "custom"})) #, {"field_name":1, "_id":1} ))
-		data_model = [ { k : str(v) for k,v in i.iteritems() } for i in data_model ]
+		self.log.info(data_model)
+
+		data_model = [ { k : unicode(v) for k,v in i.iteritems() } for i in data_model ]
 		# print "\nContributorEditHandler.get / data_model : "
 		# pprint.pprint(data_model)
 

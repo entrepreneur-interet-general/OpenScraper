@@ -14,7 +14,7 @@ USER_CORE_FIELDS = [
 	
 	"username",
 	"email",
-	"password", 		# TO DO : needs to be hashed
+	"password", 		# TO DO : needs to be hashed at register
 
 	"added_at",
 	"modified_at",
@@ -42,16 +42,18 @@ DATAMODEL_FIELDS_TYPES = [
 	"adress", 
 	"date", 
 	"tags", 
-	"price"
+	"price",
+	"list"
 ]
 # field_keep options in form only
 DATAMODEL_FIELD_KEEP_VARS = [
 	"keep", "not visible", "delete", 
 ]
 DATAMODEL_FIELD_OPEN_VARS = [
-	"opendata", # pure open data - all publics can access
-	"commons", 	# data only visible by the collectif - i.e. all users of the platform
-	"private", 	# personal data - only accessible by logged specific user
+	"opendata", 	# pure open data - all publics can access
+	"commons", 		# data with specific licence - i.e. all users of the platform
+	"collective", 	# data only visible by the collectif - i.e. all users of the platform
+	"private", 		# personal data - only accessible by logged specific user
 ]
 # fields to keep always as db backbone - mainly fields necessary to create a spider
 DATAMODEL_CORE_FIELDS = [

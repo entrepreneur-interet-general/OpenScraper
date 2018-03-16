@@ -12,6 +12,7 @@ from 	bson import ObjectId
 from 	datetime import datetime
 # from 	functools import wraps
 
+import pymongo
 # from 	pymongo import UpdateOne
 
 import 	tornado.web, tornado.escape #, tornado.template,
@@ -57,8 +58,12 @@ class BaseHandler(tornado.web.RequestHandler):
 	def __init__(self, *args, **kwargs) : 
 		
 		### super init/override tornado.web.RequestHandler with current args 
-		print "\n--- BaseHandler / __init__ :"
+		# print "\n--- BaseHandler / __init__ :"
+
 		super(BaseHandler, self).__init__(*args, **kwargs)
+
+		self.log = self.application.logger
+		self.log.info("--- BaseHandler / __init__ : \n")
 
 		### global vars for every handler
 		self.is_user_connected 	= self.get_if_user_connected()
@@ -72,17 +77,20 @@ class BaseHandler(tornado.web.RequestHandler):
 		
 		try:
 			self.error_msg = self.get_argument("error")
-			print "\n... get_error_message / self.error_msg : "
-			print self.error_msg		
+			
+			# print "\n... get_error_message / self.error_msg : "
+			# print self.error_msg		
+			self.application.logger.info("\n... get_error_message / self.error_msg : ")
+			self.application.logger.info(self.error_msg)
 		
 		except:
 			self.error_msg = ""
 
-	# NOT EXPERIMENTED YET
 	def add_error_message_to_slug(self, error_string ) : 
-		""" add a "error" arg to url slug """
+		""" add an "error" arg to url slug """
 
-		print "... add_error_message_to_slug / slug_ : "
+		# print "... add_error_message_to_slug / slug_ : "
+		self.application.logger.info("... add_error_message_to_slug / slug_ : ")
 		slug_ = self.request.arguments
 		pprint.pprint( slug_ )
 
@@ -98,16 +106,20 @@ class BaseHandler(tornado.web.RequestHandler):
 				del slug_without_error["error"]
 			except :
 				pass
-			print "... add_error_message_to_slug / slug_without_error : "
-			print slug_without_error
+			self.application.logger.warning("... add_error_message_to_slug / slug_without_error : ")
+			self.application.logger.warning(slug_without_error)
+			# print "... add_error_message_to_slug / slug_without_error : "
+			# print slug_without_error
 
 			# recreate slug
 			error_dict	= { "error" : error_string }
 			error_dict.update( slug_without_error )
 			error_slug = u"?" + urllib.urlencode( error_dict, doseq=True)		
 
-		print "... add_error_message_to_slug / error_slug : "
-		print error_slug
+		# print "... add_error_message_to_slug / error_slug : "
+		# print error_slug
+		self.application.logger.info("... add_error_message_to_slug / error_slug : ")
+		self.application.logger.info(error_slug)
 
 		return error_slug
 
@@ -189,9 +201,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		# else : 
 		# 	self.set_status(404)
 
-		print "\n... choose_collection / coll_name : "
-		print coll_name
-		print ""
+		self.log.info("... choose_collection / coll_name : %s", coll_name) 
 
 		return coll
 
@@ -211,8 +221,8 @@ class BaseHandler(tornado.web.RequestHandler):
 		# if coll_name=="users" :
 		# 	coll = self.application.coll_users
 
-		print "\n...count_documents / coll_name : "
-		print coll_name
+		print 
+		self.log.info("... count_documents / coll_name : %s", coll_name)
 
 		coll  = self.choose_collection ( coll_name=coll_name )
 		count = coll.find(query).count()
@@ -228,9 +238,14 @@ class BaseHandler(tornado.web.RequestHandler):
 			"data"			: q_data, 
 			"users"			: q_users
 		}
-		print "\n...count_all_documents / collections_to_count : "
-		print collections_to_count 
+
+		self.log.info("... count_all_documents / collections_to_count : ")
+		self.log.info("... %s ", collections_to_count )
+
 		counts 	= { "count_{}".format(k) : self.count_documents(coll_name=k, query=v) for k,v in collections_to_count.iteritems() }
+		
+		print 
+
 		return counts
 
 	def get_datamodel_fields(self, query=None):
@@ -255,21 +270,22 @@ class BaseHandler(tornado.web.RequestHandler):
 	def filter_slug(self, slug, slug_class=None) : 
 		""" filter args from slug """
 		
-		print "\n... filter_slug / slug : "
-		print slug
+		print
+		self.log.info("... filter_slug / slug : %s ", slug ) 
+		# print slug
 
 		# recreate query from slug
 		raw_query = QueryFromSlug( slug, slug_class )	# from settings_corefields
-		print "\n... filter_slug / raw_query.query :"
-		print raw_query.query
+		self.log.info("... filter_slug / raw_query.query : %s \n", raw_query.query ) 
+		# print raw_query.query
 
 		return raw_query.query
 
-	def get_data_from_query(self, query_obj, coll_name ) :
+	def get_data_from_query(self, query_obj, coll_name, sort_by=None ) :
 		""" get items from db """
 
-		print "\n... get_data_from_query / query_obj :"
-		print query_obj
+		self.log.info("... get_data_from_query / query_obj : %s ", query_obj )
+		# print query_obj
 		
 		# check if query wants all results 
 		all_results		= query_obj["all_results"]
@@ -295,9 +311,14 @@ class BaseHandler(tornado.web.RequestHandler):
 				"spider_id" : q for q in query_obj["spider_id"]
 			}
 		# retrieve docs from db
-		print "... get_data_from_query / cursor :"
+		self.log.info("... get_data_from_query / cursor :" )
 		coll 	= self.choose_collection( coll_name=coll_name )
 		cursor 	= coll.find( query )
+
+		# sort results
+		if sort_by != None :
+			cursor.sort( sort_by , pymongo.ASCENDING )
+
 		# count results
 		results_count = cursor.count()
 		print "... get_data_from_query / results_cout :", results_count
@@ -307,14 +328,14 @@ class BaseHandler(tornado.web.RequestHandler):
 		limit_results 	= query_obj["results_per_page"]
 
 		page_n_max 		= int(math.ceil( results_count / float(limit_results)  ))
-		print "... get_data_from_query / page_n_max :", page_n_max
+		self.log.info("... get_data_from_query / page_n_max : %s ", page_n_max ) 
 
 		# if page queried if negative retrieve first page
 		# if page_n <= 0 :
 		# 	page_n = 1
 		# if page_n > page_n_max :
 		# 	page_n = page_n_max
-		print "... get_data_from_query / page_n :", page_n
+		self.log.info("... get_data_from_query / page_n : %s ", page_n )
 
 
 		### select items to retrieve from list and indices start and stop
@@ -328,18 +349,18 @@ class BaseHandler(tornado.web.RequestHandler):
 		else : 
 			results_i_start	= ( page_n-1 ) * limit_results 
 			results_i_stop	= ( results_i_start + limit_results ) - 1
-			print "... get_data_from_query / results_i_start :", results_i_start
-			print "... get_data_from_query / results_i_stop  :", results_i_stop
+			self.log.info("... get_data_from_query / results_i_start : %s ", results_i_start )
+			self.log.info("... get_data_from_query / results_i_stop  : %s ", results_i_stop )
 			docs_from_db = list(cursor[ results_i_start : results_i_stop ])
-		print "... get_data_from_query / docs_from_db :"
+		self.log.info("... get_data_from_query / docs_from_db : \n ....")
 		# pprint.pprint(docs_from_db[0])
-		print "..."
+		# print "..."
 
 		# flag if the cursor is empty
 		is_data = False
 		if docs_from_db != [] :
 			is_data = True
-		print "... get_data_from_query / is_data :", is_data
+		self.log.info("... get_data_from_query / is_data : %s \n ", is_data)
 
 		return docs_from_db, is_data, page_n_max
 

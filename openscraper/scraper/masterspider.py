@@ -14,10 +14,40 @@ from 	datetime import datetime
 	# 2018-03-07T16:50:34+01:00
 """
 
-# import app settings
+### import app settings
 from config.settings_example import * 
 # from config.settings import * 
 from config.settings_scrapy import * 
+
+
+### logging only for scrapy
+from 	os import path, remove
+import 	logging
+import 	logging.config
+from 	logging.config import dictConfig
+from 	config.settings_logging import logging_config
+
+### lOGGER - SCRAPY
+
+# set logger for scrapy
+log_scrap = logging.getLogger("log_scraper")
+log_scrap.setLevel(logging.DEBUG)
+
+# Create the Handler for logging data to a file
+logger_handler = logging.FileHandler('openscraper_scrapy_logging.log')
+logger_handler.setLevel(logging.WARNING)
+
+# Create a Formatter for formatting the log messages
+logger_formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+
+# Add the Formatter to the Handler
+logger_handler.setFormatter(logger_formatter)
+
+# Add the Handler to the Logger
+log_scrap.addHandler(logger_handler)
+log_scrap.info('>>> Completed configuring log_scraper !')
+
+
 
 ### import scrapy utilities
 import scrapy
@@ -28,10 +58,10 @@ from twisted.internet 		import reactor, defer
 from scrapy.utils.log 		import configure_logging
 from scrapy.utils.project 	import get_project_settings
 
-from scrapy.settings 	import Settings
+from scrapy.settings 		import Settings
 
-from scrapy 			import Spider
-from scrapy.crawler 	import CrawlerProcess, CrawlerRunner
+from scrapy 				import Spider
+from scrapy.crawler 		import CrawlerProcess, CrawlerRunner
 # from scrapy.spiders 	import SitemapSpider, CrawlSpider
 # import scrapy.crawler as 	   crawler
 
@@ -50,7 +80,7 @@ from scrapy.crawler 	import CrawlerProcess, CrawlerRunner
 # pprint.pprint(dict(s))
 
 
-# PIPELINES....
+### SCRAPY PIPELINES....
 # update setting to use the pipeline which will write results (items) in the database or files
 # cf self-contained scrapy : https://gist.github.com/alecxe/fc1527d6d9492b59c610
 # cf self-contained scrapy : https://github.com/kirankoduru/scrapy-programmatically/
@@ -160,7 +190,9 @@ class GenericSpider(Spider) :
 	def __init__(self, user_id=None, datamodel=None, spider_id=None, spider_config_flat=None, *args, **kwargs) : 
 		
 		### super init/override spider class with current args 
-		print "\n--- GenericSpider / __init__ :"
+		# print "\n--- GenericSpider / __init__ :"
+		log_scrap.info("--- GenericSpider / __init__ :")
+
 		super(GenericSpider, self).__init__(*args, **kwargs)
 		
 		self.user_id	= user_id

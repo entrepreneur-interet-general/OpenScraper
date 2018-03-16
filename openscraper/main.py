@@ -127,32 +127,41 @@ class Application(tornado.web.Application):
 
 		timestamp = time.time()
 
+		# config logger output in console
+		# logging.basicConfig(	level 	= logging.DEBUG, 
+		# 						format 	= "%(name)s - %(funcName)s - %(levelname)s : %(message)s" )
+
 		### logger as self var
 		# create the Logger
 		# dictConfig(logging_config)
 		self.logger = logging.getLogger(__name__)
 		# self.logger = logging.getLogger()
+		
+
 		self.logger.setLevel(logging.DEBUG)
 
 		# Create the Handler for logging data to a file
 		logger_handler = logging.FileHandler('openscraper_logging.log')
 		logger_handler.setLevel(logging.WARNING)
 		"""
-		logger has 5 severity level : 
-			DEBUG (lowest)
-			INFO
-			WARNING
-			ERROR
-			CRITICAL (highest)
+		logger has 5 severity levels : 
+			D - DEBUG (lowest)
+			I - INFO
+			W - WARNING
+			E - ERROR
+			C - CRITICAL (highest)
 		"""
+
 		# Create a Formatter for formatting the log messages
-		logger_formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+		logger_formatter = logging.Formatter('%(name)s -- %(funcName)s - %(levelname)s - %(message)s')
 		
 		# Add the Formatter to the Handler
 		logger_handler.setFormatter(logger_formatter)
 		
 		# Add the Handler to the Logger
 		self.logger.addHandler(logger_handler)
+		
+		# test logger
 		self.logger.info('>>> Completed configuring logger()!')
 		self.logger.warning(">>> Let's scrap untill we choke from data...")
 

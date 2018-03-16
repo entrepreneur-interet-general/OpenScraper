@@ -42,7 +42,9 @@ def print_separate(debug) :
 		@wraps(f)
 		def wrapped(*args, **kwargs):
 			if debug == True :
-				print "\n{}".format("---"*10)
+				
+				print "\n- - - new request {}\n".format("- - - "*15)
+				
 			r = f(*args, **kwargs)
 			return r
 		return wrapped
