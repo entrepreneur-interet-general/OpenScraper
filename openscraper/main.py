@@ -10,6 +10,7 @@ a project by ...
 
 ### global imports
 import 	os, os.path
+import 	sys
 import 	json
 import 	datetime
 from 	uuid import uuid4
@@ -19,6 +20,17 @@ import 	pprint
 # import pymongo
 from pymongo import MongoClient
 from pymongo import UpdateOne
+
+
+### tornado imports
+# from 	tornado.ioloop import IOLoop
+import 	tornado.web
+import 	tornado.auth
+import 	tornado.options
+import 	tornado.gen
+# from tornado import httpclient, gen, ioloop, queues
+from tornado.options import define, options
+# from tornado.concurrent import Future
 
 
 ### import logger
@@ -31,18 +43,9 @@ import 	logging.config
 from 	logging.config import dictConfig
 from 	config.settings_logging import logging_config
 
-from tornado.log import enable_pretty_logging
-enable_pretty_logging()
+from 	tornado.log import enable_pretty_logging, LogFormatter, access_log, app_log, gen_log
 
-### tornado imports
-# from 	tornado.ioloop import IOLoop
-import 	tornado.web
-import 	tornado.auth
-import 	tornado.options
-import 	tornado.gen
-# from tornado import httpclient, gen, ioloop, queues
-from tornado.options import define, options
-# from tornado.concurrent import Future
+
 
 ### import app settings from .config.settings (keep that file confidential)
 from config.settings_corefields import * 
@@ -111,6 +114,101 @@ def create_datamodel_fields( logger, coll_model, fields_list, field_class ) :
 	]
 	coll_model.bulk_write(operations)
 
+def setup_loggers ():
+	"""
+	set up tornado loggers with custom format
+	
+	logger has 5 severity levels : 
+		D - DEBUG (lowest)
+		I - INFO
+		W - WARNING
+		E - ERROR
+		C - CRITICAL (highest)
+	"""
+
+	# config logger output in console
+	# logging.basicConfig(	level 	= logging.DEBUG, 
+	# 						format 	= "%(name)s - %(funcName)s - %(levelname)s : %(message)s" )
+
+	# Create a Formatter for formatting the log messages
+	# log_formatter = logging.Formatter('%(name)s -- %(funcName)s - %(levelname)s - %(message)s')
+	openscraper_log_format = '%(color)s::: %(levelname)s %(name)s %(asctime)s ::: %(module)s:%(lineno)d in %(funcName)s :::%(end_color)s \
+		%(message)s' 
+	# datefmt='%y%m%d %H:%M:%S'
+	# style='%'
+	# color=True
+	# colors={40: 1, 10: 4, 20: 2, 30: 3}
+	"""	
+	default tornado format for logging : 
+		fmt='%(color)s[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d]%(end_color)s %(message)s'
+		datefmt='%y%m%d %H:%M:%S'
+		style='%'
+		color=True
+		colors={40: 1, 10: 4, 20: 2, 30: 3}
+		))
+	"""
+	# log_formatter = logging.Formatter( fmt=openscraper_log_format )
+	tornado_log_formatter = LogFormatter(fmt=openscraper_log_format, color=True)
+
+	enable_pretty_logging()
+
+	### Logger as self var
+	# create the Logger
+	# dictConfig(logging_config)
+	# self.log 		= logging.getLogger(__name__)
+	# self.logger 	= logging.getLogger()
+	# self.access_log = logging.getLogger("tornado.access")
+	# self.app_log 	= logging.getLogger("tornado.application")
+	# self.gen_log 	= logging.getLogger("tornado.general")
+
+	### Get root logger
+	root_logger 	= logging.getLogger()
+	# print root_logger.__dict__
+
+	### Format root_logger stream
+	# parent_logger = app_log.parent
+	# print parent_logger.__dict__
+	# root_stream_handler = parent_logger.handlers
+	# root_stream_handler[0].setFormatter(tornado_log_formatter)
+	root_logger.handlers[0].setFormatter(tornado_log_formatter)
+
+	# streamHandler 	= logging.StreamHandler() # stream=sys.stdout
+	# streamHandler.setFormatter(tornado_log_formatter)
+	# self.gen_log.addHandler(streamHandler)
+	# self.app_log.addHandler(streamHandler)
+	# self.access_log.addHandler(streamHandler)
+
+	# self.log.setLevel(logging.DEBUG)
+
+
+
+	# Create the Handlers for logging data to log files
+	gen_log_handler 	= logging.FileHandler('openscraper_general.log')
+	gen_log_handler.setLevel(logging.WARNING)
+
+	access_log_handler 	= logging.FileHandler('openscraper_access.log')
+	access_log_handler.setLevel(logging.WARNING)
+
+	app_log_handler 	= logging.FileHandler('openscraper_app.log')
+	app_log_handler.setLevel(logging.WARNING)
+
+	# Add the Formatter to the Handler
+	gen_log_handler.setFormatter(tornado_log_formatter)
+	access_log_handler.setFormatter(tornado_log_formatter)
+	app_log_handler.setFormatter(tornado_log_formatter)
+
+
+	# Add the Handler to the Logger
+	gen_log.addHandler(gen_log_handler)
+	access_log.addHandler(access_log_handler)	
+	app_log.addHandler(app_log_handler)	
+	
+	# test loggers
+	print
+	app_log.info('>>> this is app_log ')
+	gen_log.info('>>> this is gen_log ')
+	access_log.info('>>> this is access-log ')
+	print 
 
 
 ### MAIN TORNADO APPLICATION WRAPPER
@@ -129,46 +227,10 @@ class Application(tornado.web.Application):
 
 		timestamp = time.time()
 
-		# config logger output in console
-		# logging.basicConfig(	level 	= logging.DEBUG, 
-		# 						format 	= "%(name)s - %(funcName)s - %(levelname)s : %(message)s" )
+		### setup loggers with custom format
+		setup_loggers()
 
-		### logger as self var
-		# create the Logger
-		# dictConfig(logging_config)
-		self.logger = logging.getLogger(__name__)
-		# self.logger = logging.getLogger()
-		
-
-		self.logger.setLevel(logging.DEBUG)
-
-		# Create the Handler for logging data to a file
-		logger_handler = logging.FileHandler('openscraper_logging.log')
-		logger_handler.setLevel(logging.WARNING)
-		"""
-		logger has 5 severity levels : 
-			D - DEBUG (lowest)
-			I - INFO
-			W - WARNING
-			E - ERROR
-			C - CRITICAL (highest)
-		"""
-
-		# Create a Formatter for formatting the log messages
-		logger_formatter = logging.Formatter('%(name)s -- %(funcName)s - %(levelname)s - %(message)s')
-		
-		# Add the Formatter to the Handler
-		logger_handler.setFormatter(logger_formatter)
-		
-		# Add the Handler to the Logger
-		self.logger.addHandler(logger_handler)
-		
-		# test logger
-		self.logger.info('>>> Completed configuring logger()!')
-		self.logger.warning(">>> Let's scrap untill we choke from data...")
-
-		self.logger.info('>>> Application.__init__ ... ')
-
+		app_log.info('>>> Application.__init__ ... ')
 
 		### connect to MongoDB with variables from config.settings.py
 		client = MongoClient(
@@ -212,7 +274,7 @@ class Application(tornado.web.Application):
 		# 	upsert=True ) for field in core_fields 
 		# ]
 		# self.coll_model.bulk_write(operations)
-		create_datamodel_fields( self.logger, self.coll_model, DATAMODEL_CORE_FIELDS, "core" )
+		create_datamodel_fields( app_log, self.coll_model, DATAMODEL_CORE_FIELDS, "core" )
 
 		### instantiate core and default custom fields if no custom field at all in db
 		existing_custom_fields = self.coll_model.find({"field_type" : "custom"})
@@ -242,7 +304,7 @@ class Application(tornado.web.Application):
 		
 		### app init
 		tornado.web.Application.__init__(self, handlers, **settings )
-		self.logger.info (">>> Application.__init__ end ... \n")
+		app_log.info (">>> Application.__init__ end ... \n")
 
 
 
@@ -251,14 +313,24 @@ def main():
 	"""
 	start / run app
 	"""
-	print "\n\n>>> MAIN / STARTING SERVER ... >>>\n"
+
+	print "\n\n{}".format("+ + + "*20)
+	print "\n\n>>> MAIN / RE-STARTING SERVER ... >>>\n"
 
 	tornado.options.parse_command_line()
+
+	app_log.info( ">>> starting app ...")
 	
 	http_server = tornado.httpserver.HTTPServer(Application())
+	app_log.info( ">>> http_server ready ...")
+
 	http_server.listen(options.port)
 	
+	print "\n{}\n".format("+ + + "*20)
+
 	tornado.ioloop.IOLoop.instance().start()
+
+
 	# ioloop = IOLoop.instance()
 	# ioloop.start()
 	

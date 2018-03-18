@@ -24,6 +24,7 @@ from 	pymongo import UpdateOne
 # from 	tornado.ioloop import IOLoop
 from 	tornado import gen, concurrent
 from 	tornado.concurrent import return_future, run_on_executor
+from 	tornado.log import access_log, app_log, gen_log
 
 from 	concurrent.futures import ThreadPoolExecutor # need to install futures in pytohn 2.7
 from 	spider_threading import *
@@ -101,7 +102,7 @@ class WelcomeHandler(BaseHandler):
 	# @tornado.web.authenticated
 	def get(self):
 		
-		self.log.info("WelcomeHandler.get... \n")
+		app_log.info("WelcomeHandler.get... \n")
 
 		self.site_section = "index"
 
@@ -110,7 +111,7 @@ class WelcomeHandler(BaseHandler):
 
 		### count collections' documents
 		counts = self.count_all_documents( q_datamodel={"field_class" : "custom"} ) 
-		self.log.info("WelcomeHandler.get / counts : %s" %(counts) )
+		app_log.info("WelcomeHandler.get / counts : \n  %s" , pformat(counts) )
 
 		self.render(
 			"index.html",
@@ -137,16 +138,16 @@ class LoginHandler(BaseHandler):
 	def get(self):
 		
 		print 
-		self.log.info("LoginHandler.get ... ")
+		app_log.info("LoginHandler.get ... ")
 
 		self.site_section 	= "login"
 
 		# catch error message if any
 		self.catch_error_message()
 
-		self.log.info("LoginHandler.get / next : ")
+		app_log.info("LoginHandler.get / next : ")
 		next_url = self.get_argument('next', '/')
-		self.log.info(next_url)
+		app_log.info(next_url)
 
 		# catch error if any
 		self.catch_error_message()
@@ -169,21 +170,21 @@ class LoginHandler(BaseHandler):
 		# self.check_xsrf_cookie()
 
 		print 
-		self.log.info("LoginHandler.post ...\n")
+		app_log.info("LoginHandler.post ...\n")
 		
-		self.log.info("LoginHandler.post / next_url : ")
+		app_log.info("LoginHandler.post / next_url : ")
 		
 		next_url = self.get_argument('next', '/')
 		
-		self.log.info( "%s - %s", next_url, type(next_url) )
+		app_log.info( "%s - %s", next_url, type(next_url) )
 
-		self.log.info("LoginHandler.post / request.arguments ... ")
-		self.log.info( self.request.arguments )
+		app_log.info("LoginHandler.post / request.arguments ... ")
+		app_log.info( self.request.arguments )
 
 		### get user from db
 		user = self.get_user_from_db( self.get_argument("email") )
-		self.log.info("LoginHandler.post / user : %s", user)
-		# self.log.info( user )
+		app_log.info("LoginHandler.post / user : %s", user)
+		# app_log.info( user )
 
 		### TO DO : form validation 
 		# form validation here....
@@ -561,43 +562,42 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 	def get(self, slug=None):
 
 		# print "\nContributorsHandler.get ..."
-		self.log.info("ContributorsHandler.get ...\n")
+		app_log.info("ContributorsHandler.get ...\n")
 
 		self.site_section = "contributors"
 		
 		# catch error message if any
 		self.catch_error_message()
 		
-		self.log.info("ContributorsHandler.get / slug : %s", slug )
-		# self.log.info( slug ) 
+		app_log.info("ContributorsHandler.get / slug : %s", slug )
+		# app_log.info( slug ) 
 
 		slug_ = self.request.arguments
-		self.log.info("ContributorsHandler.get / slug_ : %s", slug_ )
-		# self.log.info( slug_ )
+		app_log.info("ContributorsHandler.get / slug_ : %s", slug_ )
+		# app_log.info( slug_ )
 
 		# filter slug
 		query_contrib = self.filter_slug( slug_, slug_class="contributors" )
-		self.log.info("ContributorsHandler.get / query_contrib : %s ", query_contrib )
+		app_log.info("ContributorsHandler.get / query_contrib : \n %s ", pformat(query_contrib) )
 		# print query_contrib
 
 		# get data 
 		contributors, is_data, page_n_max = self.get_data_from_query( query_contrib, coll_name="contributors", sort_by="infos.name")
-		self.log.info("ContributorsHandler.get / contributors : " )
-		pprint.pprint (contributors[0])
+		app_log.info("ContributorsHandler.get / contributors[0] : \n %s " , pformat(contributors[0]) )
 		print '.....\n'
 
 		### operations if there is data
 		pagination_dict = None
 		if is_data : 
 			
-			self.log.info("ContributorsHandler.get / is_data : %s ", is_data ) 
+			app_log.info("ContributorsHandler.get / is_data : %s ", is_data ) 
 			
 			# make pagination 
 			pagination_dict = self.wrap_pagination( 
 									page_n=query_contrib["page_n"], 
 									page_n_max=page_n_max
 									)
-			self.log.info("DataScrapedHandler / pagination_dict : %s ", pagination_dict )
+			app_log.info("DataScrapedHandler / pagination_dict : %s ", pformat(pagination_dict) )
 			# print pagination_dict
 
 		self.render(
@@ -623,7 +623,8 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 	def get(self, spider_id=None):
 		"""show infos on one contributor : get info in DB and prefill form"""
 		
-		self.log.info("\nContributorEditHandler.get / spider_id : {}".format( spider_id ) )
+		print
+		app_log.info("ContributorEditHandler.get / spider_id : {}".format( spider_id ) )
 
 		self.site_section = "contributors"
 
@@ -632,7 +633,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 		### retrieve datamodel - custom fields
 		data_model = list(self.application.coll_model.find( {"field_class" : "custom"})) #, {"field_name":1, "_id":1} ))
-		self.log.info(data_model)
+		app_log.info( "\n %s", pformat(data_model) )
 
 		data_model = [ { k : unicode(v) for k,v in i.iteritems() } for i in data_model ]
 		# print "\nContributorEditHandler.get / data_model : "
@@ -659,8 +660,8 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			contributor 		= contributor_object.full_config_as_dict()
 			create_or_update	= "create"
 
-		print "\nContributorEditHandler.get / contributor :"
-		pprint.pprint(contributor)
+		print
+		app_log.info( "ContributorEditHandler.get / contributor : \n %s", pformat(contributor))
 
 		### render page
 		self.render("contributor_edit.html",
@@ -683,7 +684,8 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 	def post(self, spider_id=None):
 		"""update or create new contributor spider in DB"""
 
-		print "\nContributorEditHandler.post... spider_id : ", spider_id
+		print
+		app_log.info( "ContributorEditHandler.post... spider_id : %s ", spider_id )
 		
 		timestamp = time.time()
 		
@@ -691,8 +693,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		
 		### get form back from client
 		spider_config_form = self.request.arguments
-		print "\nContributorEditHandler.post / spider_config_form : "
-		pprint.pprint( spider_config_form )
+		app_log.info( "ContributorEditHandler.post / spider_config_form : \n %s ", pformat(spider_config_form ) )
 
 		# check if spider already exists
 		is_new = True
@@ -703,12 +704,13 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		# check if website is already crawled by another spider
 		similar_spider = self.application.coll_spiders.find( {"infos.page_url": spider_config_form["page_url"]} )
 		if similar_spider and is_new :
-			print "\nContributorEditHandler.post / already a similar spider ... "
+			app_log.warning( "ContributorEditHandler.post / a similar spider already exists ... ")
 			# TO DO : add alert
 			self.redirect("/contributors")
 
 		# populate a contributor object
-		print "\nContributorEditHandler.post / creating spider with SpiderConfig class  ... "
+		print
+		app_log.info( "ContributorEditHandler.post / creating spider with SpiderConfig class  ... ")
 		contributor_object = SpiderConfig( 
 				form 		= spider_config_form,
 				new_spider 	= is_new,
@@ -716,12 +718,11 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		)
 
 		### get spider identifier from form
-		print "\nContributorEditHandler.post / spider_config_form : "
-		pprint.pprint(spider_config_form)
+		app_log.info( "ContributorEditHandler.post / spider_config_form : \n %s", pformat(spider_config_form) )
 
 		if spider_id and spider_id != "new_spider":
 			
-			print "\nContributorEditHandler.post / spidername already exists : "
+			app_log.warning( "ContributorEditHandler.post / spider_id %s already exists : ", spider_id )
 
 			# getting id from form
 			spider_oid = ObjectId(spider_id)
@@ -740,8 +741,8 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			# insert new spider to db
 			self.application.coll_spiders.insert_one(contributor)
 
-		print "\nContributorEditHandler.post / contributor :"
-		pprint.pprint(contributor)
+		print 
+		app_log.info( "ContributorEditHandler.post / contributor : \n %s ", pformat(contributor) ) 
 
 		### redirections for debugging purposes
 		# if spider_id and spider_id!= "new_spider" :
@@ -784,7 +785,7 @@ class DataScrapedHandler(BaseHandler):
 	def get (self, slug ):
 		
 		print
-		self.log.info("DataScrapedHandler.get ... : \n")
+		app_log.info("DataScrapedHandler.get ... : \n")
 
 		self.site_section = "data"
 
@@ -794,45 +795,45 @@ class DataScrapedHandler(BaseHandler):
 		# print "\nDataScrapedHandler.get / slug : "
 		# pprint.pprint(slug)
 
-		self.log.info("DataScrapedHandler.get / request : " )
+		app_log.info("DataScrapedHandler.get / request : " )
 		pprint.pprint (self.request )
 
 		print
-		self.log.info("DataScrapedHandler.get ... : ")
-		self.log.info("... request.path : %s ", self.request.path )
-		self.log.info("... request.uri  : %s ", self.request.uri )
+		app_log.info("DataScrapedHandler.get ... : ")
+		app_log.info("... request.path : %s ", self.request.path )
+		app_log.info("... request.uri  : %s ", self.request.uri )
 
 		slug_ = self.request.arguments
 		print
-		self.log.info("DataScrapedHandler.get / slug_ : %s ", slug_ )
+		app_log.info("DataScrapedHandler.get / slug_ : %s ", slug_ )
 		# pprint.pprint( slug_ )
 
 		### retrieve datamodel from DB top make correspondances field's _id --> field_name
 		data_model_custom = list( self.application.coll_model.find({"field_class" : "custom", "is_visible" : True }).sort("field_name",1) )
-		self.log.info("DataScrapedHandler.get / data_model_custom[:2] :" )
+		app_log.info("DataScrapedHandler.get / data_model_custom[:2] :" )
 		pprint.pprint (data_model_custom[:2] )
 		print "..."
 
 		data_model_custom_ids = [ str(dmc["_id"]) for dmc in data_model_custom ]
-		self.log.info("DataScrapedHandler.get / data_model_custom_ids[:2] : \n %s ", data_model_custom_ids[:2] )
+		app_log.info("DataScrapedHandler.get / data_model_custom_ids[:2] : \n %s ", data_model_custom_ids[:2] )
 		# pprint.pprint (data_model_custom_ids[:2])
 		print "..."
 
 		### retrieve all spiders from db to make correspondances spider_id --> spider_name
 		spiders_list = list( self.application.coll_spiders.find( {}, {"infos" : 1 } ) )
-		self.log.info("DataScrapedHandler.get / spiders_list[0] :")
+		app_log.info("DataScrapedHandler.get / spiders_list[0] :")
 		pprint.pprint (spiders_list[0])
 		print "..."
-		
+
 		# make a dict from spiders_list
 		spiders_dict = { str(s["_id"]) : s["infos"]["name"] for s in spiders_list }
-		self.log.info("DataScrapedHandler.get / spiders_dict : %s ", spiders_dict) 
+		app_log.info("DataScrapedHandler.get / spiders_dict :\n %s ", pformat(spiders_dict) )  
 		# print (spiders_dict)
 
 
 		### clean slug as data query
 		query_data = self.filter_slug( slug_, slug_class="data" )
-		self.log.info("DataScrapedHandler / query_data : %s ", query_data )
+		app_log.info("DataScrapedHandler / query_data : \n %s ", pformat(query_data) )
 		# print query_data
 
 		### get items from db
@@ -848,8 +849,7 @@ class DataScrapedHandler(BaseHandler):
 									page_n_max	= page_n_max
 									)
 			print
-			self.log.info("DataScrapedHandler / pagination_dict :")
-			pprint.pprint (pagination_dict)
+			app_log.info("DataScrapedHandler / pagination_dict : \n %s ", pformat(pagination_dict))
 
 			# clean items 
 			for item in items_from_db : 
@@ -857,8 +857,7 @@ class DataScrapedHandler(BaseHandler):
 				item["spider_name"] = spiders_dict[ item["spider_id"] ]
 
 			print 
-			self.log.info("DataScrapedHandler / items_from_db[0] :")
-			pprint.pprint(items_from_db[0])
+			app_log.info("DataScrapedHandler / items_from_db[0] : \n %s ", pformat(items_from_db[0]) )
 			print "..."
 
 		self.render(

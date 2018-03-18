@@ -13,6 +13,7 @@ import 	jwt
 from .settings_corefields 	import * 
 from .settings_queries 		import * 
 
+from tornado.log import access_log, app_log, gen_log
 
 class UserClass :
 	"""
@@ -165,6 +166,9 @@ class QueryFromSlug :
 
 	def __init__(self, slug, slug_class ) : 
 
+		print
+		app_log.info("== QueryfromSlug / ... ")
+
 		self.slug 		= slug
 		self.slug_class = slug_class
 
@@ -200,7 +204,7 @@ class QueryFromSlug :
 		""" populate default query """
 
 		for q_field, q_arg in self.slug.iteritems() : 
-			print "=== QueryFromSlug.populate_query / q_field : ", q_field
+			app_log.info( "=== QueryFromSlug.populate_query / q_field : %s ", q_field )
 
 			# only get allowed query fields from slug so to ignore others
 			if q_field in self.default_query.keys() :

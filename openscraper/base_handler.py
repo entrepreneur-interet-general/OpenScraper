@@ -3,6 +3,7 @@
 
 
 import 	pprint 
+from 	pprint import pprint, pformat
 import 	math
 import	urllib
 from 	copy import deepcopy
@@ -16,7 +17,7 @@ import pymongo
 # from 	pymongo import UpdateOne
 
 import 	tornado.web, tornado.escape #, tornado.template,
-
+from	tornado.log import access_log, app_log, gen_log
 
 # threading for background tasks (spiders mainly)
 # cf : https://stackoverflow.com/questions/22082165/running-an-async-background-task-in-tornado/25304704
@@ -62,8 +63,8 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		super(BaseHandler, self).__init__(*args, **kwargs)
 
-		self.log = self.application.logger
-		self.log.info("--- BaseHandler / __init__ : \n")
+		app_log.info("--- BaseHandler / __init__ : \n")
+		# app_log = self.application.gen_log
 
 		### global vars for every handler
 		self.is_user_connected 	= self.get_if_user_connected()
@@ -201,7 +202,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		# else : 
 		# 	self.set_status(404)
 
-		self.log.info("... choose_collection / coll_name : %s", coll_name) 
+		app_log.info("... choose_collection / coll_name : %s", coll_name) 
 
 		return coll
 
@@ -222,7 +223,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		# 	coll = self.application.coll_users
 
 		print 
-		self.log.info("... count_documents / coll_name : %s", coll_name)
+		app_log.info("... count_documents / coll_name : %s", coll_name)
 
 		coll  = self.choose_collection ( coll_name=coll_name )
 		count = coll.find(query).count()
@@ -239,8 +240,8 @@ class BaseHandler(tornado.web.RequestHandler):
 			"users"			: q_users
 		}
 
-		self.log.info("... count_all_documents / collections_to_count : ")
-		self.log.info("... %s ", collections_to_count )
+		app_log.info("... count_all_documents / collections_to_count : ")
+		app_log.info("... %s ", collections_to_count )
 
 		counts 	= { "count_{}".format(k) : self.count_documents(coll_name=k, query=v) for k,v in collections_to_count.iteritems() }
 		
@@ -271,12 +272,12 @@ class BaseHandler(tornado.web.RequestHandler):
 		""" filter args from slug """
 		
 		print
-		self.log.info("... filter_slug / slug : %s ", slug ) 
+		app_log.info("... filter_slug / slug : %s ", slug ) 
 		# print slug
 
 		# recreate query from slug
 		raw_query = QueryFromSlug( slug, slug_class )	# from settings_corefields
-		self.log.info("... filter_slug / raw_query.query : %s \n", raw_query.query ) 
+		app_log.info("... filter_slug / raw_query.query : %s \n", pformat(raw_query.query) ) 
 		# print raw_query.query
 
 		return raw_query.query
@@ -285,7 +286,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		""" get items from db """
 
 		print
-		self.log.info("... get_data_from_query / query_obj : %s ", query_obj )
+		app_log.info("... get_data_from_query / query_obj : %s \n", pformat(query_obj) )
 		# print query_obj
 		
 		# check if query wants all results 
@@ -312,7 +313,7 @@ class BaseHandler(tornado.web.RequestHandler):
 				"spider_id" : q for q in query_obj["spider_id"]
 			}
 		# retrieve docs from db
-		self.log.info("... get_data_from_query / cursor :" )
+		app_log.info("... get_data_from_query / cursor :" )
 		coll 	= self.choose_collection( coll_name=coll_name )
 		cursor 	= coll.find( query )
 
@@ -329,14 +330,14 @@ class BaseHandler(tornado.web.RequestHandler):
 		limit_results 	= query_obj["results_per_page"]
 
 		page_n_max 		= int(math.ceil( results_count / float(limit_results)  ))
-		self.log.info("... get_data_from_query / page_n_max : %s ", page_n_max ) 
+		app_log.info("... get_data_from_query / page_n_max : %s ", page_n_max ) 
 
 		# if page queried if negative retrieve first page
 		# if page_n <= 0 :
 		# 	page_n = 1
 		# if page_n > page_n_max :
 		# 	page_n = page_n_max
-		self.log.info("... get_data_from_query / page_n : %s ", page_n )
+		app_log.info("... get_data_from_query / page_n : %s ", page_n )
 
 
 		### select items to retrieve from list and indices start and stop
@@ -350,10 +351,10 @@ class BaseHandler(tornado.web.RequestHandler):
 		else : 
 			results_i_start	= ( page_n-1 ) * limit_results 
 			results_i_stop	= ( results_i_start + limit_results ) - 1
-			self.log.info("... get_data_from_query / results_i_start : %s ", results_i_start )
-			self.log.info("... get_data_from_query / results_i_stop  : %s ", results_i_stop )
+			app_log.info("... get_data_from_query / results_i_start : %s ", results_i_start )
+			app_log.info("... get_data_from_query / results_i_stop  : %s ", results_i_stop )
 			docs_from_db = list(cursor[ results_i_start : results_i_stop ])
-		self.log.info("... get_data_from_query / docs_from_db : \n ....")
+		app_log.info("... get_data_from_query / docs_from_db : \n ....")
 		# pprint.pprint(docs_from_db[0])
 		# print "..."
 
@@ -361,7 +362,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		is_data = False
 		if docs_from_db != [] :
 			is_data = True
-		self.log.info("... get_data_from_query / is_data : %s \n ", is_data)
+		app_log.info("... get_data_from_query / is_data : %s \n ", is_data)
 
 		return docs_from_db, is_data, page_n_max
 
@@ -369,11 +370,11 @@ class BaseHandler(tornado.web.RequestHandler):
 		""" wrap all pagination args in a dict """
 
 		print
-		self.log.info("... wrap_pagination : ... ")
-		self.log.info("... wrap_pagination / request.path : %s ", self.request.path )
+		app_log.info("... wrap_pagination : ... ")
+		app_log.info("... wrap_pagination / request.path : %s ", self.request.path )
 		# print "... wrap_pagination / request.uri  : ", self.request.uri
 		slug_ = self.request.arguments
-		self.log.info("... wrap_pagination / slug_ : \n %s ", slug_ )
+		app_log.info("... wrap_pagination / slug_ : \n %s ", slug_ )
 		# pprint.pprint( slug_ )
 
 		# copy raw slug
@@ -390,7 +391,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		except :
 			pass
 
-		self.log.info("... wrap_pagination / slug_without_page : %s ", slug_without_page )
+		app_log.info("... wrap_pagination / slug_without_page : %s ", slug_without_page )
 		# print slug_without_page
 
 		# base_uri		= self.request.uri
@@ -401,11 +402,11 @@ class BaseHandler(tornado.web.RequestHandler):
 		# print urllib.urlencode({'p': [1, 2, 3]}, doseq=True)
 		if slug_without_page !={} : 
 			base_slug		= "?" + urllib.urlencode( slug_without_page, doseq=True)
-		self.log.info("... wrap_pagination / base_slug : %s ", base_slug )
+		app_log.info("... wrap_pagination / base_slug : %s ", base_slug )
 		# print base_slug
 
 		path_slug 		= base_path + base_slug
-		self.log.info("... wrap_pagination / path_slug : %s ", path_slug )
+		app_log.info("... wrap_pagination / path_slug : %s ", path_slug )
 		# print path_slug
 
 		# recreate url strings
