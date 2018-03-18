@@ -237,7 +237,9 @@ class SpiderHandler(BaseHandler) :
 		print "\nSpiderHandler.run_spider --- "
 		
 		print "\nSpiderHandler.run_spider / testing the non-blocking decorator with a time.sleep... "
-		time.sleep(5)
+		for i in range(5):
+			print "\nSpiderHandler.run_spider --- start spider %s in %s" %( str(spider_id), 5-i )
+			time.sleep(1)
 
 		### run spider --- check masterspider.py --> function run_generic_spider()
 		print "\nSpiderHandler.run_spider / now let it run... "

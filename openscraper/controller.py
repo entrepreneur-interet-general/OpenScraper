@@ -782,8 +782,9 @@ class DataScrapedHandler(BaseHandler):
 	"""
 	@print_separate(APP_DEBUG)
 	def get (self, slug ):
-
-		print "\nDataScrapedHandler.get ... : "
+		
+		print
+		self.log.info("DataScrapedHandler.get ... : \n")
 
 		self.site_section = "data"
 
@@ -793,41 +794,43 @@ class DataScrapedHandler(BaseHandler):
 		# print "\nDataScrapedHandler.get / slug : "
 		# pprint.pprint(slug)
 
-		print "\nDataScrapedHandler.get / request : "
+		self.log.info("DataScrapedHandler.get / request : " )
 		pprint.pprint (self.request )
 
-		print "\nDataScrapedHandler.get : ... "
-		print "... request.path : ", self.request.path
-		print "... request.uri  : ", self.request.uri
+		print
+		self.log.info("DataScrapedHandler.get ... : ")
+		self.log.info("... request.path : %s ", self.request.path )
+		self.log.info("... request.uri  : %s ", self.request.uri )
 
-		print "\nDataScrapedHandler.get / slug_ : "
 		slug_ = self.request.arguments
-		pprint.pprint( slug_ )
+		print
+		self.log.info("DataScrapedHandler.get / slug_ : %s ", slug_ )
+		# pprint.pprint( slug_ )
 
 		### retrieve datamodel from DB top make correspondances field's _id --> field_name
 		data_model_custom = list( self.application.coll_model.find({"field_class" : "custom", "is_visible" : True }).sort("field_name",1) )
-		print "\nDataModelHandler.get / data_model_custom :"
+		self.log.info("DataModelHandler.get / data_model_custom :" )
 		pprint.pprint (data_model_custom)
 		data_model_custom_ids = [ str(dmc["_id"]) for dmc in data_model_custom ]
-		print "\nDataModelHandler.get / data_model_custom_ids[:2] :"
-		pprint.pprint (data_model_custom_ids[:2])
+		self.log.info("DataModelHandler.get / data_model_custom_ids[:2] : \n %s ", data_model_custom_ids[:2] )
+		# pprint.pprint (data_model_custom_ids[:2])
 		print "..."
 
 		### retrieve all spiders from db to make correspondances spider_id --> spider_name
 		spiders_list = list( self.application.coll_spiders.find( {}, {"infos" : 1 } ) )
-		print "\nDataModelHandler.get / spiders_list[0] :"
+		self.log.info("DataModelHandler.get / spiders_list[0] :")
 		pprint.pprint (spiders_list[0])
 		print "..."
 		# make a dict from spiders_list
 		spiders_dict = { str(s["_id"]) : s["infos"]["name"] for s in spiders_list }
-		print "\nDataModelHandler.get / spiders_dict :"
-		print (spiders_dict)
+		self.log.info("DataModelHandler.get / spiders_dict : %s ", spiders_dict) 
+		# print (spiders_dict)
 
 
 		### clean slug as data query
 		query_data = self.filter_slug( slug_, slug_class="data" )
-		print "\nDataScrapedHandler / query_data :"
-		print query_data
+		self.log.info("DataScrapedHandler / query_data : %s ", query_data )
+		# print query_data
 
 		### get items from db
 		items_from_db, is_data, page_n_max = self.get_data_from_query( query_data, coll_name="data" )
@@ -841,7 +844,8 @@ class DataScrapedHandler(BaseHandler):
 									page_n		= query_data["page_n"], 
 									page_n_max	= page_n_max
 									)
-			print "\nDataScrapedHandler / pagination_dict :"
+			print
+			self.log.info("DataScrapedHandler / pagination_dict :")
 			pprint.pprint (pagination_dict)
 
 			# clean items 
@@ -849,7 +853,8 @@ class DataScrapedHandler(BaseHandler):
 				# put spider name instead of spider _id
 				item["spider_name"] = spiders_dict[ item["spider_id"] ]
 
-			print "\nDataScrapedHandler / items_from_db[0] :"
+			print 
+			self.log.info("DataScrapedHandler / items_from_db[0] :")
 			pprint.pprint(items_from_db[0])
 			print "..."
 

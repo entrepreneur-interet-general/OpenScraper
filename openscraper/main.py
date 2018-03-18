@@ -31,6 +31,8 @@ import 	logging.config
 from 	logging.config import dictConfig
 from 	config.settings_logging import logging_config
 
+from tornado.log import enable_pretty_logging
+enable_pretty_logging()
 
 ### tornado imports
 # from 	tornado.ioloop import IOLoop

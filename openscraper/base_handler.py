@@ -284,6 +284,7 @@ class BaseHandler(tornado.web.RequestHandler):
 	def get_data_from_query(self, query_obj, coll_name, sort_by=None ) :
 		""" get items from db """
 
+		print
 		self.log.info("... get_data_from_query / query_obj : %s ", query_obj )
 		# print query_obj
 		
@@ -367,12 +368,13 @@ class BaseHandler(tornado.web.RequestHandler):
 	def wrap_pagination (self, page_n, page_n_max ):
 		""" wrap all pagination args in a dict """
 
-		print "\n... wrap_pagination : ... "
-		print "... wrap_pagination / request.path : ", self.request.path
+		print
+		self.log.info("... wrap_pagination : ... ")
+		self.log.info("... wrap_pagination / request.path : %s ", self.request.path )
 		# print "... wrap_pagination / request.uri  : ", self.request.uri
-		print "... wrap_pagination / slug_ : "
 		slug_ = self.request.arguments
-		pprint.pprint( slug_ )
+		self.log.info("... wrap_pagination / slug_ : \n %s ", slug_ )
+		# pprint.pprint( slug_ )
 
 		# copy raw slug
 		slug_without_page = deepcopy(slug_)
@@ -388,8 +390,8 @@ class BaseHandler(tornado.web.RequestHandler):
 		except :
 			pass
 
-		print "... wrap_pagination / slug_without_page : "
-		print slug_without_page
+		self.log.info("... wrap_pagination / slug_without_page : %s ", slug_without_page )
+		# print slug_without_page
 
 		# base_uri		= self.request.uri
 		base_path		= self.request.path
@@ -399,12 +401,12 @@ class BaseHandler(tornado.web.RequestHandler):
 		# print urllib.urlencode({'p': [1, 2, 3]}, doseq=True)
 		if slug_without_page !={} : 
 			base_slug		= "?" + urllib.urlencode( slug_without_page, doseq=True)
-		print "... wrap_pagination / base_slug : "
-		print base_slug
+		self.log.info("... wrap_pagination / base_slug : %s ", base_slug )
+		# print base_slug
 
 		path_slug 		= base_path + base_slug
-		print "... wrap_pagination / path_slug : "
-		print path_slug
+		self.log.info("... wrap_pagination / path_slug : %s ", path_slug )
+		# print path_slug
 
 		# recreate url strings
 		first_slug	= { "page_n" : 1 }
