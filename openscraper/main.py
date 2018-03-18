@@ -132,7 +132,7 @@ def setup_loggers ():
 
 	# Create a Formatter for formatting the log messages
 	# log_formatter = logging.Formatter('%(name)s -- %(funcName)s - %(levelname)s - %(message)s')
-	openscraper_log_format = '%(color)s::: %(levelname)s %(name)s %(asctime)s ::: %(module)s:%(lineno)d in %(funcName)s :::%(end_color)s \
+	openscraper_log_format = '%(color)s::: %(levelname)s %(name)s %(asctime)s ::: %(module)s:%(lineno)d -in- %(funcName)s() :::%(end_color)s \
 		%(message)s' 
 	# datefmt='%y%m%d %H:%M:%S'
 	# style='%'
