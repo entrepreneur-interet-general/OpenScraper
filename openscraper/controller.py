@@ -809,21 +809,24 @@ class DataScrapedHandler(BaseHandler):
 
 		### retrieve datamodel from DB top make correspondances field's _id --> field_name
 		data_model_custom = list( self.application.coll_model.find({"field_class" : "custom", "is_visible" : True }).sort("field_name",1) )
-		self.log.info("DataModelHandler.get / data_model_custom :" )
-		pprint.pprint (data_model_custom)
+		self.log.info("DataScrapedHandler.get / data_model_custom[:2] :" )
+		pprint.pprint (data_model_custom[:2] )
+		print "..."
+
 		data_model_custom_ids = [ str(dmc["_id"]) for dmc in data_model_custom ]
-		self.log.info("DataModelHandler.get / data_model_custom_ids[:2] : \n %s ", data_model_custom_ids[:2] )
+		self.log.info("DataScrapedHandler.get / data_model_custom_ids[:2] : \n %s ", data_model_custom_ids[:2] )
 		# pprint.pprint (data_model_custom_ids[:2])
 		print "..."
 
 		### retrieve all spiders from db to make correspondances spider_id --> spider_name
 		spiders_list = list( self.application.coll_spiders.find( {}, {"infos" : 1 } ) )
-		self.log.info("DataModelHandler.get / spiders_list[0] :")
+		self.log.info("DataScrapedHandler.get / spiders_list[0] :")
 		pprint.pprint (spiders_list[0])
 		print "..."
+		
 		# make a dict from spiders_list
 		spiders_dict = { str(s["_id"]) : s["infos"]["name"] for s in spiders_list }
-		self.log.info("DataModelHandler.get / spiders_dict : %s ", spiders_dict) 
+		self.log.info("DataScrapedHandler.get / spiders_dict : %s ", spiders_dict) 
 		# print (spiders_dict)
 
 

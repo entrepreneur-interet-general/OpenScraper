@@ -180,16 +180,29 @@
 					<br>
 					{# submit button #}
 					<div class="field is-grouped is-grouped-centered">
+						
 						<p class="control">
 							<a class="button is-light is-rounded" href="/datamodel/view">
 								<span class="icon"><i class="fas fa-times"></i></span>
-								<span>Cancel</span>
+								<span>cancel</span>
 							</a>
 						</p>
+						
 						<p class="control">
-							<input 	class="button is-primary is-rounded" 
+							
+							<label 	for="saveSubmit" 
+									class="button is-primary is-rounded">
+								<span class="icon is-small">
+									<i class="fas fa-save"></i>
+								</span>
+								<span>
+									save changes
+								</span>
+							</label>
+
+							<input 	id="saveSubmit"
+									class="is-hidden" 
 									type="submit" 
-									value="Save changes"
 								>
 							</input>
 						</p>

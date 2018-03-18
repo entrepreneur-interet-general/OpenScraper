@@ -8,7 +8,7 @@ MongoDB instantiated at Application level
 """
 import pprint
 
-### USERS
+### USERS ############################################################################
 ### to initiate user core fields in mongoDB
 USER_CORE_FIELDS = [
 	
@@ -31,7 +31,7 @@ USER_CORE_FIELDS = [
 	"public_key"
 ]
 
-### DATAMODEL 
+### DATAMODEL ############################################################################
 ### to initiate datamodel core fields in mongoDB
 # field_type options in form and db
 DATAMODEL_FIELDS_TYPES = [
@@ -57,26 +57,29 @@ DATAMODEL_FIELD_OPEN_VARS = [
 ]
 # fields to keep always as db backbone - mainly fields necessary to create a spider
 DATAMODEL_CORE_FIELDS = [
-	{"field_name" : "next_page", 	"field_type" : "text",	"field_open" : "commons" },	# spider-related
-	{"field_name" : "follow_xpath",	"field_type" : "url", 	"field_open" : "commons" }, 	# spider-related
-	{"field_name" : "item_xpath", 	"field_type" : "url",	"field_open" : "commons" }, 	# spider-related
 
-	{"field_name" : "spider_id", 	"field_type" : "text", 	"field_open" : "commons" },			# item-related = to be stored in item
+	{"field_name" : "item_xpath", 		"field_type" : "url",	"field_open" : "commons" }, 	# spider-related
+	{"field_name" : "item_list_xpath", 	"field_type" : "url",	"field_open" : "commons" }, 	# spider-related
+	{"field_name" : "next_page", 		"field_type" : "text",	"field_open" : "commons" },		# spider-related
+	{"field_name" : "follow_xpath",		"field_type" : "url", 	"field_open" : "commons" }, 	# spider-related
 
-	{"field_name" : "link_data", 	"field_type" : "url",	"field_open" : "opendata" },		# item-related = to be stored in item
-	{"field_name" : "link_src", 	"field_type" : "url",	"field_open" : "opendata" },		# item-related = to be stored in item
+	{"field_name" : "spider_id", 		"field_type" : "text", 	"field_open" : "commons" },			# item-related = to be stored in item
 
-	{"field_name" : "added_by", 	"field_type" : "email",	"field_open" : "private" },			# item-related = to be stored in item
-	{"field_name" : "added_at", 	"field_type" : "date",	"field_open" : "opendata" },		# item-related = to be stored in item
+	{"field_name" : "link_data", 		"field_type" : "url",	"field_open" : "opendata" },		# item-related = to be stored in item
+	{"field_name" : "link_src", 		"field_type" : "url",	"field_open" : "opendata" },		# item-related = to be stored in item
 
-	{"field_name" : "modified_by", 	"field_type" : "email",	"field_open" : "opendata" }, 	# spider-related
-	{"field_name" : "modified_at", 	"field_type" : "date", 	"field_open" : "opendata" }, 	# spider-related
+	{"field_name" : "added_by", 		"field_type" : "email",	"field_open" : "private" },			# item-related = to be stored in item
+	{"field_name" : "added_at", 		"field_type" : "date",	"field_open" : "opendata" },		# item-related = to be stored in item
+
+	{"field_name" : "modified_by", 		"field_type" : "email",	"field_open" : "opendata" }, 	# spider-related
+	{"field_name" : "modified_at", 		"field_type" : "date", 	"field_open" : "opendata" }, 	# spider-related
 	
 	# just for debugging purposes
 	# {"field_name" : "testClass", 		"field_type" : "text"}		# item-related = to be stored in item
 ]
 # item-related fields to be used for Item in GenericSpider, in addition to custom fields 
 DATAMODEL_CORE_FIELDS_ITEM = [
+	
 	"link_data", 
 	"link_src", 
 	
@@ -100,7 +103,7 @@ DATAMODEL_DEFAULT_CUSTOM_FIELDS = [
 ]
 
 
-### CONTRIBUTORS
+### CONTRIBUTORS ############################################################################
 ### radio buttons in 'edit contributor' form
 CONTRIBUTOR_EDIT_FIELDS_RADIO = [
 	"parse_follow", "page_needs_splash"
@@ -136,6 +139,7 @@ CONTRIBUTOR_EDIT_FIELDS = {
 		"needed" : [
 			# "spidername" ,
 			"start_urls",
+			"item_list_xpath",
 			"item_xpath",
 			"next_page",
 			"parse_follow",
@@ -153,7 +157,7 @@ CONTRIBUTOR_EDIT_FIELDS = {
 		"optional" : [
 			"LIMIT" 			,	# max number of pages to be crawled
 			"download_delay" 	,	# delay
-			"page_count" 		,	# keep track of how many pages were crawled
+			# "page_count" 		,	# keep track of how many pages were crawled
 		]
 	},
 
@@ -179,6 +183,7 @@ CONTRIBUTOR_CORE_FIELDS = {
 		"spidername" 		: "",		# automatically generated
 		"start_urls" 		: [],		# list of urls to parse
 		
+		"item_list_xpath"	: "",		# xpath of items list on a page
 		"item_xpath"		: "",		# xpath of each item on a page
 		"next_page" 		: "",		# xpath to go to next page
 
@@ -224,7 +229,7 @@ for k, v in CONTRIBUTOR_CORE_FIELDS.iteritems() :
 
 
 """
-### !!! all those variables were deplaced in settings_queries.py
+### !!! all those variables were moved to settings_queries.py
 
 ### DATA QUERIES FROM URL - reconstruct from slug
 QUERY_DATA_BY_DEFAULT = {

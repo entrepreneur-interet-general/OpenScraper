@@ -99,10 +99,7 @@
 
 							<tr >
 
-								<th> {{ escape (
-									item["link_src"]
-									) }} 
-								</th>
+								<th> {{ escape ( item["link_src"] ) }} </th>
 
 								<td> 
 									<a href="/contributors" >
@@ -111,17 +108,27 @@
 								</td>
 								
 								{% for field in datamodel_custom %}
-									{% set id_f = str(field[u"_id"]) %}
+									
+									{% set id_field 	= str(field[u"_id"]) %}
+									{% set type_field 	= str(field[u"field_type"]) %}
 
-									{% if id_f in item.keys() %}
+									{% if id_field in item.keys() %}
+										
 										<td>
-											{% for i in item[ id_f ]  %} 
-											{{ escape (i) }} 
+											{% for i in item[ id_field ]  %} 
+												
+												{% if type_field == u"tags" %}
+													<span class="tag is-dark"> {{ escape (i) }} </span>
+												{% else %}
+													{{ escape (i) }} 
+												{% end %}
+												
 											{% end %}
 										</td>
-										{# <td>{ { id_f }}</td> #}
+
 									{% else %}
 										<td> - </td>
+
 									{% end %}
 
 								{% end %}

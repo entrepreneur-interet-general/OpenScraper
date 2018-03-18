@@ -158,11 +158,11 @@
 												
 												<br>
 
-												<label class="radio" disabled>
+												<label class="radio">
 													<input 	type="radio" name="{{ needed }}" value="true"
 															{% if checked %} checked {% end %} 
 													>
-													I need to click to have the complete data
+													I need to click in the list to have the complete data
 												</label>
 
 											</div>
@@ -246,7 +246,7 @@
 												
 												<br>
 
-												<label class="radio" disabled>
+												<label class="radio">
 													<input 	type="radio" class="is-small" name="{{ advanced_setting }}" value="true"
 															{% if checked %} checked {% end %} 
 													>
@@ -345,18 +345,36 @@
 						<p class="control">
 							<a class="button is-light is-rounded" href="/contributors">
 								<span class="icon"><i class="fas fa-times"></i></span>
-								<span>Cancel</span>
+								<span>cancel</span>
 							</a>
 						</p>
 						
-						<p class="control">
+						{# <p class="control">
 							<input 	class="button is-primary is-rounded" 
 									type="submit" 
 									value="{{ create_or_update }} contributor"
 								>
 							</input>
-						</p>
+						</p> #}
 
+						<p class="control">
+							
+							<label 	for="spiderSubmit" 
+									class="button is-primary is-rounded">
+								<span class="icon is-small">
+									<i class="fas fa-save"></i>
+								</span>
+								<span>
+									{{ create_or_update }} contributor
+								</span>
+							</label>
+
+							<input 	id="spiderSubmit"
+									class="is-hidden" 
+									type="submit" 
+								>
+							</input>
+						</p>
 
 						{% if create_or_update == "update" %}
 						<p class="control">

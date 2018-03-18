@@ -143,7 +143,7 @@
 							 
 							<td>
 							{% for url_ in contrib["scraper_config"]["start_urls"] %} 
-								{{ linkify ( url_)  }}
+								{{ linkify ( url_, extra_params='target="_blank"' )  }}
 							{% end %}
 							</td>
 							
@@ -183,7 +183,7 @@
 								<a class="has-text-centered button is-warning is-rounded is-small"
 									href="/crawl/{{ escape (str(contrib['_id'])) }}" 
 									{% if not is_working %}
-									disabled
+										disabled
 									{% end %}
 									>
 									<span class="icon is-small"><i class="fas fa-play"></i></span>

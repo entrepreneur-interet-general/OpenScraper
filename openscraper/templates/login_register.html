@@ -24,7 +24,7 @@
 				<p>new on Open Scraper ?</p><br>
 				<a 	class="button is-info is-rounded"
 					href="/register/{% if next_url != '/' %}?next={{ next_url }}{% end %}">
-					<span class="icon is-small"><i class="fas fa-sign-in-alt"></i></span>
+					<span class="icon is-small"><i class="fas fa-user-plus"></i></span>
 					<span>register</span>
 				</a>
 			</div>
@@ -47,18 +47,18 @@
 						
 						{% if login_or_register == "register" %}
 
-						{# username field #}
-						<div class="field is-horizontal">
-							<div class="field-body">
-								<div class="field">
-									<p class="control is-expanded has-icons-left">
-										<input class="input " type="text" 
-												placeholder="your username"
-												name="username">
-									</p>
+							{# username field #}
+							<div class="field is-horizontal">
+								<div class="field-body">
+									<div class="field">
+										<p class="control is-expanded has-icons-left">
+											<input class="input " type="text" 
+													placeholder="your username"
+													name="username">
+										</p>
+									</div>
 								</div>
 							</div>
-						</div>
 
 						{% end %}
 
@@ -111,17 +111,41 @@
 							<p class="control">
 								<a class="button is-light is-rounded" href="/">
 									<span class="icon"><i class="fas fa-times"></i></span>
-									<span>Cancel</span>
+									<span>cancel</span>
 								</a>
 							</p>
 
-							<p class="control">
+							{# <p class="control">
 								<input 	class="button is-primary is-rounded" 
 										type="submit" 
 										value="{{ login_or_register }}"
 									>
 								</input>
+							</p> #}
+
+							<p class="control">
+								
+								<label 	for="logSubmit" 
+										class="button is-primary is-rounded">
+									<span class="icon is-small">
+										{% if login_or_register == "register" %}
+											<i class="fas fa-user-plus"></i>
+										{% else %}
+											<i class="fas fa-sign-in-alt"></i>
+										{% end %}
+									</span>
+									<span>
+										{{ login_or_register }}
+									</span>
+								</label>
+
+								<input 	id="logSubmit"
+										class="is-hidden" 
+										type="submit" 
+									>
+								</input>
 							</p>
+
 
 						</div>
 						

@@ -131,14 +131,25 @@
 						<p class="control">
 							<a class="button is-light is-rounded" href="/datamodel/edit">
 								<span class="icon"><i class="fas fa-times"></i></span>
-								<span>Cancel</span>
+								<span>cancel</span>
 							</a>
 						</p>
 						
 						<p class="control">
-							<input 	class="button is-primary is-rounded" 
+							
+							<label 	for="createFieldSubmit" 
+									class="button is-primary is-rounded">
+								<span class="icon is-small">
+									<i class="fas fa-plus-circle"></i>
+								</span>
+								<span>
+									create a new field
+								</span>
+							</label>
+
+							<input 	id="createFieldSubmit"
+									class="is-hidden" 
 									type="submit" 
-									value="Create a new field"
 								>
 							</input>
 						</p>
