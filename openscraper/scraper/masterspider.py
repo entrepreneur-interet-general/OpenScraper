@@ -34,7 +34,7 @@ log_scrap = logging.getLogger("log_scraper")
 log_scrap.setLevel(logging.DEBUG)
 
 # Create the Handler for logging data to a file
-logger_handler = logging.FileHandler('openscraper_scrapy_logging.log')
+logger_handler = logging.FileHandler('logs/openscraper_scrapy_logging.log')
 logger_handler.setLevel(logging.WARNING)
 
 # Create a Formatter for formatting the log messages

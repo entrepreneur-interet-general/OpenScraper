@@ -71,6 +71,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		self.error_msg 			= ""
 		self.site_section 		= ""
 
+
 	### global functions for all handlers
 
 	def catch_error_message (self):
@@ -81,8 +82,8 @@ class BaseHandler(tornado.web.RequestHandler):
 			
 			# print "\n... get_error_message / self.error_msg : "
 			# print self.error_msg		
-			self.application.logger.info("\n... get_error_message / self.error_msg : ")
-			self.application.logger.info(self.error_msg)
+			app_log.info("\n... get_error_message / self.error_msg : ")
+			app_log.info(self.error_msg)
 		
 		except:
 			self.error_msg = ""
@@ -91,9 +92,8 @@ class BaseHandler(tornado.web.RequestHandler):
 		""" add an "error" arg to url slug """
 
 		# print "... add_error_message_to_slug / slug_ : "
-		self.application.logger.info("... add_error_message_to_slug / slug_ : ")
 		slug_ = self.request.arguments
-		pprint.pprint( slug_ )
+		app_log.info("... add_error_message_to_slug / slug_ : \n %s ", pformat( slug_ ) )
 
 		# create a complete clean slug if no slug
 		if slug_ == {} :
@@ -103,12 +103,19 @@ class BaseHandler(tornado.web.RequestHandler):
 		else : 
 			# clean existing slug from existing error arg if any
 			slug_without_error = deepcopy(slug_)
+
+			# delete previous error
 			try : 
 				del slug_without_error["error"]
 			except :
 				pass
-			self.application.logger.warning("... add_error_message_to_slug / slug_without_error : ")
-			self.application.logger.warning(slug_without_error)
+			# delete xsrf code
+			try : 
+				del slug_without_error["_xsrf"]
+			except :
+				pass
+
+			app_log.warning("... add_error_message_to_slug / slug_without_error : \n %s ", pformat(slug_without_error) )
 			# print "... add_error_message_to_slug / slug_without_error : "
 			# print slug_without_error
 
@@ -119,10 +126,10 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		# print "... add_error_message_to_slug / error_slug : "
 		# print error_slug
-		self.application.logger.info("... add_error_message_to_slug / error_slug : ")
-		self.application.logger.info(error_slug)
+		app_log.info("... add_error_message_to_slug / error_slug : \n %s ", pformat(error_slug) )
 
 		return error_slug
+
 
 	### user functions for all handlers
 
@@ -138,24 +145,31 @@ class BaseHandler(tornado.web.RequestHandler):
 
 	def get_current_user(self):
 		""" return user_name"""
+		
 		return self.get_secure_cookie("user_name")
 	
 	def get_current_user_email(self):
 		""" return user_name"""
+
 		return self.get_secure_cookie("user_email")
 
 	def get_user_from_db(self, user_email) :
 		""" get user from db"""
+		
 		user 	   = self.application.coll_users.find_one({"email": user_email })
+		
 		return user 
 
 	def get_current_user_id(self):
+		
 		user_email = self.get_current_user_email()
 		user 	   = self.application.coll_users.find_one({"email": user_email })
+		
 		# return unicode(str(user["_id"]))
 		return str(user["_id"])
 
 	def add_user_to_db(self, user): 
+		
 		self.application.coll_users.insert_one( user )
 
 	def set_current_user(self, user) :
@@ -175,6 +189,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		else :
 			# clear user if no user
 			self.clear_current_user()
+
 
 	### TO DO / TO DEBUG
 	def clear_current_user(self):
@@ -272,7 +287,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		""" filter args from slug """
 		
 		print
-		app_log.info("... filter_slug / slug : %s ", slug ) 
+		app_log.info("... filter_slug / slug : \n %s ", pformat(slug) ) 
 		# print slug
 
 		# recreate query from slug
@@ -374,7 +389,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		app_log.info("... wrap_pagination / request.path : %s ", self.request.path )
 		# print "... wrap_pagination / request.uri  : ", self.request.uri
 		slug_ = self.request.arguments
-		app_log.info("... wrap_pagination / slug_ : \n %s ", slug_ )
+		app_log.info("... wrap_pagination / slug_ : \n %s ", pformat(slug_) )
 		# pprint.pprint( slug_ )
 
 		# copy raw slug
@@ -391,7 +406,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		except :
 			pass
 
-		app_log.info("... wrap_pagination / slug_without_page : %s ", slug_without_page )
+		app_log.info("... wrap_pagination / slug_without_page :  \n %s  ", pformat(slug_without_page) )
 		# print slug_without_page
 
 		# base_uri		= self.request.uri
@@ -402,11 +417,11 @@ class BaseHandler(tornado.web.RequestHandler):
 		# print urllib.urlencode({'p': [1, 2, 3]}, doseq=True)
 		if slug_without_page !={} : 
 			base_slug		= "?" + urllib.urlencode( slug_without_page, doseq=True)
-		app_log.info("... wrap_pagination / base_slug : %s ", base_slug )
+		app_log.info("... wrap_pagination / base_slug : \n %s ", base_slug )
 		# print base_slug
 
 		path_slug 		= base_path + base_slug
-		app_log.info("... wrap_pagination / path_slug : %s ", path_slug )
+		app_log.info("... wrap_pagination / path_slug : \n %s ", path_slug )
 		# print path_slug
 
 		# recreate url strings

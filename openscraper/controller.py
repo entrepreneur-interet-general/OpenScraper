@@ -573,13 +573,11 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 		# app_log.info( slug ) 
 
 		slug_ = self.request.arguments
-		app_log.info("ContributorsHandler.get / slug_ : %s", slug_ )
-		# app_log.info( slug_ )
+		app_log.info("ContributorsHandler.get / slug_ : \n %s", pformat(slug_) )
 
 		# filter slug
 		query_contrib = self.filter_slug( slug_, slug_class="contributors" )
 		app_log.info("ContributorsHandler.get / query_contrib : \n %s ", pformat(query_contrib) )
-		# print query_contrib
 
 		# get data 
 		contributors, is_data, page_n_max = self.get_data_from_query( query_contrib, coll_name="contributors", sort_by="infos.name")
@@ -597,7 +595,7 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 									page_n=query_contrib["page_n"], 
 									page_n_max=page_n_max
 									)
-			app_log.info("DataScrapedHandler / pagination_dict : %s ", pformat(pagination_dict) )
+			app_log.info("ContributorsHandler / pagination_dict : \n %s ", pformat(pagination_dict) )
 			# print pagination_dict
 
 		self.render(
@@ -702,56 +700,61 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			is_new = False
 
 		# check if website is already crawled by another spider
-		similar_spider = self.application.coll_spiders.find( {"infos.page_url": spider_config_form["page_url"]} )
-		if similar_spider and is_new :
+		similar_spider = self.application.coll_spiders.find_one( {"infos.page_url": spider_config_form["page_url"][0] } ) 
+		app_log.info("similar spider : \n %s", pformat(similar_spider) )
+
+		if similar_spider and is_new and spider_config_form != "" :
 			app_log.warning( "ContributorEditHandler.post / a similar spider already exists ... ")
-			# TO DO : add alert
-			self.redirect("/contributors")
-
-		# populate a contributor object
-		print
-		app_log.info( "ContributorEditHandler.post / creating spider with SpiderConfig class  ... ")
-		contributor_object = SpiderConfig( 
-				form 		= spider_config_form,
-				new_spider 	= is_new,
-				user		= self.get_current_user_email() 
-		)
-
-		### get spider identifier from form
-		app_log.info( "ContributorEditHandler.post / spider_config_form : \n %s", pformat(spider_config_form) )
-
-		if spider_id and spider_id != "new_spider":
 			
-			app_log.warning( "ContributorEditHandler.post / spider_id %s already exists : ", spider_id )
+			# TO DO : add alert
+			self.error_slug = self.add_error_message_to_slug("this website is already being scraped by {}".format( similar_spider["infos"]["name"]) )
+			self.redirect("/contributors" + self.error_slug )
 
-			# getting id from form
-			spider_oid = ObjectId(spider_id)
+		else : 
+			# populate a contributor object
+			print
+			app_log.info( "ContributorEditHandler.post / creating spider with SpiderConfig class  ... ")
+			contributor_object = SpiderConfig( 
+					form 		= spider_config_form,
+					new_spider 	= is_new,
+					user		= self.get_current_user_email() 
+			)
 
-			# getting back spider config from db but from its _id
-			contributor = self.application.coll_spiders.find_one( {"_id": ObjectId(spider_oid)} )
-			new_config 	= contributor_object.partial_config_as_dict( previous_config = contributor )
+			### get spider identifier from form
+			app_log.info( "ContributorEditHandler.post / spider_config_form : \n %s", pformat(spider_config_form) )
 
-			# update contributor
-			old_fields = {"infos" : 1 , "scraper_config" : 1 , "scraper_config_xpaths" : 1, "scraper_settings" : 1 }
-			self.application.coll_spiders.update_one( {"_id": spider_oid}, { "$unset": old_fields } )
-			self.application.coll_spiders.update_one( {"_id": spider_oid}, { "$set"	 : new_config }, upsert=True )
+			if spider_id and spider_id != "new_spider":
+				
+				app_log.warning( "ContributorEditHandler.post / spider_id %s already exists : ", spider_id )
 
-		else :
-			contributor = contributor_object.full_config_as_dict()
-			# insert new spider to db
-			self.application.coll_spiders.insert_one(contributor)
+				# getting id from form
+				spider_oid = ObjectId(spider_id)
 
-		print 
-		app_log.info( "ContributorEditHandler.post / contributor : \n %s ", pformat(contributor) ) 
+				# getting back spider config from db but from its _id
+				contributor = self.application.coll_spiders.find_one( {"_id": ObjectId(spider_oid)} )
+				new_config 	= contributor_object.partial_config_as_dict( previous_config = contributor )
 
-		### redirections for debugging purposes
-		# if spider_id and spider_id!= "new_spider" :
-		# 	self.redirect("/contributor/edit/{}".format(spider_id))
-		# else : 
-		# 	self.redirect("/contributor/add")
-		
-		### real redirection
-		self.redirect("/contributors")
+				# update contributor
+				old_fields = {"infos" : 1 , "scraper_config" : 1 , "scraper_config_xpaths" : 1, "scraper_settings" : 1 }
+				self.application.coll_spiders.update_one( {"_id": spider_oid}, { "$unset": old_fields } )
+				self.application.coll_spiders.update_one( {"_id": spider_oid}, { "$set"	 : new_config }, upsert=True )
+
+			else :
+				contributor = contributor_object.full_config_as_dict()
+				# insert new spider to db
+				self.application.coll_spiders.insert_one(contributor)
+
+			print 
+			app_log.info( "ContributorEditHandler.post / contributor : \n %s ", pformat(contributor) ) 
+
+			### redirections for debugging purposes
+			# if spider_id and spider_id!= "new_spider" :
+			# 	self.redirect("/contributor/edit/{}".format(spider_id))
+			# else : 
+			# 	self.redirect("/contributor/add")
+			
+			### redirection
+			self.redirect("/contributors")
 
 
 ### TO DO : not ready yet

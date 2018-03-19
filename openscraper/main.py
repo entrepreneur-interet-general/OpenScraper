@@ -183,13 +183,13 @@ def setup_loggers ():
 
 
 	# Create the Handlers for logging data to log files
-	gen_log_handler 	= logging.FileHandler('openscraper_general.log')
+	gen_log_handler 	= logging.FileHandler('logs/openscraper_general.log')
 	gen_log_handler.setLevel(logging.WARNING)
 
-	access_log_handler 	= logging.FileHandler('openscraper_access.log')
+	access_log_handler 	= logging.FileHandler('logs/openscraper_access.log')
 	access_log_handler.setLevel(logging.WARNING)
 
-	app_log_handler 	= logging.FileHandler('openscraper_app.log')
+	app_log_handler 	= logging.FileHandler('logs/openscraper_app.log')
 	app_log_handler.setLevel(logging.WARNING)
 
 	# Add the Formatter to the Handler
