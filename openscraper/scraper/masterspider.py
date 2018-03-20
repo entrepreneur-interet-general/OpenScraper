@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
-import 	pprint
+# import 	pprint
+from 	pprint import pprint, pformat
 import 	os 
 
 import 	time
@@ -20,14 +21,13 @@ from config.settings_example import *
 from config.settings_scrapy import * 
 
 
+### lOGGER - SCRAPY
 ### logging only for scrapy
 from 	os import path, remove
 import 	logging
 import 	logging.config
 from 	logging.config import dictConfig
 from 	config.settings_logging import logging_config
-
-### lOGGER - SCRAPY
 
 # set logger for scrapy
 log_scrap = logging.getLogger("log_scraper")
@@ -71,13 +71,13 @@ from scrapy.crawler 		import CrawlerProcess, CrawlerRunner
 
 # s = get_project_settings()
 # print "\ndefault settings scrapy : "
-# pprint.pprint(dict(s))
+# pprint(dict(s))
 # update settings from settings_scrapy.py
 # s.update(dict(ITEM_PIPELINES={
 # 	'openscraper.pipelines.RestExportPipeline': 300,
 # }))
 # print "\nupdated settings scrapy : "
-# pprint.pprint(dict(s))
+# pprint(dict(s))
 
 
 ### SCRAPY PIPELINES....
@@ -100,7 +100,7 @@ settings.set( "DB_DATA_COLL_SCRAP" 			, DB_DATA_COLL_SCRAP )
 
 
 print "\n>>> settings scrapy : "
-pprint.pprint(dict(settings))
+pprint(dict(settings))
 
 print "\n"
 print "--- run_generic_spider / BOT_NAME : "	
@@ -123,23 +123,7 @@ from items import * # GenericItem #, StackItem #ScrapedItem
 ### import mixins
 # from mixins import GenericSpiderMixin
 
-### define pipelines
 
-
-
-#####################################################
-"""
-	error_array = []
-	item_count = 0  # will be incremented each time a new item is created
-	item_count_depth_1 = 0  # will be incremented each time an item is completed in detailed page
-	LIMIT = 5  # The number of pages where the spider will stop
-	page_count = 1  # The number of pages already scraped
-	name = ""  # The name of the spider to use when executing the spider
-	download_delay = 0  # The delay in seconds between each request. some website will block too many requests
-	page_url = ""  # base url (ex : "https://www.mysite.org")
-	label = ""
-	start_urls = []  # List of URLs that will be crawled by the parse method
-"""
 
 
 #####################################################
@@ -154,11 +138,14 @@ from items import * # GenericItem #, StackItem #ScrapedItem
 # to be used in run_generic_spider function
 def flattenSpiderConfig(run_spider_config) :
 	"""creates a flat dict from nested spider_config dict"""
+	
 	spider_config_flat = {}
+	
 	for conf_class, conf_set in run_spider_config.iteritems() :
 		if conf_class != "_id" :
 			for conf_field, conf_data in conf_set.iteritems() : 
 				spider_config_flat[conf_field] = conf_data
+	
 	return spider_config_flat
 
 
@@ -178,6 +165,21 @@ def dictFromDataModelList (datamodel_list ) :
 
 ### ON ITEMS AND PIPELINES SEE : https://gist.github.com/alecxe/fc1527d6d9492b59c610
 
+# class GenericSpiderUtils(Spider):
+
+# 	"""a generic spider utils class to contain all parsing functions"""
+	
+# 	### spider class needs a default name
+# 	name = "genericspiderutils"
+
+# 	def __init__(self, user_id=None, datamodel=None, spider_id=None, spider_config_flat=None, *args, **kwargs) : 
+		
+# 		### super init/override spider class with current args 
+# 		log_scrap.info("--- GenericSpider / __init__ :")
+
+# 		super(GenericSpider, self).__init__(*args, **kwargs)
+
+
 
 
 class GenericSpider(Spider) :
@@ -189,6 +191,9 @@ class GenericSpider(Spider) :
 
 	def __init__(self, user_id=None, datamodel=None, spider_id=None, spider_config_flat=None, *args, **kwargs) : 
 		
+
+		print "\n\n{}\n".format("> > > "*20)
+
 		### super init/override spider class with current args 
 		# print "\n--- GenericSpider / __init__ :"
 		log_scrap.info("--- GenericSpider / __init__ :")
@@ -199,33 +204,37 @@ class GenericSpider(Spider) :
 		self.spider_id 	= spider_id
 
 		### store spider_config_flat
-		print "\n--- GenericSpider / spider_config_flat :"
-		pprint.pprint(spider_config_flat)
+		log_scrap.info("--- GenericSpider / spider_config_flat : \n %s ", pformat(spider_config_flat) )
+		# pprint(spider_config_flat)
 		self.spider_config_flat = spider_config_flat
 
 		### getting all the config args from spider_config_flat (i.e. next_page, ...)
-		print "\n--- GenericSpider / passing kwargs..."
+		log_scrap.info("--- GenericSpider / passing kwargs..." ) 
 		for k, v in spider_config_flat.iteritems() : 
-			print "   - ", k, ":", v
+			# log_scrap.info("  - %s : %s " %(k, v) )
 			self.__dict__[k] = v
 
 
 		### getting data model for later use in item
-		print "\n--- GenericSpider / datamodel :"
+		log_scrap.info("--- GenericSpider / datamodel[:1] : \n %s \n ...", pformat(datamodel[:1]) ) 
 		# self.datamodel = datamodel 
-		pprint.pprint (datamodel[:3])
-		print "..."
+		# pprint (datamodel[:3])
+		# print "..."
 
 		### storing correspondance dict from datamodel
 		self.dm_core 					= { i["field_name"] : { "field_type" : i["field_type"] } for i in datamodel if i["field_class"] == "core" }
 		self.dm_core_item_related 		= DATAMODEL_CORE_FIELDS_ITEM
-		# self.dm_core_item_related_dict	= DATAMODEL_CORE_FIELDS_ITEM
-		self.dm_custom 					= { str(i["_id"]) 	: { "field_type" : i["field_type"] } for i in datamodel if i["field_class"] == "custom" }
+		
+		self.dm_custom 					= { str(i["_id"]) 	: { "field_type" : i["field_type"], 
+																"field_name" : i["field_name"] 
+															} for i in datamodel if i["field_class"] == "custom" }
+		log_scrap.info("--- GenericSpider / dm_custom : \n %s", pformat(self.dm_custom) ) 
+
 		self.dm_custom_list 			= self.dm_custom.keys()
 
-		print "\n--- GenericSpider / dm_item_related :"
 		self.dm_item_related 			= self.dm_custom_list + self.dm_core_item_related
-		pprint.pprint(self.dm_item_related)
+		log_scrap.info("--- GenericSpider / dm_item_related : \n %s", pformat(self.dm_item_related) ) 
+		# pprint(self.dm_item_related)
 
 	'''
 	def parse(self, response):
@@ -253,54 +262,79 @@ class GenericSpider(Spider) :
 	'''
 
 	def parse(self, response):
-		"""
-		parse pages to scrap data
-		"""
+		""" parsing pages to scrap data """
 
-		print "--- GenericSpider.parse ..."
 
-		print response.xpath(self.item_xpath)[0]
+		print "\n>>> NEW PARSING " + ">>> >>> "*10, "\n"
+		log_scrap.info("--- GenericSpider.parse ..." )
+		
+		print response
+		# print response.__dict__.keys()
+		# for k, v in response.__dict__.iteritems() : 
+		# 	print k ,"---", v
+		# print response._body
 
-		### loop through data items in page in response
-		for raw_data in response.xpath(self.item_xpath):
+		# log_scrap.info(" response.xpath : \n %s ", pformat (response.xpath(self.item_xpath)[0] ))
+
+
+		### TO DO !
+		### check response to see if API or HTML response
+		log_scrap.info("--- GenericSpider.parse / self.item_xpath : %s", self.item_xpath )
+		
+		raw_items_list = response.xpath(self.item_xpath)
+		# raw_items_list = response.xpath('//table[@class="sobi2Listing"]/tr')
+		log_scrap.info("--- GenericSpider.parse / len(raw_items_list) : %d ", len(raw_items_list) )
+
+		### start parsing page : 
+		# loop through data items in page in response
+		for raw_data in raw_items_list :
 			
+			print "\n>>> NEW ITEM " + ">>> >>> "*10, "\n"
+
 			### instantiate Item to fill from datamodel
 			itemclass 	= create_item_class( 'GenericItemClass', fields_list = self.dm_item_related )
 			item 		= itemclass()
-			
-			# just for debugging purposes
-			# item[ 'testClass' ]	= "item class is tested"
 
-			# add global info to item : i.e. core fields in dm_core_item_related list
-			item[ 'spider_id' ]	= self.spider_id
-			item[ 'added_by'  ]	= self.user_id 
-			item[ 'added_at'  ]	= time.time()		# timestamp
-			# TO DO : store urls for this item
-			item[ 'link_data']	= ""
-			item[ 'link_src' ]	= ""
+			### add global info to item : i.e. core fields in dm_core_item_related list
+			item[ 'spider_id' ]		= self.spider_id
+			item[ 'added_by'  ]		= self.user_id 
+			item[ 'added_at'  ]		= time.time()		# timestamp
+			item[ 'link_src' ]		= response._url
 
-			### extract data and feed it to Item instance based on spider_config_flat
-			for d_model in self.dm_custom_list : 
 
-				### first, checks if xpath exists in spider_config_flat
-				if d_model in self.spider_config_flat : 
+			### extract data and feed it to the Item instance based on spider_config_flat
+			# for d_model in self.dm_custom_list : 
+
+			# 	### first, checks if xpath exists in spider_config_flat
+			# 	if d_model in self.spider_config_flat : 
 					
-					### check if field is not empty
-					if self.spider_config_flat[ d_model ] != [] and self.spider_config_flat[ d_model ] != "" :
+			# 		### check if field in spider_config_flat is not empty
+			# 		if self.spider_config_flat[ d_model ] != [] and self.spider_config_flat[ d_model ] != "" :
 						
-						### fill item field corresponding to xpath
-						item[ d_model ] = raw_data.xpath(self.spider_config_flat[ d_model ]).extract()
+			# 			### fill item field corresponding to xpath
+			# 			item[ d_model ] = raw_data.xpath(self.spider_config_flat[ d_model ]).extract()
+			item = self.fill_item_from_results_page(raw_data, item)
 
 
-			### item completion is finished - yield and so spark pipeline for item (store in db for instance)
-			# print "\nGenericSpider.parse - item : \n", item.items()
-			# print item.keys()
-			yield item
 
 			### if need to follow to extract all data
 			if self.spider_config_flat["parse_follow"] == True : 
-				url = item['link']
+				
+				item[ 'link_data' ]	= raw_data.xpath(self.follow_xpath).extract_first()			
+				url 				= item['link_data']
+
+				# yield scrapy.Request(url, callback=self.parse_detailed_page, meta={'item': item})
 				yield scrapy.Request(url, callback=self.parse_detailed_page, meta={'item': item})
+
+
+			else : 			
+				### item completion is finished - yield and so spark pipeline for item (store in db for instance)
+				# print "\nGenericSpider.parse - item : \n", item.items()
+				# print item.keys()
+				yield item
+
+				print "\n>>> NEXT ITEM " + ">>> >>> "*10, "\n"
+
 
 
 		### get and go to next page 
@@ -309,26 +343,113 @@ class GenericSpider(Spider) :
 		# 	print "\n --- GenericSpider.parse / NEXT PAGE... \n"
 		# 	# yield scrapy.Request(response.urljoin(next_page_url))
 		# 	yield scrapy.follow(response.urljoin(next_page_url, callback=self.parse))
-
 		is_next_page, next_page = self.get_next_page(response)
 		if is_next_page:
-			print "\n --- GenericSpider.parse / NEXT PAGE... \n"
+			
+			print
+			log_scrap.info(" --- GenericSpider.parse >>> NEXT PAGE... \n" )
+			
 			yield response.follow(next_page, callback=self.parse)
 
 
-	### TO DO : good follow up and callbacks
+
+	### generic function to fill item from result
+	def fill_item_from_results_page (self, raw_data, item ) : 
+		""" fill item """
+
+		log_scrap.info("-+- fill_item_from_results_page" )
+		print item
+
+		### extract data and feed it to Item instance based on spider_config_flat
+		for dm_field in self.dm_custom_list : 
+			
+			### first, checks if xpath exists in spider_config_flat
+			if dm_field in self.spider_config_flat : 
+				
+				# log_scrap.info("\n dm_field : %s | dm_name : %s ", 
+				# 						dm_field, 
+				# 						self.dm_custom[dm_field]["field_name"] )
+
+				### check if field filled in spider_config_flat is not empty
+				if self.spider_config_flat[ dm_field ] != [] and self.spider_config_flat[ dm_field ] != "" :
+		
+					### fill item field corresponding to xpath
+					item_field_xpath 	= self.spider_config_flat[ dm_field ]					
+					
+					full_data 			= raw_data.xpath( item_field_xpath ).extract()
+					log_scrap.warning("\n field_name : %s \n dm_field : %s \n full_data : %s ", 
+										self.dm_custom[dm_field]["field_name"],
+										dm_field,
+										full_data )
+
+					# item[ dm_field ] 	= full_data
+					
+					if full_data != None or full_data != [] : 
+						
+						if dm_field in item : 
+							item[ dm_field ] = item[ dm_field ] + full_data
+						else : 
+							item[ dm_field ] 	= full_data
+
+					# 	if item[ dm_field ] == [] or item[ dm_field ] == None : 
+					# 		item[ dm_field ] 	= full_data
+					# 	else :
+					# 		item[ dm_field ] 	= item[ dm_field].append(full_data)
+		
+		print "\n>>> ITEM >>>"
+		print item
+		print 
+		print "\n>>> NEXT ITEM " + ">>> >>> "*10, "\n"
+
+		return item
+
+
+	### go to follow link and retrieve remaining data for Item
+	def parse_detailed_page (self, response) :
+		""" """
+
+		log_scrap.info(" === GenericSpider.parse / parse_detailed_page / ... " )
+		# print response._body
+
+		item = response.meta["item"]
+		item = self.fill_item_from_results_page(response, item)
+
+		print 
+		yield item
+
+
+	### follow up and callbacks
 	def get_next_page(self, response):
-		"""tries to find a new page to scrap.
-		if it finds one, returns it along with a True value"""
+		"""
+		tries to find a new page to scrap.
+		if it finds one, returns it along with a True value
+		"""
+		
 		next_page = response.xpath(self.next_page).extract_first()
+		
 		if (next_page is not None) and (self.page_count < self.LIMIT):
+			
 			self.page_count += 1
 			# next_page = next_page.strip()
 			# next_page = self.add_string_to_complete_url_if_needed(next_page, self.page_url)
 			next_page = response.xpath(self.spider_config_flat[ "next_page" ]).extract_first()
+		
 			return True, next_page
+		
 		else:
 			return False, next_page
+
+
+
+
+
+
+
+
+
+
+
+
 
 	def add_string_to_complete_url_if_needed(self, not_complete_url, rest_of_url=None):
 		"""adds the missing beggining part of an url with the '/' if needed"""
@@ -421,33 +542,34 @@ def run_generic_spider( user_id				= None,
 	just launch run_generic_spider() from any handler in controller
 	"""
 
-	print "\n--- run_generic_spider / spider_id : ", spider_id
+	print 
+	log_scrap.info("--- run_generic_spider / spider_id : %s ", spider_id )
 	
 	# !!! spider is launched from main.py level !!! 
 	# all relative routes referring to this...
-	print "\n--- run_generic_spider / os.getcwd() : ", os.getcwd() 
+	log_scrap.info("--- run_generic_spider / os.getcwd() : %s ", os.getcwd()  )
 
 	### flattening run_spider_config : from nested to flat dict 
 	# print "--- run_generic_spider / run_spider_config : "
-	# pprint.pprint(run_spider_config)
-	print "--- run_generic_spider / flattening run_spider_config --> spider_config_flat"
+	# pprint(run_spider_config)
+	log_scrap.info("--- run_generic_spider / 'flattenSpiderConfig()' on 'run_spider_config' --> 'spider_config_flat' ..." )
 	spider_config_flat = flattenSpiderConfig( run_spider_config )
 	# print "--- run_generic_spider / spider_config_flat : "
-	# pprint.pprint(spider_config_flat)
+	# pprint(spider_config_flat)
 
 	### settings for crawler
 	# cf : https://hackernoon.com/how-to-crawl-the-web-politely-with-scrapy-15fbe489573d
 	# gllobal settings for scrapy processes (see upper)
-	print "--- run_generic_spider / BOT_NAME :       ", settings.get('BOT_NAME')
-	print "--- run_generic_spider / USER_AGENT :     ", settings.get('USER_AGENT')
-	print "--- run_generic_spider / ITEM_PIPELINES : ", settings.get('ITEM_PIPELINES').__dict__
+	log_scrap.info("--- run_generic_spider / BOT_NAME :       %s ", settings.get('BOT_NAME') ) 
+	log_scrap.info("--- run_generic_spider / USER_AGENT :     %s ", settings.get('USER_AGENT') )
+	log_scrap.info("--- run_generic_spider / ITEM_PIPELINES : %s ", settings.get('ITEM_PIPELINES').__dict__ )
 	# specific settings for this scrapy process
 	settings.set( "CURRENT_SPIDER_ID" 				, spider_id )
 	settings.set( "DOWNLOAD_DELAY" 					, DOWNLOAD_DELAY )
 	settings.set( "RANDOMIZE_DOWNLOAD_DELAY"		, RANDOMIZE_DOWNLOAD_DELAY )
 
 	### initiating crawler process
-	print "\n--- run_generic_spider / instanciate process ..." 	
+	log_scrap.info("--- run_generic_spider / instanciate process ..." 	 )
 	# process = CrawlerRunner() 
 	# process = CrawlerProcess()
 	process = CrawlerRunner( settings = settings )
@@ -480,6 +602,9 @@ def run_generic_spider( user_id				= None,
 	if result is not None:
 		raise result
 
+	
+	
+	print "\n\n{}\n".format("> > > "*20)
 
 
 

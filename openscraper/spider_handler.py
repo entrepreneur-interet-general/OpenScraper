@@ -1,7 +1,8 @@
 
-from base_handler import *
-from base_utils	import *
+from 	base_handler import *
+from 	base_utils	import *
 
+# from 	tornado.log import access_log, app_log, gen_log # already imported from base_handler
 
 ### OpenScraper generic scraper
 from scraper import run_generic_spider 
@@ -145,7 +146,8 @@ class SpiderHandler(BaseHandler) :
 	@onthread
 	def get(self, spider_id = None ):
 		
-		print "\nSpiderHandler.get... "
+		print 
+		app_log.info("SpiderHandler.get... ")
 
 		# catch error message if any
 		self.catch_error_message()
@@ -153,8 +155,8 @@ class SpiderHandler(BaseHandler) :
 		# count all docs
 		# counts = self.count_all_documents() 
 
-		print "\nSpiderHandler.get / spider_id : "
-		print spider_id 
+		app_log.info("SpiderHandler.get / spider_id : %s", spider_id )
+		# print spider_id 
 
 		### retrieve spider config from its name in the db
 		# spider_config = self.application.coll_spiders.find_one({"scraper_config.spidername": spidername})
@@ -163,14 +165,15 @@ class SpiderHandler(BaseHandler) :
 		except : 
 			spider_config = None
 		
+		# redirect client before starting spider
 		self.redirect("/contributors")
 		
-		### redirect / set default runner if no spider_config
+		### set default runner if no spider_config
 		if spider_config == None : 
 			
-			print "SpiderHandler.get --- !!! Spidername not found : test spider with test_config"
+			app_log.warning("SpiderHandler.get --- !!! spider_id -%s- not found : test spider with test_config", spider_id ) 
 			
-			error_slug = self.add_error_message_to_slug( "ERROR !!! there is no ''%s'' spider configuration in the DB ..." %(str(spider_id)) )
+			error_slug = self.add_error_message_to_slug( "ERROR !!! there is no ''%s'' spider_id configuration in the DB ..." %(str(spider_id)) )
 
 			### TO DO : debug this error : "Cannot redirect after headers have been written"
 			self.redirect("/" + error_slug )			
@@ -185,20 +188,20 @@ class SpiderHandler(BaseHandler) :
 			# )
 		
 		else : 
-			print "SpiderHandler.get --- spider_id : ", spider_id
-			print "SpiderHandler.get --- spider_config :"
-			pprint.pprint(spider_config)
+			app_log.info("SpiderHandler.get --- spider_id     : ", spider_id )
+			app_log.info("SpiderHandler.get --- spider_config :", pformat(spider_config) )
+			# pprint.pprint(spider_config)
 
-			print "SpiderHandler.get --- starting spider runner --- "
+			app_log.info("SpiderHandler.get --- starting spider runner --- " )
 			### TO DO : CHECK IF REALLY WORKING : asynchronous run the corresponding spider
 			# self.run_generic_spider( run_spider_config = spider_config ) # synchronous
 			
 			### getting data_model lists
-			print "SpiderHandler.get --- creating data model list from fields in db "
+			app_log.info("SpiderHandler.get --- creating data model list from fields in db ")
 			# data_model 			= self.application.coll_model.distinct("field_name")
 			data_model 			= list(self.application.coll_model.find({}))
-			print "SpiderHandler.get --- data_model from db :" 
-			pprint.pprint(data_model)
+			app_log.info("SpiderHandler.get --- data_model from db : \n %s ", pformat(data_model) )
+			# pprint.pprint(data_model)
 
 			yield self.run_spider( 	
 									datamodel 		= data_model,
@@ -222,6 +225,9 @@ class SpiderHandler(BaseHandler) :
 		# )
 
 
+
+
+
 	# @gen.coroutine	# with raise gen.Result(result)
 	# @return_future	# with callback(result) / cf : http://www.maigfrga.ntweb.co/asynchronous-programming-tornado-framework/
 	@print_separate(APP_DEBUG)
@@ -231,18 +237,22 @@ class SpiderHandler(BaseHandler) :
 						spider_id, 
 						spider_config,
 						current_user_id,
-						callback=None
+						callback=None,
+						countdown=3
 					) :
 		
-		print "\nSpiderHandler.run_spider --- "
+		print 
+		app_log.info("SpiderHandler.run_spider --- " )
 		
-		print "\nSpiderHandler.run_spider / testing the non-blocking decorator with a time.sleep... "
-		for i in range(5):
-			print "\nSpiderHandler.run_spider --- start spider %s in %s" %( str(spider_id), 5-i )
+		app_log.info("SpiderHandler.run_spider / testing the non-blocking decorator with a time.sleep... " )
+		app_log.info("SpiderHandler.run_spider ---\n--- start spider %s in %s" %( str(spider_id), countdown ) ) 
+		for i in range( countdown ):
 			time.sleep(1)
+			app_log.info("SpiderHandler.run_spider ---\n--- start spider %s in %s" %( str(spider_id), countdown-i ) ) 
+		time.sleep(1)
 
 		### run spider --- check masterspider.py --> function run_generic_spider()
-		print "\nSpiderHandler.run_spider / now let it run... "
+		app_log.info("SpiderHandler.run_spider / now let it run... ")
 		result = run_generic_spider( 
 									user_id				= current_user_id,
 									spider_id			= str(spider_id), 
@@ -250,14 +260,16 @@ class SpiderHandler(BaseHandler) :
 									run_spider_config	= spider_config 
 									)
 
+
+
 		### TO DO : keep track of error and update status in spider configuration
 		### update scraper_log.is_working
-		print "SpiderHandler.get --- spider updating..."
+		app_log.info("SpiderHandler.get --- spider updating...")
 		self.application.coll_spiders.update_one( 
 												{"_id": ObjectId(spider_id) }, 
 												{"$set" : {"scraper_log.is_working" : True} }
 												)
-		print "SpiderHandler.get --- spider updated..."
+		app_log.info("SpiderHandler.get --- spider updated...")
 		
 		raise gen.Return(result)
 		# yield gen.Return(result)

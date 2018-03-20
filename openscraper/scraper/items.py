@@ -42,7 +42,6 @@ class GenericItem(Item) :
 		print "::: GenericItem - datamodel_list : ", datamodel_list
 		super(GenericItem, self).__init__(*args, **kwargs)
 		
-		######## NOT WORKNG : NEED TO OVERRIDE ITEM (check Item class from within Scrapy)
 		for field in datamodel_list : 
 			self.__dict__[field] = scrapy.Field()
 

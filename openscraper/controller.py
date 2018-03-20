@@ -24,9 +24,9 @@ from 	pymongo import UpdateOne
 # from 	tornado.ioloop import IOLoop
 from 	tornado import gen, concurrent
 from 	tornado.concurrent import return_future, run_on_executor
-from 	tornado.log import access_log, app_log, gen_log
+# from 	tornado.log import access_log, app_log, gen_log # already imported from base_handler
 
-from 	concurrent.futures import ThreadPoolExecutor # need to install futures in pytohn 2.7
+from 	concurrent.futures import ThreadPoolExecutor # note : need to install "futures" in pytohn 2.7 : pip install futures
 from 	spider_threading import *
 
 
@@ -68,18 +68,19 @@ class PageNotFoundHandler(BaseHandler):
 
 		self.site_section 	= "404"
 		# self.error_msg		= "404 - page not found"
-	
-		print "\nPageNotFoundHandler.post / uri : "
-		pprint.pprint (self.request.uri )
 
-		print "\nPageNotFoundHandler.post / self.is_user_connected : "
-		print self.is_user_connected
+		print 
+		app_log.info("PageNotFoundHandler.post / uri : %s ", pformat(self.request.uri ) )
+		# pprint.pprint (self.request.uri )
 
-		print "\nPageNotFoundHandler.post / request : "
-		pprint.pprint (self.request )
+		app_log.info("PageNotFoundHandler.post / self.is_user_connected : %s ", pformat(self.is_user_connected ) )
+		# print self.is_user_connected
+
+		app_log.warning("PageNotFoundHandler.post / request : \n %s ", pformat(self.request ) )
+		# pprint.pprint (self.request )
 		
-		print "\nPageNotFoundHandler.post / request.arguments : "
-		pprint.pprint( self.request.arguments )
+		app_log.info("PageNotFoundHandler.post / request.arguments : \n %s ", pformat(self.request.arguments ) )
+		# pprint.pprint( self.request.arguments )
 
 		self.set_status(404)
 		self.render("404.html",
@@ -222,8 +223,9 @@ class RegisterHandler(BaseHandler):
 
 	@print_separate(APP_DEBUG)
 	def get(self):
-	
-		print "\nRegisterHandler.get ... "
+		
+		print
+		app_log.info("RegisterHandler.get ... ")
 
 		self.site_section = "register"
 
@@ -235,9 +237,9 @@ class RegisterHandler(BaseHandler):
 		# catch error message if any
 		self.catch_error_message()
 
-		print "\nRegisterHandler.get / next_url : "
 		next_url = self.get_argument('next', u'/')
-		print next_url
+		app_log.info("RegisterHandler.get / next_url : %s", next_url ) 
+		# print next_url
 
 		self.render('login_register.html',
 			page_title  		= app_main_texts["main_title"],
@@ -349,7 +351,8 @@ class DataModelViewHandler(BaseHandler):
 	@tornado.web.authenticated
 	def get(self) : 
 
-		print "\nDataModelHandler.get... "
+		print
+		app_log.info("DataModelViewHandler.get... ")
 
 		self.site_section = "datamodel"
 
@@ -358,16 +361,16 @@ class DataModelViewHandler(BaseHandler):
 
 		### retrieve datamodel from DB
 		data_model_custom = list(self.application.coll_model.find({"field_class" : "custom"}).sort("field_name",1) )
-		print "DataModelHandler.get / data_model_custom :"
-		pprint.pprint (data_model_custom)
+		app_log.info("DataModelViewHandler.get / data_model_custom[0:2] : \n %s \n ...", pformat(data_model_custom[0:2]) )
+		# pprint.pprint (data_model_custom)
 
 		data_model_core = list(self.application.coll_model.find({"field_class" : "core"}).sort("field_name",1) )
-		print "DataModelHandler.get / data_model_core :"
-		pprint.pprint (data_model_core)
+		app_log.info("DataModelViewHandler.get / data_model_core[0:2] : \n %s \n ... ", pformat(data_model_core[0:2]) )
+		# pprint.pprint (data_model_core)
 
 		### test printing object ID
-		print "DataModelHandler.get / data_model_core[0] object_ID :"
-		print str(data_model_core[0]["_id"])
+		app_log.info("DataModelViewHandler.get / data_model_core[0] object_ID : %s ", str( data_model_core[0]["_id"]) )
+		# print str(data_model_core[0]["_id"])
 
 		self.render(
 			"datamodel_view.html",
@@ -387,7 +390,9 @@ class DataModelEditHandler(BaseHandler):
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
 	def get(self) : 
-		print "\nDataModelHandler.get... "
+		
+		print 
+		app_log.info("DataModelEditHandler.get... " )
 
 		self.site_section = "datamodel"
 
@@ -396,8 +401,8 @@ class DataModelEditHandler(BaseHandler):
 
 		### retrieve datamodel from DB
 		data_model_custom = list(self.application.coll_model.find({"field_class" : "custom"}))
-		print "DataModelHandler.get / data_model_custom :"
-		pprint.pprint (data_model_custom)
+		app_log.info("DataModelEditHandler.get / data_model_custom[0:2] : \n %s \n ...", pformat(data_model_custom[0:2])  )
+		# pprint.pprint (data_model_custom)
 
 		self.render(
 			"datamodel_edit.html",
@@ -416,7 +421,8 @@ class DataModelEditHandler(BaseHandler):
 	def post(self):
 
 		### get fields + objectIDs
-		print "\nDataModelEditHandler.post ..."
+		print
+		app_log.info("DataModelEditHandler.post ..." )
 
 		raw_updated_fields 	= self.request.arguments
 		timestamp			= time.time()
@@ -427,15 +433,17 @@ class DataModelEditHandler(BaseHandler):
 		# # print self.request 
 		# pprint.pprint( raw_updated_fields )
 
+		### READ POST FORM
+
 		post_keys = self.request.arguments.keys()
-		print "DataModelEditHandler.post / post_keys :  "
 		post_keys.remove("_xsrf")
-		print post_keys
+		app_log.info("DataModelEditHandler.post / post_keys :  %s", post_keys ) 
+		# print post_keys
 
 		# clean post args from _xsrf
 		del raw_updated_fields['_xsrf']
-		print "DataModelEditHandler.post / raw_updated_fields :  "
-		pprint.pprint( raw_updated_fields )
+		app_log.info("DataModelEditHandler.post / raw_updated_fields : \n %s ", pformat(raw_updated_fields) )
+		# pprint.pprint( raw_updated_fields )
 		# print( type(raw_updated_fields) )
 
 		# recreate fields 
@@ -449,14 +457,14 @@ class DataModelEditHandler(BaseHandler):
 		for field in updated_fields : 
 			field["_id"] 		= ObjectId(field["_id"])
 			field["is_visible"] = True
-		print "DataModelEditHandler.post / updated_fields :  "
-		pprint.pprint(updated_fields)
+		app_log.info("DataModelEditHandler.post / updated_fields : \n %s ", pformat(updated_fields) )
+		# pprint.pprint(updated_fields)
 
 
 		### DELETE / UPDATE FIELDS
 
 		# first : update fields in DB
-		print "DataModelEditHandler.post / updating fields :  "
+		app_log.info("DataModelEditHandler.post / updating fields ... " )
 		operations =[ UpdateOne( 
 			{"_id" : field["_id"]},
 			{'$set':  { 
@@ -473,7 +481,7 @@ class DataModelEditHandler(BaseHandler):
 		self.application.coll_model.bulk_write(operations)
 
 		# then : delete fields in db 
-		print "DataModelEditHandler.post / deleting fields :  "
+		app_log.info("DataModelEditHandler.post / deleting fields ...  ")
 		for field in updated_fields :
 			if field["field_keep"] == "delete" :
 				# field_in_db = self.application.coll_model.find_one({"_id" : field["_id"]})

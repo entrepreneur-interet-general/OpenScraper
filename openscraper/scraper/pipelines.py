@@ -1,17 +1,38 @@
 # -*- encoding: utf-8 -*-
 import 	os
 import 	json 
-import 	pprint
+from 	pprint import pprint, pformat
 import 	pymongo
 from 	pymongo import MongoClient
 from 	scrapy 	import signals
+
+import 	logging
+from 	tornado.log import app_log, gen_log, access_log
+
+# set logger for scrapy
+log_pipe = logging.getLogger("log_pipeline")
+log_pipe.setLevel(logging.DEBUG)
+
+# Create the Handler for logging data to a file
+logger_handler = logging.FileHandler('logs/openscraper_pipeline_logging.log')
+logger_handler.setLevel(logging.WARNING)
+
+# Create a Formatter for formatting the log messages
+logger_formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+
+# Add the Formatter to the Handler
+logger_handler.setFormatter(logger_formatter)
+
+# Add the Handler to the Logger
+log_pipe.addHandler(logger_handler)
+log_pipe.info('>>> Completed configuring log_pipe !')
+
 
 
 # cf / sql : https://stackoverflow.com/questions/41043970/how-to-pass-parameter-to-a-scrapy-pipeline-object
 # cf / mongodb : https://alysivji.github.io/mongodb-pipelines-in-scrapy.html
 
 ### TO DO 
-
 # define a JSON writer pipeline
 class JsonWriterPipeline(object):
 	def __init__(self):
@@ -23,7 +44,7 @@ class JsonWriterPipeline(object):
 	
 		return item
 
-
+### TO DO 
 # define a Restexport pipeline
 class RestExportPipeline(object):
 	"""
@@ -43,26 +64,29 @@ class RestExportPipeline(object):
 class MongodbPipeline(object):
 
 	def __init__(	self, 
-					spider_id=None,
-					mongo_uri=None,
-					mongo_db=None, 
-					mongo_coll_scrap=None
+					spider_id	= None,
+					mongo_uri	= None,
+					mongo_db	= None, 
+					mongo_coll_scrap = None
 					):
 
-		print "\n>>> MongodbPipeline / __init__ ..."
+		print
+		log_pipe.info(">>> MongodbPipeline / __init__ ...")
 		
 		self.spider_id			= spider_id
 		self.mongo_uri			= mongo_uri
 		self.mongo_db			= mongo_db
 		self.mongo_coll_scrap 	= mongo_coll_scrap
 		
-		print "--- MongodbPipeline / os.getcwd() : ", os.getcwd() 
+		log_pipe.info("--- MongodbPipeline / os.getcwd() : %s ", os.getcwd() )
+		print
 
 
 	@classmethod
 	def from_crawler(cls, crawler):
 		
-		print "\n>>> MongodbPipeline / @classmethod + from_crawler ..."
+		print
+		log_pipe.info(">>> MongodbPipeline / @classmethod + from_crawler ...")
 		
 		## pull in information from crawler.settings
 		pipeline = cls(
@@ -83,9 +107,10 @@ class MongodbPipeline(object):
 
 
 	def open_spider(self, spider):
-		## initializing spider
+		"""" initializing spider """
 
-		print "\n>>> MongodbPipeline / open_spider ..."
+		print
+		log_pipe.info(">>> MongodbPipeline / open_spider ...")
 
 		## opening db connection
 		self.client 	= MongoClient( 
@@ -100,22 +125,27 @@ class MongodbPipeline(object):
 		item_exists = self.coll_data.find({ "spider_id" : self.spider_id })
 		if item_exists != None :
 			self.coll_data.delete_many({ "spider_id" : self.spider_id })
+		print 
 
 	def close_spider(self, spider) :
 		## clean up when spider is closed
-		print "\n>>> MongodbPipeline / close_spider ..."
+		
+		print
+		log_pipe.info(">>> MongodbPipeline / close_spider ...")
+		print
 		self.client.close()
 
 
 	def process_item(self, item, spider):
 		"""handle each item and post it to db"""
 
-		print "\n>>> MongodbPipeline / process_item ..."
+		print
+		log_pipe.info(">>> MongodbPipeline / process_item ...")
 
 		# item object to dict
 		item_dict = dict(item)
-		print ">>> MongodbPipeline / item_dict : "
-		pprint.pprint(item_dict)
+		log_pipe.info(">>> MongodbPipeline / item_dict : \n %s", pformat(item_dict) ) 
+		# pprint(item_dict)
 
 		# check if already exists in db
 		# item_exists = self.application.coll_data.find({ "field_name" : item["field_name"]})

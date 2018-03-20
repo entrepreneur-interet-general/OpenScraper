@@ -60,7 +60,7 @@
 
 	{# data table container #}
 
-	<div class="container">
+	<div class="container" >
 
 		{% if is_data %}
 
@@ -72,13 +72,14 @@
 
 		<div class="columns is-centered">
 			
-			<div class="column">
+			<div class="column"   style="overflow-x: scroll;">
 
 				{# data #}
 				<table 	id="t_dataset " 
 						class="table display is-striped is-narrow is-hoverable is-fullwidth" 
 						width="100%" 
-						cellspacing="0">
+						cellspacing="0"
+						>
 					<thead>
 						<tr>
 							<th>link_src</th>
@@ -99,7 +100,11 @@
 
 							<tr >
 
-								<th> {{ escape ( item["link_src"] ) }} </th>
+								<th>
+									<a href="{{ escape ( item['link_src'] ) }}" target="_blank">
+									link to data
+									</a>
+								</th>
 
 								<td> 
 									<a href="/contributors" >

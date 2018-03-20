@@ -215,11 +215,11 @@ def setup_loggers ():
 class Application(tornado.web.Application):
 	"""
 	main Tornado application wrapper :
-	- set MongoDB client
-	- set scrapy
-	- set modules
-	- set urls handlers
-	- set and init Tornado app
+		- set MongoDB client
+		- set scrapy
+		- set modules
+		- set urls handlers
+		- set and init Tornado app
 	"""
 	
 	def __init__(self):  
