@@ -1,5 +1,10 @@
 # -*- encoding: utf-8 -*-
 
+DEFAULT_ERROR_ARGS_TO_DELETE = [
+	"error", 
+	"_xsrf"
+]
+
 
 ### DATA QUERIES FROM URL - reconstruct from slug
 QUERY_DATA_BY_DEFAULT = {
@@ -33,6 +38,7 @@ QUERIES_DATA_ALLOWED_BOOLEAN = [
 
 
 
+
 ### SPIDER QUERIES FROM URL - reconstruct from slug
 QUERY_SPIDER_BY_DEFAULT = {
 	"page_n"			: 1,		# page number
@@ -45,9 +51,9 @@ QUERY_SPIDER_BY_DEFAULT = {
 QUERIES_SPIDER_ALLOWED_UNIQUE = [
 	"page_n", 
 	"results_per_page",
-	 "token", 
-	 "is_working", 
-	 "all_results"
+	"token", 
+	"is_working", 
+	"all_results"
 ]
 QUERIES_SPIDER_ALLOWED_INTEGERS  	= [
 	"page_n", "results_per_page"
@@ -58,3 +64,28 @@ QUERIES_SPIDER_ALLOWED_POSITIVES  	= [
 QUERIES_SPIDER_ALLOWED_BOOLEAN = [
 	"all_results",
 ]
+
+
+
+
+
+### SPIDER CRAWLER QUERIES FROM URL - basic args in slug query for crawling
+QUERY_CRAWL_BY_DEFAULT = {
+	"spider_id" 	: None,
+	"test"			: True,
+	"test_limit" 	: 1,
+}
+QUERIES_CRAWL_ALLOWED_UNIQUE = {
+	"spider_id",
+	"test",
+	"test_limit",
+}
+QUERIES_CRAWL_ALLOWED_INTEGERS = {
+	"test_limit",
+}
+QUERIES_CRAWL_ALLOWED_POSITIVES = {
+	"test_limit",
+}
+QUERIES_CRAWL_ALLOWED_BOOLEAN = {
+	"test",
+}

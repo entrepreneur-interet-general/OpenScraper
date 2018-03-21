@@ -59,25 +59,26 @@
 	<br>
 
 	<div class="container has-text-centered">
+		
 		<a class="button is-primary is-rounded"
 		   href="/contributor/add">
 			<span class="icon is-small"><i class="fas fa-plus-circle"></i></span>
 			<span>add a new spider</span>
-			
 		</a>
-	{# </div> #}
 
 
-	{% if is_contributors == True %}
-	{# <div class="container has-text-centered"> #}
-		{# <a class="button is-primary is-rounded">save changes</a> #}
-		<a class="button is-warning is-rounded" disabled>
-			<span class="icon is-small"><i class="fas fa-play"></i></span>
-			<span>run all spiders</span>
-		</a>
+		{% if is_contributors == True %}
+		{# <div class="container has-text-centered"> #}
+			{# <a class="button is-primary is-rounded">save changes</a> #}
+			<a class="button is-warning is-rounded" disabled>
+				<span class="icon is-small"><i class="fas fa-play"></i></span>
+				<span>run all spiders</span>
+			</a>
+
+
+		{% end %}
+
 	</div>
-	{% end %}
-
 
 
 	<hr>
@@ -105,6 +106,8 @@
 					<thead>
 						<tr>
 							<th>name</th>
+							<th></th>
+							<th></th>
 							<th>added by</th>
 							{# <th>page_url</th> #}
 							
@@ -119,10 +122,10 @@
 
 							{# <th>spidername</th> #}
 
-							<th>edit</th>
+							<th></th>
+
 							<th>working</th>
 
-							<th></th>
 							<th></th>
 							<th></th>
 							<th></th>
@@ -135,25 +138,12 @@
 					{% for contrib in contributors %}
 						
 						{% set is_working = contrib["scraper_log"]["is_working"] %}
+						{% set contrib_id = escape (str(contrib['_id'])) %}
 
-						<tr id="{{ escape (str(contrib['_id'])) }}" >
-							<th> {{ escape (contrib["infos"]["name"]) }}</th>
-							<td> {{ escape (contrib["scraper_log"]["added_by"]) }}</td>
-							{# <td> {{ linkify (contrib["infos"]["page_url"]) }}</td> #}
-							 
-							<td>
-							{% for url_ in contrib["scraper_config"]["start_urls"] %} 
-								{{ linkify ( url_, extra_params='target="_blank"' )  }}
-							{% end %}
-							</td>
+						<tr id="{{contrib_id }}" >
 							
-							{#
-							<td> {{ escape (contrib["scraper_config"]["page_needs_splash"]) }}</td>
-							<td> {{ escape (contrib["scraper_config"]["parse_follow"]) }}</td>
-							<td> {{ escape (contrib["scraper_config_xpaths"]["next_page_xpath"]) }}</td> 
-							#}
-
-							{# <td> {{ escape (contrib["scraper_config"]["spidername"]) }}</td> #}
+							<th> {{ escape (contrib["infos"]["name"]) }}</th>
+							
 
 							<td> 
 								{# 	
@@ -167,6 +157,59 @@
 								</a> 
 							</td>
 
+
+							<td> 
+								<a class="has-text-centered button is-danger is-rounded is-small"
+									href="/contributor/delete?spider_id={{ escape (contrib['scraper_config']['spidername']) }}" 
+									 >
+									<span class="icon is-small"><i class="fas fa-trash"></i></span>
+									{# <span>delete</span> #}
+								</a> 
+							</td>
+
+
+
+							<td> {{ escape (contrib["scraper_log"]["added_by"]) }}</td>
+							{# <td> {{ linkify (contrib["infos"]["page_url"]) }}</td> #}
+							 
+							<td>
+							{% for url_ in contrib["scraper_config"]["start_urls"] %} 
+								<a href="{{ url_}}" target="_blank"> 
+									<span class="tag is-white">
+										<span class="icon is-small"><i class="fas fa-external-link-alt"></i></span> 
+									</span>
+								</a>
+								{# { { linkify ( url_, extra_params='target="_blank"' )  }} #}
+
+							{% end %}
+							</td>
+							
+							{#
+							<td> {{ escape (contrib["scraper_config"]["page_needs_splash"]) }}</td>
+							<td> {{ escape (contrib["scraper_config"]["parse_follow"]) }}</td>
+							<td> {{ escape (contrib["scraper_config_xpaths"]["next_page_xpath"]) }}</td> 
+							#}
+
+							{# <td> {{ escape (contrib["scraper_config"]["spidername"]) }}</td> #}
+
+
+
+
+
+
+
+
+							<td> 
+								<a class="has-text-centered button is-warning is-rounded is-small"
+									href="/crawl?spider_id={{ escape (str(contrib['_id'])) }}&test=true&test_limit=1" 
+									>
+									<span class="icon is-small"><i class="fas fa-step-forward"></i></span>
+									<span>test</span>
+								</a> 
+							</td>
+
+
+
 							<td class="has-text-centered"> 
 								{% if is_working %}
 									<span class="icon has-text-primary">
@@ -179,43 +222,67 @@
 								{% end %}
 							</td>
 
+
+
 							<td> 
 								<a class="has-text-centered button is-warning is-rounded is-small"
-									href="/crawl/{{ escape (str(contrib['_id'])) }}" 
+									href="/crawl?spider_id={{ escape (str(contrib['_id'])) }}" 
 									{% if not is_working %}
 										disabled
 									{% end %}
 									>
 									<span class="icon is-small"><i class="fas fa-play"></i></span>
-									<span>run spider</span>
+									<span><strong>crawl</strong></span>
 								</a> 
 							</td>
 
+							{# set some varriables #}
+							{% set count_data = 0 %}
+							{% set href_data  = "" %}
+							{% set href_reset  = "" %}								
+							{% set color_data = "light" %}
+
+							{% if str(contrib['_id']) in count_docs_by_spiders %}
+								{% set count_data = count_docs_by_spiders[str(contrib['_id'])] %}
+								{% if count_data > 0 %}
+									{% set href_data  = "/dataset/view?spider_id=%s" %(str(contrib['_id'])) %}
+									{% set href_reset  = "/contributor/reset_data?spider_id=%s" %(str(contrib['_id'])) %}
+									{% set color_data = "info" %}
+								{% end %}
+							{% end %}
+							
+
 							<td> 
-								<a class="has-text-centered button is-info is-rounded is-small"
-									href="/dataset/view?spider_id={{ escape (str(contrib['_id'])) }}" >
-									<span class="icon is-small"><i class="fas fa-table"></i></span>
-									<span>view data</span>
+
+								<a class="has-text-centered button is-{{color_data}} is-rounded is-small"
+									href="{{href_data}}"
+									>
+									<span class="icon is-small">
+										<i class="fas fa-table"></i>
+									</span>
+									<span>
+										view {{ count_data }} data
+									</span>
 								</a> 
 							</td>
 
+
+
 							<td> 
-								<a class="has-text-centered button is-info is-rounded is-small"
-									href="/dataset/view?spider_id={{ escape (str(contrib['_id'])) }}" 
-									disabled >
+								<a class="has-text-centered button is-{{color_data}} is-rounded is-small"
+									href="{{ href_reset }}"
+									{% if count_data == 0 %}
+									disabled 
+									{% end %}
+									>
 									<span class="icon is-small"><i class="fas fa-redo"></i></span>
 									<span>reset data</span>
 								</a> 
 							</td>
 
-							<td> 
-								<a class="has-text-centered button is-danger is-rounded is-small"
-									href="/contributor/delete/{{ escape (contrib['scraper_config']['spidername']) }}" 
-									disabled >
-									<span class="icon is-small"><i class="fas fa-times"></i></span>
-									<span>delete spider</span>
-								</a> 
-							</td>
+
+
+
 
 						</tr>
 					{% end %}

@@ -1,0 +1,165 @@
+
+
+{% extends "main.html" %}
+{% autoescape None %}
+
+{% block body %}
+
+
+<br>
+
+<section class="section">
+
+	{# TITLE #}
+	<div class="container has-text-centered">
+
+		<div class="dropdown is-hoverable">
+			
+			<div class="dropdown-trigger"> 
+				
+				<button class="button is-large is-rounded" aria-haspopup="true" aria-controls="dropdown-menu-contributor-reset-data">
+					<span>
+						<b>
+							RESET DATA					
+						</b>  
+					</span>
+				</button>
+				
+				<button class="button is-text" aria-haspopup="true" aria-controls="dropdown-menu-contributor-reset-data">
+					<span class="icon">
+						<i class="fas fa-question-circle"></i>
+					</span>
+				</button>
+				
+				{# tabs #}
+				{# <div class="has-text-weight-light"> {% module MainTabs(site_section) %}</div> #}
+			
+			</div>
+
+			<div class="dropdown-menu" id="dropdown-menu-contributors-reset-data" role="menu">
+			<div class="dropdown-content">
+				<div class="dropdown-item">
+					<p>
+						Delete all data for this spider
+					</p>
+				</div>
+			</div>
+			</div>
+
+		</div>
+
+	</div>
+
+
+	<br><br>
+
+	<div class="container">
+
+		<div class="columns is-centered">
+			
+			<div class="column is-5">
+
+					<form 	id="reset_data_form"
+							action="/contributor/reset_data" 
+							method="POST">
+						
+						{% module xsrf_form_html() %}
+
+						<input name="spider_id" type="hidden" value="{{ spider_id }}"></input>
+
+						<article class="message is-warning is-large ">
+							
+							<div class="message-header has-text-centered ">
+
+								{# labelling for spider #}
+								{# <div class="content has-text-centered"> #}
+									<p class=""> are you sure you want to reset the data ?</p>
+									{# <p class="is-small">describe the website you want to crawl</p> #}
+								{# </div> #}
+
+							</div>
+							
+							<div class="message-body">
+								{# radio buttons #}
+
+								<div class="field is-grouped is-grouped-centered">
+
+									<div class="control">
+										
+										<label class="radio">
+											<input 	type="radio" 
+													class="is-large" 
+													name="reset_data" 
+													value="false"
+													checked 
+											>
+											<strong>NO</strong><br> I changed my mind
+										</label>
+										
+										<br><br>
+
+										<label class="radio">
+											<input 	type="radio" 
+													class="is-large" 
+													name="reset_data" 
+													value="true"
+											>
+											<strong>YES</strong><br> please reset the dataset
+										</label>
+
+									</div>
+								
+								</div>
+							</div>
+						
+						</article>
+
+						<br>
+
+						{# submit button #}
+						<div class="field is-grouped is-grouped-centered">
+
+							<p class="control">
+								<a class="button is-light is-rounded" href="/contributors">
+									<span class="icon"><i class="fas fa-times"></i></span>
+									<span>cancel</span>
+								</a>
+							</p>
+
+							<p class="control">
+								
+								<label 	for="spiderSubmit" 
+										class="button is-warning is-rounded">
+									<span class="icon is-small">
+										<i class="fas fa-redo"></i>
+									</span>
+									<span>
+										reset data
+									</span>
+								</label>
+
+								<input 	id="spiderSubmit"
+										class="is-hidden" 
+										type="submit" 
+									>
+								</input>
+							</p>
+
+						</div>
+
+
+
+
+					</form>
+				
+			</div>
+		
+		</div>
+
+	</div>
+
+
+</section>
+
+
+{% end %}

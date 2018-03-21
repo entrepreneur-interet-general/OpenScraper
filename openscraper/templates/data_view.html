@@ -82,9 +82,9 @@
 						>
 					<thead>
 						<tr>
-							<th>link_src</th>
 							
 							<th>spider used</th>
+							<th>link_src</th>
 							
 							{% for field in datamodel_custom %}
 								<th>{{ field["field_name"] }}</th>
@@ -100,18 +100,22 @@
 
 							<tr >
 
-								<th>
-									<a href="{{ escape ( item['link_src'] ) }}" target="_blank">
-									link to data
-									</a>
-								</th>
-
 								<td> 
 									<a href="/contributors" >
 										{{ escape (item["spider_name"]) }} 
 									</a>
 								</td>
-								
+
+
+								<th>
+									<a href="{{ escape ( item['link_src'] ) }}" target="_blank">
+										<span class="tag is-white">
+											<span class="icon is-small"><i class="fas fa-external-link-alt"></i></span> 
+										</span>
+									</a>
+								</th>
+
+
 								{% for field in datamodel_custom %}
 									
 									{% set id_field 	= str(field[u"_id"]) %}

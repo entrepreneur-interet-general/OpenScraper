@@ -195,7 +195,6 @@ class GenericSpider(Spider) :
 		print "\n\n{}\n".format("> > > "*20)
 
 		### super init/override spider class with current args 
-		# print "\n--- GenericSpider / __init__ :"
 		log_scrap.info("--- GenericSpider / __init__ :")
 
 		super(GenericSpider, self).__init__(*args, **kwargs)
@@ -205,7 +204,6 @@ class GenericSpider(Spider) :
 
 		### store spider_config_flat
 		log_scrap.info("--- GenericSpider / spider_config_flat : \n %s ", pformat(spider_config_flat) )
-		# pprint(spider_config_flat)
 		self.spider_config_flat = spider_config_flat
 
 		### getting all the config args from spider_config_flat (i.e. next_page, ...)
@@ -234,32 +232,8 @@ class GenericSpider(Spider) :
 
 		self.dm_item_related 			= self.dm_custom_list + self.dm_core_item_related
 		log_scrap.info("--- GenericSpider / dm_item_related : \n %s", pformat(self.dm_item_related) ) 
-		# pprint(self.dm_item_related)
 
-	'''
-	def parse(self, response):
-		"""
-		parse pages to scrap data
-		"""
-		for scraped_data in response.css('div.quote'):
-			
-			### create Item to fill
-			# item = ScrapedItem()
-			item = self.custom_item
-			
-			### TO DO : fill item with results
-			# self.fill_item_from_results_page(action, item)
 
-			print(scraped_data.css('span.text::text').extract_first())
-
-		is_next_page, next_page = self.get_next_page(response)
-		if is_next_page:
-			yield response.follow(next_page, callback=self.parse)
-
-	def get_next_page(self, response, no_page_url):
-		has_next_page = True
-		has_not_next_page = False
-	'''
 
 	def parse(self, response):
 		""" parsing pages to scrap data """
@@ -290,6 +264,8 @@ class GenericSpider(Spider) :
 		for raw_data in raw_items_list :
 			
 			print "\n>>> NEW ITEM " + ">>> >>> "*10, "\n"
+			
+			print raw_data
 
 			### instantiate Item to fill from datamodel
 			itemclass 	= create_item_class( 'GenericItemClass', fields_list = self.dm_item_related )
@@ -386,10 +362,15 @@ class GenericSpider(Spider) :
 					
 					if full_data != None or full_data != [] : 
 						
+						# delete duplicates
+						full_data_uniques 	= set(full_data)
+						full_data_clean 	= list(full_data_uniques)
+
+						# aggregate to 
 						if dm_field in item : 
-							item[ dm_field ] = item[ dm_field ] + full_data
+							item[ dm_field ] = item[ dm_field ] + full_data_clean
 						else : 
-							item[ dm_field ] 	= full_data
+							item[ dm_field ] 	= full_data_clean
 
 					# 	if item[ dm_field ] == [] or item[ dm_field ] == None : 
 					# 		item[ dm_field ] 	= full_data
@@ -461,65 +442,47 @@ class GenericSpider(Spider) :
 			not_complete_url = "{}{}".format(rest_of_url, not_complete_url)
 		return not_complete_url
 
-	def parse_item (self, response): 
 
-		### create Item to fill
-		itemclass = create_item_class('GenericItemClass', self.datamodel)
-		item = itemclass()
-
-		### just for debugging purposes
-		item['testClass'] = "class is tested"
-
-		### extract data and feed it to item based on spider_config_flat
-		for d_model, d_xpath in self.datamodel_dict.iteritems() : 
-			# first, checks if xpath exists in spider_config_flat
-			if d_xpath in self.spider_config_flat : 
-				# fill item field corresponding to xpath
-				item[ d_model ] = raw_data.xpath(self.spider_config_flat[ d_xpath ]).extract()
-
-		print "\nGenericSpider.parse - item : \n", item.items()
-		# print item.keys()
-		yield item
 
 
 
 	### TO DO : generic functions linked with DATAMODEL_FIELDS_TYPES
-	def get_type_text(self, response) :
+	def clean_type_text(self, response) :
 		"""
 		for field_type : "text"
 		"""
 		value = ""
 		return value
 
-	def get_type_tags(self, response) :
+	def clean_type_tags(self, response) :
 		"""
 		for field_type : "tags"
 		"""
 		value = ""
 		return value
 
-	def get_type_url(self, response) :
+	def clean_type_url(self, response) :
 		"""
 		for field_type : "url", "email"
 		"""
 		value = ""
 		return value
 
-	def get_type_adress(self, response) : 
+	def clean_type_adress(self, response) : 
 		"""
 		for field_type : "adress"
 		"""
 		value = ""
 		return value
 
-	def get_type_image(self, response) : 
+	def clean_type_image(self, response) : 
 		"""
 		fields : "image"
 		"""
 		value = ""
 		return value
 
-	def get_type_date(self, response) : 
+	def clean_type_date(self, response) : 
 		"""
 		for field_type : "date"
 		"""
@@ -550,12 +513,9 @@ def run_generic_spider( user_id				= None,
 	log_scrap.info("--- run_generic_spider / os.getcwd() : %s ", os.getcwd()  )
 
 	### flattening run_spider_config : from nested to flat dict 
-	# print "--- run_generic_spider / run_spider_config : "
-	# pprint(run_spider_config)
 	log_scrap.info("--- run_generic_spider / 'flattenSpiderConfig()' on 'run_spider_config' --> 'spider_config_flat' ..." )
 	spider_config_flat = flattenSpiderConfig( run_spider_config )
-	# print "--- run_generic_spider / spider_config_flat : "
-	# pprint(spider_config_flat)
+
 
 	### settings for crawler
 	# cf : https://hackernoon.com/how-to-crawl-the-web-politely-with-scrapy-15fbe489573d
@@ -567,6 +527,7 @@ def run_generic_spider( user_id				= None,
 	settings.set( "CURRENT_SPIDER_ID" 				, spider_id )
 	settings.set( "DOWNLOAD_DELAY" 					, DOWNLOAD_DELAY )
 	settings.set( "RANDOMIZE_DOWNLOAD_DELAY"		, RANDOMIZE_DOWNLOAD_DELAY )
+
 
 	### initiating crawler process
 	log_scrap.info("--- run_generic_spider / instanciate process ..." 	 )

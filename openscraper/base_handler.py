@@ -75,20 +75,19 @@ class BaseHandler(tornado.web.RequestHandler):
 	### global functions for all handlers
 
 	def catch_error_message (self):
-		""" get error message if any """
+		""" get and log error message if any """
 		
 		try:
 			self.error_msg = self.get_argument("error")
 			
 			# print "\n... get_error_message / self.error_msg : "
 			# print self.error_msg		
-			app_log.info("\n... get_error_message / self.error_msg : ")
-			app_log.info(self.error_msg)
+			app_log.warning("\n... get_error_message / self.error_msg : %s ", self.error_msg )
 		
 		except:
 			self.error_msg = ""
 
-	def add_error_message_to_slug(self, error_string ) : 
+	def add_error_message_to_slug(self, error_string, args_to_delete=[] ) : 
 		""" add an "error" arg to url slug """
 
 		# print "... add_error_message_to_slug / slug_ : "
@@ -102,18 +101,24 @@ class BaseHandler(tornado.web.RequestHandler):
 		# add error arg to existing slug
 		else : 
 			# clean existing slug from existing error arg if any
-			slug_without_error = deepcopy(slug_)
+			slug_without_error = deepcopy(slug_)			
+			
+			for arg_to_delete in args_to_delete + DEFAULT_ERROR_ARGS_TO_DELETE : 
 
-			# delete previous error
-			try : 
-				del slug_without_error["error"]
-			except :
-				pass
-			# delete xsrf code
-			try : 
-				del slug_without_error["_xsrf"]
-			except :
-				pass
+				# delete previous error
+				# try : 
+				# 	del slug_without_error["error"]
+				# except :
+				# 	pass
+				# # delete xsrf code
+				# try : 
+				# 	del slug_without_error["_xsrf"]
+				# except :
+				# 	pass
+				try : 
+					del slug_without_error[arg_to_delete]
+				except :
+					pass
 
 			app_log.warning("... add_error_message_to_slug / slug_without_error : \n %s ", pformat(slug_without_error) )
 			# print "... add_error_message_to_slug / slug_without_error : "
@@ -263,6 +268,25 @@ class BaseHandler(tornado.web.RequestHandler):
 		print 
 
 		return counts
+
+	def count_docs_by_field(self, coll_name="data", field_name="spider_id") :
+		"""count all documents in a collection and aggregate by a field"""
+
+		coll = self.choose_collection(coll_name=coll_name)
+
+		count_by_field = coll.aggregate( 	[{
+											"$group" : 
+												{ 
+												"_id" : "${}".format(field_name), 
+												"total_docs" : { "$sum" : 1 }
+												} 
+											}]
+										)
+
+		count_list = list(count_by_field)
+		count_by_field_dict = { i["_id"] : i["total_docs"] for i in count_list }
+
+		return count_by_field_dict
 
 	def get_datamodel_fields(self, query=None):
 		"""return fields from query as list"""

@@ -127,6 +127,8 @@ class MongodbPipeline(object):
 			self.coll_data.delete_many({ "spider_id" : self.spider_id })
 		print 
 
+
+
 	def close_spider(self, spider) :
 		## clean up when spider is closed
 		

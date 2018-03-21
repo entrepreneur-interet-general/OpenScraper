@@ -592,6 +592,10 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 		app_log.info("ContributorsHandler.get / contributors[0] : \n %s " , pformat(contributors[0]) )
 		print '.....\n'
 
+		# count docs by spider_id
+		count_docs_by_spiders = self.count_docs_by_field(coll_name="data", field_name="spider_id")
+		app_log.info("count_docs_by_spiders : \n %s",  pformat(count_docs_by_spiders) )
+
 		### operations if there is data
 		pagination_dict = None
 		if is_data : 
@@ -600,22 +604,25 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 			
 			# make pagination 
 			pagination_dict = self.wrap_pagination( 
-									page_n=query_contrib["page_n"], 
-									page_n_max=page_n_max
-									)
+									page_n		= query_contrib["page_n"], 
+									page_n_max	= page_n_max
+								)
 			app_log.info("ContributorsHandler / pagination_dict : \n %s ", pformat(pagination_dict) )
 			# print pagination_dict
 
 		self.render(
 			"contributors_view.html",
-			page_title  		= app_main_texts["main_title"],
-			site_section		= self.site_section, 
-			query_obj			= query_contrib,
-			contributors 		= contributors,
-			is_contributors 	= is_data,
-			pagination_dict		= pagination_dict,
-			error_msg			= self.error_msg,
-			is_user_connected 	= self.is_user_connected
+			page_title  			= app_main_texts["main_title"],
+			site_section			= self.site_section, 
+
+			query_obj				= query_contrib,
+			contributors 			= contributors,
+			is_contributors 		= is_data,
+			count_docs_by_spiders 	= count_docs_by_spiders,
+
+			pagination_dict			= pagination_dict,
+			error_msg				= self.error_msg,
+			is_user_connected 		= self.is_user_connected
 		)
 
 
@@ -657,7 +664,12 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 				create_or_update	= "update"
 				contributor			= self.application.coll_spiders.find_one({"_id": ObjectId(spider_id)})
 			except :
-				self.redirect("/404")
+				app_log.warning("ContributorEditHandler.get --- !!! spider_id -%s- not found", spider_id ) 
+				
+				self.error_msg = self.add_error_message_to_slug( 
+									error_string="there is no spider configuration with -%s- spider_id in the DB" %(str(spider_id)),
+									)
+				self.redirect("/contributors" + self.error_msg)
 
 		# spider doesn't exist : add form
 		else :
@@ -765,7 +777,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			self.redirect("/contributors")
 
 
-### TO DO : not ready yet
+### TO DO 
 class ContributorDeleteHandler(BaseHandler) : 
 	"""
 	delete a spider config
@@ -773,14 +785,113 @@ class ContributorDeleteHandler(BaseHandler) :
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
 	def get(self, spidername=None):
-		print "\nContributorDeleteHandler.get / contributors :"
-		self.redirect("/404")
+		
+		print
+		app_log.warning("ContributorDeleteHandler.get / contributors :")
+
+		self.site_section = "contributors"
+
+
+
+		# self.redirect("/404")
+
+		self.render(
+			"contributors_delete.html",
+			page_title  			= app_main_texts["main_title"],
+			site_section			= self.site_section, 
+
+			query_obj				= query_contrib,
+
+			error_msg				= self.error_msg,
+			is_user_connected 		= self.is_user_connected
+		)
 
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
 	def post(self):
-		print "\nContributorDeleteHandler.get / contributors :"
+		
+		print
+		app_log.info("ContributorDeleteHandler.get / contributors :")
+
+
+
+
+
 		self.redirect("/404")
+
+class ContributorResetDataHandler(BaseHandler) : 
+	"""
+	delete a spider config
+	"""
+	@print_separate(APP_DEBUG)
+	@tornado.web.authenticated
+	def get(self):
+
+		print
+		app_log.info("ContributorResetDataHandler.get ..." )
+
+		# catch error if any
+		self.catch_error_message()
+
+		self.site_section = "contributors"
+
+		spider_id = self.get_argument('spider_id', None )
+		app_log.info("ContributorResetDataHandler.get / spider_id : %s", spider_id )
+
+		# spider exists ( edit form ) 
+		if spider_id :
+			try : 
+				create_or_update	= "update"
+				contributor			= self.application.coll_spiders.find_one({"_id": ObjectId(spider_id)})
+			except :
+				app_log.warning("ContributorResetDataHandler.get --- !!! spider_id -%s- not found", spider_id ) 
+				
+				self.error_msg = self.add_error_message_to_slug( 
+									error_string	= "there is no spider configuration with -%s- spider_id in the DB" %(str(spider_id)),
+									args_to_delete 	= QUERY_SPIDER_BY_DEFAULT.keys()
+									)
+				self.redirect("/contributors" + self.error_msg)
+
+		self.render(
+			"contributor_reset_data.html",
+			page_title  			= app_main_texts["main_title"],
+			site_section			= self.site_section, 
+
+			spider_id				= spider_id,
+
+			error_msg				= self.error_msg,
+			is_user_connected 		= self.is_user_connected
+		)
+
+	@print_separate(APP_DEBUG)
+	@tornado.web.authenticated
+	def post(self):
+
+		print 
+		app_log.info("ContributorResetDataHandler.post ... " )
+
+		app_log.info("ContributorResetDataHandler.post / request.arguments : \n %s ", pformat(self.request.arguments ) )
+
+
+		# TO DO : form validation 
+
+		### get reset choice + data validation
+		spider_id	= self.get_argument("spider_id")
+		app_log.info("ContributorResetDataHandler.post / spider_id : %s", spider_id )
+
+		is_reset	= self.get_argument("reset_data")
+		app_log.info("ContributorResetDataHandler.post / is_reset : %s", is_reset )
+		
+		# reset collection here
+		if is_reset == "true" :
+
+			app_log.warning("ContributorResetDataHandler.post / DELETING RECORDS for spider_id", spider_id )
+			self.application.coll_data.delete_many({ "spider_id" : spider_id })
+
+		self.redirect("/contributors")
+
+
+
 
 
 #####################################

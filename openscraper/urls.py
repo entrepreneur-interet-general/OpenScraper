@@ -42,11 +42,15 @@ urls = [
 	(r"/datamodel/edit", 		DataModelEditHandler),
 	(r"/datamodel/add_field", 	DataModelAddFieldHandler),
 
-	### contributors : websites to crawl
+	### contributors :the websites to crawl
 	(r"/contributors?([^/]*)?", 			ContributorsHandler),
+	
 	(r"/contributor/add", 					ContributorEditHandler),
 	(r"/contributor/edit/([\w\_\d]+)",		ContributorEditHandler), 
-	(r"/contributor/delete/([\w\_\d]+)", 	ContributorDeleteHandler), 
+	
+	(r"/contributor/reset_data", 			ContributorResetDataHandler), 
+	(r"/contributor/delete", 				ContributorDeleteHandler), 
+	
 
 	### dataset routes
 	# cf : https://stackoverflow.com/questions/10726486/tornado-url-query-parameters 
@@ -55,7 +59,7 @@ urls = [
 	
 
 
-	# TO DO 
+	# TO DO ...
 	### API routes
 	(r"/api/.*", 					PageNotFoundHandler),
 	(r"/api/([^/]*)",				PageNotFoundHandler),
@@ -67,8 +71,8 @@ urls = [
 
 
 	### spider launchers / runners
-	# (r"/crawl/(\w+)", 			SpiderHandler), ### get spidername as input
-	(r"/crawl/([\w\_\d]+)",			SpiderHandler), ### get spidername as input
+	(r"/crawl?([^/]*)?", 			SpiderHandler), ### get spidername as input
+	# (r"/crawl/([\w\_\d]+)",			SpiderHandler), ### get spidername as input
 
 
 	### error route : 404

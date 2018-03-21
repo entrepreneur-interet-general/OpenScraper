@@ -144,16 +144,27 @@ class SpiderHandler(BaseHandler) :
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
 	@onthread
-	def get(self, spider_id = None ):
+	def get(self, slug=None ):
 		
 		print 
 		app_log.info("SpiderHandler.get... ")
 
 		# catch error message if any
-		self.catch_error_message()
+		# self.catch_error_message()
 
-		# count all docs
-		# counts = self.count_all_documents() 
+		app_log.info("SpiderHandler.get / slug : %s", slug )
+
+		slug_ = self.request.arguments
+		app_log.info("SpiderHandler.get / slug_ : \n %s", pformat(slug_) )
+
+		# filter slug
+		query_contrib = self.filter_slug( slug_, slug_class="crawl" )
+		app_log.info("SpiderHandler.get / query_contrib : \n %s ", pformat(query_contrib) )
+
+		# get spider_id to crawl
+		spider_id = query_contrib["spider_id"]
+
+
 
 		app_log.info("SpiderHandler.get / spider_id : %s", spider_id )
 		# print spider_id 
@@ -165,43 +176,38 @@ class SpiderHandler(BaseHandler) :
 		except : 
 			spider_config = None
 		
-		# redirect client before starting spider
-		self.redirect("/contributors")
 		
 		### set default runner if no spider_config
 		if spider_config == None : 
 			
 			app_log.warning("SpiderHandler.get --- !!! spider_id -%s- not found : test spider with test_config", spider_id ) 
 			
-			error_slug = self.add_error_message_to_slug( "ERROR !!! there is no ''%s'' spider_id configuration in the DB ..." %(str(spider_id)) )
+			self.error_msg = self.add_error_message_to_slug( 
+								error_string="ERROR !!! there is no spider configuration with -%s- spider_id in the DB" %(str(spider_id)),
+								args_to_delete=QUERY_CRAWL_BY_DEFAULT.keys()
+								)
 
-			### TO DO : debug this error : "Cannot redirect after headers have been written"
-			self.redirect("/" + error_slug )			
-			# self.render(
-			# 	"index.html",
-			# 	page_title 			= app_main_texts["main_title"],
-			# 	serv_msg 			= "ERROR !!! there is no ''%s'' spider configuration in the DB ..." %(spider_id),
-			# 	user 				= self.current_user,
-			# 	counts 				= counts,
-			# 	error_msg			= self.error_msg,
-			# 	is_user_connected 	= self.is_user_connected
-			# )
+			# redirect client before starting spider
+			self.redirect("/contributors" + self.error_msg )
+			
 		
 		else : 
+
+			# redirect client before starting spider
+			self.redirect("/contributors"  )
+
 			app_log.info("SpiderHandler.get --- spider_id     : ", spider_id )
-			app_log.info("SpiderHandler.get --- spider_config :", pformat(spider_config) )
-			# pprint.pprint(spider_config)
+			app_log.info("SpiderHandler.get --- spider_config :",  pformat(spider_config) )
+
+
+			### asynchronous run the corresponding spider
 
 			app_log.info("SpiderHandler.get --- starting spider runner --- " )
-			### TO DO : CHECK IF REALLY WORKING : asynchronous run the corresponding spider
-			# self.run_generic_spider( run_spider_config = spider_config ) # synchronous
 			
 			### getting data_model lists
 			app_log.info("SpiderHandler.get --- creating data model list from fields in db ")
-			# data_model 			= self.application.coll_model.distinct("field_name")
-			data_model 			= list(self.application.coll_model.find({}))
+			data_model = list(self.application.coll_model.find({}))
 			app_log.info("SpiderHandler.get --- data_model from db : \n %s ", pformat(data_model) )
-			# pprint.pprint(data_model)
 
 			yield self.run_spider( 	
 									datamodel 		= data_model,
@@ -210,20 +216,6 @@ class SpiderHandler(BaseHandler) :
 									current_user_id	= self.get_current_user_id()
 							 ) 
 			# self.finish()
-
-			# self.redirect("/contributors")
-
-		### TO DO : redirect to a page showing crawling status / results
-		# self.redirect("/contributors")
-		
-		# self.render(
-		# 	"index.html",
-		# 	page_title 	= app_main_texts["main_title"],
-		# 	serv_msg 	= "crawling of -%s- finished ..." %(spider_id),
-		# 	user 		= self.current_user,
-		# 	counts 		= counts
-		# )
-
 
 
 
@@ -237,14 +229,16 @@ class SpiderHandler(BaseHandler) :
 						spider_id, 
 						spider_config,
 						current_user_id,
-						callback=None,
+						# callback=None,
 						countdown=3
 					) :
 		
 		print 
 		app_log.info("SpiderHandler.run_spider --- " )
 		
+		### for debugging purposes...
 		app_log.info("SpiderHandler.run_spider / testing the non-blocking decorator with a time.sleep... " )
+		time.sleep(1)
 		app_log.info("SpiderHandler.run_spider ---\n--- start spider %s in %s" %( str(spider_id), countdown ) ) 
 		for i in range( countdown ):
 			time.sleep(1)
@@ -262,6 +256,7 @@ class SpiderHandler(BaseHandler) :
 
 
 
+
 		### TO DO : keep track of error and update status in spider configuration
 		### update scraper_log.is_working
 		app_log.info("SpiderHandler.get --- spider updating...")
@@ -271,6 +266,7 @@ class SpiderHandler(BaseHandler) :
 												)
 		app_log.info("SpiderHandler.get --- spider updated...")
 		
+		### raise result to tell gen is ended
 		raise gen.Return(result)
 		# yield gen.Return(result)
 		# callback(result)

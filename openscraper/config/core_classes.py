@@ -167,7 +167,7 @@ class QueryFromSlug :
 	def __init__(self, slug, slug_class ) : 
 
 		print
-		app_log.info("== QueryfromSlug / ... ")
+		app_log.info("== QueryfromSlug ... ")
 
 		self.slug 		= slug
 		self.slug_class = slug_class
@@ -178,25 +178,30 @@ class QueryFromSlug :
 		self.default_bool 		= []
 		
 		# choose default query depending on slug_class
-		if self.slug_class == "data" : 
+		if self.slug_class 		== "data" : 
 			self.default_query 		= QUERY_DATA_BY_DEFAULT
 			self.default_uniques 	= QUERIES_DATA_ALLOWED_UNIQUE
 			self.default_integers 	= QUERIES_DATA_ALLOWED_INTEGERS
 			self.default_positives 	= QUERIES_DATA_ALLOWED_POSITIVES
 			self.default_bool 		= QUERIES_DATA_ALLOWED_BOOLEAN
-		elif self.slug_class == "contributors" : 
+		elif self.slug_class 	== "contributors" : 
 			self.default_query 		= QUERY_SPIDER_BY_DEFAULT
 			self.default_uniques 	= QUERIES_SPIDER_ALLOWED_UNIQUE
 			self.default_integers 	= QUERIES_SPIDER_ALLOWED_INTEGERS
 			self.default_positives 	= QUERIES_SPIDER_ALLOWED_POSITIVES
 			self.default_bool 		= QUERIES_SPIDER_ALLOWED_BOOLEAN
-
+		elif self.slug_class 	== "crawl" : 
+			self.default_query 		= QUERY_CRAWL_BY_DEFAULT
+			self.default_uniques 	= QUERIES_CRAWL_ALLOWED_UNIQUE
+			self.default_integers 	= QUERIES_CRAWL_ALLOWED_INTEGERS
+			self.default_positives 	= QUERIES_CRAWL_ALLOWED_POSITIVES
+			self.default_bool 		= QUERIES_CRAWL_ALLOWED_BOOLEAN
 
 		# copy chosen default query as backbone
-		self.query 		= deepcopy(self.default_query)
+		self.query 	= deepcopy(self.default_query)
 
 		# populate default query with args from slug if a slug
-		if slug != {} and self.slug_class in ["data", "contributors"] :
+		if slug != {} and self.slug_class in ["data", "contributors", "crawl"] :
 			self.populate_query()
 		
 
