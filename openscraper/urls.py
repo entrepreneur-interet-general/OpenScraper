@@ -75,6 +75,8 @@ urls = [
 	# (r"/crawl/([\w\_\d]+)",			SpiderHandler), ### get spidername as input
 
 
+	(r"/test_bulma_ext", 				TestBulmaHandler),
+
 	### error route : 404
 	(r'.*', 						PageNotFoundHandler),
 

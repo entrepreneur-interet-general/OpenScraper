@@ -20,122 +20,6 @@ from scraper import run_generic_spider
 # cf : http://www.tornadoweb.org/en/stable/guide/queues.html
 # cf : https://emptysqua.re/blog/refactoring-tornado-coroutines/
 
-""" prefilled fields for early tests
-
-	test_data_model = [
-		
-
-		# item source and
-		"link_data", 
-		"link_src", 
-		"link_to",
-
-		# item contents
-		"title", 
-		"img", 
-		"abstract", 
-		"tags", # keywords
-		"raw_date", 
-
-		# item 
-		"area",
-		"adress",
-
-		# item metadata 
-		"author",
-		"date_data",
-		"item_created_at",
-
-		### for debugging purposes
-		"testClass"
-	]
-
-	test_spider_config = {
-
-		### custom mandatory fields
-		"name"  : "TEST", 
-		# "label" : "test_spider_config",
-		"page_url" : "http://quote.toscrape.com", # base url (ex : "https://www.mysite.org")
-		"start_urls" : [ # List of URLs that will be crawled by the parse method
-			'http://quotes.toscrape.com/'
-		],
-
-		### custom notes
-		"notes" : u"test configuration for debugging / developping purposes...",
-
-		### settings and logging fields
-		"error_array" : [],
-		"item_count": 0, # will be incremented each time a new item is created
-		"item_count_depth_1" : 0,# will be incremented each time an item is completed in detailed page
-		"LIMIT" : 10, # The number of pages where the spider will stop
-		"page_count" : 1, # The number of pages already scraped
-		"download_delay" : 0, # The delay in seconds between each request. some website will block too many requests
-
-
-		### custom boolean on whether the page contains complete items or need to follow links
-		"parse_follow" : False, 
-
-		### custom info if website needs AJAX requests...
-		"page_needs_splash" : False,
-
-		### custom xpaths for next_page, filled by user
-		"next_page_xpath" :'//li[@class="next"]/a/@href', 
-		# "action_xpath" : "",  
-
-		### custom xpaths for item, filled by user
-		"abstract_xpath" : './span[@class="text"]/text()',
-		"author_xpath" : './/small[@class="author"]/text()',
-		"tags_xpath" : './/div[@class="tags"]/a[@class="tag"]/text()',
-		"rawdate_xpath" : ""
-	} 
-
-	avise_spider_config = {
-		
-		### mandatory fields
-		"name" : "avise",
-		"label" : "Avise",
-
-		"page_url" : "http://www.avise.org",
-		"start_urls" : ['http://www.avise.org/portraits', ],
-
-		### notes
-		"notes" : u"test configuration for debugging / developping purposes...",
-
-		### settings and logging fields
-		"error_array" : [],
-		"item_count": 0, # will be incremented each time a new item is created
-		"item_count_depth_1" : 0,# will be incremented each time an item is completed in detailed page
-		"LIMIT" : 1, # The number of pages where the spider will stop
-		"page_count" : 1, # The number of pages already scraped
-		"download_delay" : 0, # The delay in seconds between each request. some website will block too many requests
-
-		"list_xpath_selector" : '//div[@class:"view-content"]//div[@onclick]',
-		"next_page_xpath" : '//li[@class:"pager-next"]/a/@href',
-
-		# 
-		"img_xpath" : './/image/@*[name():"xlink:href"]',
-		"link_xpath" : './/h2/a/@href',
-		"abstract_xpath" : './/div[@class:"field-item even"]/text()',
-		"title_xpath" : './/h2/a/text()',
-
-		# In action page
-		"date_xpath" : 	'//div[@class:"field field--name-field-created-year field--type-text field--label-inline ' \
-						'clearfix"]//div[@class:"field-item even"]/text()',
-		"area_xpath" : 	'//div[@class:"addressfield-container-inline locality-block country-FR' \
-						'"]/span/text()',
-		"key_words_xpath" : '//div[@class:"field field--name-field-portrait-domain ' \
-						'field--type-text field--label-inline clearfix"]' \
-						'//div[@class:"field-item even"]//text()',
-		"contact_xpath" : '//div[@id:"node-portrait-full-group-portrait-coordonnees"]//text()',
-		"video_xpath" : "",
-		"state_xpath" : "",
-		"project_holder_xpath" : '//div[@id:"node-portrait-full-group-portrait-coordonnees"]' \
-								'//div[@class:"name-block"]/text()',
-		"partner_xpath" : "",
-		"economic_xpath" : "",
-	}
-"""
-
 
 
 
@@ -174,7 +58,7 @@ class SpiderHandler(BaseHandler) :
 		### retrieve spider config from its name in the db
 		# spider_config = self.application.coll_spiders.find_one({"scraper_config.spidername": spidername})
 		try : 
-			spider_config = self.application.coll_spiders.find_one( {"_id": spider_id_obj } )
+			spider_config = self.application.coll_spiders.find_one( {"_id": spider_oid } )
 		except : 
 			spider_config = None
 		
@@ -248,7 +132,7 @@ class SpiderHandler(BaseHandler) :
 		### for debugging purposes...
 		app_log.info("SpiderHandler.run_spider / testing the non-blocking decorator with a time.sleep... " )
 		time.sleep(1)
-		app_log.info("SpiderHandler.run_spider ---\n--- start spider %s in %s" %( str(spider_id), countdown ) ) 
+		# app_log.info("SpiderHandler.run_spider ---\n--- start spider %s in %s" %( str(spider_id), countdown ) ) 
 		for i in range( countdown ):
 			time.sleep(1)
 			app_log.info("SpiderHandler.run_spider ---\n--- start spider %s in %s" %( str(spider_id), countdown-i ) ) 

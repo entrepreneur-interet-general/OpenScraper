@@ -1071,8 +1071,9 @@ class FormHandler(BaseHandler) :
 
 		self.render(
 			"form_instance.html",
-			page_title = app_main_texts["main_title"],
-			form = form
+			page_title 			= app_main_texts["main_title"],
+			form 				= form,
+			is_user_connected 	= self.is_user_connected
 		)
 
 	@print_separate(APP_DEBUG)
@@ -1084,6 +1085,24 @@ class FormHandler(BaseHandler) :
 		form = SampleForm(self.request.arguments)
 		print "\nFormHandler.post / spider_config_form : "
 		pprint.pprint( form )
+
+
+class TestBulmaHandler(BaseHandler) : 
+	"""
+	test with basic Bulma extensions
+	"""
+	@print_separate(APP_DEBUG)
+	def get(self):
+
+		print
+		app_log.info("TestBulmaHandler.get... ")
+
+
+		self.render(
+			"test_bulma_extensions.html",
+			page_title = app_main_texts["main_title"],
+			is_user_connected 		= self.is_user_connected
+		)
 
 
 ########################

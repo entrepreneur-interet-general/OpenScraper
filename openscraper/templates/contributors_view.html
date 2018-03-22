@@ -141,13 +141,25 @@
 						{# set global variables #}
 						{% set contrib_id = str(contrib['_id']) %}
 
+						{% set start_urls 			= contrib["scraper_config"].get("start_urls", [] ) %}
+
 						{% set is_working 			= contrib["scraper_log"].get("is_working", False ) %}
 						{% set is_running 			= contrib["scraper_log"].get("is_running", False ) %}
 						{% set is_tested  			= contrib["scraper_log"].get("is_tested", False ) %}
 						{# { % set is_data_available 	= contrib["scraper_log"].get("is_data_available", False ) %} #}
 
+						{# set hrefs #}
+						{% set href_test_crawl = "" %}
+						{% if start_urls != [] %}
+							{% set href_test_crawl = "/crawl?spider_id=%s&test=true&test_limit=1" %( contrib_id ) %}
+						{% end %}
 
-						{# set some UI variables #}
+						{% set href_crawl = "" %}
+						{% if is_working %}
+							{% set href_crawl  = "/crawl?spider_id=%s" %( contrib_id )  %}
+						{% end %}
+
+						{# set other hrefs and some UI variables #}
 						{% set count_data = 0 %}
 						{% set href_data  = "" %}
 						{% set href_reset = "" %}								
@@ -202,7 +214,7 @@
 
 							{# start urls #}
 							<td>
-								{% for url_ in contrib["scraper_config"]["start_urls"] %} 
+								{% for url_ in start_urls %} 
 									<a href="{{ url_ }}" target="_blank"> 
 										<span class="tag is-white">
 											<span class="icon is-small"><i class="fas fa-external-link-alt"></i></span> 
@@ -229,7 +241,10 @@
 							{# test spider #}
 							<td> 
 								<a class="has-text-centered button is-warning is-rounded is-small"
-									href="/crawl?spider_id={{ contrib_id }}&test=true&test_limit=1" 
+									href="{{ href_test_crawl }}" 
+									{% if start_urls == [] %}
+									disabled
+									{% end %}
 									>
 									<span class="icon is-small"><i class="fas fa-step-forward"></i></span>
 									<span>test</span>
@@ -244,11 +259,17 @@
 									<span class="icon has-text-primary">
 										<i class="fas fa-check-square"></i>
 									</span>
-								
-								{% else %}
+
+								{% elif start_urls != [] %}
+									<span class="icon has-text-warning">
+										<i class="is-danger fas fa-exclamation-triangle "></i>
+									</span>
+
+								{% elif start_urls == [] %}
 									<span class="icon has-text-danger">
 										<i class="is-danger fas fa-exclamation-circle "></i>
 									</span>
+
 								{% end %}
 							
 							</td>
@@ -257,7 +278,7 @@
 							{# spider run crawler #}
 							<td> 
 								<a class="has-text-centered button is-warning is-rounded is-small"
-									href="/crawl?spider_id={{ contrib_id }}" 
+									href="{{ href_crawl }}" 
 									{% if not is_working %}
 										disabled
 									{% end %}

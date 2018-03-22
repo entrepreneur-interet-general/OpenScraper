@@ -1,0 +1,715 @@
+
+{% extends "main.html" %}
+
+
+{% block body %}
+
+
+
+
+<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-tagsinput.min.css') }}">
+<script type="text/javascript" language="javascript" src="{{ static_url ('css/bulma-ext/bulma-tagsinput.min.js') }}"></script>
+
+<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-badge.min.css') }}">
+
+<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-divider.min.css') }}">
+
+<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-tooltip.min.css') }}">
+
+<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-checkradio.min.css') }}">
+
+<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-slider.min.css') }}">
+<script type="text/javascript" language="javascript" src="{{ static_url ('css/bulma-ext/bulma-slider.min.js') }}"></script>
+
+<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-pricingtable.min.css') }}">
+
+<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-steps.min.css') }}">
+<script type="text/javascript" language="javascript" src="{{ static_url ('css/bulma-ext/bulma-steps.min.js') }}"></script>
+
+<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-timeline.min.css') }}">
+
+<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-accordion.min.css') }}">
+<script type="text/javascript" language="javascript" src="{{ static_url ('css/bulma-ext/bulma-accordion.min.js') }}"></script>
+
+<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-carousel.min.css') }}">
+<script type="text/javascript" language="javascript" src="{{ static_url ('css/bulma-ext/bulma-carousel.min.js') }}"></script>
+
+<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-switch.min.css') }}">
+
+
+<br>
+
+<section class="section">
+	
+	<h1>
+		BULMA EXTENSIONS SNIPPETS
+	</h1>
+
+
+	<hr>
+
+
+
+	<div class="container">
+
+		<br>
+
+
+		{# tags extension #}
+		{# https://wikiki.github.io/form/tagsinput/ #}
+		<div>
+			<br>
+			<input class="input" type="tags" placeholder="Add Tag" value="Tag1,Tag2,Tag3">
+			<br>
+		</div>
+
+
+
+
+
+		<hr>
+
+
+
+
+
+		{# badge extension #}
+		{# https://wikiki.github.io/elements/badge/ #}
+		<div>
+			<div class="columns">
+				<div class="column">
+					<span class="badge" data-badge="">
+					Notifications
+					</span>
+				</div>
+				<div class="column">
+					<span class="badge is-badge-success" data-badge="">
+					Notifications
+					</span>
+				</div>
+				<div class="column">
+					<span class="badge is-badge-warning" data-badge="">
+					Notifications
+					</span>
+				</div>
+				<div class="column">
+					<span class="badge is-badge-danger" data-badge="">
+					Notifications
+					</span>
+				</div>
+				</div>
+
+				<div class="columns">
+				<div class="column">
+					<span class="badge" data-badge="8">
+					Notifications
+					</span>
+				</div>
+				<div class="column">
+					<span class="badge is-badge-success" data-badge="88">
+					Notifications
+					</span>
+				</div>
+				<div class="column">
+					<span class="badge is-badge-danger" data-badge="888">
+					Notifications
+					</span>
+				</div>
+				</div>
+
+				<div class="block">
+				<button class="button badge" data-badge="">Button</button>
+				<button class="button badge" data-badge="8">Button</button>
+				</div>
+
+				<div class="block">
+				<button class="button is-primary badge" data-badge="">Button</button>
+				<button class="button is-info badge" data-badge="8">Button</button>
+			</div>		
+		</div>
+
+
+
+
+		<hr>
+
+
+
+		{# divider extension #}
+		{# https://wikiki.github.io/layout/divider/ #}
+		<div>
+			<br>
+
+			<div class="is-divider" data-content="OR">
+			</div>
+
+			<br>
+
+			<div class="columns">
+				<div class="column"></div>
+				<div class="is-divider-vertical" data-content="OR"></div>
+				<div class="column"></div>
+			</div>
+
+		</div>
+
+
+
+		<hr>
+
+
+
+		{# tooltip #}
+		{# https://wikiki.github.io/elements/tooltip/ #}
+		<div class="column">
+			
+			<div class="columns is-multiline text-center">
+				<div class="column">
+					<button class="button is-primary tooltip" data-tooltip="Tooltip Text">top tooltip</button>
+				</div>
+				<div class="column">
+					<button class="button is-primary tooltip is-tooltip-right" data-tooltip="Tooltip Text">right tooltip</button>
+				</div>
+				<div class="column">
+					<button class="button is-primary tooltip is-tooltip-bottom" data-tooltip="Tooltip Text">bottom tooltip</button>
+				</div>
+				<div class="column">
+					<button class="button is-primary tooltip is-tooltip-left" data-tooltip="Tooltip Text">left tooltip</button>
+				</div>
+			</div>
+
+			<br>
+
+			<div class="columns is-multiline text-center">
+				<div class="column">
+					<button class="button is-tooltip-primary tooltip" data-tooltip="Tooltip Text">Primary tooltip</button>
+				</div>
+				<div class="column">
+					<button class="button is-tooltip-info tooltip" data-tooltip="Tooltip Text">Info tooltip</button>
+				</div>
+				<div class="column">
+					<button class="button is-tooltip-success tooltip" data-tooltip="Tooltip Text">Success tooltip</button>
+				</div>
+				<div class="column">
+					<button class="button is-tooltip-warning tooltip" data-tooltip="Tooltip Text">Warning tooltip</button>
+				</div>
+				<div class="column">
+					<button class="button is-tooltip-danger tooltip" data-tooltip="Tooltip Text">Danger tooltip</button>
+				</div>
+			</div>
+
+
+		</div>
+
+
+
+		<hr>
+
+		
+
+		{# checkradio extension #}
+		{# https://wikiki.github.io/form/checkradio/ #}
+		<div>
+			<div class="field">
+				<input class="is-checkradio" id="exampleCheckbox" type="checkbox" name="exampleCheckbox" checked="checked">
+				<label for="exampleCheckbox">Check me</label>
+			</div>
+			<div class="field">
+				<input class="is-checkradio" id="exampleRadioInline1" type="radio" name="exampleRadioInline" checked="checked">
+				<label for="exampleRadioInline1">Option 1</label>
+				<input class="is-checkradio" id="exampleRadioInline2" type="radio" name="exampleRadioInline">
+				<label for="exampleRadioInline2">Option 2</label>
+			</div>
+		</div>
+
+
+
+		<hr>
+
+
+
+		{# sliders extension #}
+		{# https://wikiki.github.io/form/slider/ #}
+		<div>
+
+			<input class="slider is-fullwidth" step="1" min="0" max="100" value="50" type="range">
+			<input class="slider is-fullwidth is-success" step="1" min="0" max="100" value="50" type="range">
+			<input class="slider is-fullwidth is-warning" step="1" min="0" max="100" value="50" type="range">
+			<input class="slider is-fullwidth is-danger" step="1" min="0" max="100" value="50" type="range">
+			<input class="slider is-fullwidth is-info" step="1" min="0" max="100" value="50" type="range">
+
+		</div>
+
+
+
+		<hr>
+
+
+
+		{# pricing table #}
+		{# https://wikiki.github.io/components/pricingtable/ #}
+		<div class="pricing-table">
+
+			<div class="pricing-plan">
+				<div class="plan-header">Starter</div>
+				<div class="plan-price"><span class="plan-price-amount"><span class="plan-price-currency">$</span>20</span>/month</div>
+				<div class="plan-items">
+				<div class="plan-item">20GB Storage</div>
+				<div class="plan-item">100 Domains</div>
+				<div class="plan-item">-</div>
+				<div class="plan-item">-</div>
+				</div>
+				<div class="plan-footer">
+				<button class="button is-fullwidth" disabled="disabled">Current plan</button>
+				</div>
+			</div>
+
+			<div class="pricing-plan is-warning">
+				<div class="plan-header">Startups</div>
+				<div class="plan-price"><span class="plan-price-amount"><span class="plan-price-currency">$</span>40</span>/month</div>
+				<div class="plan-items">
+				<div class="plan-item">20GB Storage</div>
+				<div class="plan-item">25 Domains</div>
+				<div class="plan-item">1TB Bandwidth</div>
+				<div class="plan-item">-</div>
+				</div>
+				<div class="plan-footer">
+				<button class="button is-fullwidth">Choose</button>
+				</div>
+			</div>
+
+			<div class="pricing-plan is-active">
+				<div class="plan-header">Growing Team</div>
+				<div class="plan-price"><span class="plan-price-amount"><span class="plan-price-currency">$</span>60</span>/month</div>
+				<div class="plan-items">
+				<div class="plan-item">200GB Storage</div>
+				<div class="plan-item">50 Domains</div>
+				<div class="plan-item">1TB Bandwidth</div>
+				<div class="plan-item">100 Email Boxes</div>
+				</div>
+				<div class="plan-footer">
+				<button class="button is-fullwidth">Choose</button>
+				</div>
+			</div>
+
+			<div class="pricing-plan is-danger">
+				<div class="plan-header">Enterprise</div>
+				<div class="plan-price"><span class="plan-price-amount"><span class="plan-price-currency">$</span>100</span>/month</div>
+				<div class="plan-items">
+				<div class="plan-item">2TB Storage</div>
+				<div class="plan-item">100 Domains</div>
+				<div class="plan-item">1TB Bandwidth</div>
+				<div class="plan-item">1000 Email Boxes</div>
+				</div>
+				<div class="plan-footer">
+				<button class="button is-fullwidth">Choose</button>
+				</div>
+			</div>
+
+		</div>
+
+
+
+		<hr>
+
+
+
+		{# steps extension #}
+		{# https://wikiki.github.io/components/steps/ #}
+		<div class="steps" id="stepsDemo">
+			
+			<div class="step-item is-active is-success">
+				<div class="step-marker">1</div>
+				<div class="step-details">
+				<p class="step-title">Account</p>
+				</div>
+			</div>
+			<div class="step-item">
+				<div class="step-marker">2</div>
+				<div class="step-details">
+				<p class="step-title">Profile</p>
+				</div>
+			</div>
+			<div class="step-item">
+				<div class="step-marker">3</div>
+				<div class="step-details">
+				<p class="step-title">Social</p>
+				</div>
+			</div>
+			<div class="step-item">
+				<div class="step-marker">4</div>
+				<div class="step-details">
+				<p class="step-title">Finish</p>
+				</div>
+			</div>
+
+			<div class="steps-content">
+				<div class="step-content has-text-centered is-active">
+				<div class="field is-horizontal">
+					<div class="field-label is-normal">
+					<label class="label">Username</label>
+					</div>
+					<div class="field-body">
+					<div class="field">
+						<div class="control">
+						<input class="input" name="username" id="username" type="text" placeholder="Username" autofocus data-validate="require">
+						</div>
+					</div>
+					</div>
+				</div>
+				<div class="field is-horizontal">
+					<div class="field-label is-normal">
+					<label class="label">Password</label>
+					</div>
+					<div class="field-body">
+					<div class="field">
+						<div class="control has-icon has-icon-right">
+						<input class="input" type="password" name="password" id="password" placeholder="Password" data-validate="require">
+						</div>
+					</div>
+					</div>
+				</div>
+				<div class="field is-horizontal">
+					<div class="field-label is-normal">
+					<label class="label">Confirm password</label>
+					</div>
+					<div class="field-body">
+					<div class="field">
+						<div class="control has-icon has-icon-right">
+						<input class="input" type="password" name="password_confirm" id="password_confirm" placeholder="Confirm password" data-validate="require">
+						</div>
+					</div>
+					</div>
+				</div>
+				</div>
+				<div class="step-content has-text-centered">
+				<div class="field is-horizontal">
+					<div class="field-label is-normal">
+					<label class="label">Firstname</label>
+					</div>
+					<div class="field-body">
+					<div class="field">
+						<div class="control">
+						<input class="input" name="firstname" id="firstname" type="text" placeholder="Firstname" autofocus data-validate="require">
+						</div>
+					</div>
+					</div>
+				</div>
+				<div class="field is-horizontal">
+					<div class="field-label is-normal">
+					<label class="label">Last name</label>
+					</div>
+					<div class="field-body">
+					<div class="field">
+						<div class="control has-icon has-icon-right">
+						<input class="input" type="text" name="lastname" id="lastname" placeholder="Last name" data-validate="require">
+						</div>
+					</div>
+					</div>
+				</div>
+				<div class="field is-horizontal">
+					<div class="field-label is-normal">
+					<label class="label">Email</label>
+					</div>
+					<div class="field-body">
+					<div class="field">
+						<div class="control has-icon has-icon-right">
+						<input class="input" type="email" name="email" id="email" placeholder="Email" data-validate="require">
+						</div>
+					</div>
+					</div>
+				</div>
+				</div>
+				<div class="step-content has-text-centered">
+				<div class="field is-horizontal">
+					<div class="field-label is-normal">
+					<label class="label">Facebook account</label>
+					</div>
+					<div class="field-body">
+					<div class="field">
+						<div class="control">
+						<input class="input" name="facebook" id="facebook" type="text" placeholder="Facebook account url" autofocus data-validate="require">
+						</div>
+					</div>
+					</div>
+				</div>
+				<div class="field is-horizontal">
+					<div class="field-label is-normal">
+					<label class="label">Twitter account</label>
+					</div>
+					<div class="field-body">
+					<div class="field">
+						<div class="control">
+						<input class="input" name="twitter" id="twitter" type="text" placeholder="Twitter account url" autofocus data-validate="require">
+						</div>
+					</div>
+					</div>
+				</div>
+				</div>
+				<div class="step-content has-text-centered">
+				<h1 class="title is-4">Your account is now created !</h1>
+				</div>
+			</div>
+			<div class="steps-actions">
+				<div class="steps-action">
+				<a href="#" data-nav="previous" class="button is-light">previous</a>
+				</div>
+				<div class="steps-action">
+				<a href="#" data-nav="next" class="button is-light">Next</a>
+				</div>
+			</div>
+		</div>
+
+
+
+		<hr>
+
+
+
+		{# timeline extension #}
+		{# https://wikiki.github.io/components/timeline/ #}
+		<div class="timeline">
+			<header class="timeline-header">
+				<span class="tag is-medium is-primary">Start</span>
+			</header>
+			<div class="timeline-item is-primary">
+				<div class="timeline-marker"></div>
+				<div class="timeline-content">
+				<p class="heading">January 2016</p>
+				<p>Timeline content - Can include any HTML element</p>
+				</div>
+			</div>
+			<div class="timeline-item is-warning">
+				<div class="timeline-marker is-image is-32x32">
+				<img src="http://bulma.io/images/placeholders/32x32.png">
+				</div>
+				<div class="timeline-content">
+				<p class="heading">February 2016</p>
+				<p>Timeline content - Can include any HTML element</p>
+				</div>
+			</div>
+			<header class="timeline-header">
+				<span class="tag is-primary">2017</span>
+			</header>
+			<div class="timeline-item is-danger">
+				<div class="timeline-marker is-icon">
+				<i class="fa fa-flag"></i>
+				</div>
+				<div class="timeline-content">
+				<p class="heading">March 2017</p>
+				<p>Timeline content - Can include any HTML element</p>
+				</div>
+			</div>
+			<header class="timeline-header">
+				<span class="tag is-medium is-primary">End</span>
+			</header>
+
+		</div>
+
+
+
+
+		<hr>
+
+
+
+		{# accordion extension #}
+		{# https://wikiki.github.io/components/accordion/ #}
+		<div>
+			<section class="accordions">
+				
+				<article class="accordion is-active">
+					<div class="accordion-header toggle">
+					<p>Hello World</p>
+					</div>
+					<div class="accordion-body">
+					<div class="accordion-content">
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit. <strong>Pellentesque risus mi</strong>, tempus quis placerat ut, porta nec nulla. Vestibulum rhoncus ac ex sit amet fringilla. Nullam gravida purus diam, et dictum <a>felis venenatis</a> efficitur. Aenean ac <em>eleifend lacus</em>, in mollis lectus. Donec sodales, arcu et sollicitudin porttitor, tortor urna tempor ligula, id porttitor mi magna a neque. Donec dui urna, vehicula et sem eget, facilisis sodales sem.
+					</div>
+					</div>
+				</article>
+				
+				<article class="accordion">
+					<div class="accordion-header toggle">
+					<p>Hello World</p>
+					<button class="toggle" aria-label="toggle"></button>
+					</div>
+					<div class="accordion-body">
+					<div class="accordion-content">
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit. <strong>Pellentesque risus mi</strong>, tempus quis placerat ut, porta nec nulla. Vestibulum rhoncus ac ex sit amet fringilla. Nullam gravida purus diam, et dictum <a>felis venenatis</a> efficitur. Aenean ac <em>eleifend lacus</em>, in mollis lectus. Donec sodales, arcu et sollicitudin porttitor, tortor urna tempor ligula, id porttitor mi magna a neque. Donec dui urna, vehicula et sem eget, facilisis sodales sem.
+					</div>
+					</div>
+				</article>
+			
+				<article class="accordion">
+					<div class="accordion-header toggle">
+					<p>Hello World</p>
+					<button class="toggle" aria-label="toggle"></button>
+					</div>
+					<div class="accordion-body">
+					<div class="accordion-content">
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit. <strong>Pellentesque risus mi</strong>, tempus quis placerat ut, porta nec nulla. Vestibulum rhoncus ac ex sit amet fringilla. Nullam gravida purus diam, et dictum <a>felis venenatis</a> efficitur. Aenean ac <em>eleifend lacus</em>, in mollis lectus. Donec sodales, arcu et sollicitudin porttitor, tortor urna tempor ligula, id porttitor mi magna a neque. Donec dui urna, vehicula et sem eget, facilisis sodales sem.
+					</div>
+					</div>
+				</article>
+
+			</section>
+		</div>
+
+
+
+
+		<hr>
+
+
+
+		{# carousel extension #}
+		{# https://wikiki.github.io/components/carousel/ #}
+		<div>
+
+			<div class='carousel carousel-animated carousel-animate-slide'>
+				<div class='carousel-container'>
+					<div class='carousel-item has-background is-active'>
+					<img class="is-background" src="https://wikiki.github.io/images/merry-christmas.jpg" alt="" width="640" height="310" />
+					<div class="title">Merry Christmas</div>
+					</div>
+					<div class='carousel-item has-background'>
+					<img class="is-background" src="https://wikiki.github.io/images/singer.jpg" alt="" width="640" height="310" />
+					<div class="title">Original Gift: Offer a song with <a href="https://lasongbox.com" target="_blank">La Song Box</a></div>
+					</div>
+					<div class='carousel-item has-background'>
+					<img class="is-background" src="https://wikiki.github.io/images/sushi.jpg" alt="" width="640" height="310" />
+					<div class="title">Sushi time</div>
+					</div>
+					<div class='carousel-item has-background'>
+					<img class="is-background" src="https://wikiki.github.io/images/life.jpg" alt="" width="640" height="310" />
+					<div class="title">Life</div>
+					</div>
+				</div>
+				<div class="carousel-navigation is-overlay">
+					<div class="carousel-nav-left">
+					<i class="fa fa-chevron-left" aria-hidden="true"></i>
+					</div>
+					<div class="carousel-nav-right">
+					<i class="fa fa-chevron-right" aria-hidden="true"></i>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+
+
+
+
+
+		<hr>
+
+
+
+
+
+		{# switch extension #}
+		{# https://wikiki.github.io/form/switch/ #}
+		<div>
+			
+			<div class="columns">
+				<div class="column">
+					<div class="field">
+					<input id="switchRoundedOutlinedDefault" type="checkbox" name="switchRoundedOutlinedDefault" class="switch is-rounded is-outlined" checked="checked">
+					<label for="switchRoundedOutlinedDefault">Switch rounded outlined default</label>
+					</div>
+
+					<div class="field">
+					<input id="switchRoundedOutlinedSuccess" type="checkbox" name="switchRoundedOutlinedSuccess" class="switch is-rounded is-outlined is-success" checked="checked">
+					<label for="switchRoundedOutlinedSuccess">Switch rounded outlined success</label>
+					</div>
+
+					<div class="field">
+					<input id="switchRoundedOutlinedWarning" type="checkbox" name="switchRoundedOutlinedWarning" class="switch is-rounded is-outlined is-warning" checked="checked">
+					<label for="switchRoundedOutlinedWarning">Switch rounded outlined warning</label>
+					</div>
+
+					<div class="field">
+					<input id="switchRoundedOutlinedDanger" type="checkbox" name="switchRoundedOutlinedDanger" class="switch is-rounded is-outlined is-danger" checked="checked">
+					<label for="switchRoundedOutlinedDanger">Switch rounded outlined danger</label>
+					</div>
+
+					<div class="field">
+					<input id="switchRoundedOutlinedInfo" type="checkbox" name="switchRoundedOutlinedInfo" class="switch is-rounded is-outlined is-info" checked="checked">
+					<label for="switchRoundedOutlinedInfo">Switch rounded outlined info</label>
+					</div>
+
+					<div class="field">
+					<input id="switchThinRoundedOutlinedDefault" type="checkbox" name="switchThinRoundedOutlinedDefault" class="switch is-thin is-rounded is-outlined" checked="checked">
+					<label for="switchThinRoundedOutlinedDefault">Switch Thin rounded outlined default</label>
+					</div>
+
+					<div class="field">
+					<input id="switchThinRoundedOutlinedSuccess" type="checkbox" name="switchThinRoundedOutlinedSuccess" class="switch is-thin is-rounded is-outlined is-success" checked="checked">
+					<label for="switchThinRoundedOutlinedSuccess">Switch Thin rounded outlined success</label>
+					</div>
+
+					<div class="field">
+					<input id="switchThinRoundedOutlinedWarning" type="checkbox" name="switchThinRoundedOutlinedWarning" class="switch is-thin is-rounded is-outlined is-warning" checked="checked">
+					<label for="switchThinRoundedOutlinedWarning">Switch Thin rounded outlined warning</label>
+					</div>
+
+					<div class="field">
+					<input id="switchThinRoundedOutlinedDanger" type="checkbox" name="switchThinRoundedOutlinedDanger" class="switch is-thin is-rounded is-outlined is-danger" checked="checked">
+					<label for="switchThinRoundedOutlinedDanger">Switch Thin rounded outlined danger</label>
+					</div>
+
+					<div class="field">
+					<input id="switchThinRoundedOutlinedInfo" type="checkbox" name="switchThinRoundedOutlinedInfo" class="switch is-thin is-rounded is-outlined is-info" checked="checked">
+					<label for="switchThinRoundedOutlinedInfo">Switch Thin rounded outlined info</label>
+					</div>
+				</div>
+
+				<div class="column">
+
+					<div class="field">
+					<input id="switchRoundedDefault" type="checkbox" name="switchRoundedDefault" class="switch is-rounded" checked="checked">
+					<label for="switchRoundedDefault">Switch rounded default</label>
+					</div>
+
+					<div class="field">
+					<input id="switchRoundedSuccess" type="checkbox" name="switchRoundedSuccess" class="switch is-rounded is-success" checked="checked">
+					<label for="switchRoundedSuccess">Switch rounded success</label>
+					</div>
+
+					<div class="field">
+					<input id="switchRoundedWarning" type="checkbox" name="switchRoundedWarning" class="switch is-rounded is-warning" checked="checked">
+					<label for="switchRoundedWarning">Switch rounded warning</label>
+					</div>
+
+					<div class="field">
+					<input id="switchRoundedDanger" type="checkbox" name="switchRoundedDanger" class="switch is-rounded is-danger" checked="checked">
+					<label for="switchRoundedDanger">Switch rounded danger</label>
+					</div>
+
+					<div class="field">
+					<input id="switchRoundedInfo" type="checkbox" name="switchRoundedInfo" class="switch is-rounded is-info" checked="checked">
+					<label for="switchRoundedInfo">Switch rounded info</label>
+					</div>
+
+				</div>
+		</div>
+
+
+
+
+
+
+
+
+
+
+
+		<hr>
+
+	</div>
+</section>
+
+
+{% end %}
