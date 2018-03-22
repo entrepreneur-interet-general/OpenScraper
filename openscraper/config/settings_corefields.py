@@ -213,7 +213,7 @@ CONTRIBUTOR_CORE_FIELDS = {
 	# scraper - global settings	
 	"scraper_settings" : {
 		"LIMIT" 			: 100,	# max number of pages to be crawled
-		"download_delay" 	: 0,	# delay
+		"download_delay" 	: 0.1,	# delay
 		"page_count" 		: 1,	# keep track of how many pages were crawled
 	},
 

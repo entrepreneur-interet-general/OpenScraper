@@ -201,6 +201,10 @@ class GenericSpider(Spider) :
 		
 		self.user_id	= user_id
 		self.spider_id 	= spider_id
+		
+		self.item_count = 0
+		self.page_count = 1
+
 
 		### store spider_config_flat
 		log_scrap.info("--- GenericSpider / spider_config_flat : \n %s ", pformat(spider_config_flat) )
@@ -264,10 +268,11 @@ class GenericSpider(Spider) :
 		for raw_data in raw_items_list :
 			
 			print "\n>>> NEW ITEM " + ">>> >>> "*10, "\n"
-			
-			print raw_data
+			self.item_count += 1
 
-			### instantiate Item to fill from datamodel
+			print ">>> raw_data : \n", raw_data.extract()
+
+			### instantiate Item to fill from datamodel --> cf items.py 
 			itemclass 	= create_item_class( 'GenericItemClass', fields_list = self.dm_item_related )
 			item 		= itemclass()
 
@@ -279,29 +284,40 @@ class GenericSpider(Spider) :
 
 
 			### extract data and feed it to the Item instance based on spider_config_flat
-			# for d_model in self.dm_custom_list : 
-
-			# 	### first, checks if xpath exists in spider_config_flat
-			# 	if d_model in self.spider_config_flat : 
-					
-			# 		### check if field in spider_config_flat is not empty
-			# 		if self.spider_config_flat[ d_model ] != [] and self.spider_config_flat[ d_model ] != "" :
-						
-			# 			### fill item field corresponding to xpath
-			# 			item[ d_model ] = raw_data.xpath(self.spider_config_flat[ d_model ]).extract()
 			item = self.fill_item_from_results_page(raw_data, item)
+			
+			print "\n>>> NEXT ITEM " + ">>> >>> "*10, "\n"
 
 
 
 			### if need to follow to extract all data
 			if self.spider_config_flat["parse_follow"] == True : 
 				
-				item[ 'link_data' ]	= raw_data.xpath(self.follow_xpath).extract_first()			
+				# extract follow link
+				follow_link 	= raw_data.xpath( self.follow_xpath ).extract_first()	
+				log_scrap.info(" --> follow_link RAW : %s ", follow_link )
+
+				# complete follow link if needed
+				if not follow_link.startswith("http"): 
+					separator = ""
+					if not follow_link.startswith("/"):
+						separator = "/"
+					follow_link 	= "{}{}{}".format( self.page_url, separator, follow_link)			
+
+
+				log_scrap.info(" --> follow_link CLEAN : %s ", follow_link )
+
+				item[ 'link_data' ]	= follow_link
+				
 				url 				= item['link_data']
+				log_scrap.info(" --> item : %s ", item )
 
-				# yield scrapy.Request(url, callback=self.parse_detailed_page, meta={'item': item})
-				yield scrapy.Request(url, callback=self.parse_detailed_page, meta={'item': item})
-
+				try : 
+					# yield scrapy.Request(url, callback=self.parse_detailed_page, meta={'item': item})
+					yield scrapy.Request(url, callback=self.parse_detailed_page, meta={'item': item})
+				
+				except :
+					yield item
 
 			else : 			
 				### item completion is finished - yield and so spark pipeline for item (store in db for instance)
@@ -323,6 +339,9 @@ class GenericSpider(Spider) :
 		if is_next_page:
 			
 			print
+
+			self.page_count += 1
+
 			log_scrap.info(" --- GenericSpider.parse >>> NEXT PAGE... \n" )
 			
 			yield response.follow(next_page, callback=self.parse)
@@ -370,17 +389,16 @@ class GenericSpider(Spider) :
 						if dm_field in item : 
 							item[ dm_field ] = item[ dm_field ] + full_data_clean
 						else : 
-							item[ dm_field ] 	= full_data_clean
+							item[ dm_field ] = full_data_clean
 
 					# 	if item[ dm_field ] == [] or item[ dm_field ] == None : 
 					# 		item[ dm_field ] 	= full_data
 					# 	else :
 					# 		item[ dm_field ] 	= item[ dm_field].append(full_data)
 		
-		print "\n>>> ITEM >>>"
+		print "\n>>> ITEM >>> after fill_item_from_results_page >>>"
 		print item
 		print 
-		print "\n>>> NEXT ITEM " + ">>> >>> "*10, "\n"
 
 		return item
 
@@ -390,7 +408,7 @@ class GenericSpider(Spider) :
 		""" """
 
 		log_scrap.info(" === GenericSpider.parse / parse_detailed_page / ... " )
-		# print response._body
+		print response._body
 
 		item = response.meta["item"]
 		item = self.fill_item_from_results_page(response, item)
@@ -421,9 +439,50 @@ class GenericSpider(Spider) :
 			return False, next_page
 
 
+	# def get_link(self, action, xpath=None, data_type="link"):
+	# def get_link(self, raw_data, xpath=None) :
+	# 	"""
+	# 	Used to retrieve links.
+	# 	If no xpath is given, will get the data for the Action's link attribute
+	# 	"""
+		
+	# 	if xpath is None:
+	# 		xpath = self.link_xpath
+	# 	try:
+	# 		link = raw_data.xpath(xpath).extract_first()
+	# 		if link is not None:
+	# 			link = self.add_string_to_complete_url_if_needed( link, page_url_root=None)
+	# 		return link
+		
+	# 	except : 
+	# 		log_scrap.error("... fucking error at : get_link !!! ")
+	# 		return None
+
+	# 	# except AttributeError as e:
+	# 	# 	error = "Error <{}> on " \
+	# 	# 			"{} item n <{}> " \
+	# 	# 			"page <{}>".format(e, data_type, self.item_count, self.page_count)
+	# 	# 	self.error_array.append(error)
+	# 	# 	return None
 
 
+	# def add_string_to_complete_url_if_needed(self, not_complete_url, page_url_root=None):
+	# 	"""
+	# 	adds the missing beggining part of an url with the '/' if needed
+	# 	"""
+	# 	log_scrap.warning("... add_string_to_complete_url_if_needed ... ")
 
+	# 	if page_url_root is None:
+	# 		page_url_root = self.page_url
+		
+	# 	if not not_complete_url.startswith("http"):
+
+	# 		if not not_complete_url.startswith("/"):
+	# 			not_complete_url = "{}{}".format(  "/", not_complete_url)
+			
+	# 		not_complete_url = "{}{}".format( page_url_root, not_complete_url )
+		
+	# 	return not_complete_url
 
 
 
