@@ -137,30 +137,55 @@
 					
 					{% for contrib in contributors %}
 						
-						{% set is_working = contrib["scraper_log"]["is_working"] %}
-						{% set contrib_id = escape (str(contrib['_id'])) %}
 
-						<tr id="{{contrib_id }}" >
-							
-							<th> {{ escape (contrib["infos"]["name"]) }}</th>
-							
+						{# set global variables #}
+						{% set contrib_id = str(contrib['_id']) %}
 
+						{% set is_working 			= contrib["scraper_log"].get("is_working", False ) %}
+						{% set is_running 			= contrib["scraper_log"].get("is_running", False ) %}
+						{% set is_tested  			= contrib["scraper_log"].get("is_tested", False ) %}
+						{# { % set is_data_available 	= contrib["scraper_log"].get("is_data_available", False ) %} #}
+
+
+						{# set some UI variables #}
+						{% set count_data = 0 %}
+						{% set href_data  = "" %}
+						{% set href_reset = "" %}								
+						{% set color_data = "light" %}
+
+						{% if contrib_id in count_docs_by_spiders %}
+							{% set count_data = count_docs_by_spiders[ contrib_id ] %}
+							{% if count_data > 0 %}
+								{% set href_data  = "/dataset/view?spider_id=%s" %( contrib_id ) %}
+								{% set href_reset  = "/contributor/reset_data?spider_id=%s" %( contrib_id ) %}
+								{% set color_data = "info" %}
+							{% end %}
+						{% end %}
+
+
+						<tr id="{{ contrib_id }}" >
+							
+							{# name #}
+							<th> 
+								<a href='{{ escape (contrib["infos"]["page_url"]) }}' target="_blank">
+									{{ escape (contrib["infos"]["name"]) }}
+								</a>
+							</th>
+							
+							{# edit spider #}
 							<td> 
-								{# 	
-								href="/contributor/edit/{{ escape (contrib['scraper_config']['spidername']) }}"  
-								#}
 								<a class="has-text-centered button is-primary is-rounded is-small" 
-									href="/contributor/edit/{{ escape (str(contrib['_id'])) }}" 
+									href="/contributor/edit/{{ contrib_id }}" 
 									>
 									<span class="icon is-small"><i class="fas fa-list"></i></span>
 									<span>edit spider</span>
 								</a> 
 							</td>
 
-
+							{# delete spider #}
 							<td> 
 								<a class="has-text-centered button is-danger is-rounded is-small"
-									href="/contributor/delete?spider_id={{ escape (contrib['scraper_config']['spidername']) }}" 
+									href="/contributor/delete?spider_id={{ contrib_id }}" 
 									 >
 									<span class="icon is-small"><i class="fas fa-trash"></i></span>
 									{# <span>delete</span> #}
@@ -168,22 +193,27 @@
 							</td>
 
 
-
-							<td> {{ escape (contrib["scraper_log"]["added_by"]) }}</td>
-							{# <td> {{ linkify (contrib["infos"]["page_url"]) }}</td> #}
+							{# spider added by #}
+							<td> 
+								{{ escape (contrib["scraper_log"]["added_by"]) }}
+								{# { { linkify (contrib["infos"]["page_url"]) }} #}
+							</td>
 							 
-							<td>
-							{% for url_ in contrib["scraper_config"]["start_urls"] %} 
-								<a href="{{ url_}}" target="_blank"> 
-									<span class="tag is-white">
-										<span class="icon is-small"><i class="fas fa-external-link-alt"></i></span> 
-									</span>
-								</a>
-								{# { { linkify ( url_, extra_params='target="_blank"' )  }} #}
 
-							{% end %}
+							{# start urls #}
+							<td>
+								{% for url_ in contrib["scraper_config"]["start_urls"] %} 
+									<a href="{{ url_ }}" target="_blank"> 
+										<span class="tag is-white">
+											<span class="icon is-small"><i class="fas fa-external-link-alt"></i></span> 
+										</span>
+									</a>
+									{# { { linkify ( url_, extra_params='target="_blank"' )  }} #}
+								{% end %}
 							</td>
 							
+
+
 							{#
 							<td> {{ escape (contrib["scraper_config"]["page_needs_splash"]) }}</td>
 							<td> {{ escape (contrib["scraper_config"]["parse_follow"]) }}</td>
@@ -196,12 +226,10 @@
 
 
 
-
-
-
+							{# test spider #}
 							<td> 
 								<a class="has-text-centered button is-warning is-rounded is-small"
-									href="/crawl?spider_id={{ escape (str(contrib['_id'])) }}&test=true&test_limit=1" 
+									href="/crawl?spider_id={{ contrib_id }}&test=true&test_limit=1" 
 									>
 									<span class="icon is-small"><i class="fas fa-step-forward"></i></span>
 									<span>test</span>
@@ -209,24 +237,27 @@
 							</td>
 
 
-
+							{# spider status : is_working / is_running / ... #}
 							<td class="has-text-centered"> 
+								
 								{% if is_working %}
 									<span class="icon has-text-primary">
 										<i class="fas fa-check-square"></i>
 									</span>
+								
 								{% else %}
 									<span class="icon has-text-danger">
 										<i class="is-danger fas fa-exclamation-circle "></i>
 									</span>
 								{% end %}
+							
 							</td>
 
 
-
+							{# spider run crawler #}
 							<td> 
 								<a class="has-text-centered button is-warning is-rounded is-small"
-									href="/crawl?spider_id={{ escape (str(contrib['_id'])) }}" 
+									href="/crawl?spider_id={{ contrib_id }}" 
 									{% if not is_working %}
 										disabled
 									{% end %}
@@ -236,26 +267,12 @@
 								</a> 
 							</td>
 
-							{# set some varriables #}
-							{% set count_data = 0 %}
-							{% set href_data  = "" %}
-							{% set href_reset  = "" %}								
-							{% set color_data = "light" %}
-
-							{% if str(contrib['_id']) in count_docs_by_spiders %}
-								{% set count_data = count_docs_by_spiders[str(contrib['_id'])] %}
-								{% if count_data > 0 %}
-									{% set href_data  = "/dataset/view?spider_id=%s" %(str(contrib['_id'])) %}
-									{% set href_reset  = "/contributor/reset_data?spider_id=%s" %(str(contrib['_id'])) %}
-									{% set color_data = "info" %}
-								{% end %}
-							{% end %}
 							
 
+							{# spider view data #}
 							<td> 
-
 								<a class="has-text-centered button is-{{color_data}} is-rounded is-small"
-									href="{{href_data}}"
+									href="{{ href_data }}"
 									>
 									<span class="icon is-small">
 										<i class="fas fa-table"></i>
@@ -267,7 +284,7 @@
 							</td>
 
 
-
+							{# spider reset data #}
 							<td> 
 								<a class="has-text-centered button is-{{color_data}} is-rounded is-small"
 									href="{{ href_reset }}"

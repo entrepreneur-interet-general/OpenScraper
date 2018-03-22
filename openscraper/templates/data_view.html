@@ -58,8 +58,9 @@
 
 	<hr>
 
-	{# data table container #}
+	
 
+	{# data table container #}
 	<div class="container" >
 
 		{% if is_data %}
@@ -87,7 +88,14 @@
 							<th>link_src</th>
 							
 							{% for field in datamodel_custom %}
-								<th>{{ field["field_name"] }}</th>
+								
+								{# <th>{ { field["field_name"] }}</th> #}
+								<th>
+									<abbr title="{{ field['field_name'] }}">
+										{{ field['field_name'][:3].capitalize() + "." }}
+									</abbr><br>
+									<p><i>{{ field['field_type'] }}</i></p>
+								</th>
 							{% end %}
 
 						</tr>
@@ -128,6 +136,12 @@
 												
 												{% if type_field == u"tags" %}
 													<span class="tag is-dark"> {{ escape (i) }} </span>
+												{% elif type_field == u"image" %}
+													<figure class="image is-96x96">
+														<img src="{{ escape (i) }}">
+													</figure>
+												{# { % elif type_field == u"text" %}
+													{ { escape (i) }}  #}
 												{% else %}
 													{{ escape (i) }} 
 												{% end %}

@@ -501,4 +501,22 @@ class BaseHandler(tornado.web.RequestHandler):
 		return pagination
 
 
+	def update_spider_log(self, spider_id=None, spider_oid=None, log_to_update=None, value=None) :
+		""" update log of a spider """
 
+		app_log.info("... update_spider_log --- spider_id %s updating / log_to_update : %s", spider_id, log_to_update)
+
+		# for debugging 
+		spider = self.application.coll_spiders.find_one( {"_id": spider_oid } )
+
+		# update
+		if spider != None : 
+			self.application.coll_spiders.update_one( 
+														{"_id"	: spider_oid }, 
+														{"$set" : { "scraper_log.{}".format(log_to_update) : value } },
+														upsert = True
+													)
+			app_log.info("... update_spider_log --- spider updated...")
+
+		else : 
+			app_log.error("... update_spider_log --- THERE IS NO spider_id %s", spider_id)

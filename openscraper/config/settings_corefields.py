@@ -8,30 +8,39 @@ MongoDB instantiated at Application level
 """
 import pprint
 
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 ### USERS ############################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+
 ### to initiate user core fields in mongoDB
 USER_CORE_FIELDS = [
 	
 	"username",
 	"email",
-	"password", 		# TO DO : needs to be hashed at register
+	"password", 					# TO DO : needs to be hashed at register
 
 	"added_at",
 	"modified_at",
 
-	"level_admin",
+	"level_admin",					# TO DO 
+	"spiders_authorized_to_modify", # TO DO 
 
-	"organization",
-	"organization_url",
-	"picture",
-	"logo",
+	"organization",					# TO DO 
+	"organization_url",				# TO DO 
+	"picture",						# TO DO 
+	"logo",							# TO DO 
 
-	"preferences", 
-	"uses", 
-	"public_key"
+	"preferences", 					# TO DO 
+	"uses", 						# TO DO 
+	"public_key"					# TO DO
 ]
 
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 ### DATAMODEL ############################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+
 ### to initiate datamodel core fields in mongoDB
 # field_type options in form and db
 DATAMODEL_FIELDS_TYPES = [
@@ -103,7 +112,10 @@ DATAMODEL_DEFAULT_CUSTOM_FIELDS = [
 ]
 
 
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 ### CONTRIBUTORS ############################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+
 ### radio buttons in 'edit contributor' form
 CONTRIBUTOR_EDIT_FIELDS_RADIO = [
 	"parse_follow", "page_needs_splash"
@@ -212,6 +224,7 @@ CONTRIBUTOR_CORE_FIELDS = {
 		"modified_by" 			: "",		# 
 		"modified_at" 			: None,		# 
 		"is_working" 			: False,	# 
+		"is_running" 			: False,	# 
 		"error_array" 			: [],		# 
 		"item_count" 			: 0,		# 
 		"item_count_depth_1" 	: 0,		# 

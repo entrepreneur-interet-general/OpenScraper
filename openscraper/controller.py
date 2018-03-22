@@ -759,6 +759,8 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 				self.application.coll_spiders.update_one( {"_id": spider_oid}, { "$unset": old_fields } )
 				self.application.coll_spiders.update_one( {"_id": spider_oid}, { "$set"	 : new_config }, upsert=True )
 
+				self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_data_available", value=True)
+
 			else :
 				contributor = contributor_object.full_config_as_dict()
 				# insert new spider to db
@@ -767,11 +769,6 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			print 
 			app_log.info( "ContributorEditHandler.post / contributor : \n %s ", pformat(contributor) ) 
 
-			### redirections for debugging purposes
-			# if spider_id and spider_id!= "new_spider" :
-			# 	self.redirect("/contributor/edit/{}".format(spider_id))
-			# else : 
-			# 	self.redirect("/contributor/add")
 			
 			### redirection
 			self.redirect("/contributors")
@@ -780,44 +777,82 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 ### TO DO 
 class ContributorDeleteHandler(BaseHandler) : 
 	"""
-	delete a spider config
+	completly delete a spider configuration from db
 	"""
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
-	def get(self, spidername=None):
+	def get(self):
 		
 		print
 		app_log.warning("ContributorDeleteHandler.get / contributors :")
 
-		self.site_section = "contributors"
+		# catch error if any
+		self.catch_error_message()
 
+		# self.site_section = "contributors"
 
+		spider_id = self.get_argument('spider_id', None )
+		app_log.info("ContributorDeleteHandler.get / spider_id : %s", spider_id )
 
-		# self.redirect("/404")
+		spider_oid = ObjectId(spider_id)
+
+		# spider exists ( edit form ) 
+		if spider_id :
+			
+			try : 
+				contributor	= self.application.coll_spiders.find_one({"_id": spider_oid })
+			
+			except :
+				app_log.warning("ContributorDeleteHandler.get --- !!! spider_id -%s- not found", spider_id ) 
+				
+				self.error_msg = self.add_error_message_to_slug( 
+									error_string	= "there is no spider configuration with -%s- spider_id in the DB" %(str(spider_id)),
+									args_to_delete 	= QUERY_SPIDER_BY_DEFAULT.keys()
+									)
+				self.redirect("/contributors" + self.error_msg)
 
 		self.render(
-			"contributors_delete.html",
+			"contributor_delete.html",
 			page_title  			= app_main_texts["main_title"],
-			site_section			= self.site_section, 
+			# site_section			= self.site_section, 
 
-			query_obj				= query_contrib,
+			spider_id				= spider_id,
+			contributor				= contributor,
 
 			error_msg				= self.error_msg,
 			is_user_connected 		= self.is_user_connected
 		)
 
+
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
 	def post(self):
+
+		print 
+		app_log.info("ContributorDeleteHandler.post ... " )
+		app_log.info("ContributorDeleteHandler.post / request.arguments : \n %s ", pformat(self.request.arguments ) )
+
+
+		# TO DO : form validation 
+
+		### get reset choice + data validation
+		spider_id	= self.get_argument("spider_id")
+		app_log.info("ContributorDeleteHandler.post / spider_id : %s", spider_id )
+
+		is_delete	= self.get_argument("reset_data")
+		app_log.info("ContributorDeleteHandler.post / is_delete : %s", is_delete )
 		
-		print
-		app_log.info("ContributorDeleteHandler.get / contributors :")
+		# reset collection here
+		if is_delete == "true" :
+
+			app_log.warning("ContributorDeleteHandler.post / DELETING SPIDER FOR spider_id : %s", spider_id )
+			# self.application.coll_spiders.delete_one({ "_id" : ObjectId(spider_id) })
+
+		self.redirect("/contributors")
 
 
+		# self.redirect("/404")
 
-
-
-		self.redirect("/404")
 
 class ContributorResetDataHandler(BaseHandler) : 
 	"""
@@ -833,16 +868,19 @@ class ContributorResetDataHandler(BaseHandler) :
 		# catch error if any
 		self.catch_error_message()
 
-		self.site_section = "contributors"
+		# self.site_section = "contributors"
 
 		spider_id = self.get_argument('spider_id', None )
 		app_log.info("ContributorResetDataHandler.get / spider_id : %s", spider_id )
 
+		spider_oid = ObjectId(spider_id)
+
 		# spider exists ( edit form ) 
 		if spider_id :
+			
 			try : 
-				create_or_update	= "update"
-				contributor			= self.application.coll_spiders.find_one({"_id": ObjectId(spider_id)})
+				contributor	= self.application.coll_spiders.find_one({"_id": spider_oid })
+			
 			except :
 				app_log.warning("ContributorResetDataHandler.get --- !!! spider_id -%s- not found", spider_id ) 
 				
@@ -855,9 +893,10 @@ class ContributorResetDataHandler(BaseHandler) :
 		self.render(
 			"contributor_reset_data.html",
 			page_title  			= app_main_texts["main_title"],
-			site_section			= self.site_section, 
+			# site_section			= self.site_section, 
 
 			spider_id				= spider_id,
+			contributor				= contributor,
 
 			error_msg				= self.error_msg,
 			is_user_connected 		= self.is_user_connected
@@ -878,6 +917,8 @@ class ContributorResetDataHandler(BaseHandler) :
 		### get reset choice + data validation
 		spider_id	= self.get_argument("spider_id")
 		app_log.info("ContributorResetDataHandler.post / spider_id : %s", spider_id )
+		
+		spider_oid = ObjectId(spider_id)
 
 		is_reset	= self.get_argument("reset_data")
 		app_log.info("ContributorResetDataHandler.post / is_reset : %s", is_reset )
@@ -885,9 +926,12 @@ class ContributorResetDataHandler(BaseHandler) :
 		# reset collection here
 		if is_reset == "true" :
 
-			app_log.warning("ContributorResetDataHandler.post / DELETING RECORDS for spider_id", spider_id )
+			app_log.warning("ContributorResetDataHandler.post / DELETING DOCUMENTS IN COLL_DATA for spider_id : %s", spider_id )
 			self.application.coll_data.delete_many({ "spider_id" : spider_id })
-
+			
+			# update scraper log
+			self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_data_available", value=False)
+		
 		self.redirect("/contributors")
 
 

@@ -136,6 +136,9 @@ from scraper import run_generic_spider
 	}
 """
 
+
+
+
 class SpiderHandler(BaseHandler) : 
 	"""
 	launch run_generic_spider from client side (and from url arg spider_id) as background task 
@@ -162,17 +165,16 @@ class SpiderHandler(BaseHandler) :
 		app_log.info("SpiderHandler.get / query_contrib : \n %s ", pformat(query_contrib) )
 
 		# get spider_id to crawl
-		spider_id = query_contrib["spider_id"]
-
-
+		spider_id 	= query_contrib["spider_id"]
+		spider_oid 	= ObjectId(spider_id)
 
 		app_log.info("SpiderHandler.get / spider_id : %s", spider_id )
-		# print spider_id 
+		print spider_oid, type(spider_oid)
 
 		### retrieve spider config from its name in the db
 		# spider_config = self.application.coll_spiders.find_one({"scraper_config.spidername": spidername})
 		try : 
-			spider_config = self.application.coll_spiders.find_one( {"_id": ObjectId(spider_id) } )
+			spider_config = self.application.coll_spiders.find_one( {"_id": spider_id_obj } )
 		except : 
 			spider_config = None
 		
@@ -196,22 +198,27 @@ class SpiderHandler(BaseHandler) :
 			# redirect client before starting spider
 			self.redirect("/contributors"  )
 
-			app_log.info("SpiderHandler.get --- spider_id     : ", spider_id )
-			app_log.info("SpiderHandler.get --- spider_config :",  pformat(spider_config) )
+			app_log.info("SpiderHandler.get --- spider_id     : %s ", spider_id )
+			app_log.info("SpiderHandler.get --- spider_config : %s ", pformat(spider_config["infos"]) )
+
+
+			# update spider log
+			self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_running", 		value=True)
+			self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_data_available", value=False)
 
 
 			### asynchronous run the corresponding spider
-
 			app_log.info("SpiderHandler.get --- starting spider runner --- " )
 			
 			### getting data_model lists
 			app_log.info("SpiderHandler.get --- creating data model list from fields in db ")
 			data_model = list(self.application.coll_model.find({}))
-			app_log.info("SpiderHandler.get --- data_model from db : \n %s ", pformat(data_model) )
+			app_log.info("SpiderHandler.get --- data_model[:3] from db : \n %s \n...", pformat(data_model[:3]) )
 
 			yield self.run_spider( 	
 									datamodel 		= data_model,
-									spider_id 		= spider_id, 
+									spider_id 		= spider_id,
+									spider_oid 		= spider_oid, 
 									spider_config	= spider_config, 
 									current_user_id	= self.get_current_user_id()
 							 ) 
@@ -227,6 +234,7 @@ class SpiderHandler(BaseHandler) :
 	def run_spider (	self, 
 						datamodel,
 						spider_id, 
+						spider_oid,
 						spider_config,
 						current_user_id,
 						# callback=None,
@@ -236,6 +244,7 @@ class SpiderHandler(BaseHandler) :
 		print 
 		app_log.info("SpiderHandler.run_spider --- " )
 		
+
 		### for debugging purposes...
 		app_log.info("SpiderHandler.run_spider / testing the non-blocking decorator with a time.sleep... " )
 		time.sleep(1)
@@ -245,27 +254,30 @@ class SpiderHandler(BaseHandler) :
 			app_log.info("SpiderHandler.run_spider ---\n--- start spider %s in %s" %( str(spider_id), countdown-i ) ) 
 		time.sleep(1)
 
+
 		### run spider --- check masterspider.py --> function run_generic_spider()
 		app_log.info("SpiderHandler.run_spider / now let it run... ")
 		result = run_generic_spider( 
 									user_id				= current_user_id,
 									spider_id			= str(spider_id), 
+									# spider_oid		= spider_oid,
 									datamodel			= datamodel, 
 									run_spider_config	= spider_config 
 									)
 
 
-
-
 		### TO DO : keep track of error and update status in spider configuration
 		### update scraper_log.is_working
-		app_log.info("SpiderHandler.get --- spider updating...")
-		self.application.coll_spiders.update_one( 
-												{"_id": ObjectId(spider_id) }, 
-												{"$set" : {"scraper_log.is_working" : True} }
-												)
-		app_log.info("SpiderHandler.get --- spider updated...")
-		
+		# app_log.info("SpiderHandler.get --- spider is_working updating...")
+		# self.application.coll_spiders.update_one( 
+		# 										{"_id": ObjectId(spider_id) }, 
+		# 										{"$set" : {"scraper_log.is_working" : True} }
+		# 										)
+		# app_log.info("SpiderHandler.get --- spider is_working updated...")
+		self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_working", 		value=True)
+		self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_running", 		value=False)
+		self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_data_available", value=True)
+
 		### raise result to tell gen is ended
 		raise gen.Return(result)
 		# yield gen.Return(result)

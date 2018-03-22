@@ -147,8 +147,8 @@ class MongodbPipeline(object):
 		# item object to dict
 		item_dict = dict(item)
 		log_pipe.info(">>> MongodbPipeline / item_dict : \n %s", pformat(item_dict) ) 
-		# pprint(item_dict)
 
+		# TO DO : for now all docs from this spider are wiped out at "open_spider" level 
 		# check if already exists in db
 		# item_exists = self.application.coll_data.find({ "field_name" : item["field_name"]})
 

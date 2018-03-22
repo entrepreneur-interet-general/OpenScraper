@@ -20,7 +20,7 @@
 				<button class="button is-large is-rounded" aria-haspopup="true" aria-controls="dropdown-menu-contributor-reset-data">
 					<span>
 						<b>
-							RESET DATA
+							DELETE A CONTRIBUTOR
 						</b>  
 					</span>
 				</button>
@@ -40,8 +40,8 @@
 			<div class="dropdown-content">
 				<div class="dropdown-item">
 					<p>
-						<strong>Delete all data</strong> 
-						for the spider called 
+						<strong>Completly delete the contributor</strong> 
+						with the spider called 
 						"<strong>{{ escape (contributor["infos"]["name"]) }}</strong>"
 					</p>
 				</div>
@@ -62,30 +62,28 @@
 			<div class="column is-5">
 
 					<form 	id="reset_data_form"
-							action="/contributor/reset_data" 
+							action="/contributor/delete" 
 							method="POST">
 						
 						{% module xsrf_form_html() %}
 
 						<input name="spider_id" type="hidden" value="{{ spider_id }}"></input>
 
-						<article class="message is-warning is-large ">
+						<article class="message is-danger is-large ">
 							
 							<div class="message-header has-text-centered ">
 
 								{# labelling for spider #}
-								{# <div class="content has-text-centered"> #}
-									<p class="has-text-centered "> 
-									are you really sure you want to reset the data scraped by 
-									"<strong>{{ escape (contributor["infos"]["name"]) }}</strong>"
-									spider ?
-									</p>
-									{# <p class="is-small">describe the website you want to crawl</p> #}
-								{# </div> #}
+								<p class="has-text-centered "> 
+								are you really sure you want to delete the contributor named
+								"<strong>{{ escape (contributor["infos"]["name"]) }}</strong>"
+								spider ?
+								</p>
 
 							</div>
 							
 							<div class="message-body">
+								
 								{# radio buttons #}
 
 								<div class="field is-grouped is-grouped-centered">
@@ -95,7 +93,7 @@
 										<label class="radio">
 											<input 	type="radio" 
 													class="is-large" 
-													name="reset_data" 
+													name="is_delete" 
 													value="false"
 													checked 
 											>
@@ -110,13 +108,13 @@
 										<label class="radio">
 											<input 	type="radio" 
 													class="is-large" 
-													name="reset_data" 
+													name="is_delete" 
 													value="true"
 											>
 											<span class="tag is-danger is-large">
 												<strong>YES</strong>
 											</span>
-											, please reset the dataset
+											, please delete {{ escape (contributor["infos"]["name"]) }}
 
 										</label>
 
@@ -147,7 +145,7 @@
 										<i class="fas fa-redo"></i>
 									</span>
 									<span>
-										reset data
+										delete contributor
 									</span>
 								</label>
 
