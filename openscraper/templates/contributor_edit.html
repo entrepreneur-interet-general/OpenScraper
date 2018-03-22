@@ -375,8 +375,9 @@
 								>
 							</input>
 						</p>
-
-						{% if create_or_update == "update" %}
+						
+						{# 
+						{ % if create_or_update == "update" %}
 						<p class="control">
 							<a class="has-text-centered button is-warning is-rounded"
 									href="/crawl?spider_id{{ escape (str(contributor[u'_id'])) }}&test=True&test_limit=1" >
@@ -384,7 +385,8 @@
 								<span>test spider</span>
 							</a> 
 						</p>
-						{% end %}
+						{% end % } 
+						#}
 					
 					
 					</div>

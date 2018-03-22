@@ -111,7 +111,10 @@ class WelcomeHandler(BaseHandler):
 		self.catch_error_message()
 
 		### count collections' documents
-		counts = self.count_all_documents( q_datamodel={"field_class" : "custom"} ) 
+		counts = self.count_all_documents( 
+					q_datamodel		= {"field_class" : "custom"},		 # query : just count custom fields
+					q_contributors	= {"scraper_log.is_working" : True } # query : just count working and tested spiders
+					) 
 		app_log.info("WelcomeHandler.get / counts : \n  %s" , pformat(counts) )
 
 		self.render(
@@ -774,7 +777,6 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			self.redirect("/contributors")
 
 
-### TO DO 
 class ContributorDeleteHandler(BaseHandler) : 
 	"""
 	completly delete a spider configuration from db
@@ -802,6 +804,18 @@ class ContributorDeleteHandler(BaseHandler) :
 			try : 
 				contributor	= self.application.coll_spiders.find_one({"_id": spider_oid })
 			
+				self.render(
+					"contributor_delete.html",
+					page_title  			= app_main_texts["main_title"],
+					# site_section			= self.site_section, 
+
+					spider_id				= spider_id,
+					contributor				= contributor,
+
+					error_msg				= self.error_msg,
+					is_user_connected 		= self.is_user_connected
+				)
+
 			except :
 				app_log.warning("ContributorDeleteHandler.get --- !!! spider_id -%s- not found", spider_id ) 
 				
@@ -811,17 +825,11 @@ class ContributorDeleteHandler(BaseHandler) :
 									)
 				self.redirect("/contributors" + self.error_msg)
 
-		self.render(
-			"contributor_delete.html",
-			page_title  			= app_main_texts["main_title"],
-			# site_section			= self.site_section, 
 
-			spider_id				= spider_id,
-			contributor				= contributor,
+		else :
+			self.redirect("/contributors")
 
-			error_msg				= self.error_msg,
-			is_user_connected 		= self.is_user_connected
-		)
+
 
 
 	@print_separate(APP_DEBUG)
@@ -839,19 +847,28 @@ class ContributorDeleteHandler(BaseHandler) :
 		spider_id	= self.get_argument("spider_id")
 		app_log.info("ContributorDeleteHandler.post / spider_id : %s", spider_id )
 
-		is_delete	= self.get_argument("reset_data")
+		spider_oid = ObjectId(spider_id)
+
+		is_delete	= self.get_argument("is_delete")
 		app_log.info("ContributorDeleteHandler.post / is_delete : %s", is_delete )
 		
 		# reset collection here
 		if is_delete == "true" :
 
+
 			app_log.warning("ContributorDeleteHandler.post / DELETING SPIDER FOR spider_id : %s", spider_id )
-			# self.application.coll_spiders.delete_one({ "_id" : ObjectId(spider_id) })
+			self.application.coll_spiders.delete_one({ "_id" : spider_oid })
 
-		self.redirect("/contributors")
+			self.error_msg = self.add_error_message_to_slug( 
+								error_string	= "the spider was erased",
+								args_to_delete 	= QUERY_SPIDER_BY_DEFAULT.keys()
+								)
+			
+			self.redirect("/contributors" + self.error_msg )
 
+		else :
+			self.redirect("/contributors")
 
-		# self.redirect("/404")
 
 
 class ContributorResetDataHandler(BaseHandler) : 
@@ -880,7 +897,20 @@ class ContributorResetDataHandler(BaseHandler) :
 			
 			try : 
 				contributor	= self.application.coll_spiders.find_one({"_id": spider_oid })
-			
+
+				# redirect
+				self.render(
+					"contributor_reset_data.html",
+					page_title  			= app_main_texts["main_title"],
+					# site_section			= self.site_section, 
+
+					spider_id				= spider_id,
+					contributor				= contributor,
+
+					error_msg				= self.error_msg,
+					is_user_connected 		= self.is_user_connected
+				)
+				
 			except :
 				app_log.warning("ContributorResetDataHandler.get --- !!! spider_id -%s- not found", spider_id ) 
 				
@@ -890,17 +920,10 @@ class ContributorResetDataHandler(BaseHandler) :
 									)
 				self.redirect("/contributors" + self.error_msg)
 
-		self.render(
-			"contributor_reset_data.html",
-			page_title  			= app_main_texts["main_title"],
-			# site_section			= self.site_section, 
+		else :
+			self.redirect("/contributors")
 
-			spider_id				= spider_id,
-			contributor				= contributor,
 
-			error_msg				= self.error_msg,
-			is_user_connected 		= self.is_user_connected
-		)
 
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
@@ -926,14 +949,25 @@ class ContributorResetDataHandler(BaseHandler) :
 		# reset collection here
 		if is_reset == "true" :
 
+			contributor	= self.application.coll_spiders.find_one({"_id": spider_oid })
+
 			app_log.warning("ContributorResetDataHandler.post / DELETING DOCUMENTS IN COLL_DATA for spider_id : %s", spider_id )
 			self.application.coll_data.delete_many({ "spider_id" : spider_id })
 			
+			# add message
+			self.error_msg = self.add_error_message_to_slug( 
+								error_string	= "all data from -%s- were erased" %(contributor["infos"]["name"]),
+								args_to_delete 	= QUERY_SPIDER_BY_DEFAULT.keys()
+								)
+
 			# update scraper log
 			self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_data_available", value=False)
-		
-		self.redirect("/contributors")
 
+			# redirect
+			self.redirect("/contributors" + self.error_msg )
+
+		else : 
+			self.redirect("/contributors")
 
 
 

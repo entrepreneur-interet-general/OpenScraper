@@ -151,7 +151,6 @@ CONTRIBUTOR_EDIT_FIELDS = {
 		"needed" : [
 			# "spidername" ,
 			"start_urls",
-			"item_list_xpath",
 			"item_xpath",
 			"next_page",
 			"parse_follow",
@@ -159,6 +158,7 @@ CONTRIBUTOR_EDIT_FIELDS = {
 		], 
 		"optional": [
 			"page_needs_splash",
+			"item_list_xpath",
 		]
 	 },
 

@@ -26,6 +26,7 @@ urls = [
 	### index
 	(r"/", 				WelcomeHandler),
 
+
 	### login, register, logout
 	# (r'/login/(?P<next>.*?)', 		LoginHandler),
 	(r'/login/', 		LoginHandler),
@@ -34,13 +35,17 @@ urls = [
 	# TO DO 
 	(r'/preferences/', 	UserPreferences),
 
-	### forms : just for test
+
+	### bulma tests : just for debugging and speeding UI front dev
 	(r"/datamodel/form", FormHandler),
+	(r"/test_bulma_ext", TestBulmaHandler),
+
 
 	### datamodel : edit or create fields to structure what you gonna crawl
 	(r"/datamodel/view", 		DataModelViewHandler),
 	(r"/datamodel/edit", 		DataModelEditHandler),
 	(r"/datamodel/add_field", 	DataModelAddFieldHandler),
+
 
 	### contributors :the websites to crawl
 	(r"/contributors?([^/]*)?", 			ContributorsHandler),
@@ -58,6 +63,14 @@ urls = [
 	# (r"/dataset/view/(\w+)",		DataScrapedViewOneHandler),
 	
 
+	### spider launchers / runners
+	(r"/crawl?([^/]*)?", 			SpiderHandler), ### get spidername as input
+	# (r"/crawl/([\w\_\d]+)",			SpiderHandler), ### get spidername as input
+
+
+
+
+
 
 	# TO DO ...
 	### API routes
@@ -70,12 +83,6 @@ urls = [
 
 
 
-	### spider launchers / runners
-	(r"/crawl?([^/]*)?", 			SpiderHandler), ### get spidername as input
-	# (r"/crawl/([\w\_\d]+)",			SpiderHandler), ### get spidername as input
-
-
-	(r"/test_bulma_ext", 				TestBulmaHandler),
 
 	### error route : 404
 	(r'.*', 						PageNotFoundHandler),

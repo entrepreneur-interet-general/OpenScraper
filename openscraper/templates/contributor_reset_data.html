@@ -67,6 +67,9 @@
 						
 						{% module xsrf_form_html() %}
 
+						{% set contrib_name = contributor["infos"]["name"] %}
+
+
 						<input name="spider_id" type="hidden" value="{{ spider_id }}"></input>
 
 						<article class="message is-warning is-large ">
@@ -77,7 +80,7 @@
 								{# <div class="content has-text-centered"> #}
 									<p class="has-text-centered "> 
 									are you really sure you want to reset the data scraped by 
-									"<strong>{{ escape (contributor["infos"]["name"]) }}</strong>"
+									"<strong>{{ escape (contrib_name) }}</strong>"
 									spider ?
 									</p>
 									{# <p class="is-small">describe the website you want to crawl</p> #}
@@ -86,9 +89,10 @@
 							</div>
 							
 							<div class="message-body">
+
 								{# radio buttons #}
 
-								<div class="field is-grouped is-grouped-centered">
+								{# <div class="field is-grouped is-grouped-centered">
 
 									<div class="control">
 										
@@ -122,7 +126,42 @@
 
 									</div>
 								
+								</div> #}
+
+
+								<div class="field is-grouped is-grouped-centered">
+									
+
+										<input 	class="is-checkradio is-large has-background-color is-black " 
+												id="radioResetNo"
+												type="radio" 
+												name="reset_data" 
+												value="false"
+												checked="checked">
+										<label 	for="radioResetNo">
+											{# <span class="tag is-dark is-large"> #}
+												<strong>NO </strong>
+											{# </span>									 #}
+										</label>
+
+
+										<input 	class="is-checkradio is-large has-background-color is-warning" 
+												id="radioResetYes" 
+												type="radio"
+												name="reset_data"
+												value="true"
+												>
+										<label	 for="radioResetYes">
+											{# <span class="tag is-danger is-large"> #}
+												<strong>YES</strong>
+											{# </span> #}
+										</label>
+
+
 								</div>
+
+
+
 							</div>
 						
 						</article>
@@ -147,7 +186,8 @@
 										<i class="fas fa-redo"></i>
 									</span>
 									<span>
-										reset data
+										reset the data for 
+										"<strong>{{escape (contrib_name)}}</strong>"
 									</span>
 								</label>
 

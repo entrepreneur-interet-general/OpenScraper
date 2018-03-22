@@ -87,10 +87,9 @@ class BaseHandler(tornado.web.RequestHandler):
 		except:
 			self.error_msg = ""
 
-	def add_error_message_to_slug(self, error_string, args_to_delete=[] ) : 
+	def add_error_message_to_slug(self, error_string, args_to_delete=[], msg_categ="error" ) : 
 		""" add an "error" arg to url slug """
 
-		# print "... add_error_message_to_slug / slug_ : "
 		slug_ = self.request.arguments
 		app_log.info("... add_error_message_to_slug / slug_ : \n %s ", pformat( slug_ ) )
 
@@ -121,8 +120,6 @@ class BaseHandler(tornado.web.RequestHandler):
 					pass
 
 			app_log.warning("... add_error_message_to_slug / slug_without_error : \n %s ", pformat(slug_without_error) )
-			# print "... add_error_message_to_slug / slug_without_error : "
-			# print slug_without_error
 
 			# recreate slug
 			error_dict	= { "error" : error_string }
@@ -195,8 +192,6 @@ class BaseHandler(tornado.web.RequestHandler):
 			# clear user if no user
 			self.clear_current_user()
 
-
-	### TO DO / TO DEBUG
 	def clear_current_user(self):
 		""" clear cookies """
 
@@ -232,15 +227,6 @@ class BaseHandler(tornado.web.RequestHandler):
 		passed "query" arg must be with the form : {"<field>" : "<value>"}
 		ex : query={"field_class" : "custom"}
 		"""
-		
-		# if coll_name=="datamodel" :
-		# 	coll = self.application.coll_model
-		# if coll_name=="contributors" :
-		# 	coll = self.application.coll_spiders
-		# if coll_name=="data" :
-		# 	coll = self.application.coll_data
-		# if coll_name=="users" :
-		# 	coll = self.application.coll_users
 
 		print 
 		app_log.info("... count_documents / coll_name : %s", coll_name)
@@ -499,7 +485,6 @@ class BaseHandler(tornado.web.RequestHandler):
 			pagination["is_next"] 	= False
 
 		return pagination
-
 
 	def update_spider_log(self, spider_id=None, spider_oid=None, log_to_update=None, value=None) :
 		""" update log of a spider """

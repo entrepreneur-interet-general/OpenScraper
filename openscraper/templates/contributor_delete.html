@@ -59,13 +59,15 @@
 
 		<div class="columns is-centered">
 			
-			<div class="column is-5">
+			<div class="column is-6">
 
 					<form 	id="reset_data_form"
 							action="/contributor/delete" 
 							method="POST">
 						
 						{% module xsrf_form_html() %}
+
+						{% set contrib_name = contributor["infos"]["name"] %}
 
 						<input name="spider_id" type="hidden" value="{{ spider_id }}"></input>
 
@@ -75,9 +77,9 @@
 
 								{# labelling for spider #}
 								<p class="has-text-centered "> 
-								are you really sure you want to delete the contributor named
-								"<strong>{{ escape (contributor["infos"]["name"]) }}</strong>"
-								spider ?
+								are you really sure you want to delete the contributor defined by the spider called
+								"<strong>{{ escape (contrib_name) }}</strong>"
+								?
 								</p>
 
 							</div>
@@ -86,16 +88,16 @@
 								
 								{# radio buttons #}
 
-								<div class="field is-grouped is-grouped-centered">
+								{# <div class="field is-grouped is-grouped-centered"> #}
 
-									<div class="control">
+									{# <div class="control">
 										
 										<label class="radio">
 											<input 	type="radio" 
-													class="is-large" 
+													class="is-checkradio is-large" 
 													name="is_delete" 
 													value="false"
-													checked 
+													checked="checked" 
 											>
 										<span class="tag is-dark is-large">
 											<strong>NO </strong>
@@ -107,7 +109,7 @@
 
 										<label class="radio">
 											<input 	type="radio" 
-													class="is-large" 
+													class="is-checkradio is-large" 
 													name="is_delete" 
 													value="true"
 											>
@@ -118,9 +120,48 @@
 
 										</label>
 
-									</div>
+									</div> #}
 								
+									{# <input class="is-checkradio" id="exampleRadioInline1" type="radio" name="exampleRadioInline" checked="checked">
+									<label for="exampleRadioInline1">Option 1</label>
+									<input class="is-checkradio" id="exampleRadioInline2" type="radio" name="exampleRadioInline">
+									<label for="exampleRadioInline2">Option 2</label> #}
+
+								{# </div> #}
+
+
+								
+								<div class="field is-grouped is-grouped-centered">
+									
+
+										<input 	class="is-checkradio is-large has-background-color is-black " 
+												id="radioDeleteNo"
+												type="radio" 
+												name="is_delete" 
+												value="false"
+												checked="checked">
+										<label 	for="radioDeleteNo">
+											{# <span class="tag is-dark is-large"> #}
+												<strong>NO </strong>
+											{# </span>									 #}
+										</label>
+
+
+										<input 	class="is-checkradio is-large has-background-color is-danger" 
+												id="radioDeleteYes" 
+												type="radio"
+												name="is_delete"
+												value="true"
+												>
+										<label	 for="radioDeleteYes">
+											{# <span class="tag is-danger is-large"> #}
+												<strong>YES</strong>
+											{# </span> #}
+										</label>
+
+
 								</div>
+
 							</div>
 						
 						</article>
@@ -140,12 +181,13 @@
 							<p class="control">
 								
 								<label 	for="spiderSubmit" 
-										class="button is-warning is-rounded">
+										class="button is-danger is-rounded">
 									<span class="icon is-small">
-										<i class="fas fa-redo"></i>
+										<i class="fas fa-trash"></i>
 									</span>
 									<span>
-										delete contributor
+										delete contributor 
+										"<strong>{{ escape (contrib_name) }}</strong>"
 									</span>
 								</label>
 

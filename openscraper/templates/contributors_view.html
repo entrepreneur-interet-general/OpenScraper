@@ -149,27 +149,27 @@
 						{# { % set is_data_available 	= contrib["scraper_log"].get("is_data_available", False ) %} #}
 
 						{# set hrefs #}
-						{% set href_test_crawl = "" %}
+						{% set href_test_crawl = None %}
 						{% if start_urls != [] %}
-							{% set href_test_crawl = "/crawl?spider_id=%s&test=true&test_limit=1" %( contrib_id ) %}
+							{% set href_test_crawl = 'href="/crawl?spider_id=%s&test=true&test_limit=1"' %( contrib_id ) %}
 						{% end %}
 
-						{% set href_crawl = "" %}
+						{% set href_crawl = None %}
 						{% if is_working %}
-							{% set href_crawl  = "/crawl?spider_id=%s" %( contrib_id )  %}
+							{% set href_crawl = 'href="/crawl?spider_id=%s"' %( contrib_id )  %}
 						{% end %}
 
 						{# set other hrefs and some UI variables #}
 						{% set count_data = 0 %}
-						{% set href_data  = "" %}
-						{% set href_reset = "" %}								
+						{% set href_data  = None %}
+						{% set href_reset = None %}								
 						{% set color_data = "light" %}
 
 						{% if contrib_id in count_docs_by_spiders %}
 							{% set count_data = count_docs_by_spiders[ contrib_id ] %}
 							{% if count_data > 0 %}
-								{% set href_data  = "/dataset/view?spider_id=%s" %( contrib_id ) %}
-								{% set href_reset  = "/contributor/reset_data?spider_id=%s" %( contrib_id ) %}
+								{% set href_data  = 'href="/dataset/view?spider_id=%s"' %( contrib_id ) %}
+								{% set href_reset = 'href="/contributor/reset_data?spider_id=%s"' %( contrib_id ) %}
 								{% set color_data = "info" %}
 							{% end %}
 						{% end %}
@@ -241,7 +241,7 @@
 							{# test spider #}
 							<td> 
 								<a class="has-text-centered button is-warning is-rounded is-small"
-									href="{{ href_test_crawl }}" 
+									{{ href_test_crawl }}
 									{% if start_urls == [] %}
 									disabled
 									{% end %}
@@ -278,7 +278,7 @@
 							{# spider run crawler #}
 							<td> 
 								<a class="has-text-centered button is-warning is-rounded is-small"
-									href="{{ href_crawl }}" 
+									{{ href_crawl }}
 									{% if not is_working %}
 										disabled
 									{% end %}
@@ -293,7 +293,7 @@
 							{# spider view data #}
 							<td> 
 								<a class="has-text-centered button is-{{color_data}} is-rounded is-small"
-									href="{{ href_data }}"
+									{{ href_data }}
 									>
 									<span class="icon is-small">
 										<i class="fas fa-table"></i>
@@ -308,7 +308,7 @@
 							{# spider reset data #}
 							<td> 
 								<a class="has-text-centered button is-{{color_data}} is-rounded is-small"
-									href="{{ href_reset }}"
+									{{ href_reset }}
 									{% if count_data == 0 %}
 									disabled 
 									{% end %}
