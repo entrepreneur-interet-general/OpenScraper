@@ -1025,7 +1025,7 @@ class DataScrapedHandler(BaseHandler):
 		pprint.pprint (spiders_list[0])
 		print "..."
 
-		# make a dict from spiders_list
+		# make a dict from spiders_list to make correspondances spider_id --> spider_name
 		spiders_dict = { str(s["_id"]) : s["infos"]["name"] for s in spiders_list }
 		app_log.info("DataScrapedHandler.get / spiders_dict :\n %s ", pformat(spiders_dict) )  
 		# print (spiders_dict)

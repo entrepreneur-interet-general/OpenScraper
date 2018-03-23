@@ -303,18 +303,11 @@ class GenericSpider(Spider) :
 
 
 				# complete follow link if needed
-				follow_link = self.clean_link(follow_link)
-				# if not follow_link.startswith("http"): 
-				# 	separator = ""
-				# 	if not follow_link.startswith("/"):
-				# 		separator = "/"
-				# 	follow_link 	= "{}{}{}".format( self.page_url, separator, follow_link)			
-
-
+				follow_link = self.clean_link(follow_link)		
 				log_scrap.info(" --> follow_link CLEAN : %s ", follow_link )
 
+				# store follow_link
 				item[ 'link_data' ]	= follow_link
-				
 				url 				= item['link_data']
 				log_scrap.info(" --> item : %s ", item )
 
@@ -336,19 +329,14 @@ class GenericSpider(Spider) :
 
 
 		### get and go to next page 
-		# next_page_url = response.xpath(self.spider_config_flat[ "next_page_xpath" ]).extract_first()
-		# if next_page_url is not None:
-		# 	print "\n --- GenericSpider.parse / NEXT PAGE... \n"
-		# 	# yield scrapy.Request(response.urljoin(next_page_url))
-		# 	yield scrapy.follow(response.urljoin(next_page_url, callback=self.parse))
 		is_next_page, next_page = self.get_next_page(response)
-		if is_next_page:
+		if is_next_page :
 			
 			print
 
 			self.page_count += 1
 
-			log_scrap.info(" --- GenericSpider.parse >>> NEXT PAGE... \n" )
+			log_scrap.info(" --- GenericSpider.parse >>> NEXT PAGE : %s... \n", next_page )
 			
 			yield response.follow(next_page, callback=self.parse)
 
@@ -359,7 +347,7 @@ class GenericSpider(Spider) :
 		""" fill item """
 
 		log_scrap.info("-+- fill_item_from_results_page" )
-		print item
+		log_scrap.info(" -+- item : \n %s \n", pformat(item) )
 
 		### extract data and feed it to Item instance based on spider_config_flat
 		for dm_field in self.dm_custom_list : 
@@ -378,31 +366,42 @@ class GenericSpider(Spider) :
 					item_field_xpath 	= self.spider_config_flat[ dm_field ]					
 					
 					full_data 			= raw_data.xpath( item_field_xpath ).extract()
-					log_scrap.warning("\n field_name : %s \n dm_field : %s \n full_data : %s ", 
+					log_scrap.warning(" \n field_name : %s \
+										\n item_field_xpath : %s \
+										\n dm_field : %s \
+										\n full_data : %s ", 
 										self.dm_custom[dm_field]["field_name"],
+										item_field_xpath,
 										dm_field,
 										full_data )
 
-					### in case data needs cleaning before storing
-					if self.dm_custom[dm_field]["field_type"] in ["url", "image"] : 
-						full_data = self.clean_link(full_data)
-					
-					if full_data != None or full_data != [] : 
-						
-						# delete duplicates
-						full_data_uniques 	= set(full_data)
-						full_data_clean 	= list(full_data_uniques)
+					# check if data exists at all
+					if full_data != None and full_data != [] and full_data != [u""] : 
 
-						# aggregate to results
-						if dm_field in item : 
-							item[ dm_field ] = item[ dm_field ] + full_data_clean
-						else : 
-							item[ dm_field ] = full_data_clean
+						### in case data needs cleaning before storing
+						if self.dm_custom[dm_field]["field_type"] in ["url", "image"]  : 
+							clean_data_list = []
+							for data in full_data : 
+								if data != None or data != u"" : 
+									data = self.clean_link(data)
+									clean_data_list.append(data)
+							full_data = clean_data_list
 
-					# 	if item[ dm_field ] == [] or item[ dm_field ] == None : 
-					# 		item[ dm_field ] 	= full_data
-					# 	else :
-					# 		item[ dm_field ] 	= item[ dm_field].append(full_data)
+
+						# delete duplicates and aggregate
+						if full_data != None or full_data != [] or full_data != [u""] : 
+							
+							# delete duplicates
+							full_data_uniques 	= set(full_data)
+							full_data_clean 	= list(full_data_uniques)
+
+							# aggregate to existing results
+							if dm_field in item : 
+								item[ dm_field ] = item[ dm_field ] + full_data_clean
+							else : 
+								item[ dm_field ] = full_data_clean
+
+
 		
 		print "\n>>> ITEM >>> after fill_item_from_results_page >>>"
 		print item
@@ -432,17 +431,22 @@ class GenericSpider(Spider) :
 		if it finds one, returns it along with a True value
 		"""
 		
-		next_page = response.xpath(self.next_page).extract_first()
-		
+		try :
+			next_page = response.xpath(self.next_page).extract_first()
+		except :
+			next_page = None 
+
 		if (next_page is not None) and (self.page_count < self.LIMIT):
 			
 			self.page_count += 1
 			# next_page = next_page.strip()
 			# next_page = self.add_string_to_complete_url_if_needed(next_page, self.page_url)
-			next_page = response.xpath(self.spider_config_flat[ "next_page" ]).extract_first()
-		
-			return True, next_page
-		
+			try : 
+				next_page = response.xpath(self.spider_config_flat[ "next_page" ]).extract_first()
+				return True, next_page
+			
+			except:
+				return False, next_page
 		else:
 			return False, next_page
 
@@ -451,125 +455,86 @@ class GenericSpider(Spider) :
 	def clean_link(self, link=None):
 		""" complete a link if needed """
 		
-		if not link.startswith("http"): 
+		if "@" in link :
+			if link.startswith("mailto"):
+				return link
+			else :
+				link = "mailto:" + link
+				return link
+
+		elif not link.startswith("http"): 
 			separator = ""
 			if not link.startswith("/"):
 				separator = "/"
 			link 	= "{}{}{}".format( self.page_url, separator, link)			
-
-		return link
-
-
-
-
-	# def get_link(self, action, xpath=None, data_type="link"):
-	# def get_link(self, raw_data, xpath=None) :
-	# 	"""
-	# 	Used to retrieve links.
-	# 	If no xpath is given, will get the data for the Action's link attribute
-	# 	"""
+			return link
 		
-	# 	if xpath is None:
-	# 		xpath = self.link_xpath
-	# 	try:
-	# 		link = raw_data.xpath(xpath).extract_first()
-	# 		if link is not None:
-	# 			link = self.add_string_to_complete_url_if_needed( link, page_url_root=None)
-	# 		return link
-		
-	# 	except : 
-	# 		log_scrap.error("... fucking error at : get_link !!! ")
-	# 		return None
-
-	# 	# except AttributeError as e:
-	# 	# 	error = "Error <{}> on " \
-	# 	# 			"{} item n <{}> " \
-	# 	# 			"page <{}>".format(e, data_type, self.item_count, self.page_count)
-	# 	# 	self.error_array.append(error)
-	# 	# 	return None
+		else : 
+			return link
 
 
-	# def add_string_to_complete_url_if_needed(self, not_complete_url, page_url_root=None):
-	# 	"""
-	# 	adds the missing beggining part of an url with the '/' if needed
-	# 	"""
-	# 	log_scrap.warning("... add_string_to_complete_url_if_needed ... ")
 
-	# 	if page_url_root is None:
-	# 		page_url_root = self.page_url
-		
+
+
+
+
+
+	# def add_string_to_complete_url_if_needed(self, not_complete_url, rest_of_url=None):
+	# 	"""adds the missing beggining part of an url with the '/' if needed"""
+	# 	if rest_of_url is None:
+	# 		rest_of_url = self.page_url
 	# 	if not not_complete_url.startswith("http"):
-
 	# 		if not not_complete_url.startswith("/"):
-	# 			not_complete_url = "{}{}".format(  "/", not_complete_url)
-			
-	# 		not_complete_url = "{}{}".format( page_url_root, not_complete_url )
-		
+	# 			not_complete_url = "{}{}".format("/", not_complete_url)
+	# 		not_complete_url = "{}{}".format(rest_of_url, not_complete_url)
 	# 	return not_complete_url
 
 
 
 
 
+	# ### TO DO : generic functions linked with DATAMODEL_FIELDS_TYPES
+	# def clean_type_text(self, response) :
+	# 	"""
+	# 	for field_type : "text"
+	# 	"""
+	# 	value = ""
+	# 	return value
 
+	# def clean_type_tags(self, response) :
+	# 	"""
+	# 	for field_type : "tags"
+	# 	"""
+	# 	value = ""
+	# 	return value
 
+	# def clean_type_url(self, response) :
+	# 	"""
+	# 	for field_type : "url", "email"
+	# 	"""
+	# 	value = ""
+	# 	return value
 
-	def add_string_to_complete_url_if_needed(self, not_complete_url, rest_of_url=None):
-		"""adds the missing beggining part of an url with the '/' if needed"""
-		if rest_of_url is None:
-			rest_of_url = self.page_url
-		if not not_complete_url.startswith("http"):
-			if not not_complete_url.startswith("/"):
-				not_complete_url = "{}{}".format("/", not_complete_url)
-			not_complete_url = "{}{}".format(rest_of_url, not_complete_url)
-		return not_complete_url
+	# def clean_type_adress(self, response) : 
+	# 	"""
+	# 	for field_type : "adress"
+	# 	"""
+	# 	value = ""
+	# 	return value
 
+	# def clean_type_image(self, response) : 
+	# 	"""
+	# 	fields : "image"
+	# 	"""
+	# 	value = ""
+	# 	return value
 
-
-
-
-	### TO DO : generic functions linked with DATAMODEL_FIELDS_TYPES
-	def clean_type_text(self, response) :
-		"""
-		for field_type : "text"
-		"""
-		value = ""
-		return value
-
-	def clean_type_tags(self, response) :
-		"""
-		for field_type : "tags"
-		"""
-		value = ""
-		return value
-
-	def clean_type_url(self, response) :
-		"""
-		for field_type : "url", "email"
-		"""
-		value = ""
-		return value
-
-	def clean_type_adress(self, response) : 
-		"""
-		for field_type : "adress"
-		"""
-		value = ""
-		return value
-
-	def clean_type_image(self, response) : 
-		"""
-		fields : "image"
-		"""
-		value = ""
-		return value
-
-	def clean_type_date(self, response) : 
-		"""
-		for field_type : "date"
-		"""
-		value = ""
-		return value
+	# def clean_type_date(self, response) : 
+	# 	"""
+	# 	for field_type : "date"
+	# 	"""
+	# 	value = ""
+	# 	return value
 
 
 

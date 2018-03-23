@@ -87,7 +87,7 @@ class SpiderHandler(BaseHandler) :
 
 
 			# update spider log
-			self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_running", 		value=True)
+			self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_running", 		  value=True)
 			self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_data_available", value=False)
 
 
@@ -158,8 +158,8 @@ class SpiderHandler(BaseHandler) :
 		# 										{"$set" : {"scraper_log.is_working" : True} }
 		# 										)
 		# app_log.info("SpiderHandler.get --- spider is_working updated...")
-		self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_working", 		value=True)
-		self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_running", 		value=False)
+		self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_working", 		  value=True)
+		self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_running", 		  value=False)
 		self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_data_available", value=True)
 
 		### raise result to tell gen is ended

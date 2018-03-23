@@ -86,6 +86,7 @@
 							
 							<th>spider used</th>
 							<th>link_src</th>
+							<th>link_data</th>
 							
 							{% for field in datamodel_custom %}
 								
@@ -94,7 +95,7 @@
 									<abbr title="{{ field['field_name'] }}">
 										{{ field['field_name'][:3].capitalize() + "." }}
 									</abbr><br>
-									<p><i>{{ field['field_type'] }}</i></p>
+									<p class="has-text-weight-light"><i>{{ field['field_type'] }}</i></p>
 								</th>
 							{% end %}
 
@@ -109,19 +110,34 @@
 							<tr >
 
 								<td> 
-									<a href="/contributors" >
+									<a href="/contributor/edit/{{ escape (item['spider_id']) }} " >
 										{{ escape (item["spider_name"]) }} 
 									</a>
 								</td>
 
 
-								<th>
+								<th class="has-text-centered">
 									<a href="{{ escape ( item['link_src'] ) }}" target="_blank">
 										<span class="tag is-white">
 											<span class="icon is-small"><i class="fas fa-external-link-alt"></i></span> 
 										</span>
 									</a>
 								</th>
+
+
+								<th class="has-text-centered">
+									{% set link_data = item.get( 'link_data', False) %}
+									{% if link_data %}
+									<a href="{{ escape ( link_data ) }}" target="_blank">
+										<span class="tag is-white">
+											<span class="icon is-small">
+												<i class="fas fa-link"></i>
+											</span> 
+										</span>
+									</a>
+									{% end %}
+								</th>
+
 
 
 								{% for field in datamodel_custom %}
@@ -135,22 +151,39 @@
 											{% for i in item[ id_field ]  %} 
 												
 												{% if type_field == u"tags" %}
-													<span class="tag is-dark"> {{ escape (i) }} </span>
+													<span class="tag is-info"> 
+														{{ escape (i) }} 
+													</span>
+												
 												{% elif type_field == u"image" %}
 													<figure class="image is-96x96">
 														<img src="{{ escape (i) }}">
 													</figure>
+
 												{# { % elif type_field == u"text" %}
 													{ { escape (i) }}  #}
+												
+												{% elif type_field in [u"url"] %}
+													<a href="{{ escape (i) }}" >
+														<span class="tag is-white">
+															<span class="icon is-small"><i class="fas fa-external-link-alt"></i></span> 
+														</span>
+													</a>
+
 												{% else %}
 													{{ escape (i) }} 
+												
 												{% end %}
 												
 											{% end %}
 										</td>
 
 									{% else %}
-										<td> - </td>
+										<td class="has-text-centered">
+											<span class="icon has-text-grey-lighter">
+												<i class="fas fa-times"></i>
+											</span>
+										</td>
 
 									{% end %}
 
