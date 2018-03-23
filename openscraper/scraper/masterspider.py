@@ -246,7 +246,7 @@ class GenericSpider(Spider) :
 		print "\n>>> NEW PARSING " + ">>> >>> "*10, "\n"
 		log_scrap.info("--- GenericSpider.parse ..." )
 		
-		print response
+		# print response
 		# print response.__dict__.keys()
 		# for k, v in response.__dict__.iteritems() : 
 		# 	print k ,"---", v
@@ -259,6 +259,10 @@ class GenericSpider(Spider) :
 		### check response to see if API or HTML response
 		log_scrap.info("--- GenericSpider.parse / self.item_xpath : %s", self.item_xpath )
 		
+
+
+
+
 		raw_items_list = response.xpath(self.item_xpath)
 		# raw_items_list = response.xpath('//table[@class="sobi2Listing"]/tr')
 		log_scrap.info("--- GenericSpider.parse / len(raw_items_list) : %d ", len(raw_items_list) )
@@ -297,12 +301,14 @@ class GenericSpider(Spider) :
 				follow_link 	= raw_data.xpath( self.follow_xpath ).extract_first()	
 				log_scrap.info(" --> follow_link RAW : %s ", follow_link )
 
+
 				# complete follow link if needed
-				if not follow_link.startswith("http"): 
-					separator = ""
-					if not follow_link.startswith("/"):
-						separator = "/"
-					follow_link 	= "{}{}{}".format( self.page_url, separator, follow_link)			
+				follow_link = self.clean_link(follow_link)
+				# if not follow_link.startswith("http"): 
+				# 	separator = ""
+				# 	if not follow_link.startswith("/"):
+				# 		separator = "/"
+				# 	follow_link 	= "{}{}{}".format( self.page_url, separator, follow_link)			
 
 
 				log_scrap.info(" --> follow_link CLEAN : %s ", follow_link )
@@ -377,7 +383,9 @@ class GenericSpider(Spider) :
 										dm_field,
 										full_data )
 
-					# item[ dm_field ] 	= full_data
+					### in case data needs cleaning before storing
+					if self.dm_custom[dm_field]["field_type"] in ["url", "image"] : 
+						full_data = self.clean_link(full_data)
 					
 					if full_data != None or full_data != [] : 
 						
@@ -385,7 +393,7 @@ class GenericSpider(Spider) :
 						full_data_uniques 	= set(full_data)
 						full_data_clean 	= list(full_data_uniques)
 
-						# aggregate to 
+						# aggregate to results
 						if dm_field in item : 
 							item[ dm_field ] = item[ dm_field ] + full_data_clean
 						else : 
@@ -437,6 +445,21 @@ class GenericSpider(Spider) :
 		
 		else:
 			return False, next_page
+
+
+	### clean a link if http is missing
+	def clean_link(self, link=None):
+		""" complete a link if needed """
+		
+		if not link.startswith("http"): 
+			separator = ""
+			if not link.startswith("/"):
+				separator = "/"
+			link 	= "{}{}{}".format( self.page_url, separator, link)			
+
+		return link
+
+
 
 
 	# def get_link(self, action, xpath=None, data_type="link"):
