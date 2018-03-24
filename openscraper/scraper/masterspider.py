@@ -189,7 +189,13 @@ class GenericSpider(Spider) :
 	### spider class needs a default name
 	name = "genericspider"
 
-	def __init__(self, user_id=None, datamodel=None, spider_id=None, spider_config_flat=None, *args, **kwargs) : 
+	def __init__(self, 	user_id				= None, 
+						datamodel			= None, 
+						spider_id			= None, 
+						spider_config_flat	= None, 
+						test_limit			= None,
+						*args, **kwargs
+				) : 
 		
 
 		print "\n\n{}\n".format("> > > "*20)
@@ -202,6 +208,9 @@ class GenericSpider(Spider) :
 		self.user_id	= user_id
 		self.spider_id 	= spider_id
 		
+		self.test_limit = test_limit
+		log_scrap.info("--- GenericSpider / test_limit : %s ", self.test_limit )
+
 		self.item_count = 0
 		self.page_count = 1
 
@@ -328,17 +337,21 @@ class GenericSpider(Spider) :
 
 
 
-		### get and go to next page 
-		is_next_page, next_page = self.get_next_page(response)
-		if is_next_page :
-			
-			print
+		### check if there is a test_limit
+		if self.test_limit == None or self.page_count <= self.test_limit : 
 
-			self.page_count += 1
-
-			log_scrap.info(" --- GenericSpider.parse >>> NEXT PAGE : %s... \n", next_page )
+			### get and go to next page 
+			is_next_page, next_page = self.get_next_page(response)
 			
-			yield response.follow(next_page, callback=self.parse)
+			if is_next_page :
+				
+				print
+
+				self.page_count += 1
+
+				log_scrap.info(" --- GenericSpider.parse >>> NEXT PAGE : %s... \n", next_page )
+				
+				yield response.follow(next_page, callback=self.parse)
 
 
 
@@ -431,12 +444,16 @@ class GenericSpider(Spider) :
 		if it finds one, returns it along with a True value
 		"""
 		
+		log_scrap.info(" === GenericSpider.get_next_page / ... " )
+
 		try :
 			next_page = response.xpath(self.next_page).extract_first()
 		except :
 			next_page = None 
 
-		if (next_page is not None) and (self.page_count < self.LIMIT):
+		log_scrap.info(" === GenericSpider.get_next_page / next_page : %s ", next_page )
+
+		if (next_page is not None) and (self.page_count < self.LIMIT) :
 			
 			self.page_count += 1
 			# next_page = next_page.strip()
@@ -447,6 +464,7 @@ class GenericSpider(Spider) :
 			
 			except:
 				return False, next_page
+		
 		else:
 			return False, next_page
 
@@ -478,66 +496,6 @@ class GenericSpider(Spider) :
 
 
 
-
-	# def add_string_to_complete_url_if_needed(self, not_complete_url, rest_of_url=None):
-	# 	"""adds the missing beggining part of an url with the '/' if needed"""
-	# 	if rest_of_url is None:
-	# 		rest_of_url = self.page_url
-	# 	if not not_complete_url.startswith("http"):
-	# 		if not not_complete_url.startswith("/"):
-	# 			not_complete_url = "{}{}".format("/", not_complete_url)
-	# 		not_complete_url = "{}{}".format(rest_of_url, not_complete_url)
-	# 	return not_complete_url
-
-
-
-
-
-	# ### TO DO : generic functions linked with DATAMODEL_FIELDS_TYPES
-	# def clean_type_text(self, response) :
-	# 	"""
-	# 	for field_type : "text"
-	# 	"""
-	# 	value = ""
-	# 	return value
-
-	# def clean_type_tags(self, response) :
-	# 	"""
-	# 	for field_type : "tags"
-	# 	"""
-	# 	value = ""
-	# 	return value
-
-	# def clean_type_url(self, response) :
-	# 	"""
-	# 	for field_type : "url", "email"
-	# 	"""
-	# 	value = ""
-	# 	return value
-
-	# def clean_type_adress(self, response) : 
-	# 	"""
-	# 	for field_type : "adress"
-	# 	"""
-	# 	value = ""
-	# 	return value
-
-	# def clean_type_image(self, response) : 
-	# 	"""
-	# 	fields : "image"
-	# 	"""
-	# 	value = ""
-	# 	return value
-
-	# def clean_type_date(self, response) : 
-	# 	"""
-	# 	for field_type : "date"
-	# 	"""
-	# 	value = ""
-	# 	return value
-
-
-
 ### define the spider runner
 ### cf : https://stackoverflow.com/questions/13437402/how-to-run-scrapy-from-within-a-python-script
 ### cf : https://doc.scrapy.org/en/latest/topics/practices.html
@@ -546,7 +504,8 @@ class GenericSpider(Spider) :
 def run_generic_spider( user_id				= None, 
 						spider_id			= None, 
 						datamodel			= None, 
-						run_spider_config	= None 
+						run_spider_config	= None,
+						test_limit			= None 
 						):
 	"""
 	just launch run_generic_spider() from any handler in controller
@@ -592,7 +551,8 @@ def run_generic_spider( user_id				= None,
 										user_id				= user_id,
 										datamodel 			= datamodel , 
 										spider_id 			= spider_id ,
-										spider_config_flat	= spider_config_flat 
+										spider_config_flat	= spider_config_flat,
+										test_limit			= test_limit 
 									)			
 			deferred.addBoth(lambda _: reactor.stop())
 			reactor.run()

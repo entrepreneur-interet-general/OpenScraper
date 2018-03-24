@@ -72,8 +72,8 @@ QUERIES_SPIDER_ALLOWED_BOOLEAN = [
 ### SPIDER CRAWLER QUERIES FROM URL - basic args in slug query for crawling
 QUERY_CRAWL_BY_DEFAULT = {
 	"spider_id" 	: None,
-	"test"			: True,
-	"test_limit" 	: 1,
+	# "test"			: False,
+	"test_limit" 	: None,
 }
 QUERIES_CRAWL_ALLOWED_UNIQUE = {
 	"spider_id",

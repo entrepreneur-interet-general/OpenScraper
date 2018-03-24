@@ -52,6 +52,11 @@ class SpiderHandler(BaseHandler) :
 		spider_id 	= query_contrib["spider_id"]
 		spider_oid 	= ObjectId(spider_id)
 
+		# get test_limit
+		test_limit = query_contrib.get("test_limit", None)
+		app_log.info("SpiderHandler.get / test_limit : %s ", test_limit )
+
+
 		app_log.info("SpiderHandler.get / spider_id : %s", spider_id )
 		print spider_oid, type(spider_oid)
 
@@ -104,7 +109,8 @@ class SpiderHandler(BaseHandler) :
 									spider_id 		= spider_id,
 									spider_oid 		= spider_oid, 
 									spider_config	= spider_config, 
-									current_user_id	= self.get_current_user_id()
+									current_user_id	= self.get_current_user_id(),
+									test_limit		= test_limit
 							 ) 
 			# self.finish()
 
@@ -121,6 +127,7 @@ class SpiderHandler(BaseHandler) :
 						spider_oid,
 						spider_config,
 						current_user_id,
+						test_limit=None,
 						# callback=None,
 						countdown=3
 					) :
@@ -146,7 +153,8 @@ class SpiderHandler(BaseHandler) :
 									spider_id			= str(spider_id), 
 									# spider_oid		= spider_oid,
 									datamodel			= datamodel, 
-									run_spider_config	= spider_config 
+									run_spider_config	= spider_config, 
+									test_limit 			= test_limit
 									)
 
 
