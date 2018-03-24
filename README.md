@@ -94,43 +94,48 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 - display the list of sources + for each add a button to run the scraper
 - store/extract results in the DB
 
-#### Roadmap to a MVP
-1. understand basics of Tornado (reuse some tutorial material)
-1. basic Tornado + MongoDB setup
-1. understand basics of Scrapy
-1. UI to create user (register), create/update a datamodel, create/update a spider configuration
-1. add a GUI to configure the data structure you expect from the scraping
-1. create a generic spider (class) + generic item to fill, both callable from handlers
-1. integrate generic spider + tests + run
-1. make Tornado and a basic scrapy spider work together (non-blocking)
-1. make a nice front in Bulma 
-1. ... nicer front in vue.js
-1. GUI to edit also fields' names (structure of the scrapping)
-
-
 ------
 
-## CURRENTLY... 
-- currently at step /6 - /7
-- running scrapy from browser with a basic generic crawler and saving to db
-- api-like urls for pagination, contributors, dataset...
-- working on several generic spider scenarios
+## ROADMAP TO A MVP
+
+#### To do list :
+1. DONE - understand basics of Tornado (reuse some tutorial material)
+1. DONE - basic Tornado + MongoDB setup
+1. DONE - understand basics of Scrapy
+1. DONE - UI to create user (register), create/update a datamodel, create/update a spider configuration
+1. DONE - add a GUI to configure the data structure you expect from the scraping
+1. DONE - create a generic spider (class) + generic item to fill, both callable from handlers
+1. DONE - integrate generic spider + tests + run
+1. DONE - make Tornado and a basic scrapy spider work together (non-blocking)
+1. DONE - make a nice front in Bulma 
+1. add API points for JSON feeds
+1. ... nicer front in vue.js
+
+
+#### Currently : 
+- currently at steps /10
+- working on several generic spiders : pure html websites working quite well
+- working on the API points
 - ...
 
-#### Notes for later / issues
-- the generic spider need to be tested on various websites configurations
+#### Notes for later / issues :
+- must add logic to masterspider to request APIs
+- must migrate/copy data to a Elastic search (not only MongoDB) 
 - must add a feature to use Selenium inside a spider if needed (ajax or .click function)
+- ...
 
 
 
 -------
 ## CREDITS 
 
+#### OpenScraper's team thanks :
+
 - the [SocialConnect](https://entrepreneur-interet-general.etalab.gouv.fr/defi/2017/09/26/socialconnect/) project, aka "Carrefour des Innovations Sociales"
 - the [EIG](https://entrepreneur-interet-general.etalab.gouv.fr/) program by [Etalab](https://www.etalab.gouv.fr/)
 - [CGET](http://www.cget.gouv.fr/)
 
-#### Contacts
+#### Contacts :
 
 - [Julien Paris](<mailto:julien.paris@cget.gouv.fr>) (aka [JPy](https://twitter.com/jparis_py) on Twitter)
 

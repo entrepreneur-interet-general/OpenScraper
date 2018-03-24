@@ -3,8 +3,8 @@ app_infos = {
 	"project"   : "openscraper.beta",
 	"licence"   : "MIT",
 	"authors"   : [ "Julien Paris (aka JPy)"],
-	"version"   : "0.1",
-	"date"      : "2018-02-25",
+	"version"   : "0.3",
+	"date"      : "2018-03-24",
 	"link_git"  : "https://github.com/entrepreneur-interet-general/OpenScraper",
 	"link_online" : "http://..."
 }
