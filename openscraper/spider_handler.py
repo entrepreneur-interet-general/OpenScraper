@@ -7,9 +7,12 @@ from 	base_utils	import *
 ### OpenScraper generic scraper
 from scraper import run_generic_spider 
 
+from config.settings_scrapy import DEFAULT_COUNTDOWN
 
-########################
-### RUN SPIDER handlers as background tasks
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### RUN SPIDER handlers as background tasks #################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 # threading for background tasks (spiders mainly)
 # cf : https://stackoverflow.com/questions/22082165/running-an-async-background-task-in-tornado/25304704
@@ -19,8 +22,6 @@ from scraper import run_generic_spider
 # cf : http://www.tornadoweb.org/en/stable/faq.html#my-code-is-asynchronous-but-it-s-not-running-in-parallel-in-two-browser-tabs
 # cf : http://www.tornadoweb.org/en/stable/guide/queues.html
 # cf : https://emptysqua.re/blog/refactoring-tornado-coroutines/
-
-
 
 
 class SpiderHandler(BaseHandler) : 
@@ -137,7 +138,6 @@ class SpiderHandler(BaseHandler) :
 
 
 
-
 	# @gen.coroutine	# with raise gen.Result(result)
 	# @return_future	# with callback(result) / cf : http://www.maigfrga.ntweb.co/asynchronous-programming-tornado-framework/
 	@print_separate(APP_DEBUG)
@@ -180,19 +180,14 @@ class SpiderHandler(BaseHandler) :
 
 
 		### TO DO : keep track of error in spider configuration
-		### update scraper_log.is_working
-		# app_log.info("SpiderHandler.get --- spider is_working updating...")
-		# self.application.coll_spiders.update_one( 
-		# 										{"_id": ObjectId(spider_id) }, 
-		# 										{"$set" : {"scraper_log.is_working" : True} }
-		# 										)
-		# app_log.info("SpiderHandler.get --- spider is_working updated...")
+
 
 		### update status in spider configuration
 		self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_working", 		  value=True)
 		self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_tested", 		  value=True)
 		self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_running", 		  value=False)
 		self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_data_available", value=True)
+
 
 		### raise result to tell gen is ended
 		raise gen.Return(result)

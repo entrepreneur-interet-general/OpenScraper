@@ -20,10 +20,10 @@ CLOSESPIDER_ITEMCOUNT = 1
 # TEMPLATES_DIR = 'openscraper/templates'
 
 LOG_LEVEL = 'INFO'
-LOG_FILE = 'logs/scrapy.log'
+LOG_FILE  = 'logs/scrapy.log'
 
 # Splash settings ---BEGIN---
-SPLASH_URL = 'http://localhost:8050/'
+SPLASH_URL   = 'http://localhost:8050/'
 API_BASE_URL = 'http://localhost:8000/'
 
 

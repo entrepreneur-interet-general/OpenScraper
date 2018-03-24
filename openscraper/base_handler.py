@@ -43,9 +43,10 @@ from config.settings_cleaning	import * # STRIP_STRING, DATA_CONTENT_TO_IGNORE, e
 
 
 
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### BASE handler for all routing handlers ###################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
-########################
-### BASE handler
 
 class BaseHandler(tornado.web.RequestHandler):
 	"""
@@ -57,6 +58,7 @@ class BaseHandler(tornado.web.RequestHandler):
 	### global executor for base handler to deal with @run_on_executor
 
 	executor = ThreadPoolExecutor(max_workers=THREADPOOL_MAX_WORKERS)
+
 
 
 	### global settings at init handler
@@ -266,7 +268,6 @@ class BaseHandler(tornado.web.RequestHandler):
 
 
 
-
 	### user functions for all handlers
 
 	def get_if_user_connected(self) :
@@ -333,6 +334,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		self.clear_cookie("user_name")
 		self.clear_cookie("user_email")
 		self.clear_cookie("user_is_connected")
+
 
 
 
@@ -525,14 +527,16 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		return docs_from_db, is_data, page_n_max
 
-
+	
+	
+	### specific spider functions
 
 	def update_spider_log(self, spider_id=None, spider_oid=None, log_to_update=None, value=None) :
 		""" update log of a spider """
 
 		app_log.info("... update_spider_log --- spider_id %s updating / log_to_update : %s", spider_id, log_to_update)
 
-		# for debugging 
+		# find the spider
 		spider = self.application.coll_spiders.find_one( {"_id": spider_oid } )
 
 		# update

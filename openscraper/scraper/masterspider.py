@@ -267,6 +267,9 @@ class GenericSpider(Spider) :
 
 		### TO DO !
 		### check response to see if API or HTML response
+
+
+
 		log_scrap.info("--- GenericSpider.parse / self.item_xpath : %s", self.item_xpath )
 		
 
@@ -274,7 +277,6 @@ class GenericSpider(Spider) :
 
 
 		raw_items_list = response.xpath(self.item_xpath)
-		# raw_items_list = response.xpath('//table[@class="sobi2Listing"]/tr')
 		log_scrap.info("--- GenericSpider.parse / len(raw_items_list) : %d ", len(raw_items_list) )
 
 		### start parsing page : 
@@ -330,8 +332,8 @@ class GenericSpider(Spider) :
 
 			else : 			
 				### item completion is finished - yield and so spark pipeline for item (store in db for instance)
-				# print "\nGenericSpider.parse - item : \n", item.items()
-				# print item.keys()
+				# log_scrap.info(">>> GenericSpider.parse - item.items() : \n %s", item.items() )
+				# log_scrap.info(">>> GenericSpider.parse - item.keys()  : \n %s", item.items() )
 				yield item
 
 				print "\n>>> NEXT ITEM " + ">>> >>> "*10, "\n"

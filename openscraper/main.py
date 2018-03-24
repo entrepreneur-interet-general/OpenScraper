@@ -74,46 +74,11 @@ from controller import *
 # cf : db.getCollection('contributors').update({}, {$set:{"infos.added_by" : "admin"} }, {upsert:true, multi:true})
 
 
-### UTILS AT MAIN LEVEL
-def create_datamodel_fields( logger, coll_model, fields_list, field_class ) : 
-	"""
-	create datamodel fields from list of field basic dict like DATAMODEL_CORE_FIELDS
-	"""
 
-	timestamp = time.time()
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### UTILS AT MAIN LEVEL #####################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
-	if field_class == "core":
-		is_visible = False
-	if field_class == "custom":
-		is_visible = True
-		
-
-	### instantiate db.datamodel with core fields (for internal use)
-	fields_ = [ 
-		{ 	"field_name" 	: field["field_name"], 
-			"field_type" 	: field["field_type"],
-			"field_open" 	: field["field_open"],
-			"field_class" 	: field_class ,
-			"added_by" 		: "admin",
-			"added_at"		: timestamp,
-			"is_visible"	: is_visible
-		} for field in fields_list
-	]
-
-	logger.info("... create_datamodel_fields / datamodel - fields_ : ")
-	# pprint.pprint(fields_)
-
-	# upsert fields as bulk job in mongoDB
-	# cf : https://stackoverflow.com/questions/5292370/fast-or-bulk-upsert-in-pymongo
-	operations =[ UpdateOne( 
-		{"field_name" : field["field_name"]},
-		{'$set':  { 
-				k : v for k,v in field.iteritems() if k != "field_name" 
-				} 
-		}, 
-		upsert=True ) for field in fields_ 
-	]
-	coll_model.bulk_write(operations)
 
 def setup_loggers ():
 	"""
@@ -212,6 +177,68 @@ def setup_loggers ():
 	print 
 
 
+def create_datamodel_fields( logger, coll_model, fields_list, field_class ) : 
+	"""
+	create datamodel fields from list of field basic dict like DATAMODEL_CORE_FIELDS
+	"""
+
+	timestamp = time.time()
+
+	if field_class == "core":
+		is_visible = False
+	if field_class == "custom":
+		is_visible = True
+		
+
+	### instantiate db.datamodel with core fields (for internal use)
+	fields_ = [ 
+		{ 	"field_name" 	: field["field_name"], 
+			"field_type" 	: field["field_type"],
+			"field_open" 	: field["field_open"],
+			"field_class" 	: field_class ,
+			"added_by" 		: "admin",
+			"added_at"		: timestamp,
+			"is_visible"	: is_visible
+		} for field in fields_list
+	]
+
+	logger.info("... create_datamodel_fields / datamodel - fields_ : ")
+
+	# upsert fields as bulk job in mongoDB
+	# cf : https://stackoverflow.com/questions/5292370/fast-or-bulk-upsert-in-pymongo
+	operations =[ UpdateOne( 
+		{"field_name" : field["field_name"]},
+		{'$set':  { 
+				k : v for k,v in field.iteritems() if k != "field_name" 
+				} 
+		}, 
+		upsert=True ) for field in fields_ 
+	]
+	coll_model.bulk_write(operations)
+
+
+def reset_is_running_on_all_spider( coll_model ) :
+	"""
+	reset is_running on all spiders to avoid errors if app shut down while one spider was running 
+	"""
+
+	print 
+
+	app_log.info('>>> reset_is_running_on_all_spider ... ')
+	
+	# find if any spider was running
+	running_spiders = coll_model.find({"scraper_log.is_running" : True})
+
+	if running_spiders != [] : 
+
+		app_log.warning('>>> reset_is_running_on_all_spider / some spiders were blocked in is_running == True ... ')
+		app_log.warning('>>> spiders are : \n %s', pformat(list(running_spiders)) )
+		
+		coll_model.update({"scraper_log.is_running":True}, {"$set" : {"scraper_log.is_running" : False }})
+	
+	print 
+
+
 ### MAIN TORNADO APPLICATION WRAPPER
 class Application(tornado.web.Application):
 	"""
@@ -277,10 +304,13 @@ class Application(tornado.web.Application):
 		# self.coll_model.bulk_write(operations)
 		create_datamodel_fields( app_log, self.coll_model, DATAMODEL_CORE_FIELDS, "core" )
 
-		### instantiate core and default custom fields if no custom field at all in db
+		### instanciate core and default custom fields if no custom field at all in db
 		existing_custom_fields = self.coll_model.find({"field_type" : "custom"})
 		if existing_custom_fields == None : 
 			create_datamodel_fields( self.coll_model, DATAMODEL_DEFAULT_CUSTOM_FIELDS, "custom" )
+
+		### reset spiders scrape_log.is_running
+		reset_is_running_on_all_spider( self.coll_spiders )
 
 		### retrieve handlers from urls.py
 		handlers = urls.urls

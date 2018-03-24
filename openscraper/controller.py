@@ -55,8 +55,10 @@ Notes :
 """
 
 
-########################
-### ERROR HANDLERS ###
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### ERROR HANDLERS ##########################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 class PageNotFoundHandler(BaseHandler): 
 	"""
@@ -92,8 +94,10 @@ class PageNotFoundHandler(BaseHandler):
 
 
 
-########################
-### Index page 
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### INDEX PAGE ##############################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+
 class WelcomeHandler(BaseHandler):
 	"""
 	handler for index page
@@ -131,8 +135,11 @@ class WelcomeHandler(BaseHandler):
 	# 	self.write("Gosh darnit, user! You caused a %d error." % status_code)
 
 
-######################################
-### Login - logout - register handlers 
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### LOGIN - LOGOUT - REGISTER HANDLERS ######################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+
 # cf : https://guillaumevincent.github.io/2013/02/12/Basic-authentication-on-Tornado-with-a-decorator.html
 # cf : http://tornado-web.blogspot.fr/2014/05/tornado-user-authentication-example.html
 
@@ -342,8 +349,9 @@ class UserPreferences(BaseHandler):
 
 
 
-#####################################
-### DATAMODEL lists / edit handlers
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### DATAMODEL lists / edit handlers #########################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 class DataModelViewHandler(BaseHandler):
 	"""
@@ -559,8 +567,9 @@ class DataModelAddFieldHandler(BaseHandler) :
 
 
 
-#####################################
-### CONTRIBUTOR lists / edit handlers
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### CONTRIBUTOR lists / edit handlers #######################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 	"""
@@ -975,8 +984,10 @@ class ContributorResetDataHandler(BaseHandler) :
 
 
 
-#####################################
-### DATA lists / edit handlers
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### DATA lists / edit handlers ##############################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 ### TO DO - after item pipeline
 
@@ -1088,8 +1099,10 @@ class DataScrapedViewOneHandler(BaseHandler):
 
 
 
-#####################################
-### SNIPPETS handlers
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### SNIPPETS handlers #######################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 class FormHandler(BaseHandler) : 
 	"""
@@ -1142,9 +1155,12 @@ class TestBulmaHandler(BaseHandler) :
 		)
 
 
-########################
-########################
-### TORNADO MODULES
+
+
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### TORNADO MODULES #########################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 class PaginationModule(tornado.web.UIModule):
 	"""
