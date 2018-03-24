@@ -17,9 +17,10 @@ from 	datetime import datetime
 
 ### import app settings
 from config.settings_example import * 
-# from config.settings import * 
-from config.settings_scrapy import * 
+# from config.settings import *  		# for prod
 
+from config.settings_scrapy import * 
+from config.settings_cleaning import *
 
 ### lOGGER - SCRAPY
 ### logging only for scrapy
@@ -283,7 +284,7 @@ class GenericSpider(Spider) :
 			print "\n>>> NEW ITEM " + ">>> >>> "*10, "\n"
 			self.item_count += 1
 
-			print ">>> raw_data : \n", raw_data.extract()
+			# print ">>> raw_data : \n", raw_data.extract()
 
 			### instantiate Item to fill from datamodel --> cf items.py 
 			itemclass 	= create_item_class( 'GenericItemClass', fields_list = self.dm_item_related )
@@ -390,15 +391,18 @@ class GenericSpider(Spider) :
 
 					# check if data exists at all
 					if full_data != None and full_data != [] and full_data != [u""] : 
+						
+						### clean data from break lines etc...
+						full_data = self.clean_data_list(full_data)
 
 						### in case data needs cleaning before storing
 						if self.dm_custom[dm_field]["field_type"] in ["url", "image"]  : 
-							clean_data_list = []
+							clean_href_list = []
 							for data in full_data : 
 								if data != None or data != u"" : 
 									data = self.clean_link(data)
-									clean_data_list.append(data)
-							full_data = clean_data_list
+									clean_href_list.append(data)
+							full_data = clean_href_list
 
 
 						# delete duplicates and aggregate
@@ -428,7 +432,7 @@ class GenericSpider(Spider) :
 		""" """
 
 		log_scrap.info(" === GenericSpider.parse / parse_detailed_page / ... " )
-		print response._body
+		# print response._body
 
 		item = response.meta["item"]
 		item = self.fill_item_from_results_page(response, item)
@@ -490,9 +494,25 @@ class GenericSpider(Spider) :
 		else : 
 			return link
 
+	### clean data from trailing spaces, multiple spaces, line breaks, etc...
+	def clean_data_list(self, data_list, chars_to_strip = STRIP_STRING ):
+		""" clean data list from trainling """
 
+		clean_data_list = []
+		
+		for data in data_list : 
+			
+			# replace multiple spaces
+			data = ' '.join(data.split())
 
-
+			# remove line breaks
+			if data in DATA_CONTENT_TO_IGNORE : 
+				pass
+			else : 
+				data = data.strip(chars_to_strip)
+				clean_data_list.append(data)
+		
+		return clean_data_list
 
 
 

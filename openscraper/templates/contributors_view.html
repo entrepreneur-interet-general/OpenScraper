@@ -145,7 +145,7 @@
 
 						{% set is_working 			= contrib["scraper_log"].get("is_working", False ) %}
 						{% set is_running 			= contrib["scraper_log"].get("is_running", False ) %}
-						{% set is_tested  			= contrib["scraper_log"].get("is_tested", False ) %}
+						{% set is_tested  			= contrib["scraper_log"].get("is_tested",  False ) %}
 						{# { % set is_data_available 	= contrib["scraper_log"].get("is_data_available", False ) %} #}
 
 						{# set hrefs #}
@@ -195,11 +195,11 @@
 							</td>
 
 							{# delete spider #}
-							<td> 
-								<a class="has-text-centered button is-danger is-rounded is-small"
+							<td class="has-text-centered">
+								<a class="has-text-centered  is-small"
 									href="/contributor/delete?spider_id={{ contrib_id }}" 
 									 >
-									<span class="icon is-small"><i class="fas fa-trash"></i></span>
+									<span class="icon has-text-grey is-small"><i class="fas fa-trash"></i></span>
 									{# <span>delete</span> #}
 								</a> 
 							</td>
@@ -239,53 +239,90 @@
 
 
 							{# test spider #}
-							<td> 
-								<a class="has-text-centered button is-warning is-rounded is-small"
-									{{ href_test_crawl }}
-									{% if start_urls == [] %}
-									disabled
-									{% end %}
-									>
-									<span class="icon is-small"><i class="fas fa-step-forward"></i></span>
-									<span>test</span>
-								</a> 
+							<td class="has-text-centered">
+							
+								{% if is_running %}
+									
+									<span class="icon has-text-info">
+										<i class="fas fa-spinner fa-pulse"></i>
+									</span>
+
+								{% else %}
+
+									<a class="has-text-centered button is-warning is-rounded is-small"
+										{{ href_test_crawl }}
+										{% if start_urls == [] %}
+										disabled
+										{% end %}
+										>
+										<span class="icon is-small"><i class="fas fa-step-forward"></i></span>
+										<span>test</span>
+									</a> 
+								
+								{% end %}
+
 							</td>
 
 
 							{# spider status : is_working / is_running / ... #}
 							<td class="has-text-centered"> 
 								
-								{% if is_working %}
-									<span class="icon has-text-primary">
-										<i class="fas fa-check-square"></i>
+								{% if is_running %}
+									
+									<span class="icon has-text-info">
+										<i class="fas fa-spinner fa-pulse"></i>
 									</span>
 
-								{% elif start_urls != [] %}
-									<span class="icon has-text-warning">
-										<i class="is-danger fas fa-exclamation-triangle "></i>
-									</span>
+								{% else %}
 
-								{% elif start_urls == [] %}
-									<span class="icon has-text-danger">
-										<i class="is-danger fas fa-exclamation-circle "></i>
-									</span>
+									{% if is_working %}
+										<span class="icon has-text-primary">
+											<i class="fas fa-check-square"></i>
+										</span>
+
+
+									{% elif start_urls != [] %}
+										<span class="icon has-text-warning">
+											<i class="is-danger fas fa-exclamation-triangle "></i>
+										</span>
+
+									{% elif start_urls == [] %}
+										<span class="icon has-text-danger">
+											<i class="is-danger fas fa-exclamation-circle "></i>
+										</span>
+
+									{% end %}
 
 								{% end %}
-							
+
+
+
 							</td>
 
 
 							{# spider run crawler #}
-							<td> 
-								<a class="has-text-centered button is-warning is-rounded is-small"
-									{{ href_crawl }}
-									{% if not is_working %}
-										disabled
-									{% end %}
-									>
-									<span class="icon is-small"><i class="fas fa-play"></i></span>
-									<span><strong>crawl</strong></span>
-								</a> 
+							<td class="has-text-centered"> 
+
+								{% if is_running %}
+									
+									<span class="icon has-text-info">
+										<i class="fas fa-spinner fa-pulse"></i>
+									</span>
+
+								{% else %}
+
+									<a class="has-text-centered button is-warning is-rounded is-small"
+										{{ href_crawl }}
+										{% if not is_working %}
+											disabled
+										{% end %}
+										>
+										<span class="icon is-small"><i class="fas fa-play"></i></span>
+										<span><strong>crawl</strong></span>
+									</a> 
+
+								{% end %}
+
 							</td>
 
 							
@@ -306,16 +343,28 @@
 
 
 							{# spider reset data #}
-							<td> 
-								<a class="has-text-centered button is-{{color_data}} is-rounded is-small"
-									{{ href_reset }}
-									{% if count_data == 0 %}
-									disabled 
-									{% end %}
-									>
-									<span class="icon is-small"><i class="fas fa-redo"></i></span>
-									<span>reset data</span>
-								</a> 
+							<td class="has-text-centered"> 
+
+								{% if is_running %}
+									
+									<span class="icon has-text-info">
+										<i class="fas fa-spinner fa-pulse"></i>
+									</span>
+
+								{% else %}
+
+									<a class="has-text-centered button is-{{color_data}} is-rounded is-small"
+										{{ href_reset }}
+										{% if count_data == 0 %}
+										disabled 
+										{% end %}
+										>
+										<span class="icon is-small"><i class="fas fa-redo"></i></span>
+										<span>reset data</span>
+									</a> 
+								
+								{% end %}
+
 							</td>
 
 

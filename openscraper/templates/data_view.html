@@ -85,6 +85,7 @@
 						<tr>
 							
 							<th>spider used</th>
+							{# <th>item id </th> #}
 							<th>link_src</th>
 							<th>link_data</th>
 							
@@ -92,7 +93,7 @@
 								
 								{# <th>{ { field["field_name"] }}</th> #}
 								<th>
-									<abbr title="{{ field['field_name'] }}">
+									<abbr title="{{ field['field_name'] }}" class="tooltip  is-tooltip-bottom" data-tooltip="{{ field['field_name'] }}"  >
 										{{ field['field_name'][:3].capitalize() + "." }}
 									</abbr><br>
 									<p class="has-text-weight-light"><i>{{ field['field_type'] }}</i></p>
@@ -115,9 +116,13 @@
 									</a>
 								</td>
 
+								{# <td> 
+									{ { escape (str(item["_id"])) }} 
+								</td> #}
+
 
 								<th class="has-text-centered">
-									<a href="{{ escape ( item['link_src'] ) }}" target="_blank">
+									<a href="{{ escape ( item['link_src'] ) }}" target="_blank" class="tooltip" data-tooltip="{{ escape ( item['link_src']) }}">
 										<span class="tag is-white">
 											<span class="icon is-small"><i class="fas fa-external-link-alt"></i></span> 
 										</span>
@@ -128,7 +133,7 @@
 								<th class="has-text-centered">
 									{% set link_data = item.get( 'link_data', False) %}
 									{% if link_data %}
-									<a href="{{ escape ( link_data ) }}" target="_blank">
+									<a href="{{ escape ( link_data ) }}" target="_blank" class="tooltip" data-tooltip="{{ escape (link_data) }}">
 										<span class="tag is-white">
 											<span class="icon is-small">
 												<i class="fas fa-link"></i>
@@ -148,6 +153,7 @@
 									{% if id_field in item.keys() %}
 										
 										<td>
+											
 											{% for i in item[ id_field ]  %} 
 												
 												{% if type_field == u"tags" %}
@@ -164,14 +170,17 @@
 													{ { escape (i) }}  #}
 												
 												{% elif type_field in [u"url"] %}
-													<a href="{{ escape (i) }}" >
+													<a href="{{ escape (i) }}" class="tooltip" data-tooltip="{{ escape (i) }}">
 														<span class="tag is-white">
 															<span class="icon is-small"><i class="fas fa-external-link-alt"></i></span> 
 														</span>
 													</a>
 
 												{% else %}
-													{{ escape (i) }} 
+													
+													<button class="button is-text is-small tooltip" data-tooltip="{{ escape (i) }}">
+														<p>{{ escape (i[:20]) }} (...)
+													</button>
 												
 												{% end %}
 												

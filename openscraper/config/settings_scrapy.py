@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from settings_example import *
-# from settings import *
+# from settings import *		# for prod
 
 ### settings variables for scrapy
 
