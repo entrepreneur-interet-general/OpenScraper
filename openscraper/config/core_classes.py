@@ -12,6 +12,7 @@ import 	jwt
 
 from .settings_corefields 	import * 
 from .settings_queries 		import * 
+from .settings_cleaning		import *
 
 from tornado.log import access_log, app_log, gen_log
 
@@ -236,9 +237,11 @@ class QueryFromSlug :
 
 					# value should be a boolean 
 					elif q_field in self.default_bool :
-						if self.query[q_field] in ["yes", "YES", "true", "True", "TRUE", "1", "t", "T"] :
+						# if self.query[q_field] in ["yes", "YES", "true", "True", "TRUE", "1", "t", "T"] :
+						if self.query[q_field] in SYNONYMS_TRUE :
 							self.query[q_field] = True
-						elif self.query[q_field] in ["no", "NO", "false", "False", "FALSE", "0", "f", "F"] : 
+						# elif self.query[q_field] in ["no", "NO", "false", "False", "FALSE", "0", "f", "F"] : 
+						elif self.query[q_field] in SYNONYMS_FALSE : 
 							self.query[q_field] = False
 						else : 
 							# keep original value if neither

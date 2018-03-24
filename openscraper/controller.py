@@ -26,7 +26,7 @@ from 	tornado import gen, concurrent
 from 	tornado.concurrent import return_future, run_on_executor
 # from 	tornado.log import access_log, app_log, gen_log # already imported from base_handler
 
-from 	concurrent.futures import ThreadPoolExecutor # note : need to install "futures" in pytohn 2.7 : pip install futures
+# from 	concurrent.futures import ThreadPoolExecutor # note : need to install "futures" in pytohn 2.7 : pip install futures
 from 	spider_threading import *
 
 
@@ -572,16 +572,20 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 	# @gen.coroutine
 	def get(self, slug=None):
 
-		# print "\nContributorsHandler.get ..."
 		app_log.info("ContributorsHandler.get ...\n")
 
 		self.site_section = "contributors"
-		
+
 		# catch error message if any
 		self.catch_error_message()
+
+
+		# get current page 
+		current_page = self.get_current_uri_without_error_slug()
+		app_log.info("ContributorsHandler.get / current_page : %s", current_page )
+
 		
 		app_log.info("ContributorsHandler.get / slug : %s", slug )
-		# app_log.info( slug ) 
 
 		slug_ = self.request.arguments
 		app_log.info("ContributorsHandler.get / slug_ : \n %s", pformat(slug_) )
@@ -617,6 +621,7 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 			"contributors_view.html",
 			page_title  			= app_main_texts["main_title"],
 			site_section			= self.site_section, 
+			current_page			= current_page,
 
 			query_obj				= query_contrib,
 			contributors 			= contributors,
@@ -833,8 +838,6 @@ class ContributorDeleteHandler(BaseHandler) :
 			self.redirect("/contributors")
 
 
-
-
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
 	def post(self):
@@ -858,7 +861,6 @@ class ContributorDeleteHandler(BaseHandler) :
 		# reset collection here
 		if is_delete == "true" :
 
-
 			app_log.warning("ContributorDeleteHandler.post / DELETING SPIDER FOR spider_id : %s", spider_id )
 			self.application.coll_spiders.delete_one({ "_id" : spider_oid })
 
@@ -871,7 +873,6 @@ class ContributorDeleteHandler(BaseHandler) :
 
 		else :
 			self.redirect("/contributors")
-
 
 
 class ContributorResetDataHandler(BaseHandler) : 
@@ -937,7 +938,6 @@ class ContributorResetDataHandler(BaseHandler) :
 
 		app_log.info("ContributorResetDataHandler.post / request.arguments : \n %s ", pformat(self.request.arguments ) )
 
-
 		# TO DO : form validation 
 
 		### get reset choice + data validation
@@ -957,7 +957,7 @@ class ContributorResetDataHandler(BaseHandler) :
 			app_log.warning("ContributorResetDataHandler.post / DELETING DOCUMENTS IN COLL_DATA for spider_id : %s", spider_id )
 			self.application.coll_data.delete_many({ "spider_id" : spider_id })
 			
-			# add message
+			# add warning message (as error for now)
 			self.error_msg = self.add_error_message_to_slug( 
 								error_string	= "all data from -%s- were erased" %(contributor["infos"]["name"]),
 								args_to_delete 	= QUERY_SPIDER_BY_DEFAULT.keys()

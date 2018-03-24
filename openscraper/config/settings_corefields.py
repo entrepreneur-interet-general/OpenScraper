@@ -3,7 +3,7 @@
 """
 MAIN STRUCTURE FOR DB COLLECTIONS
 
-MongoDB instantiated at Application level 
+MongoDB instanciated at Application level 
 
 """
 import pprint
@@ -220,14 +220,18 @@ CONTRIBUTOR_CORE_FIELDS = {
 
 	# scraper - log and stats	
 	"scraper_log" : {
+		
 		"added_by" 				: "",		# 
 		"added_at" 				: None,		# 
 		"modified_by" 			: "",		# 
 		"modified_at" 			: None,		# 
+		
 		"is_working" 			: False,	# 
 		"is_tested" 			: False,	# 
 		"is_running" 			: False,	# 
+		
 		"error_array" 			: [],		# 
+		
 		"item_count" 			: 0,		# 
 		"item_count_depth_1" 	: 0,		# 
 	},

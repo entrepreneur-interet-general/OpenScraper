@@ -68,53 +68,72 @@ class SpiderHandler(BaseHandler) :
 			spider_config = None
 		
 		
-		### set default runner if no spider_config
+		### if no spider_config
 		if spider_config == None : 
 			
 			app_log.warning("SpiderHandler.get --- !!! spider_id -%s- not found : test spider with test_config", spider_id ) 
 			
 			self.error_msg = self.add_error_message_to_slug( 
-								error_string="ERROR !!! there is no spider configuration with -%s- spider_id in the DB" %(str(spider_id)),
-								args_to_delete=QUERY_CRAWL_BY_DEFAULT.keys()
+								error_string	= "ERROR !!! there is no spider configuration with -%s- spider_id in the DB" %(str(spider_id)),
+								args_to_delete	= QUERY_CRAWL_BY_DEFAULT.keys()
 								)
 
 			# redirect client before starting spider
 			self.redirect("/contributors" + self.error_msg )
 			
 		
+		### if a spider config exists
 		else : 
 
-			# redirect client before starting spider
-			self.redirect("/contributors"  )
+			# get spider status : if already running prohibit spider from running again
+			is_running 	= spider_config["scraper_log"]["is_running"]
+			spider_name	= spider_config["infos"]["name"]
 
-			app_log.info("SpiderHandler.get --- spider_id     : %s ", spider_id )
-			app_log.info("SpiderHandler.get --- spider_config : %s ", pformat(spider_config["infos"]) )
+			if is_running == True : 
+
+				app_log.warning("SpiderHandler.get --- spider %s with id : %s- is already running ", spider_name, spider_id ) 
+				
+				self.error_msg = self.add_error_message_to_slug( 
+									error_string	= "the contributor - %s - is already running" %(spider_name),
+									args_to_delete	= QUERY_CRAWL_BY_DEFAULT.keys()
+									)
+
+				# redirect client before starting spider
+				self.redirect("/contributors" + self.error_msg )
+
+			else : 
+
+				# redirect client before starting spider
+				self.redirect("/contributors"  )
+
+				app_log.info("SpiderHandler.get --- spider_id     : %s ", spider_id )
+				app_log.info("SpiderHandler.get --- spider_config : %s ", pformat(spider_config["infos"]) )
 
 
-			# update spider log
-			self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_running", 		  value=True)
-			self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_data_available", value=False)
-			if test_limit != None :
-				self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_tested",	  value=False)
+				# update spider log
+				self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_running", 		  value=True)
+				self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_data_available", value=False)
+				if test_limit != None :
+					self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_tested",	  value=False)
 
 
-			### asynchronous run the corresponding spider
-			app_log.info("SpiderHandler.get --- starting spider runner --- " )
-			
-			### getting data_model lists
-			app_log.info("SpiderHandler.get --- creating data model list from fields in db ")
-			data_model = list(self.application.coll_model.find({}))
-			app_log.info("SpiderHandler.get --- data_model[:3] from db : \n %s \n...", pformat(data_model[:3]) )
+				### asynchronous run the corresponding spider
+				app_log.info("SpiderHandler.get --- starting spider runner --- " )
+				
+				### getting data_model lists
+				app_log.info("SpiderHandler.get --- creating data model list from fields in db ")
+				data_model = list(self.application.coll_model.find({}))
+				app_log.info("SpiderHandler.get --- data_model[:3] from db : \n %s \n...", pformat(data_model[:3]) )
 
-			yield self.run_spider( 	
-									datamodel 		= data_model,
-									spider_id 		= spider_id,
-									spider_oid 		= spider_oid, 
-									spider_config	= spider_config, 
-									current_user_id	= self.get_current_user_id(),
-									test_limit		= test_limit
-							 ) 
-			# self.finish()
+				yield self.run_spider( 	
+										datamodel 		= data_model,
+										spider_id 		= spider_id,
+										spider_oid 		= spider_oid, 
+										spider_config	= spider_config, 
+										current_user_id	= self.get_current_user_id(),
+										test_limit		= test_limit
+								) 
+				# self.finish()
 
 
 
@@ -160,7 +179,7 @@ class SpiderHandler(BaseHandler) :
 									)
 
 
-		### TO DO : keep track of error and update status in spider configuration
+		### TO DO : keep track of error in spider configuration
 		### update scraper_log.is_working
 		# app_log.info("SpiderHandler.get --- spider is_working updating...")
 		# self.application.coll_spiders.update_one( 
@@ -168,6 +187,8 @@ class SpiderHandler(BaseHandler) :
 		# 										{"$set" : {"scraper_log.is_working" : True} }
 		# 										)
 		# app_log.info("SpiderHandler.get --- spider is_working updated...")
+
+		### update status in spider configuration
 		self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_working", 		  value=True)
 		self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_tested", 		  value=True)
 		self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_running", 		  value=False)

@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
 
-DEFAULT_ERROR_ARGS_TO_DELETE = [
-	"error", 
-	"_xsrf"
-]
+# DEFAULT_ERROR_ARGS_TO_DELETE = [
+# 	"error", 
+# 	"_xsrf"
+# ]
 
 
 ### DATA QUERIES FROM URL - reconstruct from slug
@@ -64,6 +64,9 @@ QUERIES_SPIDER_ALLOWED_POSITIVES  	= [
 QUERIES_SPIDER_ALLOWED_BOOLEAN = [
 	"all_results",
 ]
+
+QUERY_RESET  = "reset_data"
+QUERY_DELETE = "is_delete"
 
 
 
