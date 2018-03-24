@@ -225,6 +225,7 @@ CONTRIBUTOR_CORE_FIELDS = {
 		"modified_by" 			: "",		# 
 		"modified_at" 			: None,		# 
 		"is_working" 			: False,	# 
+		"is_tested" 			: False,	# 
 		"is_running" 			: False,	# 
 		"error_array" 			: [],		# 
 		"item_count" 			: 0,		# 

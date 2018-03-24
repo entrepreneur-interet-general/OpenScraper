@@ -762,7 +762,10 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 				self.application.coll_spiders.update_one( {"_id": spider_oid}, { "$unset": old_fields } )
 				self.application.coll_spiders.update_one( {"_id": spider_oid}, { "$set"	 : new_config }, upsert=True )
 
-				self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_data_available", value=True)
+				# update contributor 
+				self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_data_available",	value=False)
+				self.update_spider_log(spider_id=spider_id, spider_oid=spider_oid, log_to_update="is_tested", 			value=False)
+
 
 			else :
 				contributor = contributor_object.full_config_as_dict()

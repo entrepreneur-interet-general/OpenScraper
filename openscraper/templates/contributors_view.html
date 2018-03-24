@@ -105,6 +105,9 @@
 					
 					<thead>
 						<tr>
+
+							<th>status</th>
+
 							<th>name</th>
 							<th></th>
 							<th></th>
@@ -123,9 +126,6 @@
 							{# <th>spidername</th> #}
 
 							<th></th>
-
-							<th>working</th>
-
 							<th></th>
 							<th></th>
 							<th></th>
@@ -177,9 +177,56 @@
 
 						<tr id="{{ contrib_id }}" >
 							
-							{# name #}
+
+
+							{# spider status : is_working / is_running / ... #}
+							<td class="has-text-centered"> 
+								
+															
+								{% if is_running %}
+
+									<span 	class="icon has-text-info tooltip"
+											data-tooltip="spider is running">
+										<i class="fas fa-spinner fa-pulse"></i>
+									</span>
+
+								{% elif start_urls == [] %}
+
+									<span 	class="icon has-text-danger tooltip"
+											data-tooltip="spider is incomplete">
+										<i class="is-danger fas fa-ban "></i>
+									</span>
+
+								{% else %}
+
+									{% if not is_tested %}
+										<span 	class="icon has-text-warning tooltip"
+												data-tooltip="the spider is not tested yet">
+											<i class="fas fa-exclamation-triangle"></i>
+										</span>
+										
+									{% elif is_working %}
+										<span 	class="icon has-text-primary tooltip" 
+												data-tooltip="spider is tested and working">
+											<i class="fas fa-check-square"></i>
+										</span>
+
+
+									{% end %}
+
+								{% end %}
+
+							</td>
+
+
+
+
+							{# name spider #}
 							<th> 
-								<a href='{{ escape (contrib["infos"]["page_url"]) }}' target="_blank">
+								<a 	href='{{ escape (contrib["infos"]["page_url"]) }}' target="_blank"
+								 	class="tooltip is-tooltip-right"
+									 data-tooltip='{{ escape (contrib["infos"]["page_url"]) }}'
+								 >
 									{{ escape (contrib["infos"]["name"]) }}
 								</a>
 							</th>
@@ -216,7 +263,8 @@
 							<td>
 								{% for url_ in start_urls %} 
 									<a href="{{ url_ }}" target="_blank"> 
-										<span class="tag is-white">
+										<span class="tag is-white tooltip is-tooltip-right"
+											data-tooltip="{{ url_ }}">
 											<span class="icon is-small"><i class="fas fa-external-link-alt"></i></span> 
 										</span>
 									</a>
@@ -238,25 +286,36 @@
 
 
 
+
+
+
 							{# test spider #}
 							<td class="has-text-centered">
 							
 								{% if is_running %}
 									
-									<span class="icon has-text-info">
+									<span 	class="icon has-text-info tooltip"
+											data-tooltip="spider is running">
 										<i class="fas fa-spinner fa-pulse"></i>
 									</span>
 
 								{% else %}
 
-									<a class="has-text-centered button is-warning is-rounded is-small"
+									<a class="has-text-centered is-outlined button is-warning is-iinverted is-rounded is-small tooltip is-tooltip-right" 
+										data-tooltip="the test will erase the previous data"
 										{{ href_test_crawl }}
 										{% if start_urls == [] %}
 										disabled
 										{% end %}
 										>
-										<span class="icon is-small"><i class="fas fa-step-forward"></i></span>
-										<span>test</span>
+											<p>
+												<span class="icon is-small ">
+													<i class="fas fa-step-forward"></i>
+												</span>
+												<span class="is-small ">
+													test
+												</span>
+											</p>
 									</a> 
 								
 								{% end %}
@@ -264,40 +323,7 @@
 							</td>
 
 
-							{# spider status : is_working / is_running / ... #}
-							<td class="has-text-centered"> 
-								
-								{% if is_running %}
-									
-									<span class="icon has-text-info">
-										<i class="fas fa-spinner fa-pulse"></i>
-									</span>
 
-								{% else %}
-
-									{% if is_working %}
-										<span class="icon has-text-primary">
-											<i class="fas fa-check-square"></i>
-										</span>
-
-
-									{% elif start_urls != [] %}
-										<span class="icon has-text-warning">
-											<i class="is-danger fas fa-exclamation-triangle "></i>
-										</span>
-
-									{% elif start_urls == [] %}
-										<span class="icon has-text-danger">
-											<i class="is-danger fas fa-exclamation-circle "></i>
-										</span>
-
-									{% end %}
-
-								{% end %}
-
-
-
-							</td>
 
 
 							{# spider run crawler #}
@@ -305,21 +331,30 @@
 
 								{% if is_running %}
 									
-									<span class="icon has-text-info">
+									<span 	class="icon has-text-info tooltip"
+											data-tooltip="spider is running">
 										<i class="fas fa-spinner fa-pulse"></i>
 									</span>
 
 								{% else %}
 
-									<a class="has-text-centered button is-warning is-rounded is-small"
-										{{ href_crawl }}
-										{% if not is_working %}
-											disabled
-										{% end %}
-										>
-										<span class="icon is-small"><i class="fas fa-play"></i></span>
-										<span><strong>crawl</strong></span>
-									</a> 
+									{% if not is_working or count_data == 0 %}
+									
+										<span class="icon has-text-warning">
+											<i class="fas fa-ban"></i>
+										</span>
+
+									{% else %}
+
+										<a class="has-text-centered button is-warning is-rounded is-small tooltip is-tooltip-right" 
+											data-tooltip="new crawling will erase the previous data"
+											{{ href_crawl }}
+											>
+											<span class="icon is-small"><i class="fas fa-play"></i></span>
+											<span><strong>crawl</strong></span>
+										</a> 
+
+									{% end %}
 
 								{% end %}
 
@@ -331,13 +366,18 @@
 							<td> 
 								<a class="has-text-centered button is-{{color_data}} is-rounded is-small"
 									{{ href_data }}
+									{% if not is_working %}
+										disabled
+									{% end %}
 									>
+
 									<span class="icon is-small">
 										<i class="fas fa-table"></i>
 									</span>
 									<span>
 										view {{ count_data }} data
 									</span>
+
 								</a> 
 							</td>
 
@@ -347,7 +387,8 @@
 
 								{% if is_running %}
 									
-									<span class="icon has-text-info">
+									<span 	class="icon has-text-info tooltip"
+											data-tooltip="spider is running">
 										<i class="fas fa-spinner fa-pulse"></i>
 									</span>
 
