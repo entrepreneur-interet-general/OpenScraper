@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 
 import 	pprint
+from 	pprint import pprint, pformat
+
 import 	copy
 from 	copy import deepcopy
 import 	re
@@ -51,110 +53,128 @@ class UserClass :
 	def hash_password(self) : 
 		pass
 
+
 class SpiderConfig :
 	"""
-	a spider config object that can be created from form...
-	this class uses CONTRIBUTOR_CORE_FIELDS as base...
-	this config would be then stored in db...
+	a spider config object that can be created from the contributor form...
+	this class uses CONTRIBUTOR_CORE_FIELDS as backbone...
+	this config would be then stored in db as dict/json ...
 	"""
 
 	def __init__(self, 
 		form		= None, 
 		new_spider	= False, 
-		user		= "admin" ) :
+		user		= None ) :
 
-		print "\n*** SpiderConfig ... new_spider : ", new_spider
+		app_log.info("== SpiderConfig ... ")
 
-		self.timestamp = time.time()
+		app_log.info("== SpiderConfig / new_spider ... ")
 
-		### begin instance with empty CONTRIBUTOR_CORE_FIELDS
-		self.user 			= user
-		self.spider_config 	= deepcopy(CONTRIBUTOR_CORE_FIELDS)
-		
-		### begin with no spidername
-		spidername = ""
 
-		### form exists --> clean it
-		if form!=None : 			
-			# del _id and _xsrf
-			del form['_id']
-			del form['_xsrf']
+		### prevent adding spider if user is not connected
+		if user != None : 
 
-			# cleaning post dict
-			form = { k : v[0] for k,v in form.iteritems() }
-			# form['notes'] = re.escape(form['notes'] )
+			self.timestamp = time.time()
 
-			# optional : create a spidername and clean/escape it
-			spidername 			= re.escape(form["name"])
-			spidername			= spidername.replace('\\', '')
-
-			form['start_urls'] 	= form['start_urls'].replace(',', ' ')		
-			form['start_urls'] 	= form['start_urls'].split(' ')
-			form['start_urls']  = [ i for i in form['start_urls'] if i!="" ]
+			### begin instance with empty CONTRIBUTOR_CORE_FIELDS
+			self.user 			= user
+			self.spider_config 	= deepcopy(CONTRIBUTOR_CORE_FIELDS)
 			
-			form['notes'] 		= form['notes'].replace("\n", "")
-			form['notes'] 		= form['notes'].replace("\r", "")
+			### begin with no spidername
+			spidername = ""
+
+			### form exists --> clean it
+			if form!=None : 			
+				# del _id and _xsrf
+				del form['_id']
+				del form['_xsrf']
+
+				# cleaning post dict
+				form = { k : v[0] for k,v in form.iteritems() }
+				# form['notes'] = re.escape(form['notes'] )
+
+				# optional : create a spidername and clean/escape it
+				spidername 			= re.escape(form["name"])
+				spidername			= spidername.replace('\\', '')
+
+				form['start_urls'] 	= form['start_urls'].replace(',', ' ')		
+				form['start_urls'] 	= form['start_urls'].split(' ')
+				form['start_urls']  = [ i for i in form['start_urls'] if i!="" ]
+				
+				form['notes'] 		= form['notes'].replace("\n", "")
+				form['notes'] 		= form['notes'].replace("\r", "")
+				
+				# clean radio field values
+				for radio_field in CONTRIBUTOR_EDIT_FIELDS_RADIO : 
+					if radio_field in form.keys() : 
+						if form[radio_field] == "true" : 
+							form[radio_field] = True
+						else :
+							form[radio_field] = False
+				
+				# clean number field values
+				for num_field in CONTRIBUTOR_EDIT_FIELDS_NUMBER :
+					if num_field in form.keys() : 
+						if num_field in CONTRIBUTOR_EDIT_FIELDS_FLOAT :
+							form[num_field] = float(form[num_field])
+						else :
+							form[num_field] = int(form[num_field])
+							
+
+			### getting all the config args from spider_config (i.e. next_page_xpath, ...)
+			# print "*** SpiderConfig / cleaned form :"
+			# pprint.pprint(form)
+			app_log.info("== SpiderConfig / cleaned form : \n %s", pformat(form) )
+
+			### update core contributor fields from spider_config
 			
-			# clean radio field values
-			for radio_field in CONTRIBUTOR_EDIT_FIELDS_RADIO : 
-				if radio_field in form.keys() : 
-					if form[radio_field] == "true" : 
-						form[radio_field] = True
-					else :
-						form[radio_field] = False
-			
-			# clean number field values
-			for num_field in CONTRIBUTOR_EDIT_FIELDS_NUMBER :
-				if num_field in form.keys() : 
-					if num_field in CONTRIBUTOR_EDIT_FIELDS_FLOAT :
-						form[num_field] = float(form[num_field])
-					else :
-						form[num_field] = int(form[num_field])
-						
+			for key in CONTRIBUTOR_CUSTOMAZIBLE_FIELDS :
+				# print "\n*** SpiderConfig / self.spider_config / key : ", key
+				print
+				app_log.info("== SpiderConfig / self.spider_config / key : %s ", key )
+				for field in self.spider_config[key]:
+					app_log.info("== SpiderConfig / self.spider_config / field : %s ", field )
+					try :
+						self.spider_config[key][field] = form[field]
+					except :
+						pass
 
-		### getting all the config args from spider_config (i.e. next_page_xpath, ...)
-		print "*** SpiderConfig / cleaned form :"
-		pprint.pprint(form)
+			### update custom contributor fields from form
+			if form!=None : 
+				# print "\n*** SpiderConfig / form.keys() :"
+				print
+				app_log.info("== SpiderConfig / form.keys() :" )
+				for field_custom in form.keys() :
+					if field_custom not in NOT_CUSTOM_DATAMODEL_FIELDS :
+						# print "field_custom : ", field_custom
+						app_log.info("== SpiderConfig / field_custom : %s ", field_custom )
+						self.spider_config["scraper_config_xpaths"][field_custom] = form[field_custom]
 
-		### update core contributor fields from spider_config
-		
-		# for key in ["infos", "scraper_config", "scraper_settings"] :
-		for key in CONTRIBUTOR_CUSTOMAZIBLE_FIELDS :
-			print "\n*** SpiderConfig / self.spider_config / key : ", key
-			for field in self.spider_config[key]:
-				print "field : ", field
-				try :
-					self.spider_config[key][field] = form[field]
-				except :
-					pass
+			### add specifics in infos / scraperconfig
+			self.spider_config["scraper_config"]["spidername"]	= unicode(spidername)
+			if new_spider == True :
+				self.spider_config["scraper_log"]["added_by"] 		= user
+				self.spider_config["scraper_log"]["modified_by"] 	= user
+				self.spider_config["scraper_log"]["added_at"] 		= self.timestamp
 
-		### update custom contributor fields from form
-		if form!=None : 
-			print "\n*** SpiderConfig / form.keys() :"
-			for field_custom in form.keys() :
-				if field_custom not in NOT_CUSTOM_DATAMODEL_FIELDS :
-					print "field_custom : ", field_custom
-					self.spider_config["scraper_config_xpaths"][field_custom] = form[field_custom]
-
-		### add specifics in infos / scraperconfig
-		self.spider_config["scraper_config"]["spidername"]	= unicode(spidername)
-		if new_spider == True :
-			self.spider_config["scraper_log"]["added_by"] 		= user
-			self.spider_config["scraper_log"]["modified_by"] 	= user
-			self.spider_config["scraper_log"]["added_at"] 		= self.timestamp
-
-		print "\n*** SpiderConfig / finishing instance / contributor as self.spider_config : "
-		# pprint.pprint (self.spider_config )
-		print "\n***\n"
+			print 
+			app_log.info("== SpiderConfig / finishing instance / contributor as self.spider_config : \n %s", pformat(self.spider_config) )
+			# print "\n*** SpiderConfig / finishing instance / contributor as self.spider_config : "
+			# pprint.pprint (self.spider_config )
+			print "\n***\n"
 
 
 	def full_config_as_dict(self):
+		""" return the spider configuration as a dict (to store it in db for instance) """
 		return self.spider_config
 
-	def partial_config_as_dict(self, previous_config=None ) : 
 
-		print "\n*** SpiderConfig.partial_config_as_dict / previous_config : "
-		print previous_config
+	def partial_config_as_dict(self, previous_config=None ) : 
+		""" """
+		print 
+		app_log.info("== SpiderConfig.partial_config_as_dict / previous_config : %s ", previous_config )
+		# print "\n*** SpiderConfig.partial_config_as_dict / previous_config : "
+		# print previous_config
 
 		all_custom_fields = CONTRIBUTOR_CUSTOMAZIBLE_FIELDS + ["scraper_config_xpaths"]
 		partial_config = { k : v for k,v in self.spider_config.iteritems() if k in all_custom_fields }
@@ -168,6 +188,7 @@ class SpiderConfig :
 		partial_config["scraper_log"]["added_by"] 		= previous_config["scraper_log"]["added_by"]
 
 		return partial_config
+
 
 class QueryFromSlug : 
 	"""
