@@ -44,6 +44,12 @@ class APIrestHandler(BaseHandler):
 		query_contrib = self.filter_slug( slug_, slug_class="data" )
 		app_log.info("APIrestHandler.get / query_contrib : \n %s ", pformat(query_contrib) )
 
+
+		# TO DO : check user auth level
+		# TO DO : get user token if any from header
+		# TO DO : check datamodel and opendata level for each field
+		# TO DO : filter results depending on field's opendata level
+
 		# get data 
 		data, is_data, page_n_max = self.get_data_from_query( query_contrib, coll_name="data" )
 		app_log.info("APIrestHandler.get / contributors[0] : \n %s " , pformat(data[0]) )
@@ -55,3 +61,6 @@ class APIrestHandler(BaseHandler):
 			app_log.info("APIrestHandler.get / is_data : %s ", is_data ) 
 			
 			self.write(json.dumps(data, default=json_util.default)) 
+		
+		else :
+			self.write("no data for this query") 

@@ -71,10 +71,10 @@ urls = [
 
 	# TO DO ...
 
-	
+
 	### API routes
 	# (r"/api/.*", 					PageNotFoundHandler),
-	(r"/api/?([^/]*)?",				APIrestHandler),
+	(r"/api/data?([^/]*)?",				APIrestHandler),
 
 	(r"/api/search?=(.*)", 			PageNotFoundHandler),
 	(r"/api/(?P<page_n>[0-9]+)", 	PageNotFoundHandler),
