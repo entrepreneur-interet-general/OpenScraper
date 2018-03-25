@@ -93,6 +93,9 @@ def check_user_permissions(method):
 	return wrapper
 
 
+
+
+
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 ### BASE handler for all routing handlers ###################################################
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
@@ -132,6 +135,8 @@ class BaseHandler(tornado.web.RequestHandler):
 		self.user_auth_level	= "visitor"
 		self.user_auth_level	= USER_AUTH_LEVELS[self.user_auth_level]
 
+
+
 	### global functions for all handlers
 
 	def catch_error_message (self):
@@ -139,9 +144,6 @@ class BaseHandler(tornado.web.RequestHandler):
 		
 		try:
 			self.error_msg = self.get_argument("error")
-			
-			# print "\n... get_error_message / self.error_msg : "
-			# print self.error_msg		
 			app_log.warning("\n... get_error_message / self.error_msg : %s ", self.error_msg )
 		
 		except:
@@ -364,9 +366,9 @@ class BaseHandler(tornado.web.RequestHandler):
 		# return unicode(str(user["_id"]))
 		return str(user["_id"])
 	
-
 	def add_user_to_db(self, user): 
-		
+		""" add a user config to db"""
+
 		self.application.coll_users.insert_one( user )
 
 	def set_current_user(self, user) :
@@ -388,7 +390,7 @@ class BaseHandler(tornado.web.RequestHandler):
 			self.clear_current_user()
 
 	def clear_current_user(self):
-		""" clear cookies """
+		""" clear cookies from client"""
 
 		# if (self.get_argument("logout", None)):
 		self.clear_cookie("user_name")
@@ -508,13 +510,14 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		print
 		app_log.info("... get_data_from_query / query_obj : %s \n", pformat(query_obj) )
-		# print query_obj
 		
 		# check if query wants all results 
 		all_results		= query_obj["all_results"]
 		
-
+		
 		# TO DO : check if user has right to use specific query fields
+		
+		
 		# retrieve all results at once 
 		user_token		= query_obj["token"]
 		if all_results==True : 
@@ -551,13 +554,8 @@ class BaseHandler(tornado.web.RequestHandler):
 		limit_results 	= query_obj["results_per_page"]
 
 		page_n_max 		= int(math.ceil( results_count / float(limit_results)  ))
+		
 		app_log.info("... get_data_from_query / page_n_max : %s ", page_n_max ) 
-
-		# if page queried if negative retrieve first page
-		# if page_n <= 0 :
-		# 	page_n = 1
-		# if page_n > page_n_max :
-		# 	page_n = page_n_max
 		app_log.info("... get_data_from_query / page_n : %s ", page_n )
 
 
@@ -576,6 +574,7 @@ class BaseHandler(tornado.web.RequestHandler):
 			app_log.info("... get_data_from_query / results_i_stop  : %s ", results_i_stop )
 			docs_from_db = list(cursor[ results_i_start : results_i_stop ])
 		app_log.info("... get_data_from_query / docs_from_db : \n ....")
+		# app_log.info("%s", pformat(docs_from_db[0]) )
 		# pprint.pprint(docs_from_db[0])
 		# print "..."
 

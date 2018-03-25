@@ -1,7 +1,10 @@
 # -*- encoding: utf-8 -*-
 
+import 	pprint
+from 	pprint import pprint, pformat
+
 import 	json
-from bson import json_util, ObjectId
+from 	bson import json_util, ObjectId
 
 from 	base_handler import *
 from 	base_utils	import *
@@ -46,8 +49,17 @@ class APIrestHandler(BaseHandler):
 
 
 		# TO DO : check user auth level
-		# TO DO : get user token if any from header
+		
+		# TO DO : get user token if any from request header
+		
 		# TO DO : check datamodel and opendata level for each field
+		### retrieve datamodel from DB top make correspondances field's _id --> field_name
+		data_model_custom = list( self.application.coll_model.find({"field_class" : "custom", "is_visible" : True }) )
+		app_log.info("APIrestHandler.get / data_model_custom[:2] :" )
+		pprint.pprint (data_model_custom[:2] )
+		print "..."
+
+
 		# TO DO : filter results depending on field's opendata level
 
 		# get data 
@@ -60,6 +72,9 @@ class APIrestHandler(BaseHandler):
 			
 			app_log.info("APIrestHandler.get / is_data : %s ", is_data ) 
 			
+
+			# TO DO : rewrite field names as understable ones --> replace field_oid by field_name 
+
 			self.write(json.dumps(data, default=json_util.default)) 
 		
 		else :

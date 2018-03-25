@@ -17,7 +17,8 @@ QUERY_DATA_BY_DEFAULT = {
 	"search_for"		: [],		# list of words to search in data collection
 	"search_in"			: [],		# list of fields to search in
 	"open_level"		: ["all"],	# fields of data to be shown -> "all" == "opendata" + "commons" + "private"
-	"all_results"		: False		# to overide results_per_page
+	"all_results"		: False,	# to overide results_per_page
+	"added_by"			: None		# list of user having added the data 
 }
 QUERIES_DATA_ALLOWED_UNIQUE = [
 	"page_n", 

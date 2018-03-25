@@ -1104,13 +1104,13 @@ class DataScrapedHandler(BaseHandler):
 		)
 
 
-class DataScrapedViewOneHandler(BaseHandler):
-	"""
-	list all data scraped from db.data_scraped 
-	"""
-	@print_separate(APP_DEBUG)
-	def get (self, spidername=None):
-		self.redirect("/404")
+# class DataScrapedViewOneHandler(BaseHandler):
+# 	"""
+# 	list all data scraped from db.data_scraped 
+# 	"""
+# 	@print_separate(APP_DEBUG)
+# 	def get (self, spidername=None):
+# 		self.redirect("/404")
 
 
 
