@@ -1,4 +1,3 @@
-
 # -*- encoding: utf-8 -*-
 
 
@@ -16,6 +15,7 @@ from 	functools import wraps
 import pymongo
 # from 	pymongo import UpdateOne
 
+
 import 	tornado.web, tornado.escape #, tornado.template,
 from	tornado.log import access_log, app_log, gen_log
 
@@ -25,7 +25,7 @@ from	tornado.log import access_log, app_log, gen_log
 
 # import toro # deprecated it seems
 # from 	tornado.ioloop import IOLoop
-# from 	tornado import gen, concurrent
+from 	tornado import gen, concurrent
 # from 	tornado.concurrent import return_future, run_on_executor
 
 from 	concurrent.futures import ThreadPoolExecutor # need to install futures in pytohn 2.7
@@ -44,7 +44,7 @@ from config.settings_cleaning	import * # STRIP_STRING, DATA_CONTENT_TO_IGNORE, e
 
 
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
-### DECORATOR handler for all routing handlers ###################################################
+### DECORATOR handler for all routing handlers ##############################################
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 ### NOT FULLY TESTED YET / BASED ON tornado.web.authenticated

@@ -1,9 +1,10 @@
 
 
-from controller import *
+from controller 	import *
 from spider_handler	import *
+from api_handler	import *
 
-### all routing functions are in controller.py
+### most routing functions are in controller.py
 ### for url mapping in Tornado cf : https://stackoverflow.com/questions/17166051/url-regex-mapping-in-tornado-web-server
 ### cf : https://code.tutsplus.com/tutorials/8-regular-expressions-you-should-know--net-6149
 ### cf : https://gist.github.com/c4urself/1028897
@@ -65,17 +66,15 @@ urls = [
 
 	### spider launchers / runners
 	(r"/crawl?([^/]*)?", 			SpiderHandler), ### get spidername as input
-	# (r"/crawl/([\w\_\d]+)",			SpiderHandler), ### get spidername as input
-
-
-
 
 
 
 	# TO DO ...
+
+	
 	### API routes
-	(r"/api/.*", 					PageNotFoundHandler),
-	(r"/api/([^/]*)",				PageNotFoundHandler),
+	# (r"/api/.*", 					PageNotFoundHandler),
+	(r"/api/?([^/]*)?",				APIrestHandler),
 
 	(r"/api/search?=(.*)", 			PageNotFoundHandler),
 	(r"/api/(?P<page_n>[0-9]+)", 	PageNotFoundHandler),

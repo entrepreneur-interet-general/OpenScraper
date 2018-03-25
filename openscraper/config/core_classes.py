@@ -16,6 +16,11 @@ from .settings_cleaning		import *
 
 from tornado.log import access_log, app_log, gen_log
 
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### CORE CLASSES : USERS - SPIDERS - QUERIES ################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+
 class UserClass :
 	"""
 	a generic user class when a new user is registred

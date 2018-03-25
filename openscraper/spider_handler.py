@@ -1,8 +1,12 @@
+# -*- encoding: utf-8 -*-
 
 from 	base_handler import *
 from 	base_utils	import *
 
 # from 	tornado.log import access_log, app_log, gen_log # already imported from base_handler
+
+# main decorator to handle parallelism
+# from 	handler_threading import *
 
 ### OpenScraper generic scraper
 from scraper import run_generic_spider 

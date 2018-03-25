@@ -25,6 +25,11 @@ from 	tornado.concurrent import run_on_executor
 from config.settings_threading import *
 
 
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### MAIN DECORATOR FOR THREADING CRAWLiNG ###################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+
+
 # main decorator for running scrapy operations as background tasks
 def onthread(function):	
 	

@@ -22,12 +22,13 @@ from 	pymongo import UpdateOne
 
 # import toro # deprecated it seems
 # from 	tornado.ioloop import IOLoop
-from 	tornado import gen, concurrent
-from 	tornado.concurrent import return_future, run_on_executor
+# from 	tornado import gen, concurrent
+# from 	tornado.concurrent import return_future, run_on_executor
 # from 	tornado.log import access_log, app_log, gen_log # already imported from base_handler
 
 # from 	concurrent.futures import ThreadPoolExecutor # note : need to install "futures" in pytohn 2.7 : pip install futures
-from 	spider_threading import *
+# from 	spider_threading import *
+# from 	handler_threading import *
 
 
 ### import app settings / infos 
@@ -38,20 +39,23 @@ from 	spider_threading import *
 # from config.core_classes		import * # SpiderConfig, UserClass, QuerySlug
 # from config.settings_threading	import * # THREADPOOL_MAX_WORKERS, etc...
 
+
+### TO IMPROVE
+
 ### import WTForms for validation
 from forms import *
 
 
 
 
-########################
-########################
-### REQUEST HANDLERS ###
+
+############################################################################################
+##################################    REQUEST HANDLERS    ##################################
+############################################################################################
 """
 Notes :
 - Tornado supports any valid HTTP method (GET,POST,PUT,DELETE,HEAD,OPTIONS)
 - BaseHandler loaded from base_handler.py
-
 """
 
 

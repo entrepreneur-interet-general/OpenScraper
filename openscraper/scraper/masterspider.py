@@ -181,6 +181,9 @@ def dictFromDataModelList (datamodel_list ) :
 # 		super(GenericSpider, self).__init__(*args, **kwargs)
 
 
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### GENERIC SPIDER  #########################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 
 class GenericSpider(Spider) :
@@ -516,6 +519,12 @@ class GenericSpider(Spider) :
 		
 		return clean_data_list
 
+
+
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### SPIDER RUNNER ###########################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 
 ### define the spider runner

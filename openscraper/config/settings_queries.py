@@ -1,10 +1,11 @@
 # -*- encoding: utf-8 -*-
 
-# DEFAULT_ERROR_ARGS_TO_DELETE = [
-# 	"error", 
-# 	"_xsrf"
-# ]
 
+
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### QUERIES ARGS - DATA #####################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 ### DATA QUERIES FROM URL - reconstruct from slug
 QUERY_DATA_BY_DEFAULT = {
@@ -38,6 +39,9 @@ QUERIES_DATA_ALLOWED_BOOLEAN = [
 
 
 
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### QUERIES ARGS - SPIDERS ##################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 ### SPIDER QUERIES FROM URL - reconstruct from slug
 QUERY_SPIDER_BY_DEFAULT = {
@@ -70,7 +74,9 @@ QUERY_DELETE = "is_delete"
 
 
 
-
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### QUERIES ARGS - CRAWLING ##################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 ### SPIDER CRAWLER QUERIES FROM URL - basic args in slug query for crawling
 QUERY_CRAWL_BY_DEFAULT = {
