@@ -11,7 +11,7 @@ from 	copy import deepcopy
 import 	time
 from 	bson import ObjectId
 from 	datetime import datetime
-# from 	functools import wraps
+from 	functools import wraps
 
 import pymongo
 # from 	pymongo import UpdateOne
@@ -44,9 +44,61 @@ from config.settings_cleaning	import * # STRIP_STRING, DATA_CONTENT_TO_IGNORE, e
 
 
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
-### BASE handler for all routing handlers ###################################################
+### DECORATOR handler for all routing handlers ###################################################
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
+### NOT FULLY TESTED YET / BASED ON tornado.web.authenticated
+
+def check_user_permissions(method):
+	"""
+	Decorate methods with this to require that the user 
+	have the correct email to be able to modify stuff like the datamodel or a spider
+	"""
+	@wraps(method)
+	def wrapper(self, *args, **kwargs):
+
+		print
+		app_log.info(" ... check_user_permissions ... ")
+		
+		app_log.info(" ... check_user_permissions / self.request.full_url() : \n %s ", self.request.full_url())
+
+		user_auth_level = self.get_current_user_auth_level()
+		app_log.info(" ... check_user_permissions / user_auth_level : %s ",user_auth_level )
+		
+		user_auth_level_dict = USER_AUTH_LEVELS[user_auth_level]
+		app_log.info(" ... check_user_permissions / auth_level : %s ", user_auth_level_dict )
+
+		self.user_auth_level 		= user_auth_level
+		self.user_auth_level_dict 	= user_auth_level_dict
+
+		# if not self.current_user:
+
+		# 	if self.request.method in ("GET", "HEAD"):
+		# 		url = self.get_login_url()
+		# 		if "?" not in url:
+		# 			if urlparse.urlsplit(url).scheme:
+		# 				# if login url is absolute, make next absolute too
+		# 				next_url = self.request.full_url()
+		# 			else:
+		# 				next_url = self.request.uri
+		# 			url += "?" + urlencode(dict(next=next_url))
+		# 		self.redirect(url)
+		# 		return
+
+		# 	raise HTTPError(403)
+
+		print
+
+		return method(self, *args, **kwargs)
+	return wrapper
+
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### BASE handler for all routing handlers ###################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+"""
+SUPPORTED_METHODS = ("GET", "HEAD", "POST", "DELETE", "PATCH", "PUT", "OPTIONS")
+"""
 
 class BaseHandler(tornado.web.RequestHandler):
 	"""
@@ -77,6 +129,8 @@ class BaseHandler(tornado.web.RequestHandler):
 		self.error_msg 			= ""
 		self.site_section 		= ""
 
+		self.user_auth_level	= "visitor"
+		self.user_auth_level	= USER_AUTH_LEVELS[self.user_auth_level]
 
 	### global functions for all handlers
 
@@ -270,6 +324,21 @@ class BaseHandler(tornado.web.RequestHandler):
 
 	### user functions for all handlers
 
+	def get_user_from_db(self, user_email) :
+		""" get user from db"""
+		user 	   = self.application.coll_users.find_one({"email": user_email })
+		return user 
+
+	def get_current_user_auth_level(self):
+		""" get user level """
+		user_email 		= self.get_current_user_email()
+		user			= self.get_user_from_db( user_email )
+		try :
+			user_auth_level = user.get("level_admin", "visitor" )
+		except :
+			user_auth_level = "visitor"	
+		return user_auth_level
+
 	def get_if_user_connected(self) :
 		""" """
 		is_user = self.get_current_user()
@@ -277,33 +346,24 @@ class BaseHandler(tornado.web.RequestHandler):
 			is_connected = "Yes"
 		else : 
 			is_connected = "No"
-
 		return is_connected
 
 	def get_current_user(self):
 		""" return user_name"""
-		
 		return self.get_secure_cookie("user_name")
 	
 	def get_current_user_email(self):
 		""" return user_name"""
-
 		return self.get_secure_cookie("user_email")
-
-	def get_user_from_db(self, user_email) :
-		""" get user from db"""
-		
-		user 	   = self.application.coll_users.find_one({"email": user_email })
-		
-		return user 
 
 	def get_current_user_id(self):
 		
-		user_email = self.get_current_user_email()
-		user 	   = self.application.coll_users.find_one({"email": user_email })
-		
+		user_email 	= self.get_current_user_email()
+		# user 	   = self.application.coll_users.find_one({"email": user_email })
+		user		= self.get_user_from_db( user_email )
 		# return unicode(str(user["_id"]))
 		return str(user["_id"])
+	
 
 	def add_user_to_db(self, user): 
 		
@@ -319,7 +379,7 @@ class BaseHandler(tornado.web.RequestHandler):
 			user_email		= user["email"]
 
 			# store info in cookie
-			self.set_secure_cookie("user_name", user_name )
+			self.set_secure_cookie("user_name",  user_name )
 			self.set_secure_cookie("user_email", user_email )
 			self.set_secure_cookie("user_is_connected", "Yes" )
 

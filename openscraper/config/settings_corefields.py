@@ -14,6 +14,24 @@ import pprint
 ### USERS ###################################################################################
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
+USER_AUTH_LEVELS = {
+	"admin"   	: {	"datamodel" : "all", 
+					"spiders" 	: "all", 	
+					"data" 		: "all"  
+					}, 	# can modify and view everything
+	"staff"		: {	"datamodel" : "own", 
+					"spiders" 	: "own", 	
+					"data" 		: "collective"  
+					},		# can modify its own fields in datamodel, can modify its own spiders
+	"user"	  	: {	"datamodel" : "none", 
+					"spiders" 	: "own", 	
+					"data" 		: "commons"  
+					},		# cannot modify fields in datamodel, can modify its own spiders
+	"visitor" 	: {	"datamodel" : "none", 
+					"spiders" 	: "none", 	
+					"data" 		: "opendata" 
+					},		# cannot modify anything
+}
 ### to initiate user core fields in mongoDB
 USER_CORE_FIELDS = [
 	
@@ -34,6 +52,7 @@ USER_CORE_FIELDS = [
 
 	"preferences", 					# TO DO 
 	"uses", 						# TO DO 
+
 	"public_key"					# TO DO
 ]
 

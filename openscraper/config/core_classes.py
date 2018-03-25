@@ -18,25 +18,29 @@ from tornado.log import access_log, app_log, gen_log
 
 class UserClass :
 	"""
-	a generic user class 
+	a generic user class when a new user is registred
 	can be sent to db as a document once iniated with .__dict__()
 	"""
 	def __init__(self, **kwargs) :
 
-		print "\n*** UserClass ..."
+		print
+		app_log.warning("== UserClass ... ")
 
-		print "\n*** UserClass / fields from USER_CORE_FIELDS ..."
+		app_log.warning("== UserClass / fields from USER_CORE_FIELDS ... ")
 		for user_field in USER_CORE_FIELDS :
-			print user_field
+			app_log.warning("== UserClass / user_field : %s", user_field)
 			self.__dict__[user_field] = ""
 
-		print "\n*** UserClass / fields from **kwargs ..."
+		app_log.warning("== UserClass / fields from **kwargs ...")
 		for k, v in kwargs.items():
-			print "{} : {}".format(k,v)
+			# print "{} : {}".format(k,v)
+			app_log.warning("== UserClass / %s : %s ...", k, v)
 			try :
 				self.__dict__[k] = v
 			except : 
 				pass
+
+		print 
 
 	### TO DO : hash password
 	def hash_password(self) : 

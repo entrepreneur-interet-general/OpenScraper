@@ -228,12 +228,13 @@ def reset_is_running_on_all_spider( coll_model ) :
 	
 	# find if any spider was running
 	running_spiders = coll_model.find({"scraper_log.is_running" : True})
+	print list(running_spiders)
 
-	if running_spiders != [] : 
+	if list(running_spiders) != [] : 
 
 		app_log.warning('>>> reset_is_running_on_all_spider / some spiders were blocked in is_running == True ... ')
 		app_log.warning('>>> spiders are : \n %s', pformat(list(running_spiders)) )
-		
+
 		coll_model.update({"scraper_log.is_running":True}, {"$set" : {"scraper_log.is_running" : False }})
 	
 	print 

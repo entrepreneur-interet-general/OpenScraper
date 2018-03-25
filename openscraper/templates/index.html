@@ -33,6 +33,24 @@
 				</div>
 			</div>
 
+			{% if is_user_connected == "No"  %}
+			<div>
+				<a class="button is-large is-inverted is-primary is-rounded" href="/{{url_to}}/">
+					<span class="icon">
+						{% if url_to == "login" %}
+							<i class="fas fa-sign-in-alt"></i>
+						{% else %}
+							<i class="fas fa-sign-out-alt"></i>
+						{% end %}
+					</span>
+					<span>
+						login or register
+						{# { {url_to}} #}
+					</span>
+				</a>
+			</div>
+			{% end %}
+
 			<br>
 			<hr>
 
@@ -43,12 +61,23 @@
 
 						{% if 'serv_msg' in globals() %}
 							{{ serv_msg }}
+
 						{% else %}
+
 							{% if is_user_connected == "No"  %}
-							discover how to scrap for free
+								discover how to scrap the web for free
+
 							{% else %}
-							welcome back, {{ user }}
+								
+								welcome back, 
+								<strong>{{ user }}</strong>
+								( {{user_email}} ) 
+								... you have the <strong>{{ user_auth_level }}</strong> level
+
+
 							{% end %}
+
+
 						{% end %}
 
 					</h2>

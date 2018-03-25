@@ -105,6 +105,7 @@ class WelcomeHandler(BaseHandler):
 
 	@print_separate(APP_DEBUG)
 	# @tornado.web.authenticated
+	@check_user_permissions
 	def get(self):
 		
 		app_log.info("WelcomeHandler.get... \n")
@@ -126,9 +127,13 @@ class WelcomeHandler(BaseHandler):
 			page_title  		= app_main_texts["main_title"],
 			site_section 		= self.site_section,
 			counts 				= counts,
+			
 			user				= self.current_user,
+			user_email			= self.get_current_user_email(),
+			is_user_connected 	= self.is_user_connected,
+			user_auth_level		= self.user_auth_level,
+
 			error_msg			= self.error_msg,
-			is_user_connected 	= self.is_user_connected
 		)
 
 	# def write_error(self, status_code, **kwargs):
@@ -577,6 +582,7 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 	"""
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
+	@check_user_permissions
 	# @tornado.web.asynchronous
 	# @gen.coroutine
 	def get(self, slug=None):
@@ -639,7 +645,11 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 			pagination_dict			= pagination_dict,
 			error_msg				= self.error_msg,
-			is_user_connected 		= self.is_user_connected
+			is_user_connected 		= self.is_user_connected, 
+			
+			user_email				= self.get_current_user_email(),
+			user_auth_level 		= self.user_auth_level,
+			user_auth_level_dict 	= self.user_auth_level_dict
 		)
 
 
@@ -656,6 +666,11 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		print
 		app_log.info("ContributorEditHandler.get / spider_id : {}".format( spider_id ) )
 
+		### TO DO : check user auth level 
+
+
+
+
 		self.site_section = "contributors"
 
 		# catch error message if any
@@ -666,12 +681,8 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		app_log.info( "\n %s", pformat(data_model) )
 
 		data_model = [ { k : unicode(v) for k,v in i.iteritems() } for i in data_model ]
-		# print "\nContributorEditHandler.get / data_model : "
-		# pprint.pprint(data_model)
 
 		contributor_edit_fields = CONTRIBUTOR_EDIT_FIELDS
-		# print "\nContributorEditHandler.get / contributor_edit_fields :"
-		# pprint.pprint(contributor_edit_fields)
 
 		### retrieve contributor data from spidername
 

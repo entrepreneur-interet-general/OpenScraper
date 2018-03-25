@@ -132,7 +132,8 @@ class SpiderHandler(BaseHandler) :
 										spider_oid 		= spider_oid, 
 										spider_config	= spider_config, 
 										current_user_id	= self.get_current_user_id(),
-										test_limit		= test_limit
+										test_limit		= test_limit,
+										countdown		= DEFAULT_COUNTDOWN
 								) 
 				# self.finish()
 
@@ -150,7 +151,7 @@ class SpiderHandler(BaseHandler) :
 						current_user_id,
 						test_limit=None,
 						# callback=None,
-						countdown=3
+						countdown=None
 					) :
 		
 		print 

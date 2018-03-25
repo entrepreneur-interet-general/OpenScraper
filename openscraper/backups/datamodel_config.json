@@ -1,0 +1,363 @@
+/* 1 */
+{
+    "_id" : ObjectId("5a9aadfffc326e73f99fd644"),
+    "field_name" : "next_page",
+    "added_by" : "admin",
+    "field_class" : "core",
+    "field_type" : "text",
+    "is_visible" : false,
+    "added_at" : 1521933057.89527,
+    "field_open" : "commons"
+}
+
+/* 2 */
+{
+    "_id" : ObjectId("5a9aadfffc326e73f99fd645"),
+    "field_name" : "link_data",
+    "added_by" : "admin",
+    "field_class" : "core",
+    "field_type" : "url",
+    "is_visible" : false,
+    "added_at" : 1521933057.89527,
+    "field_open" : "opendata"
+}
+
+/* 3 */
+{
+    "_id" : ObjectId("5a9aadfffc326e73f99fd646"),
+    "field_name" : "link_src",
+    "added_by" : "admin",
+    "field_class" : "core",
+    "field_type" : "url",
+    "is_visible" : false,
+    "added_at" : 1521933057.89527,
+    "field_open" : "opendata"
+}
+
+/* 4 */
+{
+    "_id" : ObjectId("5a9aadfffc326e73f99fd648"),
+    "field_name" : "added_by",
+    "added_by" : "admin",
+    "field_class" : "core",
+    "field_type" : "email",
+    "is_visible" : false,
+    "added_at" : 1521933057.89527,
+    "field_open" : "private"
+}
+
+/* 5 */
+{
+    "_id" : ObjectId("5a9aadfffc326e73f99fd649"),
+    "field_name" : "testClass",
+    "added_by" : "admin",
+    "field_class" : "core",
+    "field_type" : "text",
+    "is_visible" : false,
+    "added_at" : 1520682999.37084
+}
+
+/* 6 */
+{
+    "_id" : ObjectId("5a9aaec70a8286276b0e6918"),
+    "field_type" : "text",
+    "field_class" : "custom",
+    "field_name" : "résumé du projet",
+    "added_by" : "admin",
+    "modified_by" : "jparis.py@gmail.com",
+    "is_visible" : true,
+    "modified_at" : 1521830244.54992,
+    "added_at" : 1520615866.38328,
+    "field_open" : "opendata"
+}
+
+/* 7 */
+{
+    "_id" : ObjectId("5a9aaed70a8286276b0e6919"),
+    "field_type" : "tags",
+    "field_class" : "custom",
+    "field_name" : "tags",
+    "added_by" : "admin",
+    "modified_by" : "jparis.py@gmail.com",
+    "is_visible" : true,
+    "modified_at" : 1521830244.54992,
+    "added_at" : 1520615866.38328,
+    "field_open" : "opendata"
+}
+
+/* 8 */
+{
+    "_id" : ObjectId("5a9aaf070a8286276b0e691a"),
+    "field_type" : "url",
+    "field_class" : "custom",
+    "field_name" : "website",
+    "added_by" : "Julien",
+    "modified_by" : "jparis.py@gmail.com",
+    "is_visible" : true,
+    "modified_at" : 1521830244.54992,
+    "field_open" : "commons"
+}
+
+/* 9 */
+{
+    "_id" : ObjectId("5a9aaf370a8286276b0e691b"),
+    "field_type" : "text",
+    "field_class" : "custom",
+    "field_name" : "auteur",
+    "added_by" : "admin",
+    "modified_by" : "jparis.py@gmail.com",
+    "is_visible" : true,
+    "modified_at" : 1521830244.54992,
+    "added_at" : 1520615866.38328,
+    "field_open" : "opendata"
+}
+
+/* 10 */
+{
+    "_id" : ObjectId("5a9ab6affc326e73f99fd925"),
+    "field_name" : "follow_xpath",
+    "added_by" : "admin",
+    "field_class" : "core",
+    "field_type" : "url",
+    "is_visible" : false,
+    "added_at" : 1521933057.89527,
+    "field_open" : "commons"
+}
+
+/* 11 */
+{
+    "_id" : ObjectId("5a9ab7950a8286276bac7b34"),
+    "field_type" : "image",
+    "field_class" : "custom",
+    "field_name" : "logo",
+    "added_by" : "Julien",
+    "modified_by" : "jparis.py@gmail.com",
+    "is_visible" : true,
+    "modified_at" : 1521830244.54992,
+    "field_open" : "opendata"
+}
+
+/* 12 */
+{
+    "_id" : ObjectId("5a9e74c1df574db384cd7df7"),
+    "field_name" : "modified_by",
+    "added_by" : "admin",
+    "field_class" : "core",
+    "field_type" : "email",
+    "is_visible" : false,
+    "added_at" : 1521933057.89527,
+    "field_open" : "opendata"
+}
+
+/* 13 */
+{
+    "_id" : ObjectId("5a9e7501df574db384cd7e0f"),
+    "field_name" : "added_at",
+    "added_by" : "admin",
+    "field_class" : "core",
+    "field_type" : "date",
+    "is_visible" : false,
+    "added_at" : 1521933057.89527,
+    "field_open" : "opendata"
+}
+
+/* 14 */
+{
+    "_id" : ObjectId("5a9e7501df574db384cd7e10"),
+    "field_name" : "modified_at",
+    "added_by" : "admin",
+    "field_class" : "core",
+    "field_type" : "date",
+    "is_visible" : false,
+    "added_at" : 1521933057.89527,
+    "field_open" : "opendata"
+}
+
+/* 15 */
+{
+    "_id" : ObjectId("5a9e756fdf574db384cd7e30"),
+    "field_name" : "spider_id",
+    "added_by" : "admin",
+    "field_class" : "core",
+    "field_type" : "text",
+    "is_visible" : false,
+    "added_at" : 1521933057.89527,
+    "field_open" : "commons"
+}
+
+/* 16 */
+{
+    "_id" : ObjectId("5a9eb5e3df574db384cd8a89"),
+    "field_name" : "item_xpath",
+    "added_by" : "admin",
+    "field_class" : "core",
+    "field_type" : "url",
+    "is_visible" : false,
+    "added_at" : 1521933057.89527,
+    "field_open" : "commons"
+}
+
+/* 17 */
+{
+    "_id" : ObjectId("5aa04ce10a82863c677c7951"),
+    "field_type" : "url",
+    "is_visible" : true,
+    "field_class" : "custom",
+    "field_name" : "video",
+    "added_by" : "jojo.py@gmail.com",
+    "modified_by" : "jparis.py@gmail.com",
+    "modified_at" : 1521830244.54992,
+    "field_open" : "private"
+}
+
+/* 18 */
+{
+    "_id" : ObjectId("5aa68c360a82861cfd650345"),
+    "field_type" : "adress",
+    "is_visible" : true,
+    "added_at" : 1520864310.70883,
+    "field_class" : "custom",
+    "field_name" : "adresse du projet",
+    "added_by" : "jparis.py@gmail.com",
+    "field_open" : "commons",
+    "modified_at" : 1521830244.54992,
+    "modified_by" : "jparis.py@gmail.com"
+}
+
+/* 19 */
+{
+    "_id" : ObjectId("5aa9333f0a82866727d2ca04"),
+    "field_type" : "text",
+    "is_visible" : true,
+    "field_open" : "opendata",
+    "added_at" : 1521038143.36255,
+    "field_class" : "custom",
+    "field_name" : "titre du projet",
+    "added_by" : "jojo.py@gmail.com",
+    "modified_at" : 1521830244.54992,
+    "modified_by" : "jparis.py@gmail.com"
+}
+
+/* 20 */
+{
+    "_id" : ObjectId("5aaaf2310a828606a4944b1b"),
+    "field_type" : "date",
+    "is_visible" : true,
+    "field_open" : "commons",
+    "added_at" : 1521152561.80708,
+    "field_class" : "custom",
+    "field_name" : "date du projet",
+    "added_by" : "jparis.py@gmail.com",
+    "modified_at" : 1521830244.54992,
+    "modified_by" : "jparis.py@gmail.com"
+}
+
+/* 21 */
+{
+    "_id" : ObjectId("5aabd1a00a82862b7852fe50"),
+    "field_type" : "image",
+    "is_visible" : true,
+    "field_open" : "opendata",
+    "added_at" : 1521209760.10322,
+    "field_class" : "custom",
+    "field_name" : "image du projet",
+    "added_by" : "jojo.py@gmail.com",
+    "modified_at" : 1521830244.54992,
+    "modified_by" : "jparis.py@gmail.com"
+}
+
+/* 22 */
+{
+    "_id" : ObjectId("5aabd3ca0a82862b7852fe51"),
+    "field_type" : "list",
+    "is_visible" : true,
+    "field_open" : "commons",
+    "added_at" : 1521210314.18398,
+    "field_class" : "custom",
+    "field_name" : "partenaires du projet",
+    "added_by" : "jojo.py@gmail.com",
+    "modified_at" : 1521830244.54992,
+    "modified_by" : "jparis.py@gmail.com"
+}
+
+/* 23 */
+{
+    "_id" : ObjectId("5aae60b2056bc9ed5dcccfd4"),
+    "field_name" : "item_list_xpath",
+    "added_at" : 1521933057.89527,
+    "added_by" : "admin",
+    "field_class" : "core",
+    "field_open" : "commons",
+    "field_type" : "url",
+    "is_visible" : false
+}
+
+/* 24 */
+{
+    "_id" : ObjectId("5ab0d81a0a8286676a48ea3f"),
+    "field_type" : "text",
+    "is_visible" : true,
+    "field_open" : "commons",
+    "added_at" : 1521539098.32439,
+    "field_class" : "custom",
+    "field_name" : "structure porteuse",
+    "added_by" : "jparis.py@gmail.com",
+    "modified_at" : 1521830244.54992,
+    "modified_by" : "jparis.py@gmail.com"
+}
+
+/* 25 */
+{
+    "_id" : ObjectId("5ab410d90a82863566d5fd06"),
+    "field_type" : "text",
+    "is_visible" : true,
+    "field_open" : "commons",
+    "added_at" : 1521750233.93157,
+    "field_class" : "custom",
+    "field_name" : "données économiques",
+    "added_by" : "jparis.py@gmail.com",
+    "modified_at" : 1521830244.54992,
+    "modified_by" : "jparis.py@gmail.com"
+}
+
+/* 26 */
+{
+    "_id" : ObjectId("5ab52e000a82860a0176ecbc"),
+    "field_type" : "text",
+    "is_visible" : true,
+    "field_open" : "collective",
+    "added_at" : 1521823232.28821,
+    "field_class" : "custom",
+    "field_name" : "fiche contact",
+    "added_by" : "jparis.py@gmail.com",
+    "modified_at" : 1521830244.54992,
+    "modified_by" : "jparis.py@gmail.com"
+}
+
+/* 27 */
+{
+    "_id" : ObjectId("5ab5475d0a82860a01da9732"),
+    "field_type" : "text",
+    "is_visible" : true,
+    "field_open" : "opendata",
+    "added_at" : 1521829725.65585,
+    "field_class" : "custom",
+    "field_name" : "SIRET",
+    "added_by" : "jparis.py@gmail.com",
+    "modified_at" : 1521830244.54992,
+    "modified_by" : "jparis.py@gmail.com"
+}
+
+/* 28 */
+{
+    "_id" : ObjectId("5ab549610a82860a01da9733"),
+    "field_type" : "text",
+    "is_visible" : true,
+    "field_open" : "opendata",
+    "added_at" : 1521830241.68331,
+    "field_class" : "custom",
+    "field_name" : "statut juridique",
+    "added_by" : "jparis.py@gmail.com",
+    "modified_at" : 1521830244.54992,
+    "modified_by" : "jparis.py@gmail.com"
+}

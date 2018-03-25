@@ -1,0 +1,1263 @@
+/* 1 */
+{
+    "_id" : ObjectId("5a95754ee175ef55698a025b"),
+    "scraper_log" : {
+        "is_working" : true,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521928239.79369,
+        "is_tested" : false,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jparis.py@gmail.com",
+        "is_data_available" : false
+    },
+    "infos" : {
+        "notes" : "test configuration for debugging / developping purposes...",
+        "contact" : "",
+        "name" : "-DEBUG- test quote",
+        "page_url" : "http://quotes.toscrape.com"
+    },
+    "scraper_config" : {
+        "next_page" : "//li[@class=\"next\"]/a/@href",
+        "start_urls" : [ 
+            "http://quotes.toscrape.com/"
+        ],
+        "item_xpath" : "//div[@class=\"quote\"]",
+        "page_needs_splash" : false,
+        "parse_follow" : false,
+        "spidername" : "-DEBUG- test quote",
+        "item_list_xpath" : "",
+        "follow_xpath" : ""
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : "",
+        "5a9aaed70a8286276b0e6919" : ".//div[@class=\"tags\"]/a[@class=\"tag\"]/text()",
+        "5ab5475d0a82860a01da9732" : "",
+        "5ab549610a82860a01da9733" : "",
+        "5ab52e000a82860a0176ecbc" : "",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : ".//small[@class=\"author\"]/text()",
+        "5ab0d81a0a8286676a48ea3f" : "",
+        "5aa9333f0a82866727d2ca04" : "",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : "",
+        "5aabd3ca0a82862b7852fe51" : "",
+        "5a9aaec70a8286276b0e6918" : "./span[@class=\"text\"]/text()",
+        "5a9aaf070a8286276b0e691a" : "",
+        "5aabd1a00a82862b7852fe50" : "",
+        "5ab410d90a82863566d5fd06" : ""
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 100,
+        "download_delay" : 0.1
+    }
+}
+
+/* 2 */
+{
+    "_id" : ObjectId("5a9aaf7bfc326e73f99fd6d9"),
+    "scraper_log" : {
+        "is_working" : true,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521921884.57579,
+        "is_tested" : true,
+        "is_running" : true,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jparis.py@gmail.com",
+        "is_data_available" : true
+    },
+    "infos" : {
+        "notes" : "a second / copy of quotes spider example... just to be sure",
+        "contact" : "",
+        "name" : "-DEBUG- test quote on one page only",
+        "page_url" : "http://quotes.toscrape.com"
+    },
+    "scraper_config" : {
+        "next_page" : "//li[@class=\"next\"]/a/@href",
+        "start_urls" : [ 
+            "http://quotes.toscrape.com/"
+        ],
+        "item_xpath" : "//div[@class=\"quote\"]",
+        "page_needs_splash" : false,
+        "parse_follow" : false,
+        "spidername" : "-DEBUG- test quote on one page only",
+        "item_list_xpath" : "",
+        "follow_xpath" : ""
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : "",
+        "5a9aaed70a8286276b0e6919" : ".//div[@class=\"tags\"]/a[@class=\"tag\"]/text()",
+        "5ab5475d0a82860a01da9732" : "",
+        "5ab549610a82860a01da9733" : "",
+        "5ab52e000a82860a0176ecbc" : "",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : ".//small[@class=\"author\"]/text()",
+        "5ab0d81a0a8286676a48ea3f" : "",
+        "5aa9333f0a82866727d2ca04" : "",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : "",
+        "5aabd3ca0a82862b7852fe51" : "",
+        "5a9aaec70a8286276b0e6918" : "./span[@class=\"text\"]/text()",
+        "5a9aaf070a8286276b0e691a" : "",
+        "5aabd1a00a82862b7852fe50" : "",
+        "5ab410d90a82863566d5fd06" : ""
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 1,
+        "download_delay" : 0.1
+    }
+}
+
+/* 3 */
+{
+    "_id" : ObjectId("5a9d9fd80a82868f4973d2d3"),
+    "scraper_log" : {
+        "is_working" : true,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521890010.10602,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jparis.py@gmail.com",
+        "is_data_available" : true,
+        "is_tested" : true
+    },
+    "infos" : {
+        "notes" : "....",
+        "contact" : "",
+        "name" : "Avise",
+        "page_url" : "http://www.avise.org"
+    },
+    "scraper_config" : {
+        "next_page" : "",
+        "start_urls" : [ 
+            "http://www.avise.org/portraits", 
+            "https://www.avise.org/portraits?page=1", 
+            "https://www.avise.org/portraits?page=2", 
+            "https://www.avise.org/portraits?page=3", 
+            "https://www.avise.org/portraits?page=4"
+        ],
+        "item_xpath" : "//div[contains(@class,\"node--portrait\")]",
+        "page_needs_splash" : false,
+        "parse_follow" : true,
+        "spidername" : "Avise",
+        "item_list_xpath" : "",
+        "follow_xpath" : ".//h2/a/@href"
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : "//div[@class=\"field field--name-field-created-year field--type-text field--label-inline clearfix\"]//div[@class=\"field-item even\"]/text()",
+        "5a9aaed70a8286276b0e6919" : ".//div[contains(@class,\"field--name-field-portrait-domain\")]//div[@class=\"field-items\"]//div/text()",
+        "5ab5475d0a82860a01da9732" : "",
+        "5ab549610a82860a01da9733" : "",
+        "5ab52e000a82860a0176ecbc" : ".//div[@id=\"node-portrait-full-group-portrait-coordonnees\"]//div[@class=\"field-items\"]//div/text()",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : "",
+        "5ab0d81a0a8286676a48ea3f" : "//div[@id=\"node-portrait-full-group-portrait-coordonnees\"]//div[@class=\"name-block\"]/text()",
+        "5aa9333f0a82866727d2ca04" : ".//div[@id=\"node-portrait-full-group-portrait-coordonnees\"]//div[@class=\"name-block\"]/text()",
+        "5a9ab7950a8286276bac7b34" : ".//div[@class=\"two-columns-wrapper\"]//image/@*[name()=\"xlink:href\"]",
+        "5aa68c360a82861cfd650345" : ".//div[@class=\"street-block\"]//div/text()|.//div[contains(@class,\"locality-block\")]//div/text()|.//div[@class=\"country\"]//div/text()",
+        "5aabd3ca0a82862b7852fe51" : "",
+        "5a9aaec70a8286276b0e6918" : ".//div[contains(@class,\"field--name-field-chapeau\")]//div/text()",
+        "5a9aaf070a8286276b0e691a" : ".//div[contains(@class,\"field--name-field-simple-website\")]//a/@href",
+        "5aabd1a00a82862b7852fe50" : ".//div[@class=\"two-columns-wrapper\"]//image/@*[name()=\"xlink:href\"]",
+        "5ab410d90a82863566d5fd06" : ".//div[contains(@class,\"field--name-field-portrait-employee\")]//div/text()"
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 1,
+        "download_delay" : 0.2
+    }
+}
+
+/* 4 */
+{
+    "_id" : ObjectId("5a9da08d0a82868f49cd3816"),
+    "scraper_log" : {
+        "is_working" : true,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521741269.11688,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jparis.py@gmail.com",
+        "is_data_available" : true,
+        "is_tested" : true
+    },
+    "infos" : {
+        "notes" : "...",
+        "contact" : "",
+        "name" : "AG2R la mondiale",
+        "page_url" : "http://www.fondation.ag2rlamondiale.fr"
+    },
+    "scraper_config" : {
+        "next_page" : "",
+        "start_urls" : [ 
+            "http://www.fondation.ag2rlamondiale.fr/accueil/les-territoires.html"
+        ],
+        "item_xpath" : "//div[@class=\"ListeProjets\"]/div/div",
+        "page_needs_splash" : false,
+        "parse_follow" : false,
+        "spidername" : "AG2R la mondiale",
+        "item_list_xpath" : "",
+        "follow_xpath" : ""
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : "",
+        "5a9aaed70a8286276b0e6919" : ".//div[@class=\"cutomizableRicheText\"]//p[contains(./text(), \"Domaine\")]/text()",
+        "5aabd1a00a82862b7852fe50" : ".//img/@src",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : "",
+        "5aa9333f0a82866727d2ca04" : "./div[1]//text()",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : ".//div[@class=\"cutomizableRicheText\"]//p[contains(./text(), \"Région\")]/text()",
+        "5aabd3ca0a82862b7852fe51" : "",
+        "5a9aaec70a8286276b0e6918" : ".//div[@class=\"cutomizableRicheText\"]//p[contains(./text(), \"Région\")]//following-sibling::p/text()",
+        "5a9aaf070a8286276b0e691a" : ".//div[@class=\"cutomizableRicheText\"]//a/@href",
+        "5ab0d81a0a8286676a48ea3f" : ""
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 100,
+        "download_delay" : 0.1
+    }
+}
+
+/* 5 */
+{
+    "_id" : ObjectId("5aa3de630a828651b2ebfe3e"),
+    "scraper_log" : {
+        "is_working" : true,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521825032.98958,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "hello@hello.fr",
+        "is_data_available" : true,
+        "is_tested" : true
+    },
+    "infos" : {
+        "notes" : " possibilité de récupérer infos sur matériels, économie, moyens humains, partenaires, impact...",
+        "contact" : "",
+        "name" : "Apriles",
+        "page_url" : "http://www.apriles.net/index.php"
+    },
+    "scraper_config" : {
+        "next_page" : "//a[@title=\"Suivante\"]/@href",
+        "start_urls" : [ 
+            "http://www.apriles.net/index.php?option=com_sobi2&Itemid=95&limit=5&limitstart=0"
+        ],
+        "item_xpath" : "//table[@class=\"sobi2Listing\"]/tr",
+        "page_needs_splash" : false,
+        "parse_follow" : true,
+        "spidername" : "Apriles",
+        "item_list_xpath" : "",
+        "follow_xpath" : ".//span[@class=\"sobi2ItemTitle\"]/a/@href"
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : "",
+        "5a9aaed70a8286276b0e6919" : "//ul[@class=\"sobi2Listing_field_type_action\"]/li/text()",
+        "5ab52e000a82860a0176ecbc" : "//span[@id=\"sobi2Listing_field_porteur_label\"]/parent::div/text()",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : "",
+        "5ab0d81a0a8286676a48ea3f" : "//span[@id=\"sobi2Details_field_porteur_action\"]/text()",
+        "5aa9333f0a82866727d2ca04" : ".//span[@class=\"sobi2ItemTitle\"]/a/text()",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : "//span[@id=\"sobi2Details_field_region\"]/text()",
+        "5aabd3ca0a82862b7852fe51" : "//span[@id=\"sobi2Details_field_partenaires\"]/div/text()|//span[@id=\"sobi2Details_field_partenaires\"]/text()",
+        "5a9aaec70a8286276b0e6918" : ".//span[@class=\"sobi2Listing_field_objectif\"]//text()",
+        "5a9aaf070a8286276b0e691a" : "//span[@id=\"sobi2Listing_field_porteur_label\"]/parent::div/a/@href",
+        "5aabd1a00a82862b7852fe50" : ".//span[@class=\"sobi2Listing_field_objectif\"]//img/@src",
+        "5ab410d90a82863566d5fd06" : ".//span[@id=\"sobi2Details_field_moyen\"]/div//text()"
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 112,
+        "download_delay" : 0.1
+    }
+}
+
+/* 6 */
+{
+    "_id" : ObjectId("5aabf8250a8286bf097cec82"),
+    "scraper_log" : {
+        "is_working" : true,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521828557.10459,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jojo.py@gmail.com",
+        "is_data_available" : true,
+        "is_tested" : true
+    },
+    "infos" : {
+        "notes" : " Pas de fiche par projet. Des critères sont disponibles pour filter sur la région, mais ne sont pas présents sur la page.pas d'image claire non plus",
+        "contact" : "",
+        "name" : "Fondation Daniel et Nina Carasso",
+        "page_url" : "http://www.fondationcarasso.org"
+    },
+    "scraper_config" : {
+        "next_page" : "",
+        "start_urls" : [ 
+            "http://www.fondationcarasso.org/fr/projets-soutenus"
+        ],
+        "item_xpath" : "//div[@class=\"view-content\"]//tr[contains (@class, \"odd\")]",
+        "page_needs_splash" : false,
+        "parse_follow" : false,
+        "spidername" : "Fondation Daniel et Nina Carasso",
+        "item_list_xpath" : "",
+        "follow_xpath" : ""
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : "./td[3]/span/text()",
+        "5a9aaed70a8286276b0e6919" : "./td[2]/text()",
+        "5ab52e000a82860a0176ecbc" : "",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : "",
+        "5ab0d81a0a8286676a48ea3f" : "",
+        "5aa9333f0a82866727d2ca04" : "./td[1]/text()",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : "",
+        "5aabd3ca0a82862b7852fe51" : "",
+        "5a9aaec70a8286276b0e6918" : "./following-sibling::tr[1]//p/text()",
+        "5a9aaf070a8286276b0e691a" : "./following-sibling::tr[1]//a/@href",
+        "5aabd1a00a82862b7852fe50" : "",
+        "5ab410d90a82863566d5fd06" : ""
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 1,
+        "download_delay" : 0.0
+    }
+}
+
+/* 7 */
+{
+    "_id" : ObjectId("5aabfd870a8286bf097e2e5f"),
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : "",
+        "5a9aaed70a8286276b0e6919" : "",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : "",
+        "5aa9333f0a82866727d2ca04" : "./article[@role=\"article\"]/div[@class=\"node__content\"]/h2/a/span/text()",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : "//article[@role=\"article\"]/div[@class=\"node__info\"]/div[contains(@class, \"field--name-field-association-region\")]/div[@class=\"field__item\"]/text()",
+        "5aabd3ca0a82862b7852fe51" : "",
+        "5a9aaec70a8286276b0e6918" : "//article[@role=\"article\"]/div[@class=\"node__content\"]/div[contains(@class, \"field--name-body\")]/div[@class=\"field__item\"]/text()",
+        "5a9aaf070a8286276b0e691a" : "//article[@role=\"article\"]/div[@class=\"association-info\"]/div[@class=\"association-content\"]/div[contains(@class, \"field--name-field-association-website\")]/div[@class=\"field__item\"]/a/@href",
+        "5aabd1a00a82862b7852fe50" : ".//img/@src"
+    },
+    "scraper_config" : {
+        "next_page" : "//div[@class=\"view-content\"]//ul/li",
+        "start_urls" : [ 
+            "https://fondation.edf.com/fr/agir/carte-projets"
+        ],
+        "item_xpath" : "",
+        "page_needs_splash" : false,
+        "parse_follow" : false,
+        "spidername" : "Fondation EDF",
+        "follow_xpath" : ""
+    },
+    "scraper_log" : {
+        "is_working" : false,
+        "modified_by" : "jojo.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : null,
+        "added_at" : 1521220999.63769,
+        "item_count" : 0,
+        "item_count_depth_1" : 0,
+        "added_by" : "jojo.py@gmail.com"
+    },
+    "infos" : {
+        "notes" : " ",
+        "contact" : "",
+        "name" : "Fondation EDF",
+        "page_url" : "https://fondation.edf.com"
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 100,
+        "download_delay" : 0.0
+    }
+}
+
+/* 8 */
+{
+    "_id" : ObjectId("5aae5f650a8286a8eb0c0707"),
+    "scraper_log" : {
+        "is_working" : false,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521736241.116,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jojo.py@gmail.com",
+        "is_data_available" : true
+    },
+    "infos" : {
+        "notes" : " ",
+        "contact" : "",
+        "name" : "Fondation Bettencourt Schueller",
+        "page_url" : "https://www.fondationbs.org"
+    },
+    "scraper_config" : {
+        "next_page" : "//div[@id=\"block-system-main\"]/div[@class=\"item-list\"]/ul/li[@class=\"pager-next\"]/a/@href",
+        "start_urls" : [ 
+            "https://www.fondationbs.org/fr/search/advanced-search/?f[0]=bundle%3Apage_article"
+        ],
+        "item_xpath" : "//div[@id=\"block-system-main\"]/ul/li[@class=\"search-result\"]",
+        "page_needs_splash" : false,
+        "parse_follow" : false,
+        "spidername" : "Fondation Bettencourt Schueller",
+        "item_list_xpath" : "",
+        "follow_xpath" : ""
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : "./div[@class=\"search-content\"]/div[@class=\"views-field-field-date\"]/span/text()",
+        "5a9aaed70a8286276b0e6919" : "",
+        "5aabd1a00a82862b7852fe50" : "./img/@src",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : "",
+        "5aa9333f0a82866727d2ca04" : "./div[@class=\"search-content\"]/h2/a/text()",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : "",
+        "5aabd3ca0a82862b7852fe51" : "",
+        "5a9aaec70a8286276b0e6918" : "./div[@class=\"search-content\"]/p[@class=\"search-snippet\"]/text()",
+        "5a9aaf070a8286276b0e691a" : "",
+        "5ab0d81a0a8286676a48ea3f" : ""
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 100,
+        "download_delay" : 0.0
+    }
+}
+
+/* 9 */
+{
+    "_id" : ObjectId("5aae638d0a8286a8ebd65fae"),
+    "scraper_log" : {
+        "is_working" : true,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521736284.64225,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jojo.py@gmail.com",
+        "is_data_available" : true,
+        "is_tested" : true
+    },
+    "infos" : {
+        "notes" : "Les mot-clés sont identifiés par un picto. Le script récupère le nom du porteur de projet, mais la fiche contient également une information sur la structure.",
+        "contact" : "",
+        "name" : "Fondation RTE",
+        "page_url" : "https://www.fondation-rte.org"
+    },
+    "scraper_config" : {
+        "next_page" : "//div[@id=\"project-list\"]/div[@class=\"carte-pagination\"]//a[@class=\"next page-numbers\"]/@href",
+        "start_urls" : [ 
+            "https://www.fondation-rte.org/actions/rechercher-un-projet/"
+        ],
+        "item_xpath" : "//div[@id=\"content-project-list\"]/article",
+        "page_needs_splash" : false,
+        "parse_follow" : false,
+        "spidername" : "Fondation RTE",
+        "item_list_xpath" : "",
+        "follow_xpath" : ""
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : "//div[@id=\"content\"]/article/header/div[@class=\"s-title\"]/span[@class=\"date\"]/text()",
+        "5a9aaed70a8286276b0e6919" : "",
+        "5aabd1a00a82862b7852fe50" : "./header/img[@class!=\"picto\"]/@src",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : "//div[@span=\"sponsor-name\"]/text()",
+        "5aa9333f0a82866727d2ca04" : "./header/h2/a/text()",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : "",
+        "5aabd3ca0a82862b7852fe51" : "",
+        "5a9aaec70a8286276b0e6918" : "//div[@id=\"project-content-left\"]/div",
+        "5a9aaf070a8286276b0e691a" : "",
+        "5ab0d81a0a8286676a48ea3f" : ""
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 100,
+        "download_delay" : 0.0
+    }
+}
+
+/* 10 */
+{
+    "_id" : ObjectId("5aaf89900a82860b066cd16e"),
+    "scraper_log" : {
+        "is_working" : true,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521895223.52125,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jparis.py@gmail.com",
+        "is_data_available" : true,
+        "is_tested" : true
+    },
+    "infos" : {
+        "notes" : " La localisation est mélée aux mot-clés.",
+        "contact" : "",
+        "name" : "RTES",
+        "page_url" : "http://rtes.fr"
+    },
+    "scraper_config" : {
+        "next_page" : "//div[@class=\"pagination\"]//strong[@class=\"on\"]/following-sibling::a[@class=\"lien_pagination\"]/@href",
+        "start_urls" : [ 
+            "http://rtes.fr/Formation-RTES", 
+            "http://rtes.fr/Les-PTCE", 
+            "http://rtes.fr/Journees-d-echanges-et-de-debats", 
+            "http://rtes.fr/Renforcer-l-ESS-dans-les"
+        ],
+        "item_xpath" : "//div[@id=\"last\"]/ul/li",
+        "page_needs_splash" : false,
+        "parse_follow" : true,
+        "spidername" : "RTES",
+        "item_list_xpath" : "",
+        "follow_xpath" : "./h2//a/@href"
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : "//span[@class=\"date\"]/text()",
+        "5a9aaed70a8286276b0e6919" : ".//div[@id=\"mots_article\"]/ul//a/text()",
+        "5ab5475d0a82860a01da9732" : "",
+        "5ab549610a82860a01da9733" : "",
+        "5ab52e000a82860a0176ecbc" : "",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : ".//div[@id=\"info_article\"]//span[@class=\"auteurs\"]//a/text()",
+        "5ab0d81a0a8286676a48ea3f" : "",
+        "5aa9333f0a82866727d2ca04" : "./h2//a/text()",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : "",
+        "5aabd3ca0a82862b7852fe51" : "",
+        "5a9aaec70a8286276b0e6918" : ".//a[img]/following-sibling::div/text()",
+        "5a9aaf070a8286276b0e691a" : ".//div[@id=\"info_article\"]//span[@class=\"vcard author\"]/a/@href",
+        "5aabd1a00a82862b7852fe50" : ".//div[@id=\"gauche\"]/a/img[@class=\"spip_logos\"]/@src",
+        "5ab410d90a82863566d5fd06" : ""
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 110,
+        "download_delay" : 0.0
+    }
+}
+
+/* 11 */
+{
+    "_id" : ObjectId("5aaf8c060a82860b06b9a8bd"),
+    "scraper_log" : {
+        "is_working" : false,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521736267.16217,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jparis.py@gmail.com",
+        "is_data_available" : true
+    },
+    "infos" : {
+        "notes" : " La pagination fonctionne en ajax et nécessite d'utiliser Splash",
+        "contact" : "",
+        "name" : "Fondation Macif",
+        "page_url" : "http://www.fondation-macif.org"
+    },
+    "scraper_config" : {
+        "next_page" : "",
+        "start_urls" : [ 
+            "http://www.fondation-macif.org/nos-projets"
+        ],
+        "item_xpath" : "//div[@id=\"programmes_holder\"]/div",
+        "page_needs_splash" : false,
+        "parse_follow" : true,
+        "spidername" : "Fondation Macif",
+        "item_list_xpath" : "",
+        "follow_xpath" : "./div[@class=\"box-see-more\"]/a/@href"
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : "",
+        "5a9aaed70a8286276b0e6919" : "",
+        "5aabd1a00a82862b7852fe50" : "./img/@src",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : "//div[@class=\"identity-card\"]/p[contains(text(), \"Pilote du projet\")]/span/text()",
+        "5aa9333f0a82866727d2ca04" : "./h3/text()",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : "",
+        "5aabd3ca0a82862b7852fe51" : "",
+        "5a9aaec70a8286276b0e6918" : "//div[@class=\"master-programme landscape\"]/p[@class=\"chapeau\"]/text()",
+        "5a9aaf070a8286276b0e691a" : "",
+        "5ab0d81a0a8286676a48ea3f" : ""
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 100,
+        "download_delay" : 0.0
+    }
+}
+
+/* 12 */
+{
+    "_id" : ObjectId("5aaff60d0a82860b0689c0a8"),
+    "scraper_log" : {
+        "is_working" : false,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521736148.65596,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jparis.py@gmail.com",
+        "is_data_available" : true
+    },
+    "infos" : {
+        "notes" : " Ce spider utilise l'API disponible \"/getAtlaasActions?z=n&p=\"",
+        "contact" : "",
+        "name" : "ATLAAS",
+        "page_url" : "http://www.villes-internet.net"
+    },
+    "scraper_config" : {
+        "next_page" : "",
+        "start_urls" : [ 
+            "http://www.villes-internet.net/getAtlaasActions?z=n&p=1"
+        ],
+        "item_xpath" : "",
+        "page_needs_splash" : false,
+        "parse_follow" : false,
+        "spidername" : "ATLAAS",
+        "item_list_xpath" : "",
+        "follow_xpath" : ""
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : "//div[@class=\"published\"]/span[@class=\"date\"][1]/text()",
+        "5a9aaed70a8286276b0e6919" : "",
+        "5aabd1a00a82862b7852fe50" : "//div[@class=\"logo thumbnail\"]/@data-thumbnail",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : "",
+        "5aa9333f0a82866727d2ca04" : "",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : "//div[@class=\"status\"]/span[@class=\"value\"]/text()",
+        "5aabd3ca0a82862b7852fe51" : "//div[@class=\"bloc contractors\"]//div[@class=\"text editable\"]//text()",
+        "5a9aaec70a8286276b0e6918" : "//div[@name=\"synthesis\"]//text()",
+        "5a9aaf070a8286276b0e691a" : "//a[@class=\"struct\"]/@href",
+        "5ab0d81a0a8286676a48ea3f" : ""
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 100,
+        "download_delay" : 0.0
+    }
+}
+
+/* 13 */
+{
+    "_id" : ObjectId("5aaff7360a82860b06c94a6d"),
+    "scraper_log" : {
+        "is_working" : true,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521892994.11183,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jparis.py@gmail.com",
+        "is_data_available" : true,
+        "is_tested" : true
+    },
+    "infos" : {
+        "notes" : " ",
+        "contact" : "",
+        "name" : "Fondation Veolia",
+        "page_url" : "https://www.fondation.veolia.com"
+    },
+    "scraper_config" : {
+        "next_page" : "//li[contains(@class, \"pager-current\")][1]//following-sibling::li[1]//a/@href",
+        "start_urls" : [ 
+            "https://www.fondation.veolia.com/fr/projets-soutenus"
+        ],
+        "item_xpath" : "//div[@class=\"block-doc-downloads\"]",
+        "page_needs_splash" : false,
+        "parse_follow" : true,
+        "spidername" : "Fondation Veolia",
+        "item_list_xpath" : "",
+        "follow_xpath" : ".//div[@class=\"title-main\"]/a/@href"
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : ".//span[@class=\"time\"]/text()",
+        "5a9aaed70a8286276b0e6919" : ".//div[@class=\"block-links-inner\"]/h2/text()",
+        "5ab5475d0a82860a01da9732" : "",
+        "5ab549610a82860a01da9733" : "",
+        "5ab52e000a82860a0176ecbc" : "",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : "",
+        "5ab0d81a0a8286676a48ea3f" : ".//div[@class=\"block-links-inner\"]//a/text()",
+        "5aa9333f0a82866727d2ca04" : ".//div[@class=\"title-main\"]/a/text()",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : ".//ul[@class=\"program-list\"]/li[1]/text()",
+        "5aabd3ca0a82862b7852fe51" : "//ul[@class=\"program-list\"]/li[2]/text()",
+        "5a9aaec70a8286276b0e6918" : ".//div[@class=\"doc-item-press\"]/a/text()",
+        "5a9aaf070a8286276b0e691a" : "//div[@class=\"block-links-inner\"]//a/@href",
+        "5aabd1a00a82862b7852fe50" : ".//div[@class=\"info-projects\"]//img/@src",
+        "5ab410d90a82863566d5fd06" : ""
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 95,
+        "download_delay" : 0.1
+    }
+}
+
+/* 14 */
+{
+    "_id" : ObjectId("5aaff8aa0a82860b06c94a6e"),
+    "scraper_log" : {
+        "is_working" : true,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521833604.75798,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jparis.py@gmail.com",
+        "is_data_available" : true,
+        "is_tested" : true
+    },
+    "infos" : {
+        "notes" : " Une seule page de résultats, pas besoin de \"next_page\"",
+        "contact" : "",
+        "name" : "Fondation Vinci",
+        "page_url" : "https://www.fondation-vinci.com"
+    },
+    "scraper_config" : {
+        "next_page" : "//a[@title=\"Aller à la page suivante\"]/@href",
+        "start_urls" : [ 
+            "https://www.fondation-vinci.com/fondation/fr/recherche/projets.htm&a=&r=&d=&t=Quartiers%20prioritaires%20et%20lien%20social&g=&p=&c=&q=#form", 
+            "https://www.fondation-vinci.com/fondation/fr/recherche/projets.htm&a=&r=&d=&t=Mobilit%C3%A9%20solidaire&g=&p=&c=&q=#form", 
+            "https://www.fondation-vinci.com/fondation/fr/recherche/projets.htm&a=&r=&d=&t=Acc%C3%A8s%20%C3%A0%20l%E2%80%99emploi&g=&p=&c=&q=#form", 
+            "https://www.fondation-vinci.com/fondation/fr/recherche/projets.htm&a=&r=&d=&t=Insertion%20par%20le%20logement&g=&p=&c=&q=#form"
+        ],
+        "item_xpath" : "//div[@class=\"projet\"]",
+        "page_needs_splash" : false,
+        "parse_follow" : false,
+        "spidername" : "Fondation Vinci",
+        "item_list_xpath" : "",
+        "follow_xpath" : ""
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : ".//p[3]",
+        "5a9aaed70a8286276b0e6919" : ".//strong/text()",
+        "5ab5475d0a82860a01da9732" : "",
+        "5ab549610a82860a01da9733" : "",
+        "5ab52e000a82860a0176ecbc" : "",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : "",
+        "5ab0d81a0a8286676a48ea3f" : "",
+        "5aa9333f0a82866727d2ca04" : ".//h4/text()",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : ".//h4/following-sibling::text()",
+        "5aabd3ca0a82862b7852fe51" : ".//h5/following-sibling::text()",
+        "5a9aaec70a8286276b0e6918" : ".//h5/text()",
+        "5a9aaf070a8286276b0e691a" : "",
+        "5aabd1a00a82862b7852fe50" : "",
+        "5ab410d90a82863566d5fd06" : ""
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 49,
+        "download_delay" : 0.0
+    }
+}
+
+/* 15 */
+{
+    "_id" : ObjectId("5aaff93f0a82860b06c94a6f"),
+    "scraper_log" : {
+        "is_working" : true,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521897752.10344,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jparis.py@gmail.com",
+        "is_data_available" : true,
+        "is_tested" : true
+    },
+    "infos" : {
+        "notes" : " Le contenu est dans un champs texte riche non structuré, il est difficile de récupérér les données, par exemple les mot-clés ",
+        "contact" : "",
+        "name" : "MOT",
+        "page_url" : "http://www.espaces-transfrontaliers.org"
+    },
+    "scraper_config" : {
+        "next_page" : "//li[@class=\"next\"]/a/@href",
+        "start_urls" : [ 
+            "http://www.espaces-transfrontaliers.org/ressources/projets/"
+        ],
+        "item_xpath" : "//div[@id=\"content\"]/ul[@class=\"sites-list\"]/li",
+        "page_needs_splash" : false,
+        "parse_follow" : true,
+        "spidername" : "MOT",
+        "item_list_xpath" : "",
+        "follow_xpath" : ".//a/@href"
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : "//h2[text()=\"Durée du projet\"]/following-sibling::p[1]/text()",
+        "5a9aaed70a8286276b0e6919" : "//div[@id=\"content\"]//strong[text()=\"Thème(s) : \"]/following-sibling::a/text()",
+        "5ab5475d0a82860a01da9732" : "",
+        "5ab549610a82860a01da9733" : "",
+        "5ab52e000a82860a0176ecbc" : "//div[@class=\"contact-box\"]//text()",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : "",
+        "5ab0d81a0a8286676a48ea3f" : "//div[@id=\"content\"]//strong[text()=\"Porteur du projet : \"]/following-sibling::text()",
+        "5aa9333f0a82866727d2ca04" : ".//div[@id=\"content\"]/h1/text()",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : "//div[@id=\"content\"]//strong[text()=\"Pays :\"]/following-sibling::text()|//div[@class=\"contact-box\"]/adress/text()",
+        "5aabd3ca0a82862b7852fe51" : "//div[@id=\"content\"]//h2[text()=\"Partenaires\"]/following-sibling::ul[1]/li/text()",
+        "5a9aaec70a8286276b0e6918" : "//div[@class=\"summary-box\"]/p/text()",
+        "5a9aaf070a8286276b0e691a" : "//div[@class=\"sites-list\"]//a/@href",
+        "5aabd1a00a82862b7852fe50" : "//img[@class=\"main-image\"]/@src",
+        "5ab410d90a82863566d5fd06" : "//h2[text()=\"Coût total\"]/following-sibling::p[1]/text()|//h2[text()=\"Subventions européennes\"]/following-sibling::p[1]/text()"
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 113,
+        "download_delay" : 0.0
+    }
+}
+
+/* 16 */
+{
+    "_id" : ObjectId("5aaffa390a82860b06c94a70"),
+    "scraper_log" : {
+        "is_working" : true,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521749025.04046,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jparis.py@gmail.com",
+        "is_data_available" : true,
+        "is_tested" : true
+    },
+    "infos" : {
+        "notes" : "video :  //div[@class=\"post-content\"]//iframe/@src",
+        "contact" : "",
+        "name" : "Semeoz",
+        "page_url" : "http://semeoz.info/"
+    },
+    "scraper_config" : {
+        "next_page" : "//a[@class=\"archive-nav-older fleft\"]/@href",
+        "start_urls" : [ 
+            "http://semeoz.info/category/initiatives/"
+        ],
+        "item_xpath" : "//div[@class=\"post-container\"]",
+        "page_needs_splash" : false,
+        "parse_follow" : true,
+        "spidername" : "Semeoz",
+        "item_list_xpath" : "",
+        "follow_xpath" : ".//h2[@class=\"post-title\"]/a/@href"
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : "//div[@class=\"post-meta-bottom\"]//ul/li[@class=\"post-date\"]/a/text()",
+        "5a9aaed70a8286276b0e6919" : "//div[@class=\"post-meta-bottom\"]//ul/li[@class=\"post-tags\"]/a/text()",
+        "5aabd1a00a82862b7852fe50" : ".//div[@class=\"featured-media2\"]/a/img/@src",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : "",
+        "5aa9333f0a82866727d2ca04" : ".//h2[@class=\"post-title\"]/a/text()",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : "",
+        "5aabd3ca0a82862b7852fe51" : "",
+        "5a9aaec70a8286276b0e6918" : ".//div[@class=\"post-excerpt\"]//p/text()",
+        "5a9aaf070a8286276b0e691a" : "",
+        "5ab0d81a0a8286676a48ea3f" : ""
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 100,
+        "download_delay" : 0.1
+    }
+}
+
+/* 17 */
+{
+    "_id" : ObjectId("5aaffadf0a82860b06c94a71"),
+    "scraper_log" : {
+        "is_working" : true,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521830399.45026,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jparis.py@gmail.com",
+        "is_data_available" : true,
+        "is_tested" : true
+    },
+    "infos" : {
+        "notes" : " ",
+        "contact" : "",
+        "name" : "Socialement responsable",
+        "page_url" : "https://www.socialement-responsable.org"
+    },
+    "scraper_config" : {
+        "next_page" : "//a[@rel=\"next\"]/@href",
+        "start_urls" : [ 
+            "https://www.socialement-responsable.org/annuaire"
+        ],
+        "item_xpath" : "//div[@class=\"content-wrapper\"]//article",
+        "page_needs_splash" : false,
+        "parse_follow" : true,
+        "spidername" : "Socialement responsable",
+        "item_list_xpath" : "",
+        "follow_xpath" : ".//h2//a/@href"
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : ".//div[@class=\"group group__metadata\"]//div[contains(@class, \"field--name-field-creation-date\")]/div[2]/text()",
+        "5a9aaed70a8286276b0e6919" : "//div[contains(text(), \"Activité\")]/following-sibling::div//text()",
+        "5ab5475d0a82860a01da9732" : ".//div[@class=\"group group__metadata\"]//div[contains(@class, \"field--name-field-siret\")]/div[2]/text()",
+        "5ab549610a82860a01da9733" : ".//div[@class=\"group group__metadata\"]//div[contains(@class, \"field--name-field-legal-form\")]/div[2]/text()",
+        "5ab52e000a82860a0176ecbc" : "",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : ".//h2//text()",
+        "5ab0d81a0a8286676a48ea3f" : "",
+        "5aa9333f0a82866727d2ca04" : ".//h2//text()",
+        "5a9ab7950a8286276bac7b34" : ".//article//div[contains(@class, \"field--name-field-image\")]//img/@src",
+        "5aa68c360a82861cfd650345" : ".//p[@class=\"address\"]/text()",
+        "5aabd3ca0a82862b7852fe51" : "",
+        "5a9aaec70a8286276b0e6918" : "//div[@class=\"structure-type\"]/text()",
+        "5a9aaf070a8286276b0e691a" : "//div[contains(text(), \"Contact(s)\")]/following-sibling::div//a/text()",
+        "5aabd1a00a82862b7852fe50" : "",
+        "5ab410d90a82863566d5fd06" : ""
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 200,
+        "download_delay" : 0.1
+    }
+}
+
+/* 18 */
+{
+    "_id" : ObjectId("5ab3f5fe0a8286585d3a307e"),
+    "scraper_log" : {
+        "is_working" : true,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521903747.36003,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jparis.py@gmail.com",
+        "is_data_available" : true,
+        "is_tested" : true
+    },
+    "infos" : {
+        "notes" : " Possible de récupérer :* contact* state = maturitépossible de récupérer la licence de l'info",
+        "contact" : "",
+        "name" : "Bretagne Creative",
+        "page_url" : "http://www.bretagne-creative.net"
+    },
+    "scraper_config" : {
+        "next_page" : "//span[@class=\"next\"]/a/@href",
+        "start_urls" : [ 
+            "http://www.bretagne-creative.net/rubrique2.html?debut_articles=0&theme="
+        ],
+        "item_xpath" : "//div[@class=\"vignette\"]",
+        "page_needs_splash" : false,
+        "parse_follow" : true,
+        "spidername" : "Bretagne Creative",
+        "item_list_xpath" : "",
+        "follow_xpath" : ".//a/@href"
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : ".//td[contains(., \"Publié le\")]/parent::tr/td[2]//a/text()",
+        "5a9aaed70a8286276b0e6919" : "//td[contains(., \"Thèmes\")]/parent::tr/td[2]//a/text()",
+        "5ab5475d0a82860a01da9732" : "",
+        "5ab549610a82860a01da9733" : "",
+        "5ab52e000a82860a0176ecbc" : "",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : ".//td[contains(., \"Auteurs\")]/parent::tr/td[2]//a/text()",
+        "5ab0d81a0a8286676a48ea3f" : ".//td[contains(., \"Auteurs\")]/parent::tr/td[2]//a/text()",
+        "5aa9333f0a82866727d2ca04" : ".//h3[@class=\"h3 entry-title\"]/a/text()",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : ".//td[contains(., \"Pays\")]/parent::tr/td[2]//a/text()",
+        "5aabd3ca0a82862b7852fe51" : "",
+        "5a9aaec70a8286276b0e6918" : ".//div[@class=\"soustitre entry-content\"]/text()",
+        "5a9aaf070a8286276b0e691a" : ".//td[contains(., \"Site Web\")]/parent::tr/td[2]//a/text()",
+        "5aabd1a00a82862b7852fe50" : ".//h3[@class=\"h3 entry-title\"]/a/img/@src",
+        "5ab410d90a82863566d5fd06" : ""
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 10,
+        "download_delay" : 0.2
+    }
+}
+
+/* 19 */
+{
+    "_id" : ObjectId("5ab40ef30a82863566d5fd04"),
+    "scraper_log" : {
+        "is_working" : false,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521908658.57416,
+        "is_tested" : false,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jparis.py@gmail.com",
+        "is_data_available" : false
+    },
+    "infos" : {
+        "notes" : " Utilise scrapy-splash: nécessite une instance de splashLa région est présente sur les filtres mais pas dans les fiches, donc non récupérable.",
+        "contact" : "",
+        "name" : "Le Labo de l'ESS",
+        "page_url" : "http://www.lelabo-ess.org"
+    },
+    "scraper_config" : {
+        "next_page" : "//span[@class=\"pages\"]/strong/following-sibling::a/@href",
+        "start_urls" : [ 
+            "http://www.lelabo-ess.org/-initiatives-inspirantes-.html"
+        ],
+        "item_xpath" : "//div[@class=\"menu menu_articles\"]/ul/li",
+        "page_needs_splash" : false,
+        "parse_follow" : true,
+        "spidername" : "Le Labo de l'ESS",
+        "item_list_xpath" : "",
+        "follow_xpath" : "./a/@href"
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : "//div[@id=\"content\"]//abbr[@class=\"published\"]/text()",
+        "5a9aaed70a8286276b0e6919" : "//div[@id=\"content\"]//div[@class=\"tag\"]/a/text()",
+        "5ab5475d0a82860a01da9732" : "",
+        "5ab549610a82860a01da9733" : "",
+        "5ab52e000a82860a0176ecbc" : "",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : "",
+        "5ab0d81a0a8286676a48ea3f" : "",
+        "5aa9333f0a82866727d2ca04" : ".//strong/text()",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : "",
+        "5aabd3ca0a82862b7852fe51" : "",
+        "5a9aaec70a8286276b0e6918" : ".//small/text()",
+        "5a9aaf070a8286276b0e691a" : "//div[@id=\"content\"]//p[contains(text(), \"En savoir plus\")]//a[@class=\"spip_out\"]/@href",
+        "5aabd1a00a82862b7852fe50" : ".//img/@src",
+        "5ab410d90a82863566d5fd06" : ""
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 100,
+        "download_delay" : 0.1
+    }
+}
+
+/* 20 */
+{
+    "_id" : ObjectId("5ab410c00a82863566d5fd05"),
+    "scraper_log" : {
+        "is_working" : true,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521826394.08434,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jparis.py@gmail.com",
+        "is_data_available" : true,
+        "is_tested" : true
+    },
+    "infos" : {
+        "notes" : " ",
+        "contact" : "",
+        "name" : "My Positive Impact",
+        "page_url" : "http://www.mypositiveimpact.org"
+    },
+    "scraper_config" : {
+        "next_page" : "//a[contains(@class, \"Paging_next\")]/@href",
+        "start_urls" : [ 
+            "http://www.mypositiveimpact.org/les-solutions"
+        ],
+        "item_xpath" : "//div[contains(@class, \"Grid-gutters\")]/div/article/div[@class=\"SolutionsItem_overflow\"]",
+        "page_needs_splash" : false,
+        "parse_follow" : true,
+        "spidername" : "My Positive Impact",
+        "item_list_xpath" : "",
+        "follow_xpath" : "./a/@href"
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : "",
+        "5a9aaed70a8286276b0e6919" : ".//span[@class=\"Button Button-underline\"]/text()",
+        "5ab52e000a82860a0176ecbc" : "",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : "",
+        "5ab0d81a0a8286676a48ea3f" : "./div[@class=\"SolutionsItem_content\"]/h5/text()",
+        "5aa9333f0a82866727d2ca04" : "./div[@class=\"SolutionsItem_content\"]/a/text()",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : "",
+        "5aabd3ca0a82862b7852fe51" : "",
+        "5a9aaec70a8286276b0e6918" : "./div[@class=\"SolutionsItem_content\"]/p/text()",
+        "5a9aaf070a8286276b0e691a" : "//div[@class=\"CustomContent CustomContent-entry\"]//a[contains(text(), \"Site Internet\")]/@href",
+        "5aabd1a00a82862b7852fe50" : "substring-before(substring-after(//div[@class='SolutionEntry_visual']/@style, \"background-image: url('\"), \"')\")",
+        "5ab410d90a82863566d5fd06" : "./div[@class=\"SolutionsItem_content\"]/span[contains(@class, \"Category\")]/text()"
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 6,
+        "download_delay" : 0.1
+    }
+}
+
+/* 21 */
+{
+    "_id" : ObjectId("5ab555780a82860a01da9734"),
+    "scraper_log" : {
+        "is_working" : true,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521833614.01355,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jparis.py@gmail.com",
+        "is_data_available" : true,
+        "is_tested" : true
+    },
+    "infos" : {
+        "notes" : "La date est au format \"jj.mm.aaaa\".",
+        "contact" : "",
+        "name" : "Solidarum",
+        "page_url" : "http://www.solidarum.org"
+    },
+    "scraper_config" : {
+        "next_page" : "//a[@title=\"Aller à la page suivante\"]/@href",
+        "start_urls" : [ 
+            "http://www.solidarum.org/recherche"
+        ],
+        "item_xpath" : "//div[@class=\"content_out clearfix\"]",
+        "page_needs_splash" : false,
+        "parse_follow" : true,
+        "spidername" : "Solidarum",
+        "item_list_xpath" : "",
+        "follow_xpath" : ".//h4[@class=\"title\"]/a/@href"
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : ".//div[@class=\"meta\"]/span[@class=\"post-date\"]/text()",
+        "5a9aaed70a8286276b0e6919" : "//div[@class=\"s-tags domaine\"]/a/text()",
+        "5ab5475d0a82860a01da9732" : "",
+        "5ab549610a82860a01da9733" : "",
+        "5ab52e000a82860a0176ecbc" : "",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : "",
+        "5ab0d81a0a8286676a48ea3f" : "",
+        "5aa9333f0a82866727d2ca04" : ".//h4[@class=\"title\"]/a/text()",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : "",
+        "5aabd3ca0a82862b7852fe51" : "",
+        "5a9aaec70a8286276b0e6918" : ".//div[@class=\"field-items\"]//p/text()",
+        "5a9aaf070a8286276b0e691a" : "",
+        "5aabd1a00a82862b7852fe50" : ".//img/@src",
+        "5ab410d90a82863566d5fd06" : ""
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 36,
+        "download_delay" : 0.1
+    }
+}
+
+/* 22 */
+{
+    "_id" : ObjectId("5ab6766e0a828611e012a8ed"),
+    "scraper_log" : {
+        "is_working" : false,
+        "modified_by" : "jparis.py@gmail.com",
+        "error_array" : [],
+        "modified_at" : 1521921865.19381,
+        "is_tested" : false,
+        "is_running" : false,
+        "item_count" : 0,
+        "added_at" : null,
+        "item_count_depth_1" : 0,
+        "added_by" : "jparis.py@gmail.com",
+        "is_data_available" : false
+    },
+    "infos" : {
+        "notes" : " ",
+        "contact" : "",
+        "name" : "-DEBUG- empty spider config",
+        "page_url" : "no url"
+    },
+    "scraper_config" : {
+        "next_page" : "",
+        "start_urls" : [],
+        "item_xpath" : "",
+        "page_needs_splash" : false,
+        "parse_follow" : false,
+        "spidername" : "-DEBUG- empty spider config",
+        "item_list_xpath" : "",
+        "follow_xpath" : ""
+    },
+    "scraper_config_xpaths" : {
+        "5aaaf2310a828606a4944b1b" : "",
+        "5a9aaed70a8286276b0e6919" : "",
+        "5ab5475d0a82860a01da9732" : "",
+        "5ab549610a82860a01da9733" : "",
+        "5ab52e000a82860a0176ecbc" : "",
+        "5aa04ce10a82863c677c7951" : "",
+        "5a9aaf370a8286276b0e691b" : "",
+        "5ab0d81a0a8286676a48ea3f" : "",
+        "5aa9333f0a82866727d2ca04" : "",
+        "5a9ab7950a8286276bac7b34" : "",
+        "5aa68c360a82861cfd650345" : "",
+        "5aabd3ca0a82862b7852fe51" : "",
+        "5a9aaec70a8286276b0e6918" : "",
+        "5a9aaf070a8286276b0e691a" : "",
+        "5aabd1a00a82862b7852fe50" : "",
+        "5ab410d90a82863566d5fd06" : ""
+    },
+    "scraper_settings" : {
+        "page_count" : 1,
+        "LIMIT" : 100,
+        "download_delay" : 0.1
+    }
+}
