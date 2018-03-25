@@ -10,45 +10,52 @@
 		<div class="container has-text-centered">
 			
 			{# logo and tagline #}
-			<div class="level">
-				<div class="level-item">
-					<figure class="image is-128x128">
-						{# <img src="http://www.pvhc.net/img5/onmbyubllatmozmvsdtf.png"> #}
-						<img src="{{ static_url ('images/brush.png') }}">
-					</figure>
+				<div class="level">
+					<div class="level-item">
+						<figure class="image is-128x128">
+							{# <img src="http://www.pvhc.net/img5/onmbyubllatmozmvsdtf.png"> #}
+							<img src="{{ static_url ('images/brush.png') }}">
+						</figure>
+					</div>
 				</div>
-			</div>
-			<div class="level">
-				<div class="level-item">
-					<h1 class="title">
-						{{ page_title }}
-					</h1>
+				<div class="level">
+					<div class="level-item">
+						<h1 class="title">
+							{{ page_title }}
+						</h1>
+					</div>
 				</div>
-			</div>
-			<div class="level">
-				<div class="level-item">
-					<h2 class="subtitle">
-						an online, open source, free webscraper you can adapt to brush and scrap (almost) any website
-					</h2>
+				<div class="level">
+					<div class="level-item">
+						<h2 class="subtitle">
+							an 
+							online
+							open source
+							free
+							webscraper 
+							<br>you can customize to brush and 
+							gather data 
+							from (almost) any website
+						</h2>
+					</div>
 				</div>
-			</div>
 
 			{% if is_user_connected == "No"  %}
-			<div>
-				<a class="button is-large is-inverted is-primary is-rounded" href="/{{url_to}}/">
-					<span class="icon">
-						{% if url_to == "login" %}
-							<i class="fas fa-sign-in-alt"></i>
-						{% else %}
-							<i class="fas fa-sign-out-alt"></i>
-						{% end %}
-					</span>
-					<span>
-						login or register
-						{# { {url_to}} #}
-					</span>
-				</a>
-			</div>
+				<div>
+					<a class="button is-large is-inverted is-primary is-rounded" href="/{{url_to}}/">
+						<span class="icon">
+							{% if url_to == "login" %}
+								<i class="fas fa-sign-in-alt"></i>
+							{% else %}
+								<i class="fas fa-sign-out-alt"></i>
+							{% end %}
+						</span>
+						<span>
+							login or register
+							{# { {url_to}} #}
+						</span>
+					</a>
+				</div>
 			{% end %}
 
 			<br>
@@ -84,28 +91,10 @@
 				</div>
 			</div>
 			
+			<br>
 			{# shortcut buttons #}
-			<div class="level">
+			{# <div class="level">
 				<div class="container">
-
-					{# <div class="buttons has-addons is-centered">
-
-						<a class="button is-primary is-inverted is-outlined "
-							href="/datamodel/view">
-							see your data model
-						</a>
-
-						<a class="button is-primary is-inverted is-outlined "
-							href="/contributors">
-							see the contributors
-						</a>
-
-						<a class="button is-primary is-inverted is-outlined "
-							href="/dataset/view">
-							see the data set
-						</a>
-
-					</div> #}
 
 					<div class="buttons is-centered" >
 						<div class="field is-grouped">
@@ -166,9 +155,128 @@
 						</div>
 					</div>
 
+				</div>
+			</div> #}
 
+
+
+			<div class="level">
+				
+				<div class="container">
+				<div class="columns is-centered">
+				<div class="column is-7">
+				
+					<ul class="steps">
+
+
+						<li class="step-item is-white is-completed">
+								<div 	class="step-marker tooltip is-tooltip-bottom" 
+										data-tooltip="define the structure of the dataset you are expecting">
+									<a 	class="button is-small is-white is-rounded"
+										href="/datamodel/view"
+										>
+										<span class="icon">
+											<i class="fa fa-list"></i>
+										</span>
+									</a>
+								</div>
+								<div class="step-details">
+									<p class="">
+										set a datamodel
+									</p>
+									{# <p>set the structure of the data you expect</p> #}
+								</div>
+						</li>
+
+
+						<li class="step-item is-white is-completed">
+								<div 	class="step-marker tooltip is-tooltip-bottom" 
+										data-tooltip="add websites of the contributors wanting to mutualize data">
+									<a 	class="button is-small is-rounded is-white"
+										href="/contributors">
+										<span class="icon  is-white">
+											<i class="fa fa-link"></i>
+										</span>
+									</a>
+								</div>
+								<div class="step-details">
+									<p class="">
+									add contributors
+									</p>
+									{# <p>add websites you want to crawl from</p> #}
+								</div>
+							</a>
+						</li>
+
+
+						<li class="step-item is-white is-completed">
+							<div 	class="step-marker tooltip is-tooltip-bottom" 
+									data-tooltip="see the complete dataset">
+								<a 	class="button is-small is-rounded is-white"
+									href="/dataset/view">
+									<span class="icon">
+										<i class="fa fa-table"></i>
+									</span>
+								</a>
+							</div>
+								<div class="step-details is-white">
+									
+									<p class="">
+									see the dataset
+									</p>
+									{# <p>see the results of your crawling</p> #}
+								</div>
+							</a>
+						</li>
+
+
+						<li class="step-item is-white is-completed">
+							<div 	class="step-marker tooltip is-tooltip-bottom" 
+									data-tooltip="visualize the dataset on several charts (working on it)">
+								<a 	class="button is-small is-rounded is-white"
+									href="/dataviz"
+									disabled>
+									<span class="icon">
+										<i class="fa fa-chart-bar"></i>
+									</span>
+								</a>
+							</div>
+							<div class="step-details">
+								<p class="">
+								visualize
+								</p>
+								{# <p>visualize the results</p> #}
+							</div>
+							</a>
+						</li>
+
+
+						<li class="step-item is-white is-completed">
+							<div 	class="step-marker tooltip is-tooltip-bottom" 
+									data-tooltip="share or get the data with the API">
+								<a 	class="button is-small is-rounded is-white"
+									href="/api/data"
+									>
+									<span class="icon">
+										<i class="fa fa-share-alt"></i>
+									</span>
+								</a>
+							</div>
+							<div class="step-details">
+								<p class="">
+								share
+								</p>
+								{# <p>visualize the results</p> #}
+							</div>
+							</a>
+						</li>
+
+					</ul>
 
 				</div>
+				</div>
+				</div>
+
 			</div>
 
 			<br>
