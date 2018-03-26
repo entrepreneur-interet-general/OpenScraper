@@ -300,7 +300,10 @@ class BaseHandler(tornado.web.RequestHandler):
 		return pagination
 
 	def get_current_uri_without_error_slug (self, slug_class=None) :
-		""" returns uri without the error slug""" 
+		""" 
+		returns uri without the error slug 
+		- note : duplicates a bit the work done for api sluf query
+		""" 
 
 		print 
 		app_log.info("... get_current_uri_without_error_slug ..." )
@@ -321,8 +324,12 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		return current_uri
 
-
-
+	def compute_count_and_page_n_max(self, results_count, limit_results) :
+		
+		### compute max_pages, start index, stop index
+		page_n_max 		= int(math.ceil( results_count / float(limit_results)  ))
+		
+		return page_n_max
 
 	### user functions for all handlers
 
@@ -473,7 +480,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		return count_by_field_dict
 
-	def get_datamodel_fields(self, query=None):
+	def get_datamodel_fields(self, query=None) :
 		"""return fields from query as list"""
 		
 		fields =[]
@@ -492,35 +499,86 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		return fields
 
-	def filter_slug(self, slug, slug_class=None) : 
+	def filter_slug(self, slug, slug_class=None, query_from="app") : 
 		""" filter args from slug """
 		
 		print
 		app_log.info("... filter_slug / slug : \n %s ", pformat(slug) ) 
-		# print slug
 
 		# recreate query from slug
-		raw_query = QueryFromSlug( slug, slug_class )	# from settings_corefields
+		raw_query = QueryFromSlug( slug, slug_class, query_from = query_from )	# from settings_corefields
 		app_log.info("... filter_slug / raw_query.query : \n %s \n", pformat(raw_query.query) ) 
 
 		return raw_query.query
 
-	def get_data_from_query(self, query_obj, coll_name, sort_by=None ) :
+
+
+	def build_first_term_query(self, query_obj) :
+		""" build the query according to allowed """
+		
+		query = {}
+
+		# reroute query fields for first query arg
+
+		if "spider_id" in query_obj : 
+			if "all" in query_obj["spider_id"] :
+				pass
+			else : 
+				q_spider = { "spider_id" : q for q in query_obj["spider_id"] }
+				query.update(q_spider)
+
+		if "search_for" in query_obj : 
+			if "all" in query_obj["search_for"] :
+				pass
+			else : 
+				q_search_for = {}
+				query.update(q_search_for)
+
+		if "search_in" in query_obj : 
+			if "all" in query_obj["search_in"] :
+				pass
+			else : 
+				q_search_in = {}
+				query.update(q_search_in)
+
+		# if "open_level" in query_obj :
+		# 	if "all" in query_obj["search_in"] :
+		# 		pass
+		# 	else :
+		# 		q_open_level = { "open" }
+		# 		query.update(q_open_level)
+
+		return query
+
+
+	def get_data_from_query(self, 
+							query_obj, 
+							coll_name, 
+							sort_by				= None, 
+							ignore_fields_list	= [],
+							keep_fields_list	= [],
+							query_from			= "app" # by default on "app", specify if comming from "api"
+							) :
 		""" get items from db """
 
 		print
-		app_log.info("... get_data_from_query / query_obj : %s \n", pformat(query_obj) )
+		app_log.info("... get_data_from_query / query_obj : \n %s \n", pformat(query_obj) )
 		
-		# check if query wants all results 
-		all_results		= query_obj["all_results"]
+		user_token		= query_obj["token"]
+
+		# check if query wants all results
+		all_results = False
+		if "all_results" in query_obj : 
+			all_results		= query_obj["all_results"]
 		
-		
+
 		# TO DO : check if user has right to use specific query fields
 		
-		
+
+		# TO DO 
 		# retrieve all results at once 
-		user_token		= query_obj["token"]
 		if all_results==True : 
+			### TO DO 
 			if user_token != None : # and 
 				pass
 			else : 
@@ -528,55 +586,84 @@ class BaseHandler(tornado.web.RequestHandler):
 				
 
 		### DB OPERATIONS
-		### WORK ON THAT !
-		# if query_obj["spider_id"] == ["all"]:
-		if "all" in query_obj["spider_id"] :
-			query = { }
-		else : 
-			query = { 
-				"spider_id" : q for q in query_obj["spider_id"]
-			}
-		# retrieve docs from db
+
+		# choose collection
 		app_log.info("... get_data_from_query / cursor :" )
-		coll 	= self.choose_collection( coll_name=coll_name )
-		cursor 	= coll.find( query )
+		coll = self.choose_collection( coll_name=coll_name )
+
+
+
+
+		# reroute query fields for first query arg
+		# query = { }
+		# if "spider_id" in query_obj : 
+		# 	# if query_obj["spider_id"] == ["all"]:
+		# 	if "all" in query_obj["spider_id"] :
+		# 		# query = { }
+		# 		pass
+		# 	else : 
+		# 		query = { 
+		# 			"spider_id" : q for q in query_obj["spider_id"]
+		# 		}
+		query = self.build_first_term_query(query_obj)
+
+
+
+		# add ignore_fields / keep_fields criterias to query if any
+		specific_fields = None
+		if ignore_fields_list != [] and ignore_fields_list != [] : 
+			specific_fields = {}
+			if ignore_fields_list != [] :
+				specific_fields = { f : 0 for f in ignore_fields_list }
+			if keep_fields_list != [] :
+				keep_fields = { f : 1 for f in keep_fields_list }
+				specific_fields.update( keep_fields )
+		app_log.info("... get_data_from_query / specific_fields : %s ", specific_fields )
+
+		# retrieve docs from db
+		cursor 	= coll.find( query, specific_fields )
+
+		# count results
+		results_count	= cursor.count()
 
 		# sort results
 		if sort_by != None :
 			cursor.sort( sort_by , pymongo.ASCENDING )
 
-		# count results
-		results_count = cursor.count()
-		print "... get_data_from_query / results_cout :", results_count
-
-		### compute max_pages, start index, stop index
-		page_n 			= query_obj["page_n"]
+		# retrieve docs
 		limit_results 	= query_obj["results_per_page"]
-
-		page_n_max 		= int(math.ceil( results_count / float(limit_results)  ))
-		
-		app_log.info("... get_data_from_query / page_n_max : %s ", page_n_max ) 
-		app_log.info("... get_data_from_query / page_n : %s ", page_n )
-
-
-		### select items to retrieve from list and indices start and stop
-		# all results case
-		if all_results==True : 		
-			docs_from_db = list(cursor)
-		# page queried is higher than page_n_max or inferior to 1
-		if page_n > page_n_max or page_n < 1 :
-			docs_from_db = []	
-		# slice cursor : get documents from start index to stop index
+		# if query from "api" ignore pagination
+		if query_from == "api" : 
+			page_n_max   = None
+			docs_from_db = list(cursor[  : limit_results ])
+		# if query from "app" limit according to pagination
 		else : 
-			results_i_start	= ( page_n-1 ) * limit_results 
-			results_i_stop	= ( results_i_start + limit_results ) - 1
-			app_log.info("... get_data_from_query / results_i_start : %s ", results_i_start )
-			app_log.info("... get_data_from_query / results_i_stop  : %s ", results_i_stop )
-			docs_from_db = list(cursor[ results_i_start : results_i_stop ])
-		app_log.info("... get_data_from_query / docs_from_db : \n ....")
-		# app_log.info("%s", pformat(docs_from_db[0]) )
-		# pprint.pprint(docs_from_db[0])
-		# print "..."
+			### compute max_pages, start index, stop index
+			page_n 			= query_obj["page_n"]
+			page_n_max 		= self.compute_count_and_page_n_max(results_count, limit_results)
+
+			app_log.info("... get_data_from_query / results_cout : %s", results_count ) 
+			app_log.info("... get_data_from_query / page_n_max   : %s ", page_n_max ) 
+			app_log.info("... get_data_from_query / page_n       : %s ", page_n )
+
+			### select items to retrieve from list and indices start and stop
+			# all results case
+			if all_results==True : 		
+				docs_from_db = list(cursor)
+			else : 
+				# page queried is higher than page_n_max or inferior to 1
+				if page_n > page_n_max or page_n < 1 :
+					docs_from_db = []	
+				# slice cursor : get documents from start index to stop index
+				else : 
+					results_i_start	= ( page_n-1 ) * limit_results 
+					results_i_stop	= ( results_i_start + limit_results + 1 ) - 1
+					app_log.info("... get_data_from_query / results_i_start : %s ", results_i_start )
+					app_log.info("... get_data_from_query / results_i_stop  : %s ", results_i_stop )
+					docs_from_db = list(cursor[ results_i_start : results_i_stop ])
+			app_log.info("... get_data_from_query / docs_from_db : \n ....")
+			# app_log.info("%s", pformat(docs_from_db[0]) )
+
 
 		# flag if the cursor is empty
 		is_data = False

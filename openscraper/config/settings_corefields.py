@@ -74,6 +74,7 @@ DATAMODEL_FIELDS_TYPES = [
 	"price",
 	"list"
 ]
+
 # field_keep options in form only
 DATAMODEL_FIELD_KEEP_VARS = [
 	"keep", "not visible", "delete", 
@@ -84,6 +85,13 @@ DATAMODEL_FIELD_OPEN_VARS = [
 	"collective", 	# data only visible by the collectif - i.e. all users of the platform
 	"private", 		# personal data - only accessible by logged specific user
 ]
+OPEN_LEVEL_DICT = {
+	"all" 			: ["opendata", "commons", "collective", "private"], 
+	"collective"	: ["opendata", "commons", "collective"], 
+	"commons" 		: ["opendata", "commons"],
+	"opendata" 		: ["opendata"],
+}
+
 # fields to keep always as db backbone - mainly fields necessary to create a spider
 DATAMODEL_CORE_FIELDS = [
 

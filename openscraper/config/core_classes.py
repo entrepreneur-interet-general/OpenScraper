@@ -9,6 +9,7 @@ import 	re
 import 	time
 from 	datetime import datetime
 
+### TO DO / IMPLEMENT
 ### for JWT in Python, cf : https://github.com/jpadilla/pyjwt
 import 	jwt
 
@@ -195,7 +196,7 @@ class QueryFromSlug :
 	slug cleaner to translate complete or incomplete slug into a clean mongodb query
 	"""
 
-	def __init__(self, slug, slug_class ) : 
+	def __init__(self, slug, slug_class, query_from="app" ) : 
 
 		print
 		app_log.info("== QueryfromSlug ... ")
@@ -228,6 +229,11 @@ class QueryFromSlug :
 			self.default_positives 	= QUERIES_CRAWL_ALLOWED_POSITIVES
 			self.default_bool 		= QUERIES_CRAWL_ALLOWED_BOOLEAN
 
+		# clean default_query if query is coming from api 
+		if query_from == "api" :
+			print QUERIES_ARGS_TO_IGNORE_IF_API
+			self.default_query = { k : v for k,v in self.default_query.iteritems() if k not in QUERIES_ARGS_TO_IGNORE_IF_API }
+
 		# copy chosen default query as backbone
 		self.query 	= deepcopy(self.default_query)
 
@@ -246,10 +252,10 @@ class QueryFromSlug :
 			if q_field in self.default_query.keys() :
 
 				if q_field in self.default_uniques : 
-					
+
 					# select one unique value for this arg (not a list)
 					self.query[q_field] = q_arg[0]
-					
+
 					# value should be an integer 
 					if q_field in self.default_integers :
 						try : 
