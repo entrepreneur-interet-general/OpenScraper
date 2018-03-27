@@ -12,6 +12,8 @@ from 	bson import ObjectId
 from 	datetime import datetime
 from 	functools import wraps
 
+import 	jwt
+
 import pymongo
 # from 	pymongo import UpdateOne
 
@@ -40,6 +42,8 @@ from config.settings_queries 	import * # QUERY_DATA_BY_DEFAULT, etc...
 from config.core_classes		import * # SpiderConfig, UserClass, QuerySlug
 from config.settings_threading	import * # THREADPOOL_MAX_WORKERS, etc...
 from config.settings_cleaning	import * # STRIP_STRING, DATA_CONTENT_TO_IGNORE, etc...
+from config.settings_errors		import * # REDIRECT_TO_IF_NOT_AUTHORIZED, etc...
+
 
 
 
@@ -59,8 +63,10 @@ def check_user_permissions(method):
 
 		print
 		app_log.info(" ... check_user_permissions ... ")
-		
 		app_log.info(" ... check_user_permissions / self.request.full_url() : \n %s ", self.request.full_url())
+
+		# override default user_email value
+		self.user_email = self.get_current_user_email()
 
 		user_auth_level = self.get_current_user_auth_level()
 		app_log.info(" ... check_user_permissions / user_auth_level : %s ",user_auth_level )
@@ -68,9 +74,81 @@ def check_user_permissions(method):
 		user_auth_level_dict = USER_AUTH_LEVELS[user_auth_level]
 		app_log.info(" ... check_user_permissions / auth_level : %s ", user_auth_level_dict )
 
+		# override default user_auth_level and user_auth_level_dict
 		self.user_auth_level 		= user_auth_level
 		self.user_auth_level_dict 	= user_auth_level_dict
 
+		app_log.info("... check_user_permissions / self.user_auth_level      : %s ...", self.user_auth_level  )
+		app_log.info("... check_user_permissions / self.user_auth_leve_dictl : %s ...", pformat( self.user_auth_level_dict)  )
+		
+		# if not self.current_user:
+
+		# 	if self.request.method in ("GET", "HEAD"):
+		# 		url = self.get_login_url()
+		# 		if "?" not in url:
+		# 			if urlparse.urlsplit(url).scheme:
+		# 				# if login url is absolute, make next absolute too
+		# 				next_url = self.request.full_url()
+		# 			else:
+		# 				next_url = self.request.uri
+		# 			url += "?" + urlencode(dict(next=next_url))
+		# 		self.redirect(url)
+		# 		return
+
+		# 	raise HTTPError(403)
+
+		print
+
+		return method(self, *args, **kwargs)
+	return wrapper
+
+
+def check_request_token(method) : 
+	"""
+	Decorate methods with this to require that the user 
+	have the correct email to be able to modify stuff like the datamodel or a spider
+	"""
+	@wraps(method)
+	def wrapper(self, *args, **kwargs):
+
+		print
+		app_log.info(" ... check_request_token ... ")
+		app_log.info(" ... check_request_token / self.request.full_url() : \n %s ", self.request.full_url())
+
+		### get token 
+		slug_ = self.request.arguments
+		token = slug_.get("token", None)
+		# if no token in slug try getting it from post header ? 
+
+		app_log.info(" ... check_user_permissions / token 			: %s ", token )
+
+
+		### get user_auth_level
+		if token == None : 
+			user_auth_level = "visitor"
+		else :
+		
+
+			### TO DO : decrypt token instead of default 
+			user_auth_level = "user"
+			self.user_email = "default.api.email@openscraper.com"
+		
+
+
+
+		app_log.info(" ... check_user_permissions / user_auth_level : %s ", user_auth_level )
+		
+		### get user_auth_level_dict
+		user_auth_level_dict = USER_AUTH_LEVELS[user_auth_level]
+		app_log.info(" ... check_user_permissions / user_auth_level_dict : %s ", user_auth_level_dict )
+
+		### add to base handler
+		self.user_auth_level 		= user_auth_level
+		self.user_auth_level_dict 	= user_auth_level_dict
+
+		app_log.info("... check_user_permissions / self.user_auth_level      : %s ...", self.user_auth_level  )
+		app_log.info("... check_user_permissions / self.user_auth_leve_dictl : %s ...", pformat( self.user_auth_level_dict)  )
+		
 		# if not self.current_user:
 
 		# 	if self.request.method in ("GET", "HEAD"):
@@ -128,14 +206,14 @@ class BaseHandler(tornado.web.RequestHandler):
 		# app_log = self.application.gen_log
 
 		### global vars for every handler
-		self.is_user_connected 	= self.get_if_user_connected()
-		self.error_msg 			= ""
-		self.site_section 		= ""
+		self.is_user_connected	 	= self.get_if_user_connected()
+		self.error_msg	 			= ""
+		self.site_section 			= ""
 
-		self.user_auth_level	= "visitor"
-		self.user_auth_level	= USER_AUTH_LEVELS[self.user_auth_level]
+		self.user_auth_level		= "visitor"
+		self.user_auth_level_dict 	= USER_AUTH_LEVELS[self.user_auth_level]
 
-
+		self.user_email				= "visitor.email@openscraper.com"
 
 	### global functions for all handlers
 
@@ -394,6 +472,9 @@ class BaseHandler(tornado.web.RequestHandler):
 			self.set_secure_cookie("user_email", user_email )
 			self.set_secure_cookie("user_is_connected", "Yes" )
 
+			# override self
+			self.user_email = user_email
+
 		else :
 			# clear user if no user
 			self.clear_current_user()
@@ -406,7 +487,30 @@ class BaseHandler(tornado.web.RequestHandler):
 		self.clear_cookie("user_email")
 		self.clear_cookie("user_is_connected")
 
+	# TO CLEAN...
+	def redirect_user_if_not_authorized(self, auth_level, site_section) :
+		""" redirect user if he/she doen't have auth level for edition """
 
+		redirect_user = False
+
+		if auth_level not in ["all", "own"] : 
+			
+			app_log.warning("... redirect_user_if_not_authorized --- user %s don't have authorization level to enter %s", self.user_email, site_section ) 
+			
+			self.error_msg = self.add_error_message_to_slug( 
+								error_string="you don't have the authorization level to access - {} - edition page".format(site_section),
+								)
+			redirect_to = REDIRECT_TO_IF_NOT_AUTHORIZED[ site_section ]
+
+			self.redirect( redirect_to + self.error_msg)
+
+			redirect_user = True 
+			
+			### TO CLEAN : still raising error / not clean .;;
+			raise HTTPError(403)
+			
+		# return redirect_user
+		return
 
 
 	### DB functions for all handlers
@@ -529,11 +633,15 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		return raw_query.query
 
+	def build_first_term_query(self, query_obj, ignore_fields_list=[], keep_fields_list=[], data_model_custom_dict_names={}) :
+		""" 
+		build the query according to allowed fields ...
+		"""
 
-	def build_first_term_query(self, query_obj) :
-		""" build the query according to allowed """
-		
+		print
 		app_log.info("... build_first_term_query / query_obj : \n %s ", pformat(query_obj) )
+		app_log.info("... build_first_term_query / keep_fields_list : \n %s ", pformat(keep_fields_list) )
+		app_log.info("... build_first_term_query / data_model_custom_dict_names : \n %s \n", pformat(data_model_custom_dict_names) )
 
 		query = {}
 
@@ -546,38 +654,57 @@ class BaseHandler(tornado.web.RequestHandler):
 				q_spider = { "spider_id" : q for q in query_obj["spider_id"] }
 				query.update(q_spider)
 
-		# search by content --> collection need to be indexed
+		### search by content --> collection need to be indexed
 		# cf : https://stackoverflow.com/questions/6790819/searching-for-value-of-any-field-in-mongodb-without-explicitly-naming-it
 		if "search_for" in query_obj : 
-			if "all" in query_obj["search_for"] :
-				pass
-			else : 
-				q_search_for = { "$text" : { "$search": s } for s in query_obj["search_for"]}
-				query.update(q_search_for)
+			if query_obj["search_for"] != [] :
+				
+				# fields to search in is not specified
+				if query_obj["search_in"] == [] : 
+					# option choosen for now : in any field
+					# cf : https://stackoverflow.com/questions/29020211/mongodb-cant-canonicalize-query-badvalue-too-many-text-expressions
+					q_search_for = { "$text" : 
+										{ "$search" : " ".join(query_obj["search_for"] ) } # doable because text fields are indexed at main.py
+									}
+					query.update(q_search_for)
 
-		# search by value in field
-		# if "search_in" in query_obj : 
-		# 	if "all" in query_obj["search_in"] :
-		# 		pass
-		# 	else : 
-		# 		q_search_in = { f : {"$regex" : ".*son.*" } for f in query_obj["search_in"] }
-		# 		query.update(q_search_in)
+				# field to search in is specified
+				else :
+					field_qs = []
+					for f in query_obj["search_in"] :
+						print f
+						# check if f is custom or core
+						if f in data_model_custom_dict_names : 
+							f = unicode(data_model_custom_dict_names[f][u"_id"])
+							print f, type(f)
+						
+						if f in keep_fields_list : 
+							q_search_in = [ { f : {"$regex" : ".*{}.*".format(s) } } for s in query_obj["search_for"] ]  
+							field_qs = field_qs + q_search_in 
+					
+					if field_qs != [] : 
+						q_search_for = { "$or" : field_qs }
+						query.update(q_search_for)
 
 		return query
 
 	def build_specific_fields(self, ignore_fields_list, keep_fields_list ) :
+		""" projection of the query """
 
 		# add ignore_fields / keep_fields criterias to query if any
 		specific_fields = None
 		if ignore_fields_list != [] or keep_fields_list != [] : 
 			specific_fields = {}
+			
+			# add fields to ignore
 			if ignore_fields_list != [] :
 				ignore_fields = { f : 0 for f in ignore_fields_list }
 				specific_fields.update( ignore_fields )
+			
+			# add fields to retrieve
 			if keep_fields_list != [] :
 				keep_fields = { f : 1 for f in keep_fields_list }
 				specific_fields.update( keep_fields )
-		app_log.info("... build_specific_fields / specific_fields : %s ", specific_fields )
 
 		return specific_fields
 
@@ -585,16 +712,21 @@ class BaseHandler(tornado.web.RequestHandler):
 	def get_data_from_query(self, 
 							query_obj, 
 							coll_name, 
-							sort_by				= None, 
+							query_from			= "app", # by default on "app", specify if comming from "api"
+							
 							ignore_fields_list	= [],
 							keep_fields_list	= [],
-							query_from			= "app" # by default on "app", specify if comming from "api"
+
+							data_model_custom_dict_names = [],
+							data_model_core_dict_names 	 = [],
+
+							sort_by				= None, 
 							) :
 		""" get items from db """
 
 		print
-		app_log.info("... get_data_from_query / query_obj : \n %s \n", pformat(query_obj) )
-		app_log.info("... get_data_from_query / keep_fields_list : \n %s \n", pformat(keep_fields_list) )
+		app_log.info("... get_data_from_query / query_obj : \n %s \n", 			pformat(query_obj) )
+		app_log.info("... get_data_from_query / keep_fields_list : \n %s \n", 	pformat(keep_fields_list) )
 		app_log.info("... get_data_from_query / ignore_fields_list : \n %s \n", pformat(ignore_fields_list) )
 		
 		user_token		= query_obj["token"]
@@ -624,12 +756,17 @@ class BaseHandler(tornado.web.RequestHandler):
 		app_log.info("... get_data_from_query / cursor :" )
 		coll = self.choose_collection( coll_name=coll_name )
 
+		# reroute query fields for first query arg (find)
+		query = self.build_first_term_query(	query_obj, 
+												ignore_fields_list			 = ignore_fields_list , 
+												keep_fields_list			 = keep_fields_list , 
+												data_model_custom_dict_names = data_model_custom_dict_names
+											)
+		app_log.info("... get_data_from_query / query : \n %s", pformat(query) )
 
-		# reroute query fields for first query arg
-		query = self.build_first_term_query(query_obj)
-
-		# add ignore_fields / keep_fields criterias to query if any
+		# add ignore_fields / keep_fields criterias to query if any (projection)
 		specific_fields = self.build_specific_fields( ignore_fields_list, keep_fields_list )
+		app_log.info("... get_data_from_query / specific_fields : %s ", specific_fields )
 
 		# retrieve docs from db
 		cursor 	= coll.find( query, specific_fields )
@@ -647,7 +784,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		# if query from "api" ignore pagination
 		if query_from == "api" : 
 			page_n_max   = None
-			docs_from_db = list(cursor[  : limit_results ])
+			docs_from_db = list(cursor[ : limit_results ])
 		# if query from "app" limit according to pagination
 		else : 
 			### compute max_pages, start index, stop index
@@ -672,7 +809,7 @@ class BaseHandler(tornado.web.RequestHandler):
 					results_i_stop	= ( results_i_start + limit_results + 1 ) - 1
 					app_log.info("... get_data_from_query / results_i_start : %s ", results_i_start )
 					app_log.info("... get_data_from_query / results_i_stop  : %s ", results_i_stop )
-					docs_from_db = list(cursor[ results_i_start : results_i_stop ])
+					docs_from_db 	= list(cursor[ results_i_start : results_i_stop ])
 			app_log.info("... get_data_from_query / docs_from_db : \n ....")
 			# app_log.info("%s", pformat(docs_from_db[0]) )
 

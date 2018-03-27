@@ -85,6 +85,7 @@ from scrapy.crawler 		import CrawlerProcess, CrawlerRunner
 # update setting to use the pipeline which will write results (items) in the database or files
 # cf self-contained scrapy : https://gist.github.com/alecxe/fc1527d6d9492b59c610
 # cf self-contained scrapy : https://github.com/kirankoduru/scrapy-programmatically/
+# cf : https://stackoverflow.com/questions/42511814/scrapy-passing-custom-settings-to-spider-from-script-using-crawlerprocess-crawl
 
 ### set scrapy from settings_scrapy.py
 settings = Settings()

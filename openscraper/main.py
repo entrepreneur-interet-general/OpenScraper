@@ -275,6 +275,8 @@ class Application(tornado.web.Application):
 		self.coll_spiders 	= self.db[ MONGODB_COLL_CONTRIBUTORS ]
 		self.coll_data		= self.db[ MONGODB_COLL_DATASCRAPPED ]
 
+		# create index for every collection needing it 
+		self.coll_spiders.create_index([('$**', 'text')])
 		self.coll_data.create_index([('$**', 'text')])
 
 		### instantiate db.datamodel with core fields (for internal use)

@@ -70,6 +70,7 @@ class PageNotFoundHandler(BaseHandler):
 	"""
 
 	@print_separate(APP_DEBUG)
+	@check_user_permissions
 	def get(self):
 
 		self.site_section 	= "404"
@@ -91,10 +92,16 @@ class PageNotFoundHandler(BaseHandler):
 		self.set_status(404)
 		self.render("404.html",
 					page_title  		= app_main_texts["main_title"],
+					
 					site_section 		= self.site_section,
+					
 					error_msg 			= self.error_msg,
-					is_user_connected 	= self.is_user_connected
-		)
+					
+					user				= self.current_user,
+					is_user_connected 	= self.is_user_connected,
+					user_email			= self.user_email,
+					user_auth_level		= self.user_auth_level,
+			)
 
 
 
@@ -133,8 +140,8 @@ class WelcomeHandler(BaseHandler):
 			counts 				= counts,
 			
 			user				= self.current_user,
-			user_email			= self.get_current_user_email(),
 			is_user_connected 	= self.is_user_connected,
+			user_email			= self.user_email,
 			user_auth_level		= self.user_auth_level,
 
 			error_msg			= self.error_msg,
@@ -348,10 +355,14 @@ class UserPreferences(BaseHandler):
 	""" get/update user's infos, preferences, public key... """
 
 	@print_separate(APP_DEBUG)
+	@tornado.web.authenticated
+	@check_user_permissions
 	def get(self, user_id=None, token=None) : 
 		self.redirect("/404")
 
 	@print_separate(APP_DEBUG)
+	@tornado.web.authenticated
+	@check_user_permissions
 	def post(self): 
 		self.redirect("/404")
 
@@ -368,7 +379,8 @@ class DataModelViewHandler(BaseHandler):
 	"""
 	
 	@print_separate(APP_DEBUG)
-	@tornado.web.authenticated
+	@tornado.web.authenticated		
+	@check_user_permissions
 	def get(self) : 
 
 		print
@@ -382,24 +394,26 @@ class DataModelViewHandler(BaseHandler):
 		### retrieve datamodel from DB
 		data_model_custom = list(self.application.coll_model.find({"field_class" : "custom"}).sort("field_name",1) )
 		app_log.info("DataModelViewHandler.get / data_model_custom[0:2] : \n %s \n ...", pformat(data_model_custom[0:2]) )
-		# pprint.pprint (data_model_custom)
 
 		data_model_core = list(self.application.coll_model.find({"field_class" : "core"}).sort("field_name",1) )
 		app_log.info("DataModelViewHandler.get / data_model_core[0:2] : \n %s \n ... ", pformat(data_model_core[0:2]) )
-		# pprint.pprint (data_model_core)
 
 		### test printing object ID
 		app_log.info("DataModelViewHandler.get / data_model_core[0] object_ID : %s ", str( data_model_core[0]["_id"]) )
-		# print str(data_model_core[0]["_id"])
 
 		self.render(
 			"datamodel_view.html",
 			page_title 			= app_main_texts["main_title"],
 			site_section		= self.site_section,
+			
 			datamodel_custom 	= data_model_custom,
 			datamodel_core 		= data_model_core,
 			error_msg			= self.error_msg,
-			is_user_connected 	= self.is_user_connected
+			
+			user				= self.current_user,
+			is_user_connected 	= self.is_user_connected,
+			user_email			= self.user_email,
+			user_auth_level		= self.user_auth_level,
 		)
 
 
@@ -409,6 +423,7 @@ class DataModelEditHandler(BaseHandler):
 	"""
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
+	@check_user_permissions
 	def get(self) : 
 		
 		print 
@@ -419,6 +434,12 @@ class DataModelEditHandler(BaseHandler):
 		# catch error message if any
 		self.catch_error_message()
 
+
+		# redirect if user doesn't have adapted auth level
+		auth_level = self.user_auth_level_dict[self.site_section]
+		self.redirect_user_if_not_authorized(auth_level, self.site_section)
+
+
 		### retrieve datamodel from DB
 		data_model_custom = list(self.application.coll_model.find({"field_class" : "custom"}))
 		app_log.info("DataModelEditHandler.get / data_model_custom[0:2] : \n %s \n ...", pformat(data_model_custom[0:2])  )
@@ -428,16 +449,23 @@ class DataModelEditHandler(BaseHandler):
 			"datamodel_edit.html",
 			page_title 			= app_main_texts["main_title"],
 			site_section		= self.site_section,
+			
 			field_types 		= DATAMODEL_FIELDS_TYPES,
 			field_keep_vars	 	= DATAMODEL_FIELD_KEEP_VARS,
 			field_open_vars	 	= DATAMODEL_FIELD_OPEN_VARS,
+			
 			datamodel_custom 	= data_model_custom,
 			error_msg			= self.error_msg,
-			is_user_connected 	= self.is_user_connected
-		) 
+			
+			user				= self.current_user,
+			is_user_connected 	= self.is_user_connected,
+			user_email			= self.user_email,
+			user_auth_level		= self.user_auth_level,		
+			) 
 
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
+	@check_user_permissions
 	def post(self):
 
 		### get fields + objectIDs
@@ -521,6 +549,7 @@ class DataModelAddFieldHandler(BaseHandler) :
 	"""
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
+	@check_user_permissions
 	def get(self) : 
 
 		print "\nDataModelAddFieldHandler.get... "
@@ -537,11 +566,16 @@ class DataModelAddFieldHandler(BaseHandler) :
 			field_types			= DATAMODEL_FIELDS_TYPES,
 			field_open_vars		= DATAMODEL_FIELD_OPEN_VARS,
 			error_msg			= self.error_msg,
+			
+			user				= self.current_user,
 			is_user_connected 	= self.is_user_connected,
+			user_email			= self.user_email,
+			user_auth_level		= self.user_auth_level,		
 		)
 
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
+	@check_user_permissions
 	def post(self):
 
 		print "\nDataModelAddFieldHandler.post ..."
@@ -649,10 +683,12 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 			pagination_dict			= pagination_dict,
 			error_msg				= self.error_msg,
-			is_user_connected 		= self.is_user_connected, 
 			
-			user_email				= self.get_current_user_email(),
-			user_auth_level 		= self.user_auth_level,
+			user					= self.current_user,
+			is_user_connected 		= self.is_user_connected,
+			user_email				= self.user_email,
+			user_auth_level			= self.user_auth_level,
+
 			user_auth_level_dict 	= self.user_auth_level_dict
 		)
 
@@ -664,18 +700,22 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
+	@check_user_permissions
 	def get(self, spider_id=None):
 		"""show infos on one contributor : get info in DB and prefill form"""
 		
 		print
 		app_log.info("ContributorEditHandler.get / spider_id : {}".format( spider_id ) )
 
-		### TO DO : check user auth level 
-
-
-
-
 		self.site_section = "contributors"
+
+
+		### check user auth level 
+		# redirect if user doesn't have adapted auth level
+		auth_level = self.user_auth_level_dict[self.site_section]
+		self.redirect_user_if_not_authorized(auth_level, self.site_section)
+
+
 
 		# catch error message if any
 		self.catch_error_message()
@@ -688,10 +728,10 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 		contributor_edit_fields = CONTRIBUTOR_EDIT_FIELDS
 
-		### retrieve contributor data from spidername
 
+		### retrieve contributor data from spider_id
 		# spider exists ( edit form ) 
-		if spider_id :
+		if spider_id != None :
 			try : 
 				create_or_update	= "update"
 				contributor			= self.application.coll_spiders.find_one({"_id": ObjectId(spider_id)})
@@ -706,7 +746,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		# spider doesn't exist : add form
 		else :
 			# core empty contributor structure to begin with
-			contributor_object 	= SpiderConfig()
+			contributor_object 	= SpiderConfig(user=self.user_email, new_spider=True)
 			contributor 		= contributor_object.full_config_as_dict()
 			create_or_update	= "create"
 
@@ -717,20 +757,29 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		self.render("contributor_edit.html",
 			page_title 				= app_main_texts["main_title"],
 			site_section			= self.site_section,
+			
 			create_or_update 		= create_or_update,
+			
 			contributor_edit_fields = contributor_edit_fields,
 			contributor_edit_radio 	= CONTRIBUTOR_EDIT_FIELDS_RADIO,
 			contributor_edit_numbers = CONTRIBUTOR_EDIT_FIELDS_NUMBER,
 			contributor_edit_floats = CONTRIBUTOR_EDIT_FIELDS_FLOAT,
 			contributor 			= contributor,
+			
 			datamodel				= data_model,
 			error_msg				= self.error_msg,
-			is_user_connected 		= self.is_user_connected
+			
+			user				= self.current_user,
+			is_user_connected 	= self.is_user_connected,
+			user_email			= self.user_email,
+			user_auth_level		= self.user_auth_level,
+			
 		)
 
 
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
+	@check_user_permissions
 	def post(self, spider_id=None):
 		"""update or create new contributor spider in DB"""
 
@@ -815,6 +864,7 @@ class ContributorDeleteHandler(BaseHandler) :
 	"""
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
+	@check_user_permissions
 	def get(self):
 		
 		print
@@ -845,8 +895,12 @@ class ContributorDeleteHandler(BaseHandler) :
 					contributor				= contributor,
 
 					error_msg				= self.error_msg,
-					is_user_connected 		= self.is_user_connected
-				)
+					
+					user				= self.current_user,
+					is_user_connected 	= self.is_user_connected,
+					user_email			= self.user_email,
+					user_auth_level		= self.user_auth_level,
+					)
 
 			except :
 				app_log.warning("ContributorDeleteHandler.get --- !!! spider_id -%s- not found", spider_id ) 
@@ -864,6 +918,7 @@ class ContributorDeleteHandler(BaseHandler) :
 
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
+	@check_user_permissions
 	def post(self):
 
 		print 
@@ -905,6 +960,7 @@ class ContributorResetDataHandler(BaseHandler) :
 	"""
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
+	@check_user_permissions
 	def get(self):
 
 		print
@@ -936,8 +992,12 @@ class ContributorResetDataHandler(BaseHandler) :
 					contributor				= contributor,
 
 					error_msg				= self.error_msg,
-					is_user_connected 		= self.is_user_connected
-				)
+					
+					user				= self.current_user,
+					is_user_connected 	= self.is_user_connected,
+					user_email			= self.user_email,
+					user_auth_level		= self.user_auth_level,
+					)
 				
 			except :
 				app_log.warning("ContributorResetDataHandler.get --- !!! spider_id -%s- not found", spider_id ) 
@@ -955,6 +1015,7 @@ class ContributorResetDataHandler(BaseHandler) :
 
 	@print_separate(APP_DEBUG)
 	@tornado.web.authenticated
+	@check_user_permissions
 	def post(self):
 
 		print 
@@ -1011,6 +1072,7 @@ class DataScrapedHandler(BaseHandler):
 	list all data scraped from db.data_scraped 
 	"""
 	@print_separate(APP_DEBUG)
+	@check_user_permissions
 	def get (self, slug ):
 		
 		print
@@ -1058,12 +1120,22 @@ class DataScrapedHandler(BaseHandler):
 		app_log.info("DataScrapedHandler.get / spiders_dict :\n %s ", pformat(spiders_dict) )  
 
 
+
+
+		### TO DO : FACTORIZ EWITH API HANDLER
+		
 		### clean slug as data query
 		query_data = self.filter_slug( slug_, slug_class="data" )
 		app_log.info("DataScrapedHandler / query_data : \n %s ", pformat(query_data) )
 
 		### get items from db
 		items_from_db, is_data, page_n_max = self.get_data_from_query( query_data, coll_name="data" )
+
+
+
+
+
+
 
 		### operations if there is data
 		pagination_dict = None
@@ -1097,7 +1169,11 @@ class DataScrapedHandler(BaseHandler):
 			pagination_dict		= pagination_dict,
 			site_section		= self.site_section,
 			error_msg			= self.error_msg,
-			is_user_connected 	= self.is_user_connected
+			
+			user				= self.current_user,
+			is_user_connected 	= self.is_user_connected,
+			user_email			= self.user_email,
+			user_auth_level		= self.user_auth_level,		
 		)
 
 
