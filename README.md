@@ -164,3 +164,7 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 -------
 
 ![alt text](./screenshots/openscraper_v0.1_beta-list_data.png "data")
+
+-------
+
+![alt text](./screenshots/openscraper_v0.1_beta-api_query_01.png "api search")
