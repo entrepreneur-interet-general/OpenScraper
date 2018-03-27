@@ -9,6 +9,17 @@ MongoDB instanciated at Application level
 import pprint
 
 
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### OPEN DATA LEVELS ########################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+
+# need to be compatible with DATAMODEL_FIELD_OPEN_VARS
+OPEN_LEVEL_DICT = {
+	"admin"			: ["opendata", "commons", "collective", "private", "admin"], 
+	"collective"	: ["opendata", "commons", "collective", "private"], 
+	"commons" 		: ["opendata", "commons", ],
+	"opendata" 		: ["opendata"],
+}
 
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 ### USERS ###################################################################################
@@ -85,12 +96,6 @@ DATAMODEL_FIELD_OPEN_VARS = [
 	"collective", 	# data only visible by the collectif - i.e. all users of the platform
 	"private", 		# personal data - only accessible by logged specific user
 ]
-OPEN_LEVEL_DICT = {
-	"all" 			: ["opendata", "commons", "collective", "private"], 
-	"collective"	: ["opendata", "commons", "collective"], 
-	"commons" 		: ["opendata", "commons"],
-	"opendata" 		: ["opendata"],
-}
 
 # fields to keep always as db backbone - mainly fields necessary to create a spider
 DATAMODEL_CORE_FIELDS = [

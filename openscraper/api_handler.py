@@ -27,7 +27,8 @@ class APIrestHandler(BaseHandler):
 	# @tornado.web.authenticated
 	# @check_user_permissions
 	# @tornado.web.asynchronous
-	@gen.coroutine
+	# @gen.coroutine
+	# @onthread
 	def get(self, slug=None):
 
 		print 
@@ -39,57 +40,102 @@ class APIrestHandler(BaseHandler):
 		current_page = self.get_current_uri_without_error_slug()
 		app_log.info("••• APIrestHandler.get / current_page : %s", current_page )
 
-		
+		# get slug
 		slug_ = self.request.arguments
 		app_log.info("••• APIrestHandler.get / slug_ : \n %s", pformat(slug_) )
 
 		# filter slug
-		query_contrib = self.filter_slug( slug_, slug_class="data", query_from="api" )
-		app_log.info("••• APIrestHandler.get / query_contrib : \n %s ", pformat(query_contrib) )
+		query_data = self.filter_slug( slug_, slug_class="data", query_from="api" )
+		app_log.info("••• APIrestHandler.get / query_data : \n %s ", pformat(query_data) )
 
-
-		# TO DO : check user auth level
+		### check user auth level 
+		# --> open data level : "opendata", "commons", "collective", "admin"
+		# check OPEN_LEVEL_DICT in settings_corefields.py for more infos
+		open_level = "opendata"
+		token = query_data["token"]
+		if token != None : 
+			# TO DO : check token to get corresponding opendata level 
+			open_level = "commons"
+			# log query as warning if request allowed get private or collective info
 		
-		# TO DO : get user token if any from request header
-		
-		# TO DO : check datamodel and opendata level for each field
-		
+		# TO DO : limit results 
+		# override 
+		if open_level == "opendata" and query_data["results_per_page"] > QUERIES_MAX_RESULTS_IF_API :
+			query_data["results_per_page"] = QUERIES_MAX_RESULTS_IF_API
+				
 		### retrieve datamodel from DB top make correspondances field's _id --> field_name
-		data_model_cursor = self.application.coll_model.find({"field_class" : "custom", "is_visible" : True }) 
-		data_model_custom = list(data_model_cursor)
+		data_model_custom_cursor	= self.application.coll_model.find({"field_class" : "custom", "is_visible" : True }) 
+		data_model_custom 			= list(data_model_custom_cursor)
+		data_model_dict 			= { str(field["_id"]) : field for field in data_model_custom }
+
+		data_model_core_cursor 		= self.application.coll_model.find({"field_class" : "core" }) 
+		data_model_core 			= list(data_model_core_cursor)
+		
+		app_log.info("••• APIrestHandler.get / data_model_dict : \n %s", pformat(data_model_dict) )
 		app_log.info("••• APIrestHandler.get / data_model_custom[:1] : \n %s", pformat(data_model_custom[:1]) )
+		app_log.info("••• APIrestHandler.get / data_model_core[:1]   : \n %s", pformat(data_model_core[:]) )
 		print "..."
 
-		# print data_model_cursor.to_dict()
-		data_model_dict = { str(field["_id"]) : field for field in data_model_custom }
-		app_log.info("••• APIrestHandler.get / data_model_dict : \n %s", pformat(data_model_dict) )
+		### filter results depending on field's opendata level
+		# get fields allowed
+		# open_level 				= query_data[open_level]
+		# allowed_open_levels 	= OPEN_LEVEL_DICT[open_level]
+		# allowed_custom_fields	= [ unicode(str(dm["_id"])) for dm in data_model_custom if dm["field_open"] in allowed_open_levels ]
+		# app_log.info("••• APIrestHandler.get / allowed_custom_fields : %s", allowed_custom_fields )
 
-
-		# TO DO : filter results depending on field's opendata level
-		open_level 				= query_contrib["open_level"]
-		allowed_custom_fields 	= OPEN_LEVEL_DICT[open_level]
-		app_log.info("••• APIrestHandler.get / allowed_custom_fields : %s", allowed_custom_fields )
-
-
+		allowed_fields = self.get_authorized_datamodel_fields(open_level, data_model_custom, data_model_core )
+		
 		# get data 
-		data, is_data, page_n_max = self.get_data_from_query( 	query_contrib, 
-																coll_name="data", 
-																query_from="api", 
-																keep_fields_list=allowed_custom_fields
+		data, is_data, page_n_max = self.get_data_from_query( 	query_data, 
+																coll_name			= "data", 
+																query_from			= self.site_section, 
+																keep_fields_list	= allowed_fields,
+																ignore_fields_list	= ["_id"]
 															)
+		# data, is_data, page_n_max = raw[0], raw[1], raw[3]
 		app_log.info("••• APIrestHandler.get / is_data : %s ", is_data ) 
+
 
 		### operations if there is data
 		if is_data : 
 			
 			app_log.info("••• APIrestHandler.get / data[0] : \n %s " , pformat(data[0]) )
-			print '.....\n' 
-
-			# TO DO : rewrite field names as understable ones --> replace field_oid by field_name 
-			data = remap( data, lambda p, k, v: ( data_model_dict[k][u"field_name"], v) if k in data_model_dict else (k, v))
 			
-			# self.write(json.dumps(data, default=json_util.default)) 
-			self.write(json.dumps(data, default=json_util.default, ensure_ascii=False).encode('utf8') )
-		
+			### rewrite field names as understable ones --> replace field_oid by field_name 
+			# cf : https://sedimental.org/remap.html
+			data = remap( data, lambda p, k, v: ( data_model_dict[k][u"field_name"], v) if k in data_model_dict else (k, v))
+
+			# ### write data as json
+			# # cf : https://stackoverflow.com/questions/35083374/how-to-decode-a-unicode-string-python
+			# # self.write(json.dumps(data, default=json_util.default)) 
+			# self.write(json.dumps(data, ensure_ascii=False, default=json_util.default).encode('utf8') )
+
+			# print '.....\n' 
+	
 		else :
-			self.write("no data for this query") 
+			data = "no data for this query"
+
+			# self.write("no data for this query") 
+			# print '.....\n' 
+
+		### add header to tell user which level auth he/she gets to get
+		full_json = { 
+			
+			"header" : {
+				"auth_level" 	: open_level ,
+				"query"			: query_data ,
+				"query_uri"		: self.request.uri ,
+			},
+			
+			"data_list" 	 	: data
+		}
+
+		### write data as json
+		# cf : https://stackoverflow.com/questions/35083374/how-to-decode-a-unicode-string-python
+		results = json.dumps(full_json, ensure_ascii=False, default=json_util.default).encode('utf8')
+
+		print '.....\n' 
+
+		# self.write( results )
+		self.write( results )
+		# raise gen.Return(self.write( results ))

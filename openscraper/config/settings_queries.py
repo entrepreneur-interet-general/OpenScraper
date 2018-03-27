@@ -8,6 +8,7 @@
 
 QUERIES_ARGS_TO_IGNORE_IF_API = [
 	"page_n",
+	"open_level"
 ]
 QUERIES_ARGS_ACCEPTED_AS_FIRST_QUERY_TERMS = [
 	"spider_id",
@@ -15,6 +16,8 @@ QUERIES_ARGS_ACCEPTED_AS_FIRST_QUERY_TERMS = [
 	"search_in",
 	"open_level"
 ]
+QUERIES_MAX_RESULTS_IF_API = 50
+
 
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 ### QUERIES ARGS - DATA #####################################################################
@@ -26,12 +29,13 @@ QUERY_DATA_BY_DEFAULT = {
 	"results_per_page" 	: 25,			# self-explanatory
 	"token"				: None, 		# TO DO LATER : client's JWT (token) to check permissions 
 	"spider_id"			: ["all"], 		# spider_id for contributor(s)
-	"is_complete"		: False, 		# only complete records
+	"is_complete"		: False, 		# only complete records... a bit optimistic isn't it ?
 	"search_for"		: [],			# list of words to search in data collection
 	"search_in"			: [],			# list of fields to search in
 	"open_level"		: "opendata",	# fields of data to be shown -> "all" == "opendata" + "commons" + "private"
 	"all_results"		: False,		# to overide results_per_page
-	"added_by"			: None			# list of user having added the data 
+	"added_by"			: None,			# list of user having added the data 
+	"sort_by"			: None
 }
 QUERIES_DATA_ALLOWED_UNIQUE = [
 	"page_n", 
@@ -39,7 +43,8 @@ QUERIES_DATA_ALLOWED_UNIQUE = [
 	"token", 
 	"is_complete", 
 	"open_level",
-	"all_results"
+	"all_results",
+	"sort_by"
 ]
 QUERIES_DATA_ALLOWED_INTEGERS  	= [
 	"page_n", "results_per_page"
@@ -63,14 +68,17 @@ QUERY_SPIDER_BY_DEFAULT = {
 	"token"				: None, 	# TO DO LATER : client's JWT (token) to check permissions 
 	"spider_id"			: ["all"], 	# spider_id for contributor(s)
 	"is_working"		: "any",	# 
-	"all_results"		: False		# to overide results_per_page
+	"all_results"		: False,		# to overide results_per_page
+	"sort_by"			: None
 }
 QUERIES_SPIDER_ALLOWED_UNIQUE = [
 	"page_n", 
 	"results_per_page",
 	"token", 
 	"is_working", 
-	"all_results"
+	"all_results",
+	"sort_by"
+
 ]
 QUERIES_SPIDER_ALLOWED_INTEGERS  	= [
 	"page_n", "results_per_page"

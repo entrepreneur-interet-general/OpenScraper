@@ -331,6 +331,8 @@ class BaseHandler(tornado.web.RequestHandler):
 		
 		return page_n_max
 
+
+
 	### user functions for all handlers
 
 	def get_user_from_db(self, user_email) :
@@ -499,6 +501,22 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		return fields
 
+	def get_authorized_datamodel_fields(self, open_level, data_model_custom, data_model_core ):
+		""" 
+		retrieve a list of authorized fields given datamodel and open_level 
+		for data query mainly
+		"""
+
+		allowed_open_levels 	= OPEN_LEVEL_DICT[open_level]
+		allowed_custom_fields	= [ unicode(str(dm["_id"])) for dm in data_model_custom if dm["field_open"] in allowed_open_levels ]
+		allowed_core_fields		= [ dm["field_name"] 		for dm in data_model_core 	if dm["field_open"] in allowed_open_levels ]
+		
+		allowed_fields 			= allowed_core_fields + allowed_custom_fields
+
+		app_log.info("••• get_authorized_datamodel_fields / allowed_fields : %s", allowed_fields )
+
+		return allowed_fields
+
 	def filter_slug(self, slug, slug_class=None, query_from="app") : 
 		""" filter args from slug """
 		
@@ -512,10 +530,11 @@ class BaseHandler(tornado.web.RequestHandler):
 		return raw_query.query
 
 
-
 	def build_first_term_query(self, query_obj) :
 		""" build the query according to allowed """
 		
+		app_log.info("... build_first_term_query / query_obj : \n %s ", pformat(query_obj) )
+
 		query = {}
 
 		# reroute query fields for first query arg
@@ -527,30 +546,42 @@ class BaseHandler(tornado.web.RequestHandler):
 				q_spider = { "spider_id" : q for q in query_obj["spider_id"] }
 				query.update(q_spider)
 
+		# search by content --> collection need to be indexed
+		# cf : https://stackoverflow.com/questions/6790819/searching-for-value-of-any-field-in-mongodb-without-explicitly-naming-it
 		if "search_for" in query_obj : 
 			if "all" in query_obj["search_for"] :
 				pass
 			else : 
-				q_search_for = {}
+				q_search_for = { "$text" : { "$search": s } for s in query_obj["search_for"]}
 				query.update(q_search_for)
 
-		if "search_in" in query_obj : 
-			if "all" in query_obj["search_in"] :
-				pass
-			else : 
-				q_search_in = {}
-				query.update(q_search_in)
-
-		# if "open_level" in query_obj :
+		# search by value in field
+		# if "search_in" in query_obj : 
 		# 	if "all" in query_obj["search_in"] :
 		# 		pass
-		# 	else :
-		# 		q_open_level = { "open" }
-		# 		query.update(q_open_level)
+		# 	else : 
+		# 		q_search_in = { f : {"$regex" : ".*son.*" } for f in query_obj["search_in"] }
+		# 		query.update(q_search_in)
 
 		return query
 
+	def build_specific_fields(self, ignore_fields_list, keep_fields_list ) :
 
+		# add ignore_fields / keep_fields criterias to query if any
+		specific_fields = None
+		if ignore_fields_list != [] or keep_fields_list != [] : 
+			specific_fields = {}
+			if ignore_fields_list != [] :
+				ignore_fields = { f : 0 for f in ignore_fields_list }
+				specific_fields.update( ignore_fields )
+			if keep_fields_list != [] :
+				keep_fields = { f : 1 for f in keep_fields_list }
+				specific_fields.update( keep_fields )
+		app_log.info("... build_specific_fields / specific_fields : %s ", specific_fields )
+
+		return specific_fields
+
+	# @run_on_executor # with raise gen.Return(result)
 	def get_data_from_query(self, 
 							query_obj, 
 							coll_name, 
@@ -563,6 +594,8 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		print
 		app_log.info("... get_data_from_query / query_obj : \n %s \n", pformat(query_obj) )
+		app_log.info("... get_data_from_query / keep_fields_list : \n %s \n", pformat(keep_fields_list) )
+		app_log.info("... get_data_from_query / ignore_fields_list : \n %s \n", pformat(ignore_fields_list) )
 		
 		user_token		= query_obj["token"]
 
@@ -592,33 +625,11 @@ class BaseHandler(tornado.web.RequestHandler):
 		coll = self.choose_collection( coll_name=coll_name )
 
 
-
-
 		# reroute query fields for first query arg
-		# query = { }
-		# if "spider_id" in query_obj : 
-		# 	# if query_obj["spider_id"] == ["all"]:
-		# 	if "all" in query_obj["spider_id"] :
-		# 		# query = { }
-		# 		pass
-		# 	else : 
-		# 		query = { 
-		# 			"spider_id" : q for q in query_obj["spider_id"]
-		# 		}
 		query = self.build_first_term_query(query_obj)
 
-
-
 		# add ignore_fields / keep_fields criterias to query if any
-		specific_fields = None
-		if ignore_fields_list != [] and ignore_fields_list != [] : 
-			specific_fields = {}
-			if ignore_fields_list != [] :
-				specific_fields = { f : 0 for f in ignore_fields_list }
-			if keep_fields_list != [] :
-				keep_fields = { f : 1 for f in keep_fields_list }
-				specific_fields.update( keep_fields )
-		app_log.info("... get_data_from_query / specific_fields : %s ", specific_fields )
+		specific_fields = self.build_specific_fields( ignore_fields_list, keep_fields_list )
 
 		# retrieve docs from db
 		cursor 	= coll.find( query, specific_fields )
@@ -632,6 +643,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		# retrieve docs
 		limit_results 	= query_obj["results_per_page"]
+
 		# if query from "api" ignore pagination
 		if query_from == "api" : 
 			page_n_max   = None
@@ -672,7 +684,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		app_log.info("... get_data_from_query / is_data : %s \n ", is_data)
 
 		return docs_from_db, is_data, page_n_max
-
+		# raise gen.Return([ docs_from_db, is_data, page_n_max ] )
 	
 	
 	### specific spider functions

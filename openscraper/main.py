@@ -275,6 +275,8 @@ class Application(tornado.web.Application):
 		self.coll_spiders 	= self.db[ MONGODB_COLL_CONTRIBUTORS ]
 		self.coll_data		= self.db[ MONGODB_COLL_DATASCRAPPED ]
 
+		self.coll_data.create_index([('$**', 'text')])
+
 		### instantiate db.datamodel with core fields (for internal use)
 		# core_fields = [ 
 		# 	{ 	"field_name" 	: field["field_name"], 

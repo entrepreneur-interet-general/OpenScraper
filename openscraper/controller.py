@@ -1035,7 +1035,6 @@ class DataScrapedHandler(BaseHandler):
 		slug_ = self.request.arguments
 		print
 		app_log.info("DataScrapedHandler.get / slug_ : %s ", slug_ )
-		# pprint.pprint( slug_ )
 
 		### retrieve datamodel from DB top make correspondances field's _id --> field_name
 		data_model_custom = list( self.application.coll_model.find({"field_class" : "custom", "is_visible" : True }).sort("field_name",1) )
@@ -1057,13 +1056,11 @@ class DataScrapedHandler(BaseHandler):
 		# make a dict from spiders_list to make correspondances spider_id --> spider_name
 		spiders_dict = { str(s["_id"]) : s["infos"]["name"] for s in spiders_list }
 		app_log.info("DataScrapedHandler.get / spiders_dict :\n %s ", pformat(spiders_dict) )  
-		# print (spiders_dict)
 
 
 		### clean slug as data query
 		query_data = self.filter_slug( slug_, slug_class="data" )
 		app_log.info("DataScrapedHandler / query_data : \n %s ", pformat(query_data) )
-		# print query_data
 
 		### get items from db
 		items_from_db, is_data, page_n_max = self.get_data_from_query( query_data, coll_name="data" )
