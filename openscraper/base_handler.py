@@ -537,8 +537,8 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		query = {}
 
-		# reroute query fields for first query arg
-
+		### reroute query fields for first query arg
+		# search by spider_id
 		if "spider_id" in query_obj : 
 			if "all" in query_obj["spider_id"] :
 				pass

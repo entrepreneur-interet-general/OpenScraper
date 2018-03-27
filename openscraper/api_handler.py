@@ -56,6 +56,7 @@ class APIrestHandler(BaseHandler):
 		if token != None : 
 			# TO DO : check token to get corresponding opendata level 
 			open_level = "commons"
+			
 			# log query as warning if request allowed get private or collective info
 		
 		# TO DO : limit results 
@@ -95,10 +96,12 @@ class APIrestHandler(BaseHandler):
 		# data, is_data, page_n_max = raw[0], raw[1], raw[3]
 		app_log.info("••• APIrestHandler.get / is_data : %s ", is_data ) 
 
-
+		
+		
 		### operations if there is data
 		if is_data : 
 			
+			count_results = len(data)
 			app_log.info("••• APIrestHandler.get / data[0] : \n %s " , pformat(data[0]) )
 			
 			### rewrite field names as understable ones --> replace field_oid by field_name 
@@ -113,6 +116,7 @@ class APIrestHandler(BaseHandler):
 			# print '.....\n' 
 	
 		else :
+			count_results = 0
 			data = "no data for this query"
 
 			# self.write("no data for this query") 
@@ -125,6 +129,7 @@ class APIrestHandler(BaseHandler):
 				"auth_level" 	: open_level ,
 				"query"			: query_data ,
 				"query_uri"		: self.request.uri ,
+				"count_results"	: count_results
 			},
 			
 			"data_list" 	 	: data
