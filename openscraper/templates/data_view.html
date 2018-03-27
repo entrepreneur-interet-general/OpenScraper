@@ -90,14 +90,19 @@
 							<th>link_data</th>
 							
 							{% for field in datamodel_custom %}
-								
-								{# <th>{ { field["field_name"] }}</th> #}
-								<th>
-									<abbr title="{{ field['field_name'] }}" class="tooltip  is-tooltip-bottom" data-tooltip="{{ field['field_name'] }}"  >
-										{{ field['field_name'][:3].capitalize() + "." }}
-									</abbr><br>
-									<p class="has-text-weight-light"><i>{{ field['field_type'] }}</i></p>
-								</th>
+								{% set id_field 	= str(field[u"_id"]) %}
+								{% if id_field in allowed_custom_fields %}
+									{# <th>{ { field["field_name"] }}</th> #}
+									<th>
+										<abbr title="{{ field['field_name'] }}" class="tooltip  is-tooltip-bottom" data-tooltip="{{ field['field_name'] }}"  >
+											{{ field['field_name'][:3].capitalize() + "." }}
+										</abbr>
+										<br>
+										<p class="has-text-weight-light"><i>{{ field['field_type'] }}</i></p>
+										-
+										<p class="has-text-weight-light"><i>{{ field['field_open'] }}</i></p>
+									</th>
+								{% end %}
 							{% end %}
 
 						</tr>
@@ -110,17 +115,19 @@
 
 							<tr >
 
+								{# spider_name #}
 								<td> 
 									<a href="/contributor/edit/{{ escape (item['spider_id']) }} " >
 										{{ escape (item["spider_name"]) }} 
 									</a>
 								</td>
 
+								{# spider_id #}
 								{# <td> 
 									{ { escape (str(item["_id"])) }} 
 								</td> #}
 
-
+								{# link_src #}
 								<th class="has-text-centered">
 									<a href="{{ escape ( item['link_src'] ) }}" target="_blank" class="tooltip" data-tooltip="{{ escape ( item['link_src']) }}">
 										<span class="tag is-white">
@@ -129,7 +136,7 @@
 									</a>
 								</th>
 
-
+								{# link_data #}
 								<th class="has-text-centered">
 									{% set link_data = item.get( 'link_data', False) %}
 									{% if link_data %}
@@ -145,54 +152,58 @@
 
 
 
-								{% for field in datamodel_custom %}
+								{% for field in datamodel_custom   %}
 									
 									{% set id_field 	= str(field[u"_id"]) %}
-									{% set type_field 	= str(field[u"field_type"]) %}
+									{% if id_field in allowed_custom_fields %}
 
-									{% if id_field in item.keys() %}
-										
-										<td>
+										{% set type_field 	= str(field[u"field_type"]) %}
+
+										{% if id_field in item.keys() %}
 											
-											{% for i in item[ id_field ]  %} 
+											<td>
 												
-												{% if type_field == u"tags" %}
-													<span class="tag is-info"> 
-														{{ escape (i) }} 
-													</span>
-												
-												{% elif type_field == u"image" %}
-													<figure class="image is-96x96">
-														<img src="{{ escape (i) }}">
-													</figure>
-
-												{# { % elif type_field == u"text" %}
-													{ { escape (i) }}  #}
-												
-												{% elif type_field in [u"url"] %}
-													<a href="{{ escape (i) }}" class="tooltip" data-tooltip="{{ escape (i) }}">
-														<span class="tag is-white">
-															<span class="icon is-small"><i class="fas fa-external-link-alt"></i></span> 
-														</span>
-													</a>
-
-												{% else %}
+												{% for i in item[ id_field ]  %} 
 													
-													<button class="button is-text is-small tooltip" data-tooltip="{{ escape (i) }}">
-														<p>{{ escape (i[:20]) }} (...)
-													</button>
-												
-												{% end %}
-												
-											{% end %}
-										</td>
+													{% if type_field == u"tags" %}
+														<span class="tag is-info"> 
+															{{ escape (i) }} 
+														</span>
+													
+													{% elif type_field == u"image" %}
+														<figure class="image is-96x96">
+															<img src="{{ escape (i) }}">
+														</figure>
 
-									{% else %}
-										<td class="has-text-centered">
-											<span class="icon has-text-grey-lighter">
-												<i class="fas fa-times"></i>
-											</span>
-										</td>
+													{# { % elif type_field == u"text" %}
+														{ { escape (i) }}  #}
+													
+													{% elif type_field in [u"url"] %}
+														<a href="{{ escape (i) }}" class="tooltip" data-tooltip="{{ escape (i) }}">
+															<span class="tag is-white">
+																<span class="icon is-small"><i class="fas fa-external-link-alt"></i></span> 
+															</span>
+														</a>
+
+													{% else %}
+														
+														<button class="button is-text is-small tooltip" data-tooltip="{{ escape (i) }}">
+															<p>{{ escape (i[:20]) }} (...)
+														</button>
+													
+													{% end %}
+													
+												{% end %}
+											</td>
+
+										{% else %}
+											<td class="has-text-centered">
+												<span class="icon has-text-grey-lighter">
+													<i class="fas fa-times"></i>
+												</span>
+											</td>
+
+										{% end %}
 
 									{% end %}
 

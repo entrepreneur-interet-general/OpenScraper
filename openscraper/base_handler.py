@@ -102,7 +102,6 @@ def check_user_permissions(method):
 		return method(self, *args, **kwargs)
 	return wrapper
 
-
 def check_request_token(method) : 
 	"""
 	Decorate methods with this to require that the user 
@@ -605,21 +604,61 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		return fields
 
+	def get_datamodel_set(self, sort_fields_by="field_open", visible_custom=True ) : 
+		### retrieve datamodel from DB top make correspondances field's _id --> field_name
+		
+		print 
+		app_log.info("... get_datamodel_set ")
+
+		# custom fields
+		data_model_custom_cursor	 = self.application.coll_model.find({"field_class" : "custom", "is_visible" : visible_custom })
+		data_model_custom_cursor.sort(sort_fields_by,1) 
+
+		data_model_custom_list		 = list(data_model_custom_cursor)
+		data_model_custom_dict 		 = { str(field["_id"])   : field for field in data_model_custom_list }
+		data_model_custom_dict_names = { field["field_name"] : field for field in data_model_custom_list }
+
+		# core fields
+		data_model_core_cursor 		 = self.application.coll_model.find({"field_class" : "core" }) 
+		data_model_core_list		 = list(data_model_core_cursor)
+		data_model_core_dict_names	 = { field["field_name"] : field for field in data_model_core_list }
+
+		# logs
+		# app_log.info("... get_datamodel_set / data_model_custom_dict      : \n %s",			pformat(data_model_custom_dict) )
+		app_log.info("... get_datamodel_set / data_model_custom_list[:1]  : \n %s \n ...", 	pformat(data_model_custom_list[:1]) )
+		app_log.info("... get_datamodel_set / data_model_core_list[:1]    : \n %s \n ...", 	pformat(data_model_core_list[:1]) )
+
+
+		dm_set = {
+			"data_model_custom_list" 		: data_model_custom_list,
+			"data_model_custom_dict" 		: data_model_custom_dict,
+			"data_model_custom_dict_names" 	: data_model_custom_dict_names,
+			
+			"data_model_core_list" 			: data_model_core_list,
+			"data_model_core_dict_names"	: data_model_core_dict_names,
+		}
+
+		return dm_set
+
 	def get_authorized_datamodel_fields(self, open_level, data_model_custom, data_model_core ):
 		""" 
 		retrieve a list of authorized fields given datamodel and open_level 
 		for data query mainly
 		"""
+		print
+		app_log.info("... get_authorized_datamodel_fields" )
 
 		allowed_open_levels 	= OPEN_LEVEL_DICT[open_level]
 		allowed_custom_fields	= [ unicode(str(dm["_id"])) for dm in data_model_custom if dm["field_open"] in allowed_open_levels ]
 		allowed_core_fields		= [ dm["field_name"] 		for dm in data_model_core 	if dm["field_open"] in allowed_open_levels ]
 		
-		allowed_fields 			= allowed_core_fields + allowed_custom_fields
+		allowed_fields_list		= allowed_core_fields + allowed_custom_fields
 
-		app_log.info("••• get_authorized_datamodel_fields / allowed_fields : %s", allowed_fields )
+		app_log.info("... get_authorized_datamodel_fields / allowed_custom_fields : \n %s", allowed_custom_fields )
+		app_log.info("... get_authorized_datamodel_fields / allowed_core_fields   : \n %s", allowed_core_fields )
+		app_log.info("... get_authorized_datamodel_fields / allowed_fields_list   : \n %s", allowed_fields_list )
 
-		return allowed_fields
+		return allowed_fields_list, allowed_custom_fields, allowed_core_fields
 
 	def filter_slug(self, slug, slug_class=None, query_from="app") : 
 		""" filter args from slug """
@@ -661,10 +700,11 @@ class BaseHandler(tornado.web.RequestHandler):
 				
 				# fields to search in is not specified
 				if query_obj["search_in"] == [] : 
-					# option choosen for now : in any field
+					# option choosen for now : in any field even not allowed + full word search (not regex)
+					# cf : https://stackoverflow.com/questions/35812680/searching-in-mongo-db-using-mongoose-regex-vs-text
 					# cf : https://stackoverflow.com/questions/29020211/mongodb-cant-canonicalize-query-badvalue-too-many-text-expressions
 					q_search_for = { "$text" : 
-										{ "$search" : " ".join(query_obj["search_for"] ) } # doable because text fields are indexed at main.py
+										{ "$search" : u" ".join(query_obj["search_for"] ) } # doable because text fields are indexed at main.py
 									}
 					query.update(q_search_for)
 
@@ -679,7 +719,8 @@ class BaseHandler(tornado.web.RequestHandler):
 							print f, type(f)
 						
 						if f in keep_fields_list : 
-							q_search_in = [ { f : {"$regex" : ".*{}.*".format(s) } } for s in query_obj["search_for"] ]  
+							# search for strings containing s + case insensitive --> "$options" : "-i"
+							q_search_in = [ { f : {"$regex" : ".*{}.*".format(s), "$options": "-i" } } for s in query_obj["search_for"] ]  
 							field_qs = field_qs + q_search_in 
 					
 					if field_qs != [] : 
@@ -714,8 +755,8 @@ class BaseHandler(tornado.web.RequestHandler):
 							coll_name, 
 							query_from			= "app", # by default on "app", specify if comming from "api"
 							
+							allowed_fields_list	= [],
 							ignore_fields_list	= [],
-							keep_fields_list	= [],
 
 							data_model_custom_dict_names = [],
 							data_model_core_dict_names 	 = [],
@@ -725,9 +766,9 @@ class BaseHandler(tornado.web.RequestHandler):
 		""" get items from db """
 
 		print
-		app_log.info("... get_data_from_query / query_obj : \n %s \n", 			pformat(query_obj) )
-		app_log.info("... get_data_from_query / keep_fields_list : \n %s \n", 	pformat(keep_fields_list) )
-		app_log.info("... get_data_from_query / ignore_fields_list : \n %s \n", pformat(ignore_fields_list) )
+		app_log.info("... get_data_from_query / query_obj : \n %s \n", 				pformat(query_obj) )
+		app_log.info("... get_data_from_query / allowed_fields_list : \n %s \n", 	pformat(allowed_fields_list) )
+		app_log.info("... get_data_from_query / ignore_fields_list : \n %s \n", 	pformat(ignore_fields_list) )
 		
 		user_token		= query_obj["token"]
 
@@ -759,13 +800,13 @@ class BaseHandler(tornado.web.RequestHandler):
 		# reroute query fields for first query arg (find)
 		query = self.build_first_term_query(	query_obj, 
 												ignore_fields_list			 = ignore_fields_list , 
-												keep_fields_list			 = keep_fields_list , 
+												keep_fields_list			 = allowed_fields_list , 
 												data_model_custom_dict_names = data_model_custom_dict_names
 											)
 		app_log.info("... get_data_from_query / query : \n %s", pformat(query) )
 
 		# add ignore_fields / keep_fields criterias to query if any (projection)
-		specific_fields = self.build_specific_fields( ignore_fields_list, keep_fields_list )
+		specific_fields = self.build_specific_fields( ignore_fields_list, allowed_fields_list )
 		app_log.info("... get_data_from_query / specific_fields : %s ", specific_fields )
 
 		# retrieve docs from db

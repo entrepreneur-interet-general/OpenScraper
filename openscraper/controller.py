@@ -101,6 +101,7 @@ class PageNotFoundHandler(BaseHandler):
 					is_user_connected 	= self.is_user_connected,
 					user_email			= self.user_email,
 					user_auth_level		= self.user_auth_level,
+					user_auth_level_dict = self.user_auth_level_dict
 			)
 
 
@@ -143,6 +144,7 @@ class WelcomeHandler(BaseHandler):
 			is_user_connected 	= self.is_user_connected,
 			user_email			= self.user_email,
 			user_auth_level		= self.user_auth_level,
+			user_auth_level_dict = self.user_auth_level_dict,
 
 			error_msg			= self.error_msg,
 		)
@@ -391,12 +393,20 @@ class DataModelViewHandler(BaseHandler):
 		# catch error message if any
 		self.catch_error_message()
 
+
+
+
+
 		### retrieve datamodel from DB
 		data_model_custom = list(self.application.coll_model.find({"field_class" : "custom"}).sort("field_name",1) )
 		app_log.info("DataModelViewHandler.get / data_model_custom[0:2] : \n %s \n ...", pformat(data_model_custom[0:2]) )
 
 		data_model_core = list(self.application.coll_model.find({"field_class" : "core"}).sort("field_name",1) )
 		app_log.info("DataModelViewHandler.get / data_model_core[0:2] : \n %s \n ... ", pformat(data_model_core[0:2]) )
+
+
+
+
 
 		### test printing object ID
 		app_log.info("DataModelViewHandler.get / data_model_core[0] object_ID : %s ", str( data_model_core[0]["_id"]) )
@@ -414,6 +424,7 @@ class DataModelViewHandler(BaseHandler):
 			is_user_connected 	= self.is_user_connected,
 			user_email			= self.user_email,
 			user_auth_level		= self.user_auth_level,
+			user_auth_level_dict = self.user_auth_level_dict,
 		)
 
 
@@ -461,6 +472,7 @@ class DataModelEditHandler(BaseHandler):
 			is_user_connected 	= self.is_user_connected,
 			user_email			= self.user_email,
 			user_auth_level		= self.user_auth_level,		
+			user_auth_level_dict = self.user_auth_level_dict,
 			) 
 
 	@print_separate(APP_DEBUG)
@@ -559,6 +571,12 @@ class DataModelAddFieldHandler(BaseHandler) :
 		# catch error message if any
 		self.catch_error_message()
 
+
+		# redirect if user doesn't have adapted auth level
+		auth_level = self.user_auth_level_dict[self.site_section]
+		self.redirect_user_if_not_authorized(auth_level, self.site_section)
+
+
 		self.render(
 			"datamodel_new_field.html",
 			page_title 			= app_main_texts["main_title"],
@@ -571,6 +589,7 @@ class DataModelAddFieldHandler(BaseHandler) :
 			is_user_connected 	= self.is_user_connected,
 			user_email			= self.user_email,
 			user_auth_level		= self.user_auth_level,		
+			user_auth_level_dict = self.user_auth_level_dict,
 		)
 
 	@print_separate(APP_DEBUG)
@@ -627,19 +646,24 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 		app_log.info("ContributorsHandler.get ...\n")
 
+		app_log.info("ContributorsHandler.get / slug : %s", slug )
+
 		self.site_section = "contributors"
 
 		# catch error message if any
 		self.catch_error_message()
 
 
+		# redirect if user doesn't have adapted auth level
+		auth_level = self.user_auth_level_dict[self.site_section]
+		self.redirect_user_if_not_authorized(auth_level, self.site_section)
+
+
 		# get current page 
 		current_page = self.get_current_uri_without_error_slug()
 		app_log.info("ContributorsHandler.get / current_page : %s", current_page )
 
-		
-		app_log.info("ContributorsHandler.get / slug : %s", slug )
-
+		# get slug args
 		slug_ = self.request.arguments
 		app_log.info("ContributorsHandler.get / slug_ : \n %s", pformat(slug_) )
 
@@ -688,8 +712,8 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 			is_user_connected 		= self.is_user_connected,
 			user_email				= self.user_email,
 			user_auth_level			= self.user_auth_level,
+			user_auth_level_dict = self.user_auth_level_dict,
 
-			user_auth_level_dict 	= self.user_auth_level_dict
 		)
 
 
@@ -721,10 +745,11 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		self.catch_error_message()
 
 		### retrieve datamodel - custom fields
-		data_model = list(self.application.coll_model.find( {"field_class" : "custom"})) #, {"field_name":1, "_id":1} ))
-		app_log.info( "\n %s", pformat(data_model) )
+		data_model_custom = list(self.application.coll_model.find( {"field_class" : "custom"})) #, {"field_name":1, "_id":1} ))
+		app_log.info( "\n %s", pformat(data_model_custom) )
 
-		data_model = [ { k : unicode(v) for k,v in i.iteritems() } for i in data_model ]
+
+		data_model_custom = [ { k : unicode(v) for k,v in i.iteritems() } for i in data_model_custom ]
 
 		contributor_edit_fields = CONTRIBUTOR_EDIT_FIELDS
 
@@ -766,13 +791,14 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			contributor_edit_floats = CONTRIBUTOR_EDIT_FIELDS_FLOAT,
 			contributor 			= contributor,
 			
-			datamodel				= data_model,
+			datamodel				= data_model_custom,
 			error_msg				= self.error_msg,
 			
 			user				= self.current_user,
 			is_user_connected 	= self.is_user_connected,
 			user_email			= self.user_email,
 			user_auth_level		= self.user_auth_level,
+			user_auth_level_dict = self.user_auth_level_dict,
 			
 		)
 
@@ -790,9 +816,6 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		
 		### TO DO : form validation
 		
-		### get form back from client
-		spider_config_form = self.request.arguments
-		app_log.info( "ContributorEditHandler.post / spider_config_form : \n %s ", pformat(spider_config_form ) )
 
 		# check if spider already exists
 		is_new = True
@@ -873,7 +896,12 @@ class ContributorDeleteHandler(BaseHandler) :
 		# catch error if any
 		self.catch_error_message()
 
-		# self.site_section = "contributors"
+		self.site_section = "contributors"
+
+		# redirect if user doesn't have adapted auth level
+		auth_level = self.user_auth_level_dict[self.site_section]
+		self.redirect_user_if_not_authorized(auth_level, self.site_section)
+
 
 		spider_id = self.get_argument('spider_id', None )
 		app_log.info("ContributorDeleteHandler.get / spider_id : %s", spider_id )
@@ -900,6 +928,7 @@ class ContributorDeleteHandler(BaseHandler) :
 					is_user_connected 	= self.is_user_connected,
 					user_email			= self.user_email,
 					user_auth_level		= self.user_auth_level,
+					user_auth_level_dict = self.user_auth_level_dict,
 					)
 
 			except :
@@ -969,7 +998,12 @@ class ContributorResetDataHandler(BaseHandler) :
 		# catch error if any
 		self.catch_error_message()
 
-		# self.site_section = "contributors"
+		self.site_section = "contributors"
+
+		# redirect if user doesn't have adapted auth level
+		auth_level = self.user_auth_level_dict[self.site_section]
+		self.redirect_user_if_not_authorized(auth_level, self.site_section)
+
 
 		spider_id = self.get_argument('spider_id', None )
 		app_log.info("ContributorResetDataHandler.get / spider_id : %s", spider_id )
@@ -997,6 +1031,7 @@ class ContributorResetDataHandler(BaseHandler) :
 					is_user_connected 	= self.is_user_connected,
 					user_email			= self.user_email,
 					user_auth_level		= self.user_auth_level,
+					user_auth_level_dict = self.user_auth_level_dict,
 					)
 				
 			except :
@@ -1094,20 +1129,11 @@ class DataScrapedHandler(BaseHandler):
 		app_log.info("... request.path : %s ", self.request.path )
 		app_log.info("... request.uri  : %s ", self.request.uri )
 
-		slug_ = self.request.arguments
-		print
-		app_log.info("DataScrapedHandler.get / slug_ : %s ", slug_ )
 
-		### retrieve datamodel from DB top make correspondances field's _id --> field_name
-		data_model_custom = list( self.application.coll_model.find({"field_class" : "custom", "is_visible" : True }).sort("field_name",1) )
-		app_log.info("DataScrapedHandler.get / data_model_custom[:2] :" )
-		pprint.pprint (data_model_custom[:2] )
-		print "..."
 
-		data_model_custom_ids = [ str(dmc["_id"]) for dmc in data_model_custom ]
-		app_log.info("DataScrapedHandler.get / data_model_custom_ids[:2] : \n %s ", data_model_custom_ids[:2] )
-		# pprint.pprint (data_model_custom_ids[:2])
-		print "..."
+
+
+		### SPIDERS 
 
 		### retrieve all spiders from db to make correspondances spider_id --> spider_name
 		spiders_list = list( self.application.coll_spiders.find( {}, {"infos" : 1 } ) )
@@ -1122,14 +1148,66 @@ class DataScrapedHandler(BaseHandler):
 
 
 
-		### TO DO : FACTORIZ EWITH API HANDLER
-		
+
+		### DATA QUERY 
+
+		slug_ = self.request.arguments
+		print
+		app_log.info("DataScrapedHandler.get / slug_ : %s ", slug_ )
+
 		### clean slug as data query
-		query_data = self.filter_slug( slug_, slug_class="data" )
+		query_data = self.filter_slug( slug_, slug_class="data", query_from="app" )
 		app_log.info("DataScrapedHandler / query_data : \n %s ", pformat(query_data) )
 
+
+		open_level = self.user_auth_level_dict["data"] # generated by @check_request_token
+		app_log.info("DataScrapedHandler / open_level : %s ", open_level )
+
+
+		### TO DO : FACTORIZE WITH APIrestHandler HANDLER
+		dm_set = self.get_datamodel_set()
+		data_model_custom_list		 	= dm_set["data_model_custom_list"]
+		data_model_custom_dict 		 	= dm_set["data_model_custom_dict"]
+		data_model_custom_dict_names 	= dm_set["data_model_custom_dict_names"]
+		data_model_core_list		 	= dm_set["data_model_core_list"]
+		data_model_core_dict_names		= dm_set["data_model_core_dict_names"]
+
+
+		### retrieve datamodel from DB top make correspondances field's _id --> field_name
+		# data_model_custom = list( self.application.coll_model.find({"field_class" : "custom", "is_visible" : True }).sort("field_name",1) )
+		# app_log.info("DataScrapedHandler.get / data_model_custom[:2] :" )
+		# pprint.pprint (data_model_custom[:2] )
+		# print "..."
+
+		data_model_custom_ids = [ str(dmc["_id"]) for dmc in data_model_custom_list ]
+		app_log.info("DataScrapedHandler.get / data_model_custom_ids[:2] : \n %s ", data_model_custom_ids[:2] )
+		# pprint.pprint (data_model_custom_ids[:2])
+		print "..."
+
+		# data_model_core = list( self.application.coll_model.find({"field_class" : "core"})  )
+
+		### filter results depending on field's opendata level
+		# get fields allowed
+		allowed_fields_list, allowed_custom_fields, allowed_core_fields = self.get_authorized_datamodel_fields(open_level, data_model_custom_list, data_model_core_list )
+		allowed_fields_list.append("spider_id")
+		app_log.info("DataScrapedHandler.get / allowed_fields_list : \n %s ", allowed_fields_list ) 
+
+
+
+
+
+
 		### get items from db
-		items_from_db, is_data, page_n_max = self.get_data_from_query( query_data, coll_name="data" )
+		items_from_db, is_data, page_n_max = self.get_data_from_query( 	query_data, 
+																		coll_name					 = "data", 
+																		query_from					 = self.site_section, 
+																
+																		allowed_fields_list			 = allowed_fields_list,
+																		ignore_fields_list			 = ["_id"],
+																
+																		data_model_custom_dict_names = data_model_custom_dict_names,
+																		data_model_core_dict_names	 = data_model_core_dict_names
+																	)
 
 
 
@@ -1162,7 +1240,10 @@ class DataScrapedHandler(BaseHandler):
 			"data_view.html",
 			page_title			= app_main_texts["main_title"],
 			query_obj			= query_data,
-			datamodel_custom 	= data_model_custom,
+			
+			datamodel_custom 	  = data_model_custom_list,
+			allowed_custom_fields = allowed_custom_fields,
+
 			# spiders_list		= spiders_list,
 			items				= items_from_db,
 			is_data				= is_data,
@@ -1174,6 +1255,7 @@ class DataScrapedHandler(BaseHandler):
 			is_user_connected 	= self.is_user_connected,
 			user_email			= self.user_email,
 			user_auth_level		= self.user_auth_level,		
+			user_auth_level_dict = self.user_auth_level_dict,
 		)
 
 

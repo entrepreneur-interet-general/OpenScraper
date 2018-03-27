@@ -123,7 +123,12 @@
 					{% set url_to = "logout" %}
 
 					<p class="control">
-						<a class="button is-white" disabled>
+						<a 	class="button is-white tooltip is-tooltip-bottom" 
+							data-tooltip="	data : {{ user_auth_level_dict['data'] }} / 
+											contributors : {{ user_auth_level_dict['contributors'] }} / 
+											datamodel : {{ user_auth_level_dict['datamodel'] }}
+										"
+							disabled>
 							<span class="icon">
 								<i class="fas fa-user-circle"></i>
 							</span>

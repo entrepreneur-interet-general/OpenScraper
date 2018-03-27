@@ -291,6 +291,10 @@ class QueryFromSlug :
 					for q in q_arg :  	# for every list if q_arg is repeated
 						q_ = q.split()	# split string content into list when args are separated by a space
 						for i in q_ : 	# for every arg add it to raw_q_list
+							# print type(i)
+							# print i, type(i)
+							i = unicode(i.decode('utf-8') )
+							# print i, type(i)
 							raw_q_list.append(i)
 					self.query[q_field] = raw_q_list
 

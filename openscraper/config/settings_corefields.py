@@ -26,21 +26,21 @@ OPEN_LEVEL_DICT = {
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 USER_AUTH_LEVELS = {
-	"admin"   	: {	"datamodel" : "all", 
-					"spiders" 	: "all", 	
-					"data" 		: "all"  
+	"admin"   	: {	"datamodel" 	: "all", 
+					"contributors"	: "all", 	
+					"data" 			: "admin"  
 					}, 	# can modify and view everything
-	"staff"		: {	"datamodel" : "own", 
-					"spiders" 	: "own", 	
-					"data" 		: "collective"  
+	"staff"		: {	"datamodel" 	: "own", 
+					"contributors" 	: "own", 	
+					"data" 			: "collective"  
 					},		# can modify its own fields in datamodel, can modify its own spiders
-	"user"	  	: {	"datamodel" : "none", 
-					"spiders" 	: "own", 	
-					"data" 		: "commons"  
+	"user"	  	: {	"datamodel" 	: "none", 
+					"contributors" 	: "own", 	
+					"data" 			: "commons"  
 					},		# cannot modify fields in datamodel, can modify its own spiders
-	"visitor" 	: {	"datamodel" : "none", 
-					"spiders" 	: "none", 	
-					"data" 		: "opendata" 
+	"visitor" 	: {	"datamodel" 	: "none", 
+					"contributors" 	: "none", 	
+					"data" 			: "opendata" 
 					},		# cannot modify anything
 }
 ### to initiate user core fields in mongoDB

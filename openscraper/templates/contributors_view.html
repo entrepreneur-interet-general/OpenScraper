@@ -180,9 +180,9 @@
 						
 						{# set authorization level for spider #}
 						{% set can_edit = False %}
-						{% if user_auth_level_dict["spiders"] == "all" %}
+						{% if user_auth_level_dict["contributors"] == "all" %}
 							{% set can_edit = True %}
-						{% elif user_auth_level_dict["spiders"] == "own" and contrib["scraper_log"]["added_by"] == user_email %}
+						{% elif user_auth_level_dict["contributors"] == "own" and contrib["scraper_log"]["added_by"] == user_email %}
 							{% set can_edit = True %}
 						{% end %}
 

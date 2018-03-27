@@ -72,32 +72,39 @@ class APIrestHandler(BaseHandler):
 		### override query_data["results_per_page"] if auth level doesn't allow it
 		if open_level == "opendata" and query_data["results_per_page"] > QUERIES_MAX_RESULTS_IF_API :
 			query_data["results_per_page"] = QUERIES_MAX_RESULTS_IF_API
-				
+
+
+		### TO DO : FACTORIZE WITH DataScrapedHandler HANDLER
+
 		### retrieve datamodel from DB top make correspondances field's _id --> field_name
-		data_model_custom_cursor	 = self.application.coll_model.find({"field_class" : "custom", "is_visible" : True }) 
-		data_model_custom 			 = list(data_model_custom_cursor)
-		data_model_custom_dict 		 = { str(field["_id"])   : field for field in data_model_custom }
-		data_model_custom_dict_names = { field["field_name"] : field for field in data_model_custom }
+		# data_model_custom_cursor	 = self.application.coll_model.find({"field_class" : "custom", "is_visible" : True }) 
+		# data_model_custom 			 = list(data_model_custom_cursor)
+		# data_model_custom_dict 		 = { str(field["_id"])   : field for field in data_model_custom }
+		# data_model_custom_dict_names = { field["field_name"] : field for field in data_model_custom }
 
-		data_model_core_cursor 		 = self.application.coll_model.find({"field_class" : "core" }) 
-		data_model_core 			 = list(data_model_core_cursor)
-		data_model_core_dict_names	 = { field["field_name"] : field for field in data_model_core }
+		# data_model_core_cursor 		 = self.application.coll_model.find({"field_class" : "core" }) 
+		# data_model_core 			 = list(data_model_core_cursor)
+		# data_model_core_dict_names	 = { field["field_name"] : field for field in data_model_core }
 
-		app_log.info("••• APIrestHandler.get / data_model_custom_dict : \n %s", 		pformat(data_model_custom_dict) )
-		app_log.info("••• APIrestHandler.get / data_model_custom[:1]  : \n %s \n ...", 	pformat(data_model_custom[:1]) )
-		app_log.info("••• APIrestHandler.get / data_model_core[:1]    : \n %s \n ...", 	pformat(data_model_core[:1]) )
+		dm_set = self.get_datamodel_set()
+		data_model_custom_list		 	= dm_set["data_model_custom_list"]
+		data_model_custom_dict 		 	= dm_set["data_model_custom_dict"]
+		data_model_custom_dict_names 	= dm_set["data_model_custom_dict_names"]
+		data_model_core_list		 	= dm_set["data_model_core_list"]
+		data_model_core_dict_names		= dm_set["data_model_core_dict_names"]
+
 
 		### filter results depending on field's opendata level
 		# get fields allowed
-		allowed_fields = self.get_authorized_datamodel_fields(open_level, data_model_custom, data_model_core )
-		app_log.info("••• APIrestHandler.get / allowed_fields : \n %s ", allowed_fields ) 
+		allowed_fields_list, allowed_custom_fields, allowed_core_fields = self.get_authorized_datamodel_fields(open_level, data_model_custom_list, data_model_core_list )
+		app_log.info("••• APIrestHandler.get / allowed_fields_list : \n %s ", allowed_fields_list ) 
 
 		# get data 
 		data, is_data, page_n_max = self.get_data_from_query( 	query_data, 
 																coll_name					 = "data", 
 																query_from					 = self.site_section, 
 																
-																keep_fields_list			 = allowed_fields,
+																allowed_fields_list			 = allowed_fields_list,
 																ignore_fields_list			 = ["_id"],
 																
 																data_model_custom_dict_names = data_model_custom_dict_names,
@@ -137,7 +144,7 @@ class APIrestHandler(BaseHandler):
 												"field_name" : f["field_name"], 
 												"field_open" : f["field_open"],
 												"field_type" : f["field_type"]
-											} for f in data_model_custom if f["field_open"] in OPEN_LEVEL_DICT[open_level]
+											} for f in data_model_custom_list if f["field_open"] in OPEN_LEVEL_DICT[open_level]
 										  ]
 			},
 			# data retrieved
