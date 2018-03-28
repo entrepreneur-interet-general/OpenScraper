@@ -123,7 +123,7 @@
 					{% set url_to = "logout" %}
 
 					<p class="control">
-						<a 	class="button is-white tooltip is-tooltip-bottom" 
+						<a 	class="button is-white is-rounded tooltip is-tooltip-bottom" 
 							data-tooltip="	data : {{ user_auth_level_dict['data'] }} / 
 											contributors : {{ user_auth_level_dict['contributors'] }} / 
 											datamodel : {{ user_auth_level_dict['datamodel'] }}
@@ -139,9 +139,14 @@
 					</p>
 
 				{% end %}
-
+					{% if url_to == "login" %}
+						{% set log_color = "primary" %}
+					{% elif url_to == "logout" %}
+						{% set log_color = "light" %}
+					{% end %}
 					<p class="control">
-						<a class="button is-light" href="/{{url_to}}/">
+						<a 	class="button is-rounded is-{{ log_color }}" 
+							href="/{{url_to}}/">
 							<span class="icon">
 								{% if url_to == "login" %}
 									<i class="fas fa-sign-in-alt"></i>
@@ -155,11 +160,13 @@
 
 
 				<p class="control">
-					<a class="button is-primary" href="https://github.com/entrepreneur-interet-general/OpenScraper">
-					<span class="icon">
-						<i class="fab fa-github"></i>
-					</span>
-					<span>source code</span>
+					<a 	class="button is-rounded is-primary is-outlined tooltip is-tooltip-bottom"
+						data-tooltip="source code" 
+						href="https://github.com/entrepreneur-interet-general/OpenScraper">
+						<span class="icon">
+							<i class="fab fa-github"></i>
+						</span>
+						{# <span>source code</span> #}
 					</a>
 				</p>
 
