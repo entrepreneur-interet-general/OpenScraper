@@ -119,13 +119,15 @@
 
 							<th>name</th>
 
+							{# edit spider #}
 							<th class="has-text-centered">
 								<span class="icon has-text-grey is-small tooltip"
 										data-tooltip="edit a spider" >
-									<i class="fas fa-list"></i>
+									<i class="fas fa-edit"></i>
 								</span>
 							</th>
 
+							{# delete spider #}
 							<th class="has-text-centered">
 								<span class="icon has-text-grey is-small tooltip"
 										data-tooltip="delete a spider" >
@@ -226,7 +228,6 @@
 						<tr id="{{ contrib_id }}" >
 							
 
-
 							{# spider status : is_working / is_running / ... #}
 							<td class="has-text-centered"> 
 								
@@ -287,16 +288,20 @@
 										data-tooltip="edit this spider" 
 										href="/contributor/edit/{{ contrib_id }}" 
 										>
-										<span class="icon is-small"><i class="fas fa-list"></i></span>
+										<span class="icon is-small ">
+											<i class="fas fa-edit"></i>
+										</span>
 									</a> 
 								{% else %}
-									<span 	class="icon tooltip is-tooltip-right"
-											data-tooltip="you can't edit this spider" >
-										<span class="fa-stack">
-											<i class="fas has-text-light fa-list fa-stack-1x"></i>
-											<i class="fas has-text-grey fa-ban fa-stack-1x "></i>
+									<a class="button is-text is-small">
+										<span 	class="icon tooltip is-small is-tooltip-right"
+												data-tooltip="you can't edit this spider" >
+											<span class="fa-stack">
+												<i class="fas has-text-light fa-edit fa-stack-1x"></i>
+												<i class="fas has-text-grey fa-ban fa-stack-1x "></i>
+											</span>
 										</span>
-									</span>
+									</a>
 								{% end %}
 
 							</td>
@@ -306,23 +311,25 @@
 							<td class="has-text-centered">
 								
 								{% if can_edit %}
-								<a class="has-text-centered is-small tooltip is-tooltip-right is-tooltip-danger"
-									data-tooltip="delete this spider"
-									href="/contributor/delete?spider_id={{ contrib_id }}" 
-									 >
-									<span class="icon has-text-grey is-small"><i class="fas fa-trash"></i></span>
-									{# <span>delete</span> #}
-								</a> 
-								{% else %}
-									<p>
-									<span class="icon tooltip is-tooltip-right"
-										data-tooltip="you can't delete this spider">
-										<span class="fa-stack">
-											<i class="fas has-text-light fa-trash fa-stack-1x"></i>
-											<i class="fas has-text-grey fa-ban fa-stack-1x "></i>
+									<a class="has-text-centered button is-text is-small is-rounded tooltip is-tooltip-right is-tooltip-danger"
+										data-tooltip="delete this spider"
+										href="/contributor/delete?spider_id={{ contrib_id }}" 
+										>
+										<span class="icon is-small has-text-danger">
+											<i class="fas fa-trash"></i>
 										</span>
-			 						 </span>
-									</p>
+										{# <span>delete</span> #}
+									</a> 
+								{% else %}
+									<a class="button is-text is-small">
+										<span class="icon tooltip is-small is-tooltip-right"
+											data-tooltip="you can't delete this spider">
+											<span class="fa-stack">
+												<i class="fas has-text-light fa-trash fa-stack-1x"></i>
+												<i class="fas has-text-grey fa-ban fa-stack-1x "></i>
+											</span>
+										</span>
+									</a>	
 								{% end %}
 
 							</td>
@@ -367,15 +374,15 @@
 							<td class="has-text-centered">
 							
 								{% if not can_edit %}
-
-									<span 	class="icon tooltip is-tooltip-right"
-											data-tooltip="you can't run nor test this spider" >
-										<span class="fa-stack">
-											<i class="fas has-text-light fa-step-forward fa-stack-1x"></i>
-											<i class="fas has-text-grey fa-ban fa-stack-1x "></i>
+									<a class="button is-text is-small">
+										<span 	class="icon tooltip is-tooltip-right"
+												data-tooltip="you can't run nor test this spider" >
+											<span class="fa-stack">
+												<i class="fas has-text-light fa-step-forward fa-stack-1x"></i>
+												<i class="fas has-text-grey fa-ban fa-stack-1x "></i>
+											</span>
 										</span>
-									</span>
-
+									</a>
 								{% else %}
 
 									{% if is_running %}
@@ -426,15 +433,15 @@
 							<td class="has-text-centered"> 
 
 								{% if not can_edit %}
-
-									<span 	class="icon tooltip is-tooltip-right"
-											data-tooltip="you can't run nor test this spider" >
-										<span class="fa-stack">
-											<i class="fas has-text-light fa-play fa-stack-1x"></i>
-											<i class="fas has-text-grey fa-ban fa-stack-1x "></i>
+									<a class="button is-text is-small">
+										<span 	class="icon tooltip is-tooltip-right"
+												data-tooltip="you can't run nor test this spider" >
+											<span class="fa-stack">
+												<i class="fas has-text-light fa-play fa-stack-1x"></i>
+												<i class="fas has-text-grey fa-ban fa-stack-1x "></i>
+											</span>
 										</span>
-									</span>
-
+									</a>
 								{% else %}
 
 
@@ -491,11 +498,12 @@
 							<td class="has-text-centered"> 
 
 								{% if start_urls == [] %}
-
-									<span 	class="icon has-text-danger tooltip is-tooltip-right"
-											data-tooltip="spider is incomplete">
-										<i class="is-danger fas fa-ban "></i>
-									</span>
+									<a class="button is-text is-small">
+										<span 	class="icon has-text-danger tooltip is-tooltip-right"
+												data-tooltip="spider is incomplete">
+											<i class="is-danger fas fa-ban "></i>
+										</span>
+									</a>
 								
 								{% elif is_running %}
 									
@@ -507,13 +515,13 @@
 								{% else %}
 
 									{% if count_data == 0 %}
-
-										<span 	class="icon has-text-info tooltip is-tooltip-right"
-												data-tooltip="no data to see">
-											<i class="fas fa-times"></i>
-										</span>
-										
-									{% else %}
+										{# <a class="button is-text"> #}
+											<span 	class="icon has-text-info tooltip is-tooltip-right"
+													data-tooltip="no data to see">
+												<i class="fas fa-times"></i>
+											</span>
+										{# </a> #}
+									{% else %}	
 
 										<a class="button is-{{color_data}} is-rounded is-small "
 											{{ href_data }}
@@ -540,13 +548,15 @@
 
 								{% if not can_edit %}
 
-									<span 	class="icon tooltip is-tooltip-right"
-											data-tooltip="you can't run nor test this spider" >
-										<span class="fa-stack">
-											<i class="fas has-text-light fa-play fa-stack-1x"></i>
-											<i class="fas has-text-grey fa-ban fa-stack-1x "></i>
+									<a class="button is-text is-small">
+										<span 	class="icon tooltip is-tooltip-right"
+												data-tooltip="you can't run nor test this spider" >
+											<span class="fa-stack">
+												<i class="fas has-text-light fa-play fa-stack-1x"></i>
+												<i class="fas has-text-grey fa-ban fa-stack-1x "></i>
+											</span>
 										</span>
-									</span>
+									</a>
 
 								{% else %}
 

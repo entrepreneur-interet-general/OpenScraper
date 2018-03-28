@@ -6,18 +6,25 @@ from settings_example import *
 ### settings variables for scrapy
 
 
+
+### POLITE WEBSCRAPING
+# cf : https://hackernoon.com/how-to-crawl-the-web-politely-with-scrapy-15fbe489573d
+
 # identification 
 BOT_NAME		= 	"OpenScraper"
 USER_AGENT		= 	"Open Scraper (+https://github.com/entrepreneur-interet-general/OpenScraper)"
 					# 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
 ROBOTSTXT_OBEY 	= True
 
+AUTOTHROTTLE_ENABLED 		= True
+HTTPCACHE_ENABLED 			= True
 
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
 DOWNLOAD_DELAY 				= .25
-RANDOMIZE_DOWNLOAD_DELAY 	= True
+RANDOMIZE_DOWNLOAD_DELAY 	= False
+
 
 
 # pipelines registration
