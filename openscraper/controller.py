@@ -814,8 +814,17 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		
 		timestamp = time.time()
 		
+
+
+
+
 		### TO DO : form validation
 		
+
+		### get form back from client
+		spider_config_form = self.request.arguments
+		app_log.info("ContributorEditHandler.post /spider_config_form : \n %s", pformat(spider_config_form) )
+
 
 		# check if spider already exists
 		is_new = True
@@ -825,7 +834,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 		# check if website is already crawled by another spider
 		similar_spider = self.application.coll_spiders.find_one( {"infos.page_url": spider_config_form["page_url"][0] } ) 
-		app_log.info("similar spider : \n %s", pformat(similar_spider) )
+		app_log.info("ContributorEditHandler.post /similar spider : \n %s", pformat(similar_spider) )
 
 		if similar_spider and is_new and spider_config_form != "" :
 			app_log.warning( "ContributorEditHandler.post / a similar spider already exists ... ")

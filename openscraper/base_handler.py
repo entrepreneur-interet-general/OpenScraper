@@ -214,6 +214,8 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		self.user_email				= "visitor.email@openscraper.com"
 
+
+
 	### global functions for all handlers
 
 	def catch_error_message (self):
@@ -410,6 +412,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
 
 
+
 	### user functions for all handlers
 
 	def get_user_from_db(self, user_email) :
@@ -510,6 +513,8 @@ class BaseHandler(tornado.web.RequestHandler):
 			
 		# return redirect_user
 		return
+
+
 
 
 	### DB functions for all handlers
