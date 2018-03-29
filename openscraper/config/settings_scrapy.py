@@ -32,6 +32,7 @@ ITEM_PIPELINES	= 	{ 'scraper.pipelines.MongodbPipeline' : 300 }
 
 
 # database for items - can be the same as server but can be different too
+# imported from settings_example.py for demo or settings for prod
 DB_DATA_URI			= 	MONGODB_APP_URI
 DB_DATA_DATABASE	= 	MONGODB_DB
 DB_DATA_COLL_SCRAP	= 	MONGODB_COLL_DATASCRAPPED

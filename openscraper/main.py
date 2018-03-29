@@ -333,10 +333,13 @@ class Application(tornado.web.Application):
 
 			login_url		= "/login/",
 
+			autoreload 		= APP_AUTORELOAD,
+
 			debug 			= APP_DEBUG ,
 			cookie_secret 	= COOKIE_SECRET , ### example / store real key in ignored config.py
 			xsrf_cookies  	= XSRF_ENABLED
 		)
+
 		
 		### app init
 		tornado.web.Application.__init__(self, handlers, **settings )
@@ -355,24 +358,27 @@ def main():
 
 	tornado.options.parse_command_line()
 
-	app_log.info( ">>> starting app ...")
-	
+	app_log.info( ">>> starting tornado app on APP_PORT : %s ...", APP_PORT)
+
+
 	http_server = tornado.httpserver.HTTPServer(Application())
 	app_log.info( ">>> http_server ready ...")
 
-	http_server.listen(options.port)
-	
+	# for local dev --> debug
+	if APP_DEBUG == True : 
+		http_server.listen(options.port)
+		tornado.ioloop.IOLoop.instance().start()
+
+	# for prod --> doesn't work with autoreaload == True
+	# cf : http://www.tornadoweb.org/en/stable/guide/running.html
+	elif APP_DEBUG == False : 
+		http_server.bind(options.port)	
+		http_server.start(0)  			# forks one process per cpu
+		tornado.ioloop.IOLoop.current().start()
+
 	print "\n{}\n".format("+ + + "*20)
 
-	tornado.ioloop.IOLoop.instance().start()
 
-
-	# ioloop = IOLoop.instance()
-	# ioloop.start()
-	
-	# http_server.bind(options.port)
-	# http_server.start(0)  # Forks multiple sub-processes
-	# tornado.ioloop.IOLoop.current().start()
 
 
 if __name__ == "__main__":

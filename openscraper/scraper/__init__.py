@@ -14,7 +14,7 @@ so to be run from the python script and not from bash
 
 
 ### needs imports here to be called from controller.py
-from items          import *
-from masterspider   import *
-from pipelines      import *
+from items              import *
+from masterspider       import *
+from pipelines          import *
 from settings_scrapy	import *
