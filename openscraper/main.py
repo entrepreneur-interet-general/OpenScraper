@@ -16,6 +16,8 @@ import 	datetime
 from 	uuid import uuid4
 import 	pprint
 
+import argparse
+
 # BDD imports and client
 # import pymongo
 from pymongo import MongoClient
@@ -212,9 +214,12 @@ def create_datamodel_fields( logger, coll_model, fields_list, field_class ) :
 				k : v for k,v in field.iteritems() if k != "field_name" 
 				} 
 		}, 
-		upsert=True ) for field in fields_ 
+		# upsert=True  # do not upsert otherwise new fields are created
+		) 
+		for field in fields_ 
 	]
 	coll_model.bulk_write(operations)
+
 
 
 def reset_is_running_on_all_spider( coll_model ) :
@@ -248,7 +253,7 @@ class Application(tornado.web.Application):
 		- set scrapy
 		- set modules
 		- set urls handlers
-		- set and init Tornado app
+		- set and init Tornado app 
 	"""
 	
 	def __init__(self):  
@@ -275,44 +280,24 @@ class Application(tornado.web.Application):
 		self.coll_spiders 	= self.db[ MONGODB_COLL_CONTRIBUTORS ]
 		self.coll_data		= self.db[ MONGODB_COLL_DATASCRAPPED ]
 
-		# create index for every collection needing it 
+		# create index for every collection needing it  
 		self.coll_spiders.create_index([('$**', 'text')])
 		self.coll_data.create_index([('$**', 'text')])
 
-		### instantiate db.datamodel with core fields (for internal use)
-		# core_fields = [ 
-		# 	{ 	"field_name" 	: field["field_name"], 
-		# 		"field_type" 	: field["field_type"],
-		# 		"field_class" 	: "core" ,
-		# 		"added_by" 		: "admin",
-		# 		"added_at"		: timestamp,
-		# 		"is_visible"	: False
-		# 	} for field in DATAMODEL_CORE_FIELDS
-		# ]
-		# print ">>> Application.__init__ / datamodel - core_fields : "
-		# pprint.pprint(core_fields)
+		### instantiate db.datamodel with core fields (for internal use) if no core field at all in db
+		existing_core_fields = self.coll_model.find({"field_class" : "core"})
+		app_log.warning("existing_core_fields.count() : %s", existing_core_fields.count())
+		if existing_core_fields.count() == 0 : 
+			app_log.warning("no core fields... creating default core fields...")
+			create_datamodel_fields( app_log, self.coll_model, DATAMODEL_CORE_FIELDS, "core" )
 
-		# upsert fields as bulk job in mongoDB
-		# cf : https://stackoverflow.com/questions/5292370/fast-or-bulk-upsert-in-pymongo
-		# operations =[ UpdateOne( 
-		# 	{"field_name" : field["field_name"]},
-		# 	{'$set':  { 
-		# 			"field_type" 	: field["field_type"],
-		# 			"field_class" 	: field["field_class"],
-		# 			"added_by" 		: field["added_by"], 	# "admin",
-		# 			"added_at" 		: field["added_at"], 	# timestamp,
-		# 			"is_visible"	: field["is_visible"], 	# False
-		# 			} 
-		# 	}, 
-		# 	upsert=True ) for field in core_fields 
-		# ]
-		# self.coll_model.bulk_write(operations)
-		create_datamodel_fields( app_log, self.coll_model, DATAMODEL_CORE_FIELDS, "core" )
-
-		### instanciate core and default custom fields if no custom field at all in db
-		existing_custom_fields = self.coll_model.find({"field_type" : "custom"})
-		if existing_custom_fields == None : 
-			create_datamodel_fields( self.coll_model, DATAMODEL_DEFAULT_CUSTOM_FIELDS, "custom" )
+		### instanciate default custom fields if no custom field at all in db
+		existing_custom_fields = self.coll_model.find({"field_class" : "custom"})
+		app_log.warning("existing_custom_fields.count() : %s", existing_custom_fields.count())
+		# if list(existing_custom_fields) == [] : 
+		if existing_custom_fields.count() == 0 : 
+			app_log.warning("no custom fields... creating default custom fields...")
+			create_datamodel_fields( app_log, self.coll_model, DATAMODEL_DEFAULT_CUSTOM_FIELDS, "custom" )
 
 		### reset spiders scrape_log.is_running
 		reset_is_running_on_all_spider( self.coll_spiders )
@@ -364,6 +349,13 @@ def main():
 	print ">>> IP_ADRESS IS : ", ip_adress[0]
 	s.close()
 
+
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-p', '--port', type=int, default=8000)
+	args = parser.parse_args()
+	print args
+
+
 	# totally optionnal
 	tornado.options.parse_command_line()
 
@@ -392,4 +384,5 @@ def main():
 
 
 if __name__ == "__main__":
+
 	main()

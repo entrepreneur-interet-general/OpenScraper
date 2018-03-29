@@ -284,11 +284,12 @@ class RegisterHandler(BaseHandler):
 		""" check if user exists in db, insert it in db, and set cookie"""
 
 		# self.check_xsrf_cookie()
-		print "\nRegisterHandler.post ... "
+		print
+		app_log.info("RegisterHandler.post ... ")
 
-		print "\nRegisterHandler.post / next_url : "
 		next_url = self.get_argument('next', u'/')
-		print next_url
+		app_log.info("RegisterHandler.post / next_url : %s ", next_url)
+		# print next_url
 
 		timestamp = time.time()
 
@@ -301,27 +302,34 @@ class RegisterHandler(BaseHandler):
 		# basic validation
 		if user_name != "" and user_email != "" and user_password != "" :		
 		
-			print "RegisterHandler.post / request.arguments ... "
+			app_log.info("RegisterHandler.post / request.arguments : %s", self.request.arguments )
 			# print self.request 
-			print self.request.arguments 
+			# print self.request.arguments 
 
 			### get user from db
 			user = self.get_user_from_db( self.get_argument("email") )
 
 			if user == None : 
 
-				print "\nRegisterHandler.post / adding user to DB "
+				app_log.info("RegisterHandler.post / adding user to DB ")
 				
+				user_level = "user"
+				# add first user of the app as admin if no user are registred at all 
+				users_registred = self.application.coll_users.find({})
+				if users_registred.count() == 0 :
+					app_log.warning("RegisterHandler.post / adding FIRST user to DB ")
+					user_level = "admin"
+
 				user_dict = { 
 					"username" 		: user_name,
 					"email" 		: user_email,
 					"password" 		: user_password,
-					"level_admin" 	: "user",
+					"level_admin" 	: user_level,
 					"added_at"		: timestamp
 					}
 				user_object = UserClass(**user_dict) 
-				print "\nRegisterHandler.post / user as UserClass instance "
-				print user_object.__dict__
+				app_log.info("RegisterHandler.post / user as UserClass instance : %s", pformat(user_object.__dict__))
+				# print user_object.__dict__
 
 				self.add_user_to_db(user_dict)
 
