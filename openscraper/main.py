@@ -356,11 +356,21 @@ def main():
 	print "\n\n{}".format("+ + + "*20)
 	print "\n\n>>> MAIN / RE-STARTING SERVER ... >>>\n"
 
+	# printing current ip adress
+	import socket
+	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	s.connect(("8.8.8.8", 80))
+	ip_adress = s.getsockname()
+	print ">>> IP_ADRESS IS : ", ip_adress[0]
+	s.close()
+
+	# totally optionnal
 	tornado.options.parse_command_line()
 
+	# print port for reminder
 	app_log.info( ">>> starting tornado app on APP_PORT : %s ...", APP_PORT)
 
-
+	# create server
 	http_server = tornado.httpserver.HTTPServer(Application())
 	app_log.info( ">>> http_server ready ...")
 
