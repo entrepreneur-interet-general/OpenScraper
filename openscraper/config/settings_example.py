@@ -20,9 +20,9 @@ if APP_PROD == False :
 	MONGODB_HOST 		= "localhost"
 elif APP_PROD == True :
 	MONGODB_HOST 		= "0.0.0.0"
-MONGODB_PORT 		= 27017
-MONGODB_DB          = "openscraper" 
-MONGODB_APP_URI     = "mongodb://{}:{}".format(MONGODB_HOST, MONGODB_PORT)
+MONGODB_PORT 			= 27017
+MONGODB_DB          	= "openscraper" 
+MONGODB_APP_URI     	= "mongodb://{}:{}".format(MONGODB_HOST, MONGODB_PORT)
 
 
 # collections

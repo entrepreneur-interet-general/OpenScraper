@@ -14,7 +14,8 @@ def create_default_spider( coll_model, coll_spiders ):
 	custom_field_author 	= coll_model.find_one( {"field_class" : "custom", "field_name" : "author"})
 	custom_field_abstract 	= coll_model.find_one( {"field_class" : "custom", "field_name" : "abstract"}  )
 	custom_field_tags 		= coll_model.find_one( {"field_class" : "custom", "field_name" : "tags"} )
-
+	
+	pprint (custom_field_tags)
 
 	# recreate spider form
 	spider_config_form = {
@@ -30,11 +31,11 @@ def create_default_spider( coll_model, coll_spiders ):
 		# },
 
 		# "scraper_config" : {
-		"next_page" 		: "//li[@class=\"next\"]/a/@href",
+		"next_page" 		: '//li[@class="next"]/a/@href',
 		"start_urls" 		: [ 
 			"http://quotes.toscrape.com/"
 		],
-		"item_xpath" 		: '//div[@class=\"quote\"]',
+		"item_xpath" 		: '//div[@class="quote"]',
 		"page_needs_splash" : "false",
 		"parse_follow" 		: "false",
 		# "spidername" : "test quote",
@@ -43,9 +44,9 @@ def create_default_spider( coll_model, coll_spiders ):
 		# },
 		
 		# "scraper_config_xpaths" : {
-		str(custom_field_tags["_id"]) 	: './/div[@class=\"tags\"]/a[@class=\"tag\"]/text()',
-		str(custom_field_author["_id"]) : './/small[@class=\"author\"]/text()',
-		str(custom_field_author["_id"])	: './span[@class=\"text\"]/text()',
+		str(custom_field_tags["_id"]) 		: './/div[@class="tags"]/a[@class="tag"]/text()',
+		str(custom_field_author["_id"]) 	: './/small[@class="author"]/text()',
+		str(custom_field_abstract["_id"])	: './span[@class="text"]/text()',
 		# }
 
 	}
@@ -57,6 +58,7 @@ def create_default_spider( coll_model, coll_spiders ):
 			user		= "admin"
 	)
 	contributor = contributor_object.full_config_as_dict()
-	
+	pprint(contributor)
+
 	# insert new spider to db
 	coll_spiders.insert_one(contributor)

@@ -223,7 +223,7 @@ def create_datamodel_fields( logger, coll_model, fields_list, field_class ) :
 				k : v for k,v in field.iteritems() if k != "field_name" 
 				} 
 		}, 
-		upsert=True  # do not upsert otherwise new fields are created
+		upsert=True  # do not upsert otherwise if yo don't want new fields to be created
 		) 
 		for field in fields_ 
 	]
@@ -321,6 +321,8 @@ class Application(tornado.web.Application):
 				create_default_spider( self.coll_model, self.coll_spiders ) 
 			except : 
 				app_log.error("enable to create a default spider...")
+
+
 
 		### reset spiders scrape_log.is_running
 		reset_is_running_on_all_spider( self.coll_spiders )
