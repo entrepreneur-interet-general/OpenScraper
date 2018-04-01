@@ -4,8 +4,8 @@
 config.py
 */config.py
 app_scrapnado/config/settings.py
-# coral/app/backend/config_mail_recaptcha.py 
-# coral/app/backend/config.py 
+# app_scrapnado/config/config_mail_recaptcha.py 
+# app_scrapnado/config/config.py 
 
 config.cfg
 */config.cfg

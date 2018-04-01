@@ -53,7 +53,9 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 
 -------
 
-## INSTALLATION WALKTHROUGH
+## INSTALLATION WALKTHROUGH 
+
+### _LOCALLY_
 
 1. **clone or [download](https://github.com/entrepreneur-interet-general/OpenScraper/archive/master.zip) the repo**
 1. **[install MongoDB](https://docs.mongodb.com/manual/installation/) locally** or get the URI of the MongoDB you're using
@@ -75,6 +77,15 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 1. **create/update your spiders** at `localhost:8000/contributors`
 
 1. **run the test spider in the browser** by clicking on the test spider at  `localhost:8000/contributors`
+
+
+### _PRODUCTION_
+
+1. **get a server** - check digital ocean, OVH, ...
+1. optionnal : get a domain name : check OVH, namecheap, godaddy.... 
+1. **follow (most of) these [instructions](https://github.com/entrepreneur-interet-general/tutos-2018/wiki/Admin-Sys)** 
+1. pray for all that to work... 
+
 
 ------
 
@@ -109,12 +120,14 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 1. DONE - make Tornado and a basic scrapy spider work together (non-blocking)
 1. DONE - make a nice front in Bulma 
 1. add API points for JSON feeds
+1. deploy a demo at [http://www.cis-openscraper.com/](http://www.cis-openscraper.com/)
 1. ... nicer front in vue.js
+1. integrate JWT and hash private infos for users and API
+1. add an "exposrt csv" button and function to download the dataset
 
 
 #### Currently : 
-- currently at steps /10
-- working on several generic spiders : pure html websites working quite well
+- currently at step(s) /10 and /11
 - working on the API points
 - ...
 
@@ -122,6 +135,7 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 - must add logic to masterspider to request APIs
 - must migrate/copy data to a Elastic search (not only MongoDB) 
 - must add a feature to use Selenium inside a spider if needed (ajax or .click function)
+- containerize the app for simpler deployment (locally or in production)
 - ...
 
 
@@ -133,7 +147,7 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 
 - the [SocialConnect](https://entrepreneur-interet-general.etalab.gouv.fr/defi/2017/09/26/socialconnect/) project, aka "Carrefour des Innovations Sociales"
 - the [EIG](https://entrepreneur-interet-general.etalab.gouv.fr/) program by [Etalab](https://www.etalab.gouv.fr/)
-- [CGET](http://www.cget.gouv.fr/)
+- the [CGET](http://www.cget.gouv.fr/)
 
 #### Contacts :
 
@@ -143,28 +157,42 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 
 ## SCREENSHOTS (development)
 
+<h4 align=center>index<br> </h4>
+
 ![alt text](./screenshots/openscraper_v0.1_beta-index.png "index")
 
 -------
+
+<h4 align=center>edit your datamodel <br>(only for admin and staff of openscraper)<br> </h4>
 
 ![alt text](./screenshots/openscraper_v0.1_beta-edit_datamodel.png "edit datamodel")
 
 -------
 
+<h4 align=center>add a field to your datamodel <br>(only for admin and staff of openscraper)<br> </h4>
+
 ![alt text](./screenshots/openscraper_v0.1_beta-add_datamodel.png "edit datamodel")
 
 -------
+
+<h4 align=center>list of websites you want to crawl <br>(for admin, staff and users of openscraper)<br></h4>
 
 ![alt text](./screenshots/openscraper_v0.1_beta-list_scrapers.png "list scrapers")
 
 -------
 
-![alt text](./screenshots/openscraper_v0.1_beta-edit_scrapers.png "list scrapers")
+<h4 align=center>add a new website to scrap <br>(for admin, staff and users of openscraper)<br></h4>
+
+![alt text](./screenshots/openscraper_v0.1_beta-edit_scrapers.png "edit scrapers")
 
 -------
+
+<h4 align=center>the resulting dataset <br>(data shown depends on the user's auth level : admin, staff, user, visitor)<br></h4>
 
 ![alt text](./screenshots/openscraper_v0.1_beta-list_data.png "data")
 
 -------
+
+<h4 align=center>overview of the API response <br>(data shown depends on your token)<br></h4>
 
 ![alt text](./screenshots/openscraper_v0.1_beta-api_query_01.png "api search")
