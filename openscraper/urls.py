@@ -69,7 +69,6 @@ urls = [
 
 
 
-	# TO DO ...
 
 
 	### API routes
@@ -80,6 +79,8 @@ urls = [
 	# (r"/api/(?P<project>.*?)", 		PageNotFoundHandler),
 
 
+	# TO DO ...
+	(r"/(ajax)$", 	AjaxHandler),
 
 
 	### error route : 404

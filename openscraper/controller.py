@@ -1154,13 +1154,16 @@ class DataScrapedHandler(BaseHandler):
 
 		### retrieve all spiders from db to make correspondances spider_id --> spider_name
 		spiders_list = list( self.application.coll_spiders.find( {}, {"infos" : 1 } ) )
-		app_log.info("DataScrapedHandler.get / spiders_list[0] :")
-		pprint.pprint (spiders_list[0])
-		print "..."
+		spiders_dict = {}
+		
+		if len(spiders_list) > 0 :
+			app_log.info("DataScrapedHandler.get / spiders_list[0] :")
+			pprint.pprint (spiders_list[0])
+			print "..."
 
-		# make a dict from spiders_list to make correspondances spider_id --> spider_name
-		spiders_dict = { str(s["_id"]) : s["infos"]["name"] for s in spiders_list }
-		app_log.info("DataScrapedHandler.get / spiders_dict :\n %s ", pformat(spiders_dict) )  
+			# make a dict from spiders_list to make correspondances spider_id --> spider_name
+			spiders_dict = { str(s["_id"]) : s["infos"]["name"] for s in spiders_list }
+			app_log.info("DataScrapedHandler.get / spiders_dict :\n %s ", pformat(spiders_dict) )  
 
 
 
@@ -1284,6 +1287,35 @@ class DataScrapedHandler(BaseHandler):
 # 	def get (self, spidername=None):
 # 		self.redirect("/404")
 
+
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### AJAX handler ############################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+
+# cf : https://stackoverflow.com/questions/23984586/reply-to-ajax-request-using-tornado
+# cf : https://gist.github.com/mminer/5464753
+
+# cf : https://github.com/richstoner/TornadoAJAXSample/blob/master/templates/index.html
+# cf : https://github.com/richstoner/TornadoAJAXSample/blob/master/app.py
+
+class AjaxHandler(BaseHandler):
+	"""Simple, ajax handler"""
+	
+	def get(self, *args, **kwargs):
+		"""get unlikely to be used for ajax"""
+		self.write("Not allowed")
+		self.finish()
+
+	def post(self, *args):
+		"""Example handle ajax post"""
+		dic = tornado.escape.json_decode(self.request.body)
+		app_log.info("ajax / dic : \n %s " , pformat(dic) )
+
+		# useful code goes here
+		
+		self.write(json.dumps({'status': 'ok', 'sent': dic}))
+		self.finish()
 
 
 

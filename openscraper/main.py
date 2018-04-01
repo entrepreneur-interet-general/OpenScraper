@@ -35,6 +35,7 @@ from tornado.options import define, options
 # from tornado.concurrent import Future
 
 
+
 ### import logger
 # cf : http://www.patricksoftwareblog.com/python-logging-tutorial/
 # cf : https://gitlab.com/patkennedy79/python_logging/blob/master/python_logging/__init__.py
@@ -54,7 +55,6 @@ from config.settings_corefields import *
 from config.settings_example import * 
 # from config.settings import * 
 
-define( "port", default=APP_PORT, help="run on the given port", type=int )
 
 
 
@@ -74,6 +74,15 @@ from controller import *
 ### snippet DB
 # update/upsert a field for all documents in a collection
 # cf : db.getCollection('contributors').update({}, {$set:{"infos.added_by" : "admin"} }, {upsert:true, multi:true})
+
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### DEFAULT VALUES AT MAIN LEVEL ############################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+
+
+# define default port to listen to
+define( "port", default=APP_PORT, help="run on the given port", type=int )
 
 
 
@@ -341,7 +350,7 @@ def main():
 	print "\n\n{}".format("+ + + "*20)
 	print "\n\n>>> MAIN / RE-STARTING SERVER ... >>>\n"
 
-	# printing current ip adress
+	# printing current IP adress
 	import socket
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.connect(("8.8.8.8", 80))
@@ -349,18 +358,23 @@ def main():
 	print ">>> IP_ADRESS IS : ", ip_adress[0]
 	s.close()
 
+	# parse command line arguments if any port arg
+	# parser = argparse.ArgumentParser()
+	# parser.add_argument('-p', '--port', type=int, default=APP_PORT)
+	# args = parser.parse_args()
+	# print ">>> ARGS FROM COMMAND LINE : "
+	# print args
+	# print ">>> ARG.PORT FROM COMMAND LINE : ", args.port
 
-	parser = argparse.ArgumentParser()
-	parser.add_argument('-p', '--port', type=int, default=8000)
-	args = parser.parse_args()
-	print args
 
-
-	# totally optionnal
+	# read optionnal args from command line
 	tornado.options.parse_command_line()
+	pprint.pprint (options.__dict__)
 
 	# print port for reminder
-	app_log.info( ">>> starting tornado app on APP_PORT : %s ...", APP_PORT)
+	app_log.info( ">>> starting tornado / options.port    : %s ", options.port)
+	app_log.info( ">>> starting tornado / options.logging : %s ", options.logging)
+	app_log.info( ">>> starting tornado / options.help    : %s ", options.help)
 
 	# create server
 	http_server = tornado.httpserver.HTTPServer(Application())
