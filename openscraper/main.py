@@ -223,12 +223,11 @@ def create_datamodel_fields( logger, coll_model, fields_list, field_class ) :
 				k : v for k,v in field.iteritems() if k != "field_name" 
 				} 
 		}, 
-		# upsert=True  # do not upsert otherwise new fields are created
+		upsert=True  # do not upsert otherwise new fields are created
 		) 
 		for field in fields_ 
 	]
 	coll_model.bulk_write(operations)
-
 
 
 def reset_is_running_on_all_spider( coll_model ) :
@@ -293,6 +292,8 @@ class Application(tornado.web.Application):
 		self.coll_spiders.create_index([('$**', 'text')])
 		self.coll_data.create_index([('$**', 'text')])
 
+
+
 		### instantiate db.datamodel with core fields (for internal use) if no core field at all in db
 		existing_core_fields = self.coll_model.find({"field_class" : "core"})
 		app_log.warning("existing_core_fields.count() : %s", existing_core_fields.count())
@@ -307,6 +308,10 @@ class Application(tornado.web.Application):
 		if existing_custom_fields.count() == 0 : 
 			app_log.warning("no custom fields... creating default custom fields...")
 			create_datamodel_fields( app_log, self.coll_model, DATAMODEL_DEFAULT_CUSTOM_FIELDS, "custom" )
+
+
+
+
 
 		### reset spiders scrape_log.is_running
 		reset_is_running_on_all_spider( self.coll_spiders )
