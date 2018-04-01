@@ -310,8 +310,17 @@ class Application(tornado.web.Application):
 			create_datamodel_fields( app_log, self.coll_model, DATAMODEL_DEFAULT_CUSTOM_FIELDS, "custom" )
 
 
-
-
+		### instanciate default spider if no custom field at all in db
+		existing_spiders = self.coll_spiders.find({})
+		app_log.warning("existing_spiders.count() : %s", existing_spiders.count())
+		if existing_spiders.count() == 0 : 
+			app_log.warning("no spiders neither custom fields... creating one default spider...")
+			
+			from scraper.default_test_spider import create_default_spider
+			try : 
+				create_default_spider( self.coll_model, self.coll_spiders ) 
+			except : 
+				app_log.error("enable to create a default spider...")
 
 		### reset spiders scrape_log.is_running
 		reset_is_running_on_all_spider( self.coll_spiders )

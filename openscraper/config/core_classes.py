@@ -85,7 +85,8 @@ class SpiderConfig :
 			spidername = ""
 
 			### form exists --> clean it
-			if form!=None : 			
+			if form!=None :
+				
 				# del _id and _xsrf
 				del form['_id']
 				del form['_xsrf']

@@ -681,8 +681,10 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 		# get data 
 		contributors, is_data, page_n_max = self.get_data_from_query( query_contrib, coll_name="contributors", sort_by="infos.name")
-		app_log.info("ContributorsHandler.get / contributors[0] : \n %s " , pformat(contributors[0]) )
-		print '.....\n'
+		
+		if len(contributors) != 0 : 
+			app_log.info("ContributorsHandler.get / contributors[0] : \n %s " , pformat(contributors[0]) )
+			print '.....\n'
 
 		# count docs by spider_id
 		count_docs_by_spiders = self.count_docs_by_field(coll_name="data", field_name="spider_id")
