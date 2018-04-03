@@ -722,7 +722,7 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 			is_user_connected 		= self.is_user_connected,
 			user_email				= self.user_email,
 			user_auth_level			= self.user_auth_level,
-			user_auth_level_dict = self.user_auth_level_dict,
+			user_auth_level_dict 	= self.user_auth_level_dict,
 
 		)
 
@@ -1330,6 +1330,7 @@ class FormHandler(BaseHandler) :
 	test with basic Bulma Form
 	"""
 	@print_separate(APP_DEBUG)
+	@check_user_permissions
 	def get(self):
 
 		print "\FormHandler.get... "
@@ -1344,7 +1345,13 @@ class FormHandler(BaseHandler) :
 			"form_instance.html",
 			page_title 			= app_main_texts["main_title"],
 			form 				= form,
-			is_user_connected 	= self.is_user_connected
+
+			user					= self.current_user,
+			is_user_connected 		= self.is_user_connected,
+			user_email				= self.user_email,
+			user_auth_level			= self.user_auth_level,
+			user_auth_level_dict 	= self.user_auth_level_dict,
+
 		)
 
 	@print_separate(APP_DEBUG)
@@ -1363,16 +1370,20 @@ class TestBulmaHandler(BaseHandler) :
 	test with basic Bulma extensions
 	"""
 	@print_separate(APP_DEBUG)
+	@check_user_permissions
 	def get(self):
 
 		print
 		app_log.info("TestBulmaHandler.get... ")
 
-
 		self.render(
 			"test_bulma_extensions.html",
 			page_title = app_main_texts["main_title"],
-			is_user_connected 		= self.is_user_connected
+			user					= self.current_user,
+			is_user_connected 		= self.is_user_connected,
+			user_email				= self.user_email,
+			user_auth_level			= self.user_auth_level,
+			user_auth_level_dict 	= self.user_auth_level_dict,
 		)
 
 
