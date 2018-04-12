@@ -1,4 +1,10 @@
 
+
+
+""" APP SECRET KEY """
+SECRET_KEY			= "app_very_secret_key"
+WTF_CSRF_SECRET_KEY = "a_super_wtf_secret_key" ### needs to be the same than cis_front ?
+
 ### settings for openscrapper app
 APP_PORT = 8000
 APP_DEBUG = True 

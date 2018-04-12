@@ -216,7 +216,15 @@ class BaseHandler(tornado.web.RequestHandler):
 		self.user_email				= "visitor.email@openscraper.com"
 
 
+	def set_default_headers(self, *args, **kwargs):
 
+		app_log.info("setting headers")
+		
+		self.set_header("Access-Control-Allow-Origin", "*")
+		self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+		self.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+	
+	
 	### global functions for all handlers
 
 	def catch_error_message (self):
@@ -665,6 +673,10 @@ class BaseHandler(tornado.web.RequestHandler):
 		app_log.info("... get_authorized_datamodel_fields / allowed_fields_list   : \n %s", allowed_fields_list )
 
 		return allowed_fields_list, allowed_custom_fields, allowed_core_fields
+
+	### TO DO 
+	def get_all_tag_fields_distincts(self) :
+		pass
 
 	def filter_slug(self, slug, slug_class=None, query_from="app") : 
 		""" filter args from slug """

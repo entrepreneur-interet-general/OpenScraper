@@ -52,9 +52,10 @@ from 	tornado.log import enable_pretty_logging, LogFormatter, access_log, app_lo
 
 ### import app settings from .config.settings (keep that file confidential)
 from config.settings_corefields import * 
-from config.settings_example import * 
+# from config.settings_example import * 
 # from config.settings import * 
 
+from config.settings_secret import *
 
 
 
@@ -264,15 +265,24 @@ class Application(tornado.web.Application):
 		- set and init Tornado app 
 	"""
 	
-	def __init__(self):  
+	def __init__(self, mode="default"):  
 
 
 		timestamp = time.time()
 
-		### setup loggers with custom format
-		setup_loggers()
+		# ### setup loggers with custom format
+		# setup_loggers()
 
 		app_log.info('>>> Application.__init__ ... ')
+
+		### check if default or production mode to load secret keys and app settings
+		if mode=="production" : 
+			try : 
+				from config.settings_secret import *
+			except :
+				pass
+		app_log.info(">>> WTF_CSRF_SECRET_KEY : %s ", WTF_CSRF_SECRET_KEY)
+
 
 		### connect to MongoDB with variables from config.settings.py
 		client = MongoClient(
@@ -346,7 +356,7 @@ class Application(tornado.web.Application):
 			autoreload 		= APP_AUTORELOAD,
 
 			debug 			= APP_DEBUG ,
-			cookie_secret 	= COOKIE_SECRET , ### example / store real key in ignored config.py
+			cookie_secret 	= WTF_CSRF_SECRET_KEY , ### example / store real key in ignored config.settings_secret.py
 			xsrf_cookies  	= XSRF_ENABLED
 		)
 
@@ -366,26 +376,29 @@ def main():
 	print "\n\n{}".format("+ + + "*20)
 	print "\n\n>>> MAIN / RE-STARTING SERVER ... >>>\n"
 
+	### setup loggers with custom format
+	setup_loggers()
+
 	# printing current IP adress
 	import socket
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.connect(("8.8.8.8", 80))
 	ip_adress = s.getsockname()
-	print ">>> IP_ADRESS IS : ", ip_adress[0]
+	app_log.info(">>> IP_ADRESS IS : %s ", ip_adress[0] )
 	s.close()
 
 	# parse command line arguments if any port arg
-	# parser = argparse.ArgumentParser()
-	# parser.add_argument('-p', '--port', type=int, default=APP_PORT)
-	# args = parser.parse_args()
-	# print ">>> ARGS FROM COMMAND LINE : "
-	# print args
-	# print ">>> ARG.PORT FROM COMMAND LINE : ", args.port
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-p', '--port', type=int, default=APP_PORT)
+	parser.add_argument('-m', '--mode', type=str, default="default")
+	args = parser.parse_args()
 
+	app_log.info(">>> ARG.PORT FROM COMMAND LINE : %s ", args.port)
+	app_log.info(">>> ARG.MODE FROM COMMAND LINE : %s ", args.mode)
 
 	# read optionnal args from command line
-	tornado.options.parse_command_line()
-	pprint.pprint (options.__dict__)
+	# tornado.options.parse_command_line()
+	app_log.info(">>> options.__dict__ : %s", pformat(options.__dict__))
 
 	# print port for reminder
 	app_log.info( ">>> starting tornado / options.port    : %s ", options.port)
@@ -393,7 +406,7 @@ def main():
 	app_log.info( ">>> starting tornado / options.help    : %s ", options.help)
 
 	# create server
-	http_server = tornado.httpserver.HTTPServer(Application())
+	http_server = tornado.httpserver.HTTPServer(Application( mode=args.mode ))
 	app_log.info( ">>> http_server ready ...")
 
 	# for local dev --> debug
