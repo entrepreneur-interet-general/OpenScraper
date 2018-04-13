@@ -1,11 +1,19 @@
 # Created by https://www.gitignore.io/api/osx,python,komodoedit
 
+# cf : https://www.atlassian.com/git/tutorials/saving-changes/gitignore 
+
+### remove file from repo previously not in gitignore
+# git rm -r --cached .
+# git add .
+# git commit -m "Removing all files in .gitignore"
+
+
 ### CONFIG FILES
 config.py
 */config.py
-app_scrapnado/config/settings.py
-# app_scrapnado/config/config_mail_recaptcha.py 
-# app_scrapnado/config/config.py 
+**/settings.py
+# openscraper/config/config_mail_recaptcha.py 
+# openscraper/config/config.py 
 **/settings_secret.py
 
 config.cfg
