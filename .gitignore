@@ -6,7 +6,7 @@ config.py
 app_scrapnado/config/settings.py
 # app_scrapnado/config/config_mail_recaptcha.py 
 # app_scrapnado/config/config.py 
-**/settings_secrets.py
+**/settings_secret.py
 
 config.cfg
 */config.cfg
