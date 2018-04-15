@@ -680,7 +680,7 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 		app_log.info("ContributorsHandler.get / query_contrib : \n %s ", pformat(query_contrib) )
 
 		# get data 
-		contributors, is_data, page_n_max = self.get_data_from_query( query_contrib, coll_name="contributors", sort_by="infos.name")
+		contributors, is_data, page_n_max, count_results_tot = self.get_data_from_query( query_contrib, coll_name="contributors", sort_by="infos.name")
 		
 		if len(contributors) != 0 : 
 			app_log.info("ContributorsHandler.get / contributors[0] : \n %s " , pformat(contributors[0]) )

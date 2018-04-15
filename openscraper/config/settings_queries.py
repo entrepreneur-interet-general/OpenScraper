@@ -71,7 +71,8 @@ QUERY_SPIDER_BY_DEFAULT = {
 	"spider_id"			: ["all"], 	# spider_id for contributor(s)
 	"is_working"		: "any",	# 
 	"all_results"		: False,		# to overide results_per_page
-	"sort_by"			: None
+	"sort_by"			: None,
+	"shuffle_seed"		: None,
 }
 QUERIES_SPIDER_ALLOWED_UNIQUE = [
 	"page_n", 
