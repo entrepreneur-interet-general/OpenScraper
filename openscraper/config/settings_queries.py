@@ -35,7 +35,8 @@ QUERY_DATA_BY_DEFAULT = {
 	"open_level"		: "opendata",	# fields of data to be shown -> "all" == "opendata" + "commons" + "private"
 	"all_results"		: False,		# to overide results_per_page
 	"added_by"			: None,			# list of user having added the data 
-	"sort_by"			: None
+	"sort_by"			: None,
+	"shuffle_seed"		: None,			# seed to randomize list order
 }
 QUERIES_DATA_ALLOWED_UNIQUE = [
 	"page_n", 
@@ -44,13 +45,14 @@ QUERIES_DATA_ALLOWED_UNIQUE = [
 	"is_complete", 
 	"open_level",
 	"all_results",
-	"sort_by"
+	"sort_by",
+	"shuffle_seed",
 ]
 QUERIES_DATA_ALLOWED_INTEGERS  	= [
-	"page_n", "results_per_page"
+	"page_n", "results_per_page", "shuffle_seed"
 ]
 QUERIES_DATA_ALLOWED_POSITIVES 	= [
-	"page_n", "results_per_page"
+	"page_n", "results_per_page", "shuffle_seed"
 ]
 QUERIES_DATA_ALLOWED_BOOLEAN = [
 	"is_complete", "all_results"

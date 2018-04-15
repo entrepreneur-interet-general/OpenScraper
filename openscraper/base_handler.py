@@ -5,6 +5,7 @@ import 	pprint
 from 	pprint import pprint, pformat
 import 	json
 import 	math
+import 	random
 import	urllib
 from 	copy import deepcopy
 
@@ -781,6 +782,7 @@ class BaseHandler(tornado.web.RequestHandler):
 							data_model_core_dict_names 	 = [],
 
 							sort_by				= None, 
+							
 							) :
 		""" get items from db """
 
@@ -838,9 +840,17 @@ class BaseHandler(tornado.web.RequestHandler):
 		# sort results
 		if sort_by != None :
 			cursor.sort( sort_by , pymongo.ASCENDING )
-
-		# shuffle results
 		
+
+		cursor_list = list(cursor)
+
+		# shuffle results if shuffle_seed != None
+		# app_log.warning("cursor type : %s", type(cursor))
+		shuffle_seed = query_obj["shuffle_seed"]
+		if shuffle_seed != None :
+			app_log.warning("shuffle_seed : %s ", shuffle_seed )
+			random.seed(shuffle_seed)
+			random.shuffle(cursor_list)
 
 		# retrieve docs
 		limit_results 	= query_obj["results_per_page"]
@@ -850,7 +860,8 @@ class BaseHandler(tornado.web.RequestHandler):
 		if query_from == "api"  : 
 			# page_n 			= query_obj["page_n"]
 			page_n_max   	= None
-			docs_from_db 	= list(cursor[ : limit_results ])
+			# docs_from_db 	= list(cursor[ : limit_results ])
+			docs_from_db 	= cursor_list[ : limit_results ]
 		# if query from "app" limit according to pagination
 		else : 
 			### compute max_pages, start index, stop index
@@ -875,7 +886,8 @@ class BaseHandler(tornado.web.RequestHandler):
 				results_i_stop	= ( results_i_start + limit_results + 1 ) - 1
 				app_log.info("... get_data_from_query / results_i_start : %s ", results_i_start )
 				app_log.info("... get_data_from_query / results_i_stop  : %s ", results_i_stop )
-				docs_from_db 	= list(cursor[ results_i_start : results_i_stop ])
+				# docs_from_db 	= list(cursor[ results_i_start : results_i_stop ])
+				docs_from_db 	= cursor_list[ results_i_start : results_i_stop ]
 			
 			app_log.info("... get_data_from_query / docs_from_db : \n ....")
 			# app_log.info("%s", pformat(docs_from_db[0]) )
