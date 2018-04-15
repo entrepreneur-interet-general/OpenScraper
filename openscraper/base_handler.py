@@ -601,6 +601,21 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		return count_by_field_dict
 
+	def get_spiders_infos(self, limit_fields={"infos" : 1}, as_dict=False ) : 
+		""" return all spiders infos as list"""
+		
+		spiders_infos = list(self.application.coll_spiders.find( {}, limit_fields ))
+		
+		for spider in spiders_infos :
+			spider["_id"] = str(spider["_id"])
+
+		app_log.info("... spiders_list[0] : \n %s", pformat(spiders_infos[0]) )
+		
+		if as_dict == True :
+			spiders_infos = { spider["_id"] : spider["infos"] for spider in spiders_infos }
+
+		return spiders_infos
+
 	def get_datamodel_fields(self, query=None) :
 		"""return fields from query as list"""
 		

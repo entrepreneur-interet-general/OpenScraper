@@ -87,6 +87,9 @@ class APIrestHandler(BaseHandler):
 		data_model_core_list		 	= dm_set["data_model_core_list"]
 		data_model_core_dict_names		= dm_set["data_model_core_dict_names"]
 
+		### get spiders_list
+		spiders_dict = self.get_spiders_infos(as_dict=True)
+		app_log.info("••• APIrestHandler.get / spiders_dict : \n %s ", spiders_dict ) 
 
 		### filter results depending on field's opendata level
 		# get fields allowed
@@ -148,8 +151,11 @@ class APIrestHandler(BaseHandler):
 												"field_open" : f["field_open"],
 												"field_type" : f["field_type"]
 											} for f in data_model_custom_list if f["field_open"] in OPEN_LEVEL_DICT[open_level]
-										  ]
+										  ],
 			},
+
+			# infos about spiders
+			"spiders_dict"				: spiders_dict,
 
 			# data retrieved
 			"query_results" 	 		: data
