@@ -30,7 +30,7 @@ class APIrestHandler(BaseHandler):
 		print 
 		app_log.info("••• APIrestHandler.get ...\n")
 
-		self.site_section = "api"
+		self.site_section = "api_paginated"
 
 		# get current page - optionnal
 		current_page = self.get_current_uri_without_error_slug()
@@ -58,7 +58,7 @@ class APIrestHandler(BaseHandler):
 		app_log.info("••• APIrestHandler.get / slug_ : \n %s", pformat(slug_) )
 
 		# filter slug
-		query_data = self.filter_slug( slug_, slug_class="data", query_from="api" )
+		query_data = self.filter_slug( slug_, slug_class="data", query_from=self.site_section )
 		app_log.info("••• APIrestHandler.get / query_data : \n %s ", pformat(query_data) )
 
 
@@ -94,7 +94,7 @@ class APIrestHandler(BaseHandler):
 		app_log.info("••• APIrestHandler.get / allowed_fields_list : \n %s ", allowed_fields_list ) 
 
 		# get data 
-		data, is_data, page_n_max = self.get_data_from_query( 	query_data, 
+		data, is_data, page_n_max, count_results_tot = self.get_data_from_query( 	query_data, 
 																coll_name					 = "data", 
 																query_from					 = self.site_section, 
 																
@@ -132,10 +132,16 @@ class APIrestHandler(BaseHandler):
 			# header of the json with infos 
 			"query_log" : {
 				"_description"			: "synthesis of the query made by the user",
+
 				"auth_level" 			: open_level ,
 				"query"					: query_data ,
 				"uri"					: self.request.uri ,
+
+				# "page_n"				: count_results,
+				"page_n_max"			: page_n_max,
 				"count_results"			: count_results,
+				"count_results_tot"		: count_results_tot,
+
 				"fields_open_level" 	: [ 
 											{ 	
 												"field_name" : f["field_name"], 

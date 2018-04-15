@@ -1220,7 +1220,7 @@ class DataScrapedHandler(BaseHandler):
 
 
 		### get items from db
-		items_from_db, is_data, page_n_max = self.get_data_from_query( 	query_data, 
+		items_from_db, is_data, page_n_max, count_results_tot = self.get_data_from_query( 	query_data, 
 																		coll_name					 = "data", 
 																		query_from					 = self.site_section, 
 																

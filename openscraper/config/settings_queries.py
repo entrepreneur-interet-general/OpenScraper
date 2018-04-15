@@ -7,7 +7,7 @@
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 QUERIES_ARGS_TO_IGNORE_IF_API = [
-	"page_n",
+	# "page_n",
 	"open_level"
 ]
 QUERIES_ARGS_ACCEPTED_AS_FIRST_QUERY_TERMS = [
@@ -16,7 +16,7 @@ QUERIES_ARGS_ACCEPTED_AS_FIRST_QUERY_TERMS = [
 	"search_in",
 	"open_level"
 ]
-QUERIES_MAX_RESULTS_IF_API = 50
+QUERIES_MAX_RESULTS_IF_API = 100
 
 
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###

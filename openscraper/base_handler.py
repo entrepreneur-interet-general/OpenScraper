@@ -832,44 +832,51 @@ class BaseHandler(tornado.web.RequestHandler):
 		cursor 	= coll.find( query, specific_fields )
 
 		# count results
-		results_count	= cursor.count()
+		count_results_tot	= cursor.count()
+		app_log.info("... get_data_from_query / count_results_tot : %s ", count_results_tot )
 
 		# sort results
 		if sort_by != None :
 			cursor.sort( sort_by , pymongo.ASCENDING )
 
+		# shuffle results
+		
+
 		# retrieve docs
 		limit_results 	= query_obj["results_per_page"]
 
-		# if query from "api" ignore pagination
-		if query_from == "api" : 
-			page_n_max   = None
-			docs_from_db = list(cursor[ : limit_results ])
+		# if query from "api" ignore pagination --> 
+		# script doesn't do that if query_from == "app" or == "api_paginated"
+		if query_from == "api"  : 
+			# page_n 			= query_obj["page_n"]
+			page_n_max   	= None
+			docs_from_db 	= list(cursor[ : limit_results ])
 		# if query from "app" limit according to pagination
 		else : 
 			### compute max_pages, start index, stop index
 			page_n 			= query_obj["page_n"]
-			page_n_max 		= self.compute_count_and_page_n_max(results_count, limit_results)
+			page_n_max 		= self.compute_count_and_page_n_max(count_results_tot, limit_results)
 
-			app_log.info("... get_data_from_query / results_cout : %s", results_count ) 
+			app_log.info("... get_data_from_query / results_cout : %s", count_results_tot ) 
 			app_log.info("... get_data_from_query / page_n_max   : %s ", page_n_max ) 
 			app_log.info("... get_data_from_query / page_n       : %s ", page_n )
 
 			### select items to retrieve from list and indices start and stop
 			# all results case
-			if all_results==True : 		
-				docs_from_db = list(cursor)
+			# if all_results==True : 		
+			# 	docs_from_db = list(cursor)
+			# else : 
+			# page queried is higher than page_n_max or inferior to 1
+			if page_n > page_n_max or page_n < 1 :
+				docs_from_db = []	
+			# slice cursor : get documents from start index to stop index
 			else : 
-				# page queried is higher than page_n_max or inferior to 1
-				if page_n > page_n_max or page_n < 1 :
-					docs_from_db = []	
-				# slice cursor : get documents from start index to stop index
-				else : 
-					results_i_start	= ( page_n-1 ) * limit_results 
-					results_i_stop	= ( results_i_start + limit_results + 1 ) - 1
-					app_log.info("... get_data_from_query / results_i_start : %s ", results_i_start )
-					app_log.info("... get_data_from_query / results_i_stop  : %s ", results_i_stop )
-					docs_from_db 	= list(cursor[ results_i_start : results_i_stop ])
+				results_i_start	= ( page_n-1 ) * limit_results 
+				results_i_stop	= ( results_i_start + limit_results + 1 ) - 1
+				app_log.info("... get_data_from_query / results_i_start : %s ", results_i_start )
+				app_log.info("... get_data_from_query / results_i_stop  : %s ", results_i_stop )
+				docs_from_db 	= list(cursor[ results_i_start : results_i_stop ])
+			
 			app_log.info("... get_data_from_query / docs_from_db : \n ....")
 			# app_log.info("%s", pformat(docs_from_db[0]) )
 
@@ -880,7 +887,7 @@ class BaseHandler(tornado.web.RequestHandler):
 			is_data = True
 		app_log.info("... get_data_from_query / is_data : %s \n ", is_data)
 
-		return docs_from_db, is_data, page_n_max
+		return docs_from_db, is_data, page_n_max, count_results_tot
 		# raise gen.Return([ docs_from_db, is_data, page_n_max ] )
 	
 	

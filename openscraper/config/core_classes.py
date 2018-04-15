@@ -231,7 +231,7 @@ class QueryFromSlug :
 			self.default_bool 		= QUERIES_CRAWL_ALLOWED_BOOLEAN
 
 		# clean default_query if query is coming from api 
-		if query_from == "api" :
+		if query_from in ["api", "api_paginated"] :
 			print QUERIES_ARGS_TO_IGNORE_IF_API
 			self.default_query = { k : v for k,v in self.default_query.iteritems() if k not in QUERIES_ARGS_TO_IGNORE_IF_API }
 			self.default_query["results_per_page"] = QUERIES_MAX_RESULTS_IF_API
