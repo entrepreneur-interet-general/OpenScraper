@@ -23,6 +23,10 @@ config.cfg
 # coral/app/config.cfg
 # coral/app/backend/config.cfg
 
+### BACKUP FILES
+openscraper/_backups_collections/*.json
+
+
 ### BOWER
 bower_components
 

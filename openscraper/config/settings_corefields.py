@@ -83,7 +83,7 @@ DATAMODEL_FIELDS_TYPES = [
 	"date", 
 	"tags", 
 	"price",
-	"list"
+	"list"		# note : not sure about this one ... 
 ]
 
 # field_keep options in form only
@@ -93,7 +93,7 @@ DATAMODEL_FIELD_KEEP_VARS = [
 DATAMODEL_FIELD_OPEN_VARS = [
 	"opendata", 	# pure open data - all publics can access
 	"commons", 		# data with specific licence - i.e. all users of the platform
-	"collective", 	# data only visible by the collectif - i.e. all users of the platform
+	"collective", 	# data only visible by the collective - i.e. not all users of the platform
 	"private", 		# personal data - only accessible by logged specific user
 ]
 
@@ -162,15 +162,17 @@ CONTRIBUTOR_EDIT_FIELDS_FLOAT = [
 ### to display form for edit contributor
 CONTRIBUTOR_EDIT_FIELDS = {
 
-	### fields displayed in edit contributor page
+	### fields displayed in "edit contributor" page
 	### "needed" = to be displayed
-	### "optional" = optional (in drawer)
+	### "optional" = optional (in drawer) - TO DO 
 
 	# custom infos 
 	"infos" : {
 		"needed" : [
 			"name", 
+			"licence",			# licence of all data scrapped by this spider
 			"page_url",
+			"logo_url",
 			# "added_by",
 		],
 		"optional" : [
@@ -214,9 +216,12 @@ CONTRIBUTOR_CORE_FIELDS = {
 	
 	# scraper - custom infos 
 	"infos" : {
+
 		"name" 			: "" , 	# real name contributor
 		"page_url" 		: "" ,	# domain to crawl
-		"contact" 		: "",	# why did I put this field ?
+		"licence"	 	: "",	# licence of all data scrapped by this spider
+		"logo_url"		: "" ,	# url for contributor's logo
+		"contact" 		: "" ,	# why did I put this field ?
 		"notes" 		: " ",	# text area to store notes on the spider
 		# "added_by" 	: "",
 		# "modified_by" : "",
@@ -225,7 +230,9 @@ CONTRIBUTOR_CORE_FIELDS = {
 
 	# scraper - custom for scraping basics
 	 "scraper_config" : {
+
 		"spidername" 		: "",		# automatically generated
+
 		"start_urls" 		: [],		# list of urls to parse
 		
 		"item_list_xpath"	: "",		# xpath of items list on a page

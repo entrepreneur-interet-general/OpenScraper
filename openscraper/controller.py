@@ -91,18 +91,19 @@ class PageNotFoundHandler(BaseHandler):
 
 		self.set_status(404)
 		self.render("404.html",
-					page_title  		= app_main_texts["main_title"],
-					
-					site_section 		= self.site_section,
-					
-					error_msg 			= self.error_msg,
-					
-					user				= self.current_user,
-					is_user_connected 	= self.is_user_connected,
-					user_email			= self.user_email,
-					user_auth_level		= self.user_auth_level,
-					user_auth_level_dict = self.user_auth_level_dict
-			)
+
+			page_title  		= app_main_texts["main_title"],
+			
+			site_section 		= self.site_section,
+			
+			error_msg 			= self.error_msg,
+			
+			user				= self.current_user,
+			is_user_connected 	= self.is_user_connected,
+			user_email			= self.user_email,
+			user_auth_level		= self.user_auth_level,
+			user_auth_level_dict = self.user_auth_level_dict
+		)
 
 
 
@@ -134,8 +135,8 @@ class WelcomeHandler(BaseHandler):
 					) 
 		app_log.info("WelcomeHandler.get / counts : \n  %s" , pformat(counts) )
 
-		self.render(
-			"index.html",
+		self.render( "index.html",
+
 			page_title  		= app_main_texts["main_title"],
 			site_section 		= self.site_section,
 			counts 				= counts,
@@ -704,8 +705,8 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 			app_log.info("ContributorsHandler / pagination_dict : \n %s ", pformat(pagination_dict) )
 			# print pagination_dict
 
-		self.render(
-			"contributors_view.html",
+		self.render("contributors_view.html",
+			
 			page_title  			= app_main_texts["main_title"],
 			site_section			= self.site_section, 
 			current_page			= current_page,
@@ -790,6 +791,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 		### render page
 		self.render("contributor_edit.html",
+			
 			page_title 				= app_main_texts["main_title"],
 			site_section			= self.site_section,
 			
@@ -933,8 +935,8 @@ class ContributorDeleteHandler(BaseHandler) :
 			try : 
 				contributor	= self.application.coll_spiders.find_one({"_id": spider_oid })
 			
-				self.render(
-					"contributor_delete.html",
+				self.render( "contributor_delete.html",
+					
 					page_title  			= app_main_texts["main_title"],
 					# site_section			= self.site_section, 
 
@@ -948,7 +950,7 @@ class ContributorDeleteHandler(BaseHandler) :
 					user_email			= self.user_email,
 					user_auth_level		= self.user_auth_level,
 					user_auth_level_dict = self.user_auth_level_dict,
-					)
+				)
 
 			except :
 				app_log.warning("ContributorDeleteHandler.get --- !!! spider_id -%s- not found", spider_id ) 

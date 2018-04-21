@@ -1,4 +1,4 @@
-
+# -*- encoding: utf-8 -*-
 
 
 # # """ APP SECRET KEY """
@@ -21,13 +21,12 @@ WTF_CSRF_SECRET_KEY = "a_super_wtf_secret_key"
 XSRF_ENABLED  		= True 
 
 
-### settings for MONGO_DB
+### SHARED JWT SECRET KEY : this key must be shared with openscraper and solidata
+JWT_SECRET_KEY			= "a_key_shared_with_front_and_openscraper_and_solidata"
 
-MONGODB_HOST 		= "localhost"
-# if APP_PROD == False :
-# 	MONGODB_HOST 		= "localhost"
-# elif APP_PROD == True :
-# 	MONGODB_HOST 		= "0.0.0.0"
+
+### settings for MONGO_DB
+MONGODB_HOST 			= "localhost"
 MONGODB_PORT 			= 27017
 MONGODB_DB				= "openscraper" 
 MONGODB_APP_URI			= "mongodb://{}:{}".format(MONGODB_HOST, MONGODB_PORT)

@@ -16,6 +16,9 @@ import 	datetime
 from 	uuid import uuid4
 import 	pprint
 
+from 	bson import json_util
+from	bson.json_util import dumps
+
 import argparse
 
 # BDD imports and client
@@ -254,6 +257,21 @@ def reset_is_running_on_all_spider( coll_model ) :
 	print 
 
 
+def backup_mongo_collection(coll, filepath) :
+	"""
+	dumps all documents in collection in _backups_collections 
+	"""
+
+	cursor 		= coll.find({})
+	backup_file = open(filepath, "w")
+	backup_file.write('[')
+	for document in cursor:
+		backup_file.write(json.dumps(document,indent=4, default=json_util.default))
+		backup_file.write(',')
+	backup_file.write(']')
+
+
+
 ### MAIN TORNADO APPLICATION WRAPPER
 class Application(tornado.web.Application):
 	"""
@@ -281,7 +299,8 @@ class Application(tornado.web.Application):
 				from config.settings_secret import *
 			except :
 				pass
-		app_log.info(">>> WTF_CSRF_SECRET_KEY : %s ", WTF_CSRF_SECRET_KEY)
+		app_log.info(">>> WTF_CSRF_SECRET_KEY 	: %s ", WTF_CSRF_SECRET_KEY)
+		app_log.info(">>> JWT_SECRET_KEY 		: %s ", JWT_SECRET_KEY)
 
 
 		### connect to MongoDB with variables from config.settings.py
@@ -298,9 +317,22 @@ class Application(tornado.web.Application):
 		self.coll_spiders 	= self.db[ MONGODB_COLL_CONTRIBUTORS ]
 		self.coll_data		= self.db[ MONGODB_COLL_DATASCRAPPED ]
 
+		# create default fields if missing
+		self.coll_spiders.update_many({'infos.licence'	: {"$exists" : False}}, {"$set": {'infos.licence' : "" }})
+		self.coll_spiders.update_many({'infos.logo_url'	: {"$exists" : False}}, {"$set": {'infos.logo_url' : "" }})
+
+
+
+
 		# create index for every collection needing it  
+		# cf : https://code.tutsplus.com/tutorials/full-text-search-in-mongodb--cms-24835 
 		self.coll_spiders.create_index([('$**', 'text')])
 		self.coll_data.create_index([('$**', 'text')])
+		# TO DO 
+		# then create an index for all fields in custom fields, especially tags
+		# 
+
+		app_log.info("self.coll_data.index_information() : \n %s ", pformat(self.coll_data.index_information() ) )
 
 
 
@@ -333,9 +365,20 @@ class Application(tornado.web.Application):
 				app_log.error("enable to create a default spider...")
 
 
-
 		### reset spiders scrape_log.is_running
 		reset_is_running_on_all_spider( self.coll_spiders )
+
+
+		### BACKUPS / TEMPORARY SOLUTION : backup all spiders and users collections to JSON
+		# backup all collections when restart in ./_backups_collections
+		cwd = os.getcwd()
+		app_log.info('>>> BACKUP MONGO COLLECITONS : cwd : %s', cwd )
+		reboot_datetime = datetime.now().strftime("%Y-%m-%d-h%H-m%M-s%S")
+		backup_mongo_collection(self.coll_spiders,	 cwd + "/_backups_collections/backup_coll_spiders-"+reboot_datetime +".json")
+		backup_mongo_collection(self.coll_model,	 cwd + "/_backups_collections/backup_coll_model-"+reboot_datetime +".json")
+		backup_mongo_collection(self.coll_users,	 cwd + "/_backups_collections/backup_coll_users-"+reboot_datetime +".json")
+
+
 
 		### retrieve handlers from urls.py
 		handlers = urls.urls

@@ -38,14 +38,16 @@ from 	handler_threading import *
 
 ### import app settings / infos 
 from config.app_infos 			import app_infos, app_main_texts
-from config.settings_example 	import * # MONGODB_COLL_CONTRIBUTORS, MONGODB_COLL_DATAMODEL, MONGODB_COLL_DATASCRAPPED
-from config.settings_corefields import * # USER_CORE_FIELDS, etc...
-from config.settings_queries 	import * # QUERY_DATA_BY_DEFAULT, etc...
-from config.core_classes		import * # SpiderConfig, UserClass, QuerySlug
-from config.settings_threading	import * # THREADPOOL_MAX_WORKERS, etc...
-from config.settings_cleaning	import * # STRIP_STRING, DATA_CONTENT_TO_IGNORE, etc...
-from config.settings_errors		import * # REDIRECT_TO_IF_NOT_AUTHORIZED, etc...
+from config.settings_example 	import * 	# MONGODB_COLL_CONTRIBUTORS, MONGODB_COLL_DATAMODEL, MONGODB_COLL_DATASCRAPPED
+from config.settings_corefields import * 	# USER_CORE_FIELDS, etc...
+from config.settings_queries 	import * 	# QUERY_DATA_BY_DEFAULT, etc...
+from config.core_classes		import * 	# SpiderConfig, UserClass, QuerySlug
+from config.settings_threading	import * 	# THREADPOOL_MAX_WORKERS, etc...
+from config.settings_cleaning	import * 	# STRIP_STRING, DATA_CONTENT_TO_IGNORE, etc...
+from config.settings_errors		import * 	# REDIRECT_TO_IF_NOT_AUTHORIZED, etc...
 
+
+app_log.info(">>> QUERY_DATA_BY_DEFAULT : %s", pformat(QUERY_DATA_BY_DEFAULT))
 
 
 
@@ -128,7 +130,8 @@ def check_request_token(method) :
 		if token == None : 
 			user_auth_level = "visitor"
 		else :
-		
+
+
 
 			### TO DO : decrypt token instead of default 
 			user_auth_level = "user"
@@ -738,8 +741,15 @@ class BaseHandler(tornado.web.RequestHandler):
 					# option choosen for now : in any field even not allowed + full word search (not regex)
 					# cf : https://stackoverflow.com/questions/35812680/searching-in-mongo-db-using-mongoose-regex-vs-text
 					# cf : https://stackoverflow.com/questions/29020211/mongodb-cant-canonicalize-query-badvalue-too-many-text-expressions
+					### equivalent of an OR search
+					# q_search_for = { "$text" : 
+					# 					{ "$search" : u" ".join(query_obj["search_for"] ) } # doable because text fields are indexed at main.py
+					# 				}
+					### equivalent of an AND search
+					# cf : https://stackoverflow.com/questions/23985464/how-to-and-and-not-in-mongodb-text-search 
+					search_words = [ "\""+word+"\"" for word in query_obj["search_for"] ]
 					q_search_for = { "$text" : 
-										{ "$search" : u" ".join(query_obj["search_for"] ) } # doable because text fields are indexed at main.py
+										{ "$search" : u" ".join(search_words) } # doable because text fields are indexed at main.py
 									}
 					query.update(q_search_for)
 
@@ -769,7 +779,9 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		# add ignore_fields / keep_fields criterias to query if any
 		specific_fields = None
+
 		if ignore_fields_list != [] or keep_fields_list != [] : 
+			
 			specific_fields = {}
 			
 			# add fields to ignore
@@ -784,6 +796,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		return specific_fields
 
+	### MAIN DATA QUERY
 	# @run_on_executor # with raise gen.Return(result)
 	def get_data_from_query(self, 
 							query_obj, 

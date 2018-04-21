@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+from settings_corefields import DATAMODEL_FIELDS_TYPES
 
 
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
@@ -33,11 +34,18 @@ QUERY_DATA_BY_DEFAULT = {
 	"search_for"		: [],			# list of words to search in data collection
 	"search_in"			: [],			# list of fields to search in
 	"open_level"		: "opendata",	# fields of data to be shown -> "all" == "opendata" + "commons" + "private"
-	"all_results"		: False,		# to overide results_per_page
+	"all_results"		: False,		# to override results_per_page <-- only to be required by solidata instance sharing same secret key
 	"added_by"			: None,			# list of user having added the data 
 	"sort_by"			: None,
 	"shuffle_seed"		: None,			# seed to randomize list order
 }
+# adding search_in_* by field type slugs == authorized DATAMODEL_FIELDS_TYPES
+QUERY_DATA_BY_TYPE = {
+	"search_in_" + field_type : None for field_type in DATAMODEL_FIELDS_TYPES
+}
+QUERY_DATA_BY_DEFAULT.update(QUERY_DATA_BY_TYPE)
+
+
 QUERIES_DATA_ALLOWED_UNIQUE = [
 	"page_n", 
 	"results_per_page", 

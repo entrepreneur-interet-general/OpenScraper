@@ -12,7 +12,6 @@ from 	base_utils	import *
 
 
 
-### TO DO 
 
 
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
@@ -140,18 +139,24 @@ class APIrestHandler(BaseHandler):
 				"query"					: query_data ,
 				"uri"					: self.request.uri ,
 
-				# "page_n"				: count_results,
+				"page_n"				: count_results,
 				"page_n_max"			: page_n_max,
 				"count_results"			: count_results,
 				"count_results_tot"		: count_results_tot,
 
-				"fields_open_level" 	: [ 
-											{ 	
-												"field_name" : f["field_name"], 
-												"field_open" : f["field_open"],
-												"field_type" : f["field_type"]
-											} for f in data_model_custom_list if f["field_open"] in OPEN_LEVEL_DICT[open_level]
-										  ],
+
+			},
+
+			"fields_open_level" 	: { 
+				"_description" 		: "fields returned by the query with their level of opendata" , 
+				"fields_returned"	: 	[ 
+						{ 	
+							"field_id" 		: str(f["_id"]), 
+							"field_name"	: f["field_name"], 
+							"field_open" 	: f["field_open"],
+							"field_type" 	: f["field_type"]
+						} for f in data_model_custom_list if f["field_open"] in OPEN_LEVEL_DICT[open_level]
+					]
 			},
 
 			# infos about spiders
