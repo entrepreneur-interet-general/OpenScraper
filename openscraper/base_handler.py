@@ -728,7 +728,7 @@ class BaseHandler(tornado.web.RequestHandler):
 			if "all" in query_obj["spider_id"] :
 				pass
 			else : 
-				q_spider = { "spider_id" : q for q in query_obj["spider_id"] }
+				q_spider = { "spider_id" : { "$in" : query_obj["spider_id"] } } #  for q in query_obj["spider_id"] }
 				query.update(q_spider)
 
 		### search by content --> collection need to be indexed
@@ -1034,7 +1034,7 @@ class BaseHandler(tornado.web.RequestHandler):
 			is_data = True
 		app_log.info("... is_data : %s \n ", is_data)
 
-		return docs_from_db, is_data, page_n_max, count_results_tot
+		return docs_from_db, is_data, page_n_max, count_results_tot, query
 		# raise gen.Return([ docs_from_db, is_data, page_n_max ] )
 	
 	

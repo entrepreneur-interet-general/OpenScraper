@@ -96,7 +96,7 @@ class APIrestHandler(BaseHandler):
 		app_log.info("••• allowed_fields_list : \n %s ", allowed_fields_list ) 
 
 		# get data 
-		data, is_data, page_n_max, count_results_tot = self.get_data_from_query( 	query_data, 
+		data, is_data, page_n_max, count_results_tot, query = self.get_data_from_query( 	query_data, 
 																coll_name					= "data", 
 																query_from					= self.site_section, 
 																
@@ -134,6 +134,7 @@ class APIrestHandler(BaseHandler):
 
 			# header of the json with infos 
 			"query_log" : {
+
 				"_description"			: "synthesis of the query made by the user",
 
 				"auth_level" 			: open_level ,
@@ -145,6 +146,7 @@ class APIrestHandler(BaseHandler):
 				"count_results"			: count_results,
 				"count_results_tot"		: count_results_tot,
 
+				"query_mongo"			: query,
 
 			},
 

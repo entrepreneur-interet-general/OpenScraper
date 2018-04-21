@@ -681,7 +681,7 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 		app_log.info("ContributorsHandler.get / query_contrib : \n %s ", pformat(query_contrib) )
 
 		# get data 
-		contributors, is_data, page_n_max, count_results_tot = self.get_data_from_query( query_contrib, coll_name="contributors", sort_by="infos.name")
+		contributors, is_data, page_n_max, count_results_tot, query = self.get_data_from_query( query_contrib, coll_name="contributors", sort_by="infos.name")
 		
 		if len(contributors) != 0 : 
 			app_log.info("ContributorsHandler.get / contributors[0] : \n %s " , pformat(contributors[0]) )
@@ -703,7 +703,6 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 									page_n_max	= page_n_max
 								)
 			app_log.info("ContributorsHandler / pagination_dict : \n %s ", pformat(pagination_dict) )
-			# print pagination_dict
 
 		self.render("contributors_view.html",
 			
@@ -1222,7 +1221,7 @@ class DataScrapedHandler(BaseHandler):
 
 
 		### get items from db
-		items_from_db, is_data, page_n_max, count_results_tot = self.get_data_from_query( 	query_data, 
+		items_from_db, is_data, page_n_max, count_results_tot, query = self.get_data_from_query( 	query_data, 
 																		coll_name						= "data", 
 																		query_from						= self.site_section, 
 																
