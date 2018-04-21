@@ -213,6 +213,7 @@ class QueryFromSlug :
 		# choose default query depending on slug_class
 		if self.slug_class 		== "data" : 
 			self.default_query 		= QUERY_DATA_BY_DEFAULT
+			# self.default_type 		= QUERY_DATA_BY_TYPE 			### warning : extra one in comparison to others
 			self.default_uniques 	= QUERIES_DATA_ALLOWED_UNIQUE
 			self.default_integers 	= QUERIES_DATA_ALLOWED_INTEGERS
 			self.default_positives 	= QUERIES_DATA_ALLOWED_POSITIVES
@@ -232,12 +233,12 @@ class QueryFromSlug :
 
 		# clean default_query if query is coming from api 
 		if query_from in ["api", "api_paginated"] :
-			print QUERIES_ARGS_TO_IGNORE_IF_API
+			app_log.info( "QUERIES_ARGS_TO_IGNORE_IF_API : %s ", QUERIES_ARGS_TO_IGNORE_IF_API )
 			self.default_query = { k : v for k,v in self.default_query.iteritems() if k not in QUERIES_ARGS_TO_IGNORE_IF_API }
 			self.default_query["results_per_page"] = QUERIES_MAX_RESULTS_IF_API
 
 		# copy chosen default query as backbone
-		self.query 	= deepcopy(self.default_query)
+		self.query_obj 	= deepcopy(self.default_query)
 
 		# populate default query with args from slug if a slug
 		if slug != {} and self.slug_class in ["data", "contributors", "crawl"] :
@@ -248,46 +249,50 @@ class QueryFromSlug :
 		""" populate default query """
 
 		for q_field, q_arg in self.slug.iteritems() : 
+
 			app_log.info( "=== QueryFromSlug.populate_query / q_field : %s ", q_field )
 
 			# only get allowed query fields from slug so to ignore others
 			if q_field in self.default_query.keys() :
+				
 
+				### set uniques
 				if q_field in self.default_uniques : 
 
 					# select one unique value for this arg (not a list)
-					self.query[q_field] = q_arg[0]
+					self.query_obj[q_field] = q_arg[0]
 
 					# value should be an integer 
 					if q_field in self.default_integers :
 						try : 
-							self.query[q_field] = int(self.query[q_field])
+							self.query_obj[q_field] = int(self.query_obj[q_field])
 							
 							# value should be positive, keep default value if not
 							if q_field in self.default_positives :
-								if self.query[q_field] < 0 :
+								if self.query_obj[q_field] < 0 :
 									# deprecated : absolute value 
-									# self.query[q_field] = abs(self.query[q_field]) # for absolute value
+									# self.query_obj[q_field] = abs(self.query_obj[q_field]) # for absolute value
 									# reset to zero
-									self.query[q_field] = 0
+									self.query_obj[q_field] = 0
 						except : 
-							self.query[q_field] = self.default_query[q_field]
+							self.query_obj[q_field] = self.default_query[q_field]
 
 					# value should be a boolean 
 					elif q_field in self.default_bool :
-						# if self.query[q_field] in ["yes", "YES", "true", "True", "TRUE", "1", "t", "T"] :
-						if self.query[q_field] in SYNONYMS_TRUE :
-							self.query[q_field] = True
-						# elif self.query[q_field] in ["no", "NO", "false", "False", "FALSE", "0", "f", "F"] : 
-						elif self.query[q_field] in SYNONYMS_FALSE : 
-							self.query[q_field] = False
+						# if self.query_obj[q_field] in ["yes", "YES", "true", "True", "TRUE", "1", "t", "T"] :
+						if self.query_obj[q_field] in SYNONYMS_TRUE :
+							self.query_obj[q_field] = True
+						# elif self.query_obj[q_field] in ["no", "NO", "false", "False", "FALSE", "0", "f", "F"] : 
+						elif self.query_obj[q_field] in SYNONYMS_FALSE : 
+							self.query_obj[q_field] = False
 						else : 
 							# keep original value if neither
 							pass
 
+				### for not uniques
 				else : 
 					# split query list by space (if + sign is notified)
-					# self.query[q_field] = q_arg
+					# self.query_obj[q_field] = q_arg
 					raw_q_list = []
 					for q in q_arg :  	# for every list if q_arg is repeated
 						q_ = q.split()	# split string content into list when args are separated by a space
@@ -297,8 +302,33 @@ class QueryFromSlug :
 							i = unicode(i.decode('utf-8') )
 							# print i, type(i)
 							raw_q_list.append(i)
-					self.query[q_field] = raw_q_list
+					self.query_obj[q_field] = raw_q_list
 
 
-		# print "=== QueryFromSlug.populate_query / self.query : "
-		# print self.query
+		### reposition all search_in_* by types in a nested element inside query
+		if self.slug_class in ["data"] :
+			
+			app_log.info("self.slug_class == 'data' --> reposition search_in_* ")
+			
+			search_by_types = {}
+
+			### loop in search for search_in_* fields to reposition
+			for q_field, q_arg in self.slug.iteritems() : 
+				
+				if q_field in QUERY_DATA_BY_TYPE : 
+					
+					# populate search_by_types dict
+					search_by_types[QUERY_DATA_BY_TYPE_REVERSE[q_field]] = [ unicode(i.decode('utf-8')) for i in q_arg ]
+					
+			### add search_by_types to self.query_obj
+			app_log.info("filter_by_types : %s", pformat(search_by_types))
+			self.query_obj["filter_by_types"] = search_by_types
+
+			# delete entry key from self.query_obj to make it cleaner
+			self.query_obj = {k:v for k, v in self.query_obj.items() if k not in QUERY_DATA_BY_TYPE }
+
+
+
+		### END OF POPULATE QUERY --> return it to filter_slug
+		app_log.info( "=== END / QueryFromSlug.populate_query / self.query_obj : \n %s", pformat(self.query_obj) )
+		print

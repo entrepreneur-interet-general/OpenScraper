@@ -1223,14 +1223,15 @@ class DataScrapedHandler(BaseHandler):
 
 		### get items from db
 		items_from_db, is_data, page_n_max, count_results_tot = self.get_data_from_query( 	query_data, 
-																		coll_name					 = "data", 
-																		query_from					 = self.site_section, 
+																		coll_name						= "data", 
+																		query_from						= self.site_section, 
 																
-																		allowed_fields_list			 = allowed_fields_list,
-																		ignore_fields_list			 = ["_id"],
-																
-																		data_model_custom_dict_names = data_model_custom_dict_names,
-																		data_model_core_dict_names	 = data_model_core_dict_names
+																		allowed_fields_list				= allowed_fields_list,
+																		ignore_fields_list				= ["_id"],
+
+																		data_model_custom_dict			= data_model_custom_dict, 
+																		# data_model_custom_dict_names = data_model_custom_dict_names,
+																		# data_model_core_dict_names	 = data_model_core_dict_names
 																	)
 
 

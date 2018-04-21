@@ -677,10 +677,10 @@ class BaseHandler(tornado.web.RequestHandler):
 	def get_authorized_datamodel_fields(self, open_level, data_model_custom, data_model_core ):
 		""" 
 		retrieve a list of authorized fields given datamodel and open_level 
-		for data query mainly
+		for data query, mainly
 		"""
 		print
-		app_log.info("... get_authorized_datamodel_fields" )
+		# app_log.info("... get_authorized_datamodel_fields" )
 
 		allowed_open_levels 	= OPEN_LEVEL_DICT[open_level]
 		allowed_custom_fields	= [ unicode(str(dm["_id"])) for dm in data_model_custom if dm["field_open"] in allowed_open_levels ]
@@ -688,9 +688,9 @@ class BaseHandler(tornado.web.RequestHandler):
 		
 		allowed_fields_list		= allowed_core_fields + allowed_custom_fields
 
-		app_log.info("... get_authorized_datamodel_fields / allowed_custom_fields : \n %s", allowed_custom_fields )
-		app_log.info("... get_authorized_datamodel_fields / allowed_core_fields   : \n %s", allowed_core_fields )
-		app_log.info("... get_authorized_datamodel_fields / allowed_fields_list   : \n %s", allowed_fields_list )
+		app_log.info("... allowed_custom_fields : \n %s", allowed_custom_fields )
+		app_log.info("... allowed_core_fields   : \n %s", allowed_core_fields )
+		app_log.info("... allowed_fields_list   : \n %s", allowed_fields_list )
 
 		return allowed_fields_list, allowed_custom_fields, allowed_core_fields
 
@@ -706,19 +706,19 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		# recreate query from slug
 		raw_query = QueryFromSlug( slug, slug_class, query_from = query_from )	# from settings_corefields
-		app_log.info("... filter_slug / raw_query.query : \n %s \n", pformat(raw_query.query) ) 
+		app_log.info("... filter_slug / raw_query.query_obj : \n %s \n", pformat(raw_query.query_obj) ) 
 
-		return raw_query.query
+		return raw_query.query_obj
 
-	def build_first_term_query(self, query_obj, ignore_fields_list=[], keep_fields_list=[], data_model_custom_dict_names={}) :
+	def build_first_term_query(self, query_obj, ignore_fields_list=[], keep_fields_list=[], data_model_custom_dict={}) :
 		""" 
 		build the query according to allowed fields ...
 		"""
 
 		print
-		app_log.info("... build_first_term_query / query_obj : \n %s ", pformat(query_obj) )
-		app_log.info("... build_first_term_query / keep_fields_list : \n %s ", pformat(keep_fields_list) )
-		app_log.info("... build_first_term_query / data_model_custom_dict_names : \n %s \n", pformat(data_model_custom_dict_names) )
+		app_log.info("... query_obj : \n %s ", pformat(query_obj) )
+		app_log.info("... keep_fields_list : \n %s ", pformat(keep_fields_list) )
+		app_log.info("... data_model_custom_dict : \n %s \n", pformat(data_model_custom_dict) )
 
 		query = {}
 
@@ -734,44 +734,144 @@ class BaseHandler(tornado.web.RequestHandler):
 		### search by content --> collection need to be indexed
 		# cf : https://stackoverflow.com/questions/6790819/searching-for-value-of-any-field-in-mongodb-without-explicitly-naming-it
 		if "search_for" in query_obj : 
+			
 			if query_obj["search_for"] != [] :
 				
 				# fields to search in is not specified
-				if query_obj["search_in"] == [] : 
-					# option choosen for now : in any field even not allowed + full word search (not regex)
-					# cf : https://stackoverflow.com/questions/35812680/searching-in-mongo-db-using-mongoose-regex-vs-text
-					# cf : https://stackoverflow.com/questions/29020211/mongodb-cant-canonicalize-query-badvalue-too-many-text-expressions
-					### equivalent of an OR search
-					# q_search_for = { "$text" : 
-					# 					{ "$search" : u" ".join(query_obj["search_for"] ) } # doable because text fields are indexed at main.py
-					# 				}
-					### equivalent of an AND search
-					# cf : https://stackoverflow.com/questions/23985464/how-to-and-and-not-in-mongodb-text-search 
-					search_words = [ "\""+word+"\"" for word in query_obj["search_for"] ]
-					q_search_for = { "$text" : 
-										{ "$search" : u" ".join(search_words) } # doable because text fields are indexed at main.py
-									}
-					query.update(q_search_for)
+				# if query_obj["search_in"] == [] : 
+
+				# option choosen for now : in any field even not allowed + full word search (not regex)
+				# cf : https://stackoverflow.com/questions/35812680/searching-in-mongo-db-using-mongoose-regex-vs-text
+				# cf : https://stackoverflow.com/questions/29020211/mongodb-cant-canonicalize-query-badvalue-too-many-text-expressions
+				### equivalent of an OR search
+				# q_search_for = { "$text" : 
+				# 					{ "$search" : u" ".join(query_obj["search_for"] ) } # doable because text fields are indexed at main.py
+				# 				}
+				### equivalent of an AND search
+				# cf : https://stackoverflow.com/questions/23985464/how-to-and-and-not-in-mongodb-text-search 
+				search_words = [ "\""+word+"\"" for word in query_obj["search_for"] ]
+				q_search_for = { "$text" : 
+									{ "$search" : u" ".join(search_words) } # doable because text fields are indexed at main.py
+								}
+				query.update(q_search_for)
 
 				# field to search in is specified
-				else :
-					field_qs = []
-					for f in query_obj["search_in"] :
-						print f
-						# check if f is custom or core
-						if f in data_model_custom_dict_names : 
-							f = unicode(data_model_custom_dict_names[f][u"_id"])
-							print f, type(f)
+				# else :
+				# 	field_qs = []
+				# 	for f in query_obj["search_in"] :
+				# 		print f
+				# 		# check if f is custom or core
+				# 		if f in data_model_custom_dict_names : 
+				# 			f = unicode(data_model_custom_dict_names[f][u"_id"])
+				# 			print f, type(f)
 						
-						if f in keep_fields_list : 
-							# search for strings containing s + case insensitive --> "$options" : "-i"
-							q_search_in = [ { f : {"$regex" : ".*{}.*".format(s), "$options": "-i" } } for s in query_obj["search_for"] ]  
-							field_qs = field_qs + q_search_in 
+				# 		if f in keep_fields_list : 
+				# 			# search for strings containing s + case insensitive --> "$options" : "-i"
+				# 			q_search_in = [ { f : {"$regex" : ".*{}.*".format(s), "$options": "-i" } } for s in query_obj["search_for"] ]  
+				# 			field_qs = field_qs + q_search_in 
 					
-					if field_qs != [] : 
-						q_search_for = { "$or" : field_qs }
-						query.update(q_search_for)
+				# 	if field_qs != [] : 
+				# 		q_search_for = { "$or" : field_qs }
+				# 		query.update(q_search_for)
 
+
+		### create filters by types
+		if "filter_by_types" in query_obj :
+			"""
+			note : 
+			cf : https://stackoverflow.com/questions/18148166/find-document-with-array-that-contains-a-specific-value
+			working query in mongodb shell :
+
+				------------------------------------------------------
+				db.getCollection('data_scraped').find( { 
+					$text : { $search : "chantier"} , 
+					$or : [
+							{
+							"5a9aaed70a8286276b0e6919" : { $all : ["Logement", "Entraide"] },
+							},
+					],
+				})
+				------------------------------------------------------
+				db.getCollection('data_scraped').find( { 
+					$text : { $search : "chantier"} , 
+					$and : [ 
+								{ $or : [
+											{ "5a9aaed70a8286276b0e6919" : { $all : ["Logement", "Entraide"] } } ,
+										],
+								},
+					],
+				})
+				------------------------------------------------------
+				db.getCollection('data_scraped').find( { 
+						$and: [
+								{ $or: [
+									{ '5aa68c360a82861cfd650345': { $options : '-i', $regex : '.*nantes.*' } }
+								]},
+								{ $or: [
+									{ '5a9aaed70a8286276b0e6919': { $all: ["Mobilité Solidaire"] } },
+									{ '5ad7682e0a82866bcd19bbca': { $all: ["Mobilité Solidaire"] } }
+								]},
+						],
+						$text : { $search : "atao"}
+				})
+			"""
+			
+			if query_obj["filter_by_types"] != {} :
+				
+				app_log.info( 'query_obj["filter_by_types"] : %s', query_obj["filter_by_types"] )
+
+				query["$and"] = []
+
+				# write mongo filters
+				for f_type, f_values in query_obj["filter_by_types"].iteritems() : 
+
+					app_log.info("f_type : %s", f_type )
+					app_log.info("f_values[0] : %s", f_values[0] )
+					
+					# find all fields id with corresponding field_type in data_model_custom_dict_names
+					# fields_with_type = list(self.application.coll_model.find({"field_type" : f_type }) )
+					fields_with_type = { k : (v["field_name"], v["field_type"]) for k, v in data_model_custom_dict.iteritems() if v[u"field_type"] == f_type }
+					app_log.info("... fields_with_type - %s : \n %s", f_type, pformat(fields_with_type) )
+					
+					if f_type in ["tags"] : ### add in list every field having similar behaviour than tags 
+					
+						# initiate q_filters_tags dict
+						q_filters_tags = {}
+
+						# generate new mongodb query filters
+						new_filters_tags = [ { k : { "$all" : f_values } } for k,v in fields_with_type.iteritems() ]
+						app_log.info("... new_filters : \n %s", pformat(new_filters_tags) )
+						
+						# append new_filters_tags to q_filters_tags list
+						q_filters_tags["$or"] = new_filters_tags
+
+						# query.update(q_filters_tags)
+						query["$and"].append(q_filters_tags)
+
+
+					else : 
+						# initiate q_filters dict
+						q_filters = {"$or" : [] }
+
+						# generate new mongodb query filters
+						# search for strings containing s + case insensitive --> "$options" : "-i"
+						# [ { f : {"$regex" : ".*{}.*".format(s), "$options": "-i" } } for s in query_obj["search_for"] ]
+						regex_string = [u".*"+word+".*" for word in f_values]
+						app_log.info("... regex_string : %s", regex_string )
+
+						new_filters = { k : { "$regex" : u"".join(regex_string) , "$options": "-i" }  for k,v in fields_with_type.iteritems() }
+						app_log.info("... new_filters : \n %s", pformat(new_filters) )
+
+						# append new_filter to q_filters_tags list
+						q_filters["$or"].append(new_filters)
+
+						query["$and"].append(q_filters)
+
+
+
+
+		### END OF build_first_term_query
+		app_log.info("END / query : \n %s", pformat(query))
 		return query
 
 	def build_specific_fields(self, ignore_fields_list, keep_fields_list ) :
@@ -806,8 +906,9 @@ class BaseHandler(tornado.web.RequestHandler):
 							allowed_fields_list	= [],
 							ignore_fields_list	= [],
 
-							data_model_custom_dict_names = [],
-							data_model_core_dict_names 	 = [],
+							data_model_custom_dict		= {} ,
+							# data_model_custom_dict_names = [],
+							# data_model_core_dict_names 	 = [],
 
 							sort_by				= None, 
 							
@@ -815,9 +916,9 @@ class BaseHandler(tornado.web.RequestHandler):
 		""" get items from db """
 
 		print
-		app_log.info("... get_data_from_query / query_obj : \n %s \n", 				pformat(query_obj) )
-		app_log.info("... get_data_from_query / allowed_fields_list : \n %s \n", 	pformat(allowed_fields_list) )
-		app_log.info("... get_data_from_query / ignore_fields_list : \n %s \n", 	pformat(ignore_fields_list) )
+		app_log.info("... query_obj : \n %s \n", 			pformat(query_obj) )
+		app_log.info("... allowed_fields_list : \n %s \n", 	pformat(allowed_fields_list) )
+		app_log.info("... ignore_fields_list : \n %s \n", 	pformat(ignore_fields_list) )
 		
 		user_token		= query_obj["token"]
 
@@ -843,33 +944,39 @@ class BaseHandler(tornado.web.RequestHandler):
 		### DB OPERATIONS
 
 		# choose collection
-		app_log.info("... get_data_from_query / cursor :" )
+		app_log.info("... cursor :" )
 		coll = self.choose_collection( coll_name=coll_name )
 
 		# reroute query fields for first query arg (find)
 		query = self.build_first_term_query(	query_obj, 
-												ignore_fields_list			 = ignore_fields_list , 
-												keep_fields_list			 = allowed_fields_list , 
-												data_model_custom_dict_names = data_model_custom_dict_names
+												ignore_fields_list			= ignore_fields_list , 
+												keep_fields_list			= allowed_fields_list , 
+												data_model_custom_dict		= data_model_custom_dict
 											)
-		app_log.info("... get_data_from_query / query : \n %s", pformat(query) )
+		app_log.info("... query : \n %s", pformat(query) )
 
 		# add ignore_fields / keep_fields criterias to query if any (projection)
 		specific_fields = self.build_specific_fields( ignore_fields_list, allowed_fields_list )
-		app_log.info("... get_data_from_query / specific_fields : %s ", specific_fields )
+		app_log.info("... specific_fields : %s ", specific_fields )
+
+
+
+
+
 
 		# retrieve docs from db
 		cursor 	= coll.find( query, specific_fields )
 
 		# count results
 		count_results_tot	= cursor.count()
-		app_log.info("... get_data_from_query / count_results_tot : %s ", count_results_tot )
+		app_log.info("... count_results_tot : %s ", count_results_tot )
 
 		# sort results
 		if sort_by != None :
 			cursor.sort( sort_by , pymongo.ASCENDING )
 		
 
+		# convert cursor into a list
 		cursor_list = list(cursor)
 
 		# shuffle results if shuffle_seed != None
@@ -896,9 +1003,9 @@ class BaseHandler(tornado.web.RequestHandler):
 			page_n 			= query_obj["page_n"]
 			page_n_max 		= self.compute_count_and_page_n_max(count_results_tot, limit_results)
 
-			app_log.info("... get_data_from_query / results_cout : %s", count_results_tot ) 
-			app_log.info("... get_data_from_query / page_n_max   : %s ", page_n_max ) 
-			app_log.info("... get_data_from_query / page_n       : %s ", page_n )
+			app_log.info("... results_cout : %s", count_results_tot ) 
+			app_log.info("... page_n_max   : %s ", page_n_max ) 
+			app_log.info("... page_n       : %s ", page_n )
 
 			### select items to retrieve from list and indices start and stop
 			# all results case
@@ -912,12 +1019,12 @@ class BaseHandler(tornado.web.RequestHandler):
 			else : 
 				results_i_start	= ( page_n-1 ) * limit_results 
 				results_i_stop	= ( results_i_start + limit_results + 1 ) - 1
-				app_log.info("... get_data_from_query / results_i_start : %s ", results_i_start )
-				app_log.info("... get_data_from_query / results_i_stop  : %s ", results_i_stop )
+				app_log.info("... results_i_start : %s ", results_i_start )
+				app_log.info("... results_i_stop  : %s ", results_i_stop )
 				# docs_from_db 	= list(cursor[ results_i_start : results_i_stop ])
 				docs_from_db 	= cursor_list[ results_i_start : results_i_stop ]
 			
-			app_log.info("... get_data_from_query / docs_from_db : \n ....")
+			app_log.info("... docs_from_db : \n ....")
 			# app_log.info("%s", pformat(docs_from_db[0]) )
 
 
@@ -925,7 +1032,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		is_data = False
 		if docs_from_db != [] :
 			is_data = True
-		app_log.info("... get_data_from_query / is_data : %s \n ", is_data)
+		app_log.info("... is_data : %s \n ", is_data)
 
 		return docs_from_db, is_data, page_n_max, count_results_tot
 		# raise gen.Return([ docs_from_db, is_data, page_n_max ] )

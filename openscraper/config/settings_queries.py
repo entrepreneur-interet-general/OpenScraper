@@ -14,7 +14,7 @@ QUERIES_ARGS_TO_IGNORE_IF_API = [
 QUERIES_ARGS_ACCEPTED_AS_FIRST_QUERY_TERMS = [
 	"spider_id",
 	"search_for",
-	"search_in",
+	# "search_in",
 	"open_level"
 ]
 QUERIES_MAX_RESULTS_IF_API = 100
@@ -32,16 +32,19 @@ QUERY_DATA_BY_DEFAULT = {
 	"spider_id"			: ["all"], 		# spider_id for contributor(s)
 	"is_complete"		: False, 		# only complete records... a bit optimistic isn't it ?
 	"search_for"		: [],			# list of words to search in data collection
-	"search_in"			: [],			# list of fields to search in
+	# "search_in"			: [],			# list of fields to search in
 	"open_level"		: "opendata",	# fields of data to be shown -> "all" == "opendata" + "commons" + "private"
 	"all_results"		: False,		# to override results_per_page <-- only to be required by solidata instance sharing same secret key
 	"added_by"			: None,			# list of user having added the data 
 	"sort_by"			: None,
 	"shuffle_seed"		: None,			# seed to randomize list order
 }
-# adding search_in_* by field type slugs == authorized DATAMODEL_FIELDS_TYPES
+# adding search_in_* by field type if present in slug == authorized DATAMODEL_FIELDS_TYPES
 QUERY_DATA_BY_TYPE = {
 	"search_in_" + field_type : None for field_type in DATAMODEL_FIELDS_TYPES
+}
+QUERY_DATA_BY_TYPE_REVERSE = {
+	"search_in_" + field_type : field_type for field_type in DATAMODEL_FIELDS_TYPES
 }
 QUERY_DATA_BY_DEFAULT.update(QUERY_DATA_BY_TYPE)
 
