@@ -803,6 +803,7 @@ class BaseHandler(tornado.web.RequestHandler):
 				})
 				------------------------------------------------------
 				db.getCollection('data_scraped').find( { 
+						$text : { $search : "atao"},
 						$and: [
 								{ $or: [
 									{ '5aa68c360a82861cfd650345': { $options : '-i', $regex : '.*nantes.*' } }
@@ -812,7 +813,6 @@ class BaseHandler(tornado.web.RequestHandler):
 									{ '5ad7682e0a82866bcd19bbca': { $all: ["Mobilité Solidaire"] } }
 								]},
 						],
-						$text : { $search : "atao"}
 				})
 			"""
 			
