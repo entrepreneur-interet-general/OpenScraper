@@ -818,11 +818,11 @@ class BaseHandler(tornado.web.RequestHandler):
 			
 			if query_obj["filter_by_types"] != {} :
 				
-				app_log.info( 'query_obj["filter_by_types"] : %s', query_obj["filter_by_types"] )
+				app_log.info( 'query_obj["filter_by_types"] : \n %s', pformat(query_obj["filter_by_types"]) )
 
 				query["$and"] = []
 
-				# write mongo filters
+				# write mongo filters by looping 
 				for f_type, f_values in query_obj["filter_by_types"].iteritems() : 
 
 					app_log.info("f_type : %s", f_type )
@@ -839,14 +839,18 @@ class BaseHandler(tornado.web.RequestHandler):
 						q_filters_tags = {}
 
 						# generate new mongodb query filters
-						new_filters_tags = [ { k : { "$all" : f_values } } for k,v in fields_with_type.iteritems() ]
-						app_log.info("... new_filters : \n %s", pformat(new_filters_tags) )
+						# new_filters_tags = [ { k : { "$all" : f_values } } for k,v in fields_with_type.iteritems() ]
+						for f_value in f_values : 
+							
+							new_filters_tags = [ { k : { "$in" : f_value } } for k,v in fields_with_type.iteritems() ]
 						
-						# append new_filters_tags to q_filters_tags list
-						q_filters_tags["$or"] = new_filters_tags
+							app_log.info("... new_filters : \n %s", pformat(new_filters_tags) )
+							
+							# append new_filters_tags to q_filters_tags list
+							q_filters_tags["$or"] = new_filters_tags
 
-						# query.update(q_filters_tags)
-						query["$and"].append(q_filters_tags)
+							# query.update(q_filters_tags)
+							query["$and"].append(q_filters_tags)
 
 
 					else : 
@@ -856,7 +860,10 @@ class BaseHandler(tornado.web.RequestHandler):
 						# generate new mongodb query filters
 						# search for strings containing s + case insensitive --> "$options" : "-i"
 						# [ { f : {"$regex" : ".*{}.*".format(s), "$options": "-i" } } for s in query_obj["search_for"] ]
-						regex_string = [u".*"+word+".*" for word in f_values]
+						regex_string = []
+						for f_value in f_values : 
+							regex_string += [ u".*"+word+".*" for word in f_value ] 
+
 						app_log.info("... regex_string : %s", regex_string )
 
 						new_filters = { k : { "$regex" : u"".join(regex_string) , "$options": "-i" }  for k,v in fields_with_type.iteritems() }

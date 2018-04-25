@@ -32,7 +32,8 @@ QUERY_DATA_BY_DEFAULT = {
 	"spider_id"			: ["all"], 		# spider_id for contributor(s)
 	"is_complete"		: False, 		# only complete records... a bit optimistic isn't it ?
 	"search_for"		: [],			# list of words to search in data collection
-	# "search_in"			: [],			# list of fields to search in
+	# "search_in"		: [],			# list of fields to search in
+	# "filter_by_types"	: {},
 	"open_level"		: "opendata",	# fields of data to be shown -> "all" == "opendata" + "commons" + "private"
 	"all_results"		: False,		# to override results_per_page <-- only to be required by solidata instance sharing same secret key
 	"added_by"			: None,			# list of user having added the data 

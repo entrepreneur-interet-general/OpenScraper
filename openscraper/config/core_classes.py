@@ -243,6 +243,10 @@ class QueryFromSlug :
 		# populate default query with args from slug if a slug
 		if slug != {} and self.slug_class in ["data", "contributors", "crawl"] :
 			self.populate_query()
+
+		if slug == {} and self.slug_class in ["data"] : 
+			self.query_obj["filter_by_types"] = {}
+			self.query_obj = {k:v for k, v in self.query_obj.items() if k not in QUERY_DATA_BY_TYPE }
 		
 
 	def populate_query(self) : 
@@ -317,15 +321,21 @@ class QueryFromSlug :
 				
 				if q_field in QUERY_DATA_BY_TYPE : 
 					
+					# transform values into list of lists
+					raw_values_list 		= [ unicode(i.decode('utf-8')) for i in q_arg ]
+					splitted_values_list 	= [ [ x.strip() for x in v.split(',') ] for v in raw_values_list ]
+					app_log.info("splitted_values_list : %s", pformat(splitted_values_list)) 
+
 					# populate search_by_types dict
-					search_by_types[QUERY_DATA_BY_TYPE_REVERSE[q_field]] = [ unicode(i.decode('utf-8')) for i in q_arg ]
+					# search_by_types[QUERY_DATA_BY_TYPE_REVERSE[q_field]] = raw_values_list
+					search_by_types[QUERY_DATA_BY_TYPE_REVERSE[q_field]] = splitted_values_list
 					
 			### add search_by_types to self.query_obj
 			app_log.info("filter_by_types : %s", pformat(search_by_types))
 			self.query_obj["filter_by_types"] = search_by_types
 
-			# delete entry key from self.query_obj to make it cleaner
-			self.query_obj = {k:v for k, v in self.query_obj.items() if k not in QUERY_DATA_BY_TYPE }
+			# delete entry key search_in_* from self.query_obj to make it cleaner
+			self.query_obj = { k:v for k,v in self.query_obj.items() if k not in QUERY_DATA_BY_TYPE }
 
 
 
