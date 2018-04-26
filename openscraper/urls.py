@@ -73,8 +73,9 @@ urls = [
 
 	### API routes
 	# (r"/api/.*", 					PageNotFoundHandler),
-	(r"/api/data?([^/]*)?",				APIrestHandler),
-	# (r"/api/search?=(.*)", 			PageNotFoundHandler),
+	(r"/api/data?([^/]*)?",			APIrestHandlerData),
+	(r"/api/infos?([^/]*)?", 		APIrestHandlerInfos),
+	# (r"/api/counts?([^/]*)?", 		APIrestHandlerCounts),
 	# (r"/api/(?P<page_n>[0-9]+)", 	PageNotFoundHandler),
 	# (r"/api/(?P<project>.*?)", 		PageNotFoundHandler),
 

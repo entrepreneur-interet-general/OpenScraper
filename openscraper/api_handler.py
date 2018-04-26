@@ -18,7 +18,82 @@ from 	base_utils	import *
 ### API handlers as background tasks ########################################################
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
-class APIrestHandler(BaseHandler): 
+class APIrestHandlerInfos(BaseHandler):
+	"""
+	main api point for getting infos on dataset / datamodel / spiders
+	"""
+	
+	@print_separate(APP_DEBUG)
+	@check_request_token
+	def get(self, slug=None):
+
+		""" main api point for app """
+		
+		self.site_section = "api"
+		
+		# get slug
+		slug_ = self.request.arguments
+		app_log.info("••• slug_ : \n %s", pformat(slug_) )
+
+		# filter slug
+		# query_data = self.filter_slug( slug_, slug_class="data", query_from=self.site_section )
+		# app_log.info("••• query_data : \n %s ", pformat(query_data) )
+
+		### get datamodel set infos
+		dm_set = self.get_datamodel_set( exclude_fields={"added_by" : 0, "modified_by" : 0 } )
+		app_log.info("••• data_model_custom_list : \n %s ", pformat(dm_set) ) 
+
+		### get spiders_list
+		spiders_dict = self.get_spiders_infos(as_dict=True, query={ "scraper_log.is_tested" : True})
+		app_log.info("••• spiders_dict : \n %s ", pformat(spiders_dict) ) 
+
+		# count docs by spider_id
+		count_docs_by_spiders = self.count_docs_by_field(coll_name="data", field_name="spider_id")
+		app_log.info("count_docs_by_spiders : \n %s",  pformat(count_docs_by_spiders) )
+
+
+		full_json = {
+
+			"datamodel" : {
+				"data_model_custom_dict"	: dm_set["data_model_custom_dict"],
+				"data_model_core_dict" 		: dm_set["data_model_core_dict"],
+			},
+
+			"spiders" 	: {
+				"spiders_dict"	: spiders_dict,
+				"spiders_list"	: [ 
+						{
+							"id" 		: k,
+							"name" 		: v["name"],
+							"fullname" 	: v["name"] 
+						} for k,v in spiders_dict.iteritems() if k in count_docs_by_spiders.keys() 
+					],
+			},
+
+			"counts" 	: {
+
+				"data_by_spiders"	: count_docs_by_spiders,
+				"datamodel_custom"	: self.count_documents(coll_name="datamodel", 	 query={ "field_class" : "custom" }), 
+				"spiders_tested"	: self.count_documents(coll_name="contributors", query={ "scraper_log.is_tested" : True}), 
+				"data"				: self.count_documents(coll_name="data"), 
+				"users"				: self.count_documents(coll_name="users"), 
+			} 
+
+		}
+
+
+		### write data as json
+		# cf : https://stackoverflow.com/questions/35083374/how-to-decode-a-unicode-string-python
+		results = json.dumps(full_json, ensure_ascii=False, default=json_util.default).encode('utf8')
+
+		print '.....\n' 
+
+		self.write( results )
+		
+		self.finish()
+
+
+class APIrestHandlerData(BaseHandler): 
 	"""
 	main api point to get / query data from DB
 	"""

@@ -132,7 +132,6 @@ def check_request_token(method) :
 		else :
 
 
-
 			### TO DO : decrypt token instead of default 
 			user_auth_level = "user"
 			self.user_email = "default.api.email@openscraper.com"
@@ -604,10 +603,10 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		return count_by_field_dict
 
-	def get_spiders_infos(self, limit_fields={"infos" : 1}, as_dict=False ) : 
+	def get_spiders_infos(self, limit_fields={"infos" : 1}, as_dict=False, query={} ) : 
 		""" return all spiders infos as list"""
 		
-		spiders_infos = list(self.application.coll_spiders.find( {}, limit_fields ))
+		spiders_infos = list(self.application.coll_spiders.find( query, limit_fields ))
 		
 		for spider in spiders_infos :
 			spider["_id"] = str(spider["_id"])
@@ -638,23 +637,25 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		return fields
 
-	def get_datamodel_set(self, sort_fields_by="field_open", visible_custom=True ) : 
+	def get_datamodel_set(self, sort_fields_by="field_open", visible_custom=True, exclude_fields=None ) : 
 		### retrieve datamodel from DB top make correspondances field's _id --> field_name
 		
 		print 
 		app_log.info("... get_datamodel_set ")
 
 		# custom fields
-		data_model_custom_cursor	 = self.application.coll_model.find({"field_class" : "custom", "is_visible" : visible_custom })
-		data_model_custom_cursor.sort(sort_fields_by,1) 
+		data_model_custom_cursor	 = self.application.coll_model.find({"field_class" : "custom", "is_visible" : visible_custom }, exclude_fields )
+		data_model_custom_cursor.sort(sort_fields_by, 1) 
 
 		data_model_custom_list		 = list(data_model_custom_cursor)
 		data_model_custom_dict 		 = { str(field["_id"])   : field for field in data_model_custom_list }
 		data_model_custom_dict_names = { field["field_name"] : field for field in data_model_custom_list }
 
 		# core fields
-		data_model_core_cursor 		 = self.application.coll_model.find({"field_class" : "core" }) 
+		data_model_core_cursor 		 = self.application.coll_model.find({"field_class" : "core" }, exclude_fields ) 
+		
 		data_model_core_list		 = list(data_model_core_cursor)
+		data_model_core_dict 		 = { str(field["_id"])   : field for field in data_model_core_list }
 		data_model_core_dict_names	 = { field["field_name"] : field for field in data_model_core_list }
 
 		# logs
@@ -669,6 +670,7 @@ class BaseHandler(tornado.web.RequestHandler):
 			"data_model_custom_dict_names" 	: data_model_custom_dict_names,
 			
 			"data_model_core_list" 			: data_model_core_list,
+			"data_model_core_dict" 			: data_model_core_dict,
 			"data_model_core_dict_names"	: data_model_core_dict_names,
 		}
 
@@ -695,7 +697,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		return allowed_fields_list, allowed_custom_fields, allowed_core_fields
 
 	### TO DO 
-	def get_all_tag_fields_distincts(self) :
+	def get_all_tags_fields_distincts(self) :
 		pass
 
 	def filter_slug(self, slug, slug_class=None, query_from="app") : 
@@ -834,14 +836,14 @@ class BaseHandler(tornado.web.RequestHandler):
 					app_log.info("... fields_with_type - %s : \n %s", f_type, pformat(fields_with_type) )
 					
 					if f_type in ["tags"] : ### add in list every field having similar behaviour than tags 
-					
-						# initiate q_filters_tags dict
-						q_filters_tags = {}
 
 						# generate new mongodb query filters
 						# new_filters_tags = [ { k : { "$all" : f_values } } for k,v in fields_with_type.iteritems() ]
 						for f_value in f_values : 
-							
+						
+							# initiate q_filters_tags dict
+							q_filters_tags = {}
+
 							new_filters_tags = [ { k : { "$in" : f_value } } for k,v in fields_with_type.iteritems() ]
 						
 							app_log.info("... new_filters : \n %s", pformat(new_filters_tags) )
