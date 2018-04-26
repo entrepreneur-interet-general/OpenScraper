@@ -206,7 +206,6 @@ class BaseHandler(tornado.web.RequestHandler):
 		super(BaseHandler, self).__init__(*args, **kwargs)
 
 		app_log.info("--- BaseHandler / __init__ : \n")
-		# app_log = self.application.gen_log
 
 		### global vars for every handler
 		self.is_user_connected	 	= self.get_if_user_connected()
@@ -224,6 +223,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		set some handlers to be able to respond to AJAX GET queries
 		cf : https://stackoverflow.com/questions/35254742/tornado-server-enable-cors-requests
 		"""
+
 		# app_log.info("setting headers")
 		self.set_header("Access-Control-Allow-Origin", "*")
 		self.set_header("Access-Control-Allow-Headers", "x-requested-with")

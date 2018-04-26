@@ -41,15 +41,15 @@ class APIrestHandlerInfos(BaseHandler):
 
 		### get datamodel set infos
 		dm_set = self.get_datamodel_set( exclude_fields={"added_by" : 0, "modified_by" : 0 } )
-		app_log.info("••• data_model_custom_list : \n %s ", pformat(dm_set) ) 
+		# app_log.info("••• data_model_custom_list : \n %s ", pformat(dm_set) ) 
 
 		### get spiders_list
 		spiders_dict = self.get_spiders_infos(as_dict=True, query={ "scraper_log.is_tested" : True})
-		app_log.info("••• spiders_dict : \n %s ", pformat(spiders_dict) ) 
+		# app_log.info("••• spiders_dict : \n %s ", pformat(spiders_dict) ) 
 
 		# count docs by spider_id
 		count_docs_by_spiders = self.count_docs_by_field(coll_name="data", field_name="spider_id")
-		app_log.info("count_docs_by_spiders : \n %s",  pformat(count_docs_by_spiders) )
+		# app_log.info("count_docs_by_spiders : \n %s",  pformat(count_docs_by_spiders) )
 
 
 		full_json = {
@@ -243,6 +243,8 @@ class APIrestHandlerData(BaseHandler):
 			# data retrieved
 			"query_results" 	 		: data
 		} 
+
+		app_log.info("--- API / headers : \n %s", pformat(self._headers.__dict__) )
 
 		return full_json
 
