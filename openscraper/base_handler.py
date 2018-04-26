@@ -222,12 +222,14 @@ class BaseHandler(tornado.web.RequestHandler):
 	def set_default_headers(self, *args, **kwargs):
 		""" 
 		set some handlers to be able to respond to AJAX GET queries
+		cf : https://stackoverflow.com/questions/35254742/tornado-server-enable-cors-requests
 		"""
 		# app_log.info("setting headers")
 		self.set_header("Access-Control-Allow-Origin", "*")
 		self.set_header("Access-Control-Allow-Headers", "x-requested-with")
 		self.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-	
+
+		self.set_header("Access-Control-Allow-Headers", "access-control-allow-origin,authorization,content-type") 
 	
 	### global functions for all handlers
 
