@@ -93,6 +93,103 @@ class APIrestHandlerInfos(BaseHandler):
 		self.finish()
 
 
+
+class APIrestHandlerStats(BaseHandler):
+	"""
+	main api point for getting infos on dataset / datamodel / spiders
+	"""
+	
+	@print_separate(APP_DEBUG)
+	@check_request_token
+	def get(self, slug=None):
+
+		""" main api point for app """
+		
+		self.site_section = "api"
+		
+		# get slug
+		slug_ = self.request.arguments
+		app_log.info("••• slug_ : \n %s", pformat(slug_) )
+
+		### get datamodel set infos
+		dm_set = self.get_datamodel_set( exclude_fields={"added_by" : 0, "modified_by" : 0 } )
+		# app_log.info("••• data_model_custom_list : \n %s ", pformat(dm_set) ) 
+
+		### get spiders_list
+		spiders_dict = self.get_spiders_infos(as_dict=True, query={ "scraper_log.is_tested" : True})
+		# app_log.info("••• spiders_dict : \n %s ", pformat(spiders_dict) ) 
+
+		# count docs by spider_id
+		count_docs_by_spiders = self.count_docs_by_field(coll_name="data", field_name="spider_id")
+		# app_log.info("count_docs_by_spiders : \n %s",  pformat(count_docs_by_spiders) )
+
+
+		### tags stats
+		# cf : https://stackoverflow.com/questions/16448175/whats-the-unwind-operator-in-mongodb
+		# find tags fields
+		tags_fields = list(self.application.coll_model.find({"field_type" : "tags"}))
+		tags_counts = []
+		for tags_field in tags_fields : 
+			tags_field_id 	= str(tags_field["_id"])
+			tags_field_name = str(tags_field["field_name"])
+			tags_by_spiders = self.application.coll_data.aggregate( [
+				{ "$unwind"	: "$"+tags_field_id  }, 
+				{ "$group"	: { 
+								"_id"			: "$"+tags_field_id , 
+								"count"			: { "$sum"		: 1 },
+								"in_items" 		: { "$push" 	: "$_id" },
+								"in_spiders"	: { "$addToSet" : "$spider_id" }
+								} 
+				}, 
+				{ "$project": { "_id"			: 0, 
+								"tag_name"		: "$_id", 
+								"count"			: 1, 
+								"in_items" 		: 1, 
+								"in_spiders" 	: 1 } 
+				}
+			])
+			tags_by_spiders = list(tags_by_spiders)
+			# stringify object_id
+			for t in tags_by_spiders : 
+				t["in_items"] = [ str(i) for i in t["in_items"] ]
+			tags_counts.append( { 	"field_id" 		: tags_field_id, 
+									"field_name" 	: tags_field_name, 
+									"stats" 		: tags_by_spiders 
+								} )
+
+		### stack stats in dict
+		full_json = {
+
+			"counts_stats" 	: {
+
+				"spiders_stats"	: count_docs_by_spiders,
+				"tags_stats"	: tags_counts,
+
+			},
+
+			"counts_simple" : {
+
+				"datamodel_custom"	: self.count_documents(coll_name="datamodel", 	 query={ "field_class" : "custom" }), 
+				"spiders_tested"	: self.count_documents(coll_name="contributors", query={ "scraper_log.is_tested" : True}), 
+				"data"				: self.count_documents(coll_name="data"), 
+				"users"				: self.count_documents(coll_name="users"), 
+
+			} 
+
+		}
+
+
+		### write data as json
+		# cf : https://stackoverflow.com/questions/35083374/how-to-decode-a-unicode-string-python
+		results = json.dumps(full_json, ensure_ascii=False, default=json_util.default).encode('utf8')
+
+		print '.....\n' 
+
+		self.write( results )
+		
+		self.finish()
+
+
 class APIrestHandlerData(BaseHandler): 
 	"""
 	main api point to get / query data from DB
@@ -170,13 +267,18 @@ class APIrestHandlerData(BaseHandler):
 		allowed_fields_list, allowed_custom_fields, allowed_core_fields = self.get_authorized_datamodel_fields(open_level, data_model_custom_list, data_model_core_list )
 		app_log.info("••• allowed_fields_list : \n %s ", allowed_fields_list ) 
 
+		# set fields to ignore
+		ignore_fields_list = []
+		# ignore_fields_list = ["_id"]
+
 		# get data 
 		data, is_data, page_n_max, count_results_tot, query = self.get_data_from_query( 	query_data, 
 																coll_name					= "data", 
 																query_from					= self.site_section, 
 																
 																allowed_fields_list			= allowed_fields_list,
-																ignore_fields_list			= ["_id"],
+																# ignore_fields_list			= ["_id"],
+																ignore_fields_list			= ignore_fields_list,
 																
 																data_model_custom_dict		= data_model_custom_dict,
 																# data_model_custom_dict_names = data_model_custom_dict_names,
@@ -196,10 +298,15 @@ class APIrestHandlerData(BaseHandler):
 			### rewrite field names as understable ones --> replace field_oid by field_name 
 			# cf : https://sedimental.org/remap.html
 			data = remap( data, lambda p, k, v: ( data_model_custom_dict[k][u"field_name"], v) if k in data_model_custom_dict else (k, v))
+			
+			### include _id
+			if "_id" not in ignore_fields_list :
+				for d in data :
+					d["_id"] = str(d["_id"])
 
 		else :
-			count_results = 0
-			data = "no data for this query"
+			count_results 	= 0
+			data 			= "no data for this query"
 
 
 		### add header to tell user which level auth he/she gets to get

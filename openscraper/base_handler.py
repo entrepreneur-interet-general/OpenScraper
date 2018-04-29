@@ -591,16 +591,19 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		coll = self.choose_collection(coll_name=coll_name)
 
-		count_by_field = coll.aggregate( 	[{
-											"$group" : 
-												{ 
-												"_id" : "${}".format(field_name), 
-												"total_docs" : { "$sum" : 1 }
-												} 
-											}]
-										)
+		count_by_field = coll.aggregate( 	
+							[{
+								"$group" : { 
+									"_id" 			: "${}".format(field_name), 
+									"total_docs" 	: { "$sum" : 1 }
+								} 
+							}]
+						)
 
 		count_list = list(count_by_field)
+		
+		app_log.info("... count_list : \n %s", pformat(count_list))
+
 		count_by_field_dict = { i["_id"] : i["total_docs"] for i in count_list }
 
 		return count_by_field_dict

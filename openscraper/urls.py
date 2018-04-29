@@ -75,7 +75,7 @@ urls = [
 	# (r"/api/.*", 					PageNotFoundHandler),
 	(r"/api/data?([^/]*)?",			APIrestHandlerData),
 	(r"/api/infos?([^/]*)?", 		APIrestHandlerInfos),
-	# (r"/api/counts?([^/]*)?", 		APIrestHandlerCounts),
+	(r"/api/stats?([^/]*)?", 		APIrestHandlerStats),
 	# (r"/api/(?P<page_n>[0-9]+)", 	PageNotFoundHandler),
 	# (r"/api/(?P<project>.*?)", 		PageNotFoundHandler),
 
