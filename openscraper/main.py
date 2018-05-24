@@ -247,14 +247,16 @@ def reset_is_running_on_all_spider( coll_model ) :
 	running_spiders = coll_model.find({"scraper_log.is_running" : True})
 	print list(running_spiders)
 
-	if list(running_spiders) != [] : 
+	coll_model.update_many({'scraper_log.is_running' : True }, {"$set": {'scraper_log.is_running' : False }})
 
-		app_log.warning('>>> reset_is_running_on_all_spider / some spiders were blocked in is_running == True ... ')
-		app_log.warning('>>> spiders are : \n %s', pformat(list(running_spiders)) )
+	# if list(running_spiders) != [] : 
 
-		coll_model.update({"scraper_log.is_running":True}, {"$set" : {"scraper_log.is_running" : False }})
+	# 	app_log.warning('>>> reset_is_running_on_all_spider / some spiders were blocked in is_running == True ... ')
+	# 	app_log.warning('>>> spiders are : \n %s', pformat(list(running_spiders)) )
+
+	# 	coll_model.update({"scraper_log.is_running":True}, {"$set" : {"scraper_log.is_running" : False }})
 	
-	print 
+	# print 
 
 
 def backup_mongo_collection(coll, filepath) :
@@ -318,8 +320,11 @@ class Application(tornado.web.Application):
 		self.coll_data		= self.db[ MONGODB_COLL_DATASCRAPPED ]
 
 		# create default fields if missing
-		self.coll_spiders.update_many({'infos.licence'	: {"$exists" : False}}, {"$set": {'infos.licence' : "" }})
-		self.coll_spiders.update_many({'infos.logo_url'	: {"$exists" : False}}, {"$set": {'infos.logo_url' : "" }})
+		self.coll_spiders.update_many({'infos.logo_url'		: {"$exists" : False}}, {"$set": {'infos.logo_url' : "" }})
+		self.coll_spiders.update_many({'infos.licence'		: {"$exists" : False}}, {"$set": {'infos.licence' : "" }})
+		
+		self.coll_spiders.update_many({'scraper_config.deploy_list'			: {"$exists" : False}}, {"$set": {'scraper_config.deploy_list' : False }})
+		self.coll_spiders.update_many({'scraper_config.deploy_list_xpath'	: {"$exists" : False}}, {"$set": {'scraper_config.deploy_list_xpath' : "" }})
 
 
 

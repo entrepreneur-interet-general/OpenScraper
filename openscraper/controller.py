@@ -796,11 +796,12 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			
 			create_or_update 		= create_or_update,
 			
-			contributor_edit_fields = contributor_edit_fields,
-			contributor_edit_radio 	= CONTRIBUTOR_EDIT_FIELDS_RADIO,
-			contributor_edit_numbers = CONTRIBUTOR_EDIT_FIELDS_NUMBER,
-			contributor_edit_floats = CONTRIBUTOR_EDIT_FIELDS_FLOAT,
-			contributor 			= contributor,
+			contributor_edit_fields 		= contributor_edit_fields,
+			contributor_edit_radio 			= CONTRIBUTOR_EDIT_FIELDS_RADIO,
+			contributor_edit_radio_texts	= CONTRIBUTOR_EDIT_FIELDS_RADIO_TEXTS,
+			contributor_edit_numbers 		= CONTRIBUTOR_EDIT_FIELDS_NUMBER,
+			contributor_edit_floats 		= CONTRIBUTOR_EDIT_FIELDS_FLOAT,
+			contributor 					= contributor,
 			
 			datamodel				= data_model_custom,
 			error_msg				= self.error_msg,

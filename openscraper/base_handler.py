@@ -217,19 +217,52 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		self.user_email				= "visitor.email@openscraper.com"
 
-
-	def set_default_headers(self, *args, **kwargs):
+	### headers for CORS use
+	### cf : https://github.com/globocom/tornado-cors/blob/master/tornado_cors/__init__.py
+	# def set_default_headers(self, *args, **kwargs):
+	def set_default_headers(self):
 		""" 
-		set some handlers to be able to respond to AJAX GET queries
+		set some handlers to be able to respond to AJAX GET queries with CORS protection
 		cf : https://stackoverflow.com/questions/35254742/tornado-server-enable-cors-requests
 		"""
+		headers = self.request.headers # .get('Origin')
+		app_log.info("HHH --> headers : \n %s ", pformat(headers.__dict__))
 
 		# app_log.info("setting headers")
 		self.set_header("Access-Control-Allow-Origin", "*")
-		# self.set_header("Access-Control-Allow-Headers", "x-requested-with")
-		self.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
 
-		self.set_header("Access-Control-Allow-Headers", "access-control-allow-origin,authorization,content-type") 
+		self.set_header("Access-Control-Allow-Credentials", True )
+
+		# self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+		# self.set_header("Access-Control-Request-Headers", "x-test-header")
+		# self.set_header("Access-Control-Request-Headers", "x-test-header")
+		# self.set_header("Access-Control-Expose-Headers", "x-test-header")
+
+		# self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+		self.set_header("Access-Control-Allow-Headers", 
+			# "accept,access-control-allow-origin,access-control-allow-credentials,authorization,content-type"
+			"accept,access-control-allow-origin,access-control-allow-credentials,Access-Control-Request-Headers,authorization,content-type,x-token-header"
+		) 
+
+		# self.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+		self.set_header("Access-Control-Allow-Methods", "GET,OPTIONS")
+		
+
+	def options(self, *args, **kwargs):
+		"""
+		needed for non-simple request / aka GET + custom headers --> call OPTIONS
+		"""
+		self.set_header("Access-Control-Allow-Headers", 
+			"accept,access-control-allow-origin,access-control-allow-credentials,Access-Control-Request-Headers,authorization,content-type,x-token-header"
+		) 
+		self.set_header("Access-Control-Allow-Methods", "GET,OPTIONS")
+		self.set_header("Access-Control-Allow-Credentials", True )
+		self.set_header("Access-Control-Expose-Headers", "x-token-header")
+
+		# no body
+		self.set_status(204)
+		self.finish()
+
 	
 	### global functions for all handlers
 

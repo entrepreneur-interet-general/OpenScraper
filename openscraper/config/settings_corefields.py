@@ -151,8 +151,13 @@ DATAMODEL_DEFAULT_CUSTOM_FIELDS = [
 
 ### radio buttons in 'edit contributor' form
 CONTRIBUTOR_EDIT_FIELDS_RADIO = [
-	"parse_follow", "page_needs_splash"
+	"parse_follow", "page_needs_splash", "deploy_list"
 ]
+CONTRIBUTOR_EDIT_FIELDS_RADIO_TEXTS = {
+	"parse_follow" 		: ["The data is complete in the list ","I need to click a link in the list to show the complete data "] , 
+	"page_needs_splash" : ["no","yes"], 
+	"deploy_list" 		: ["There is no special button at the end of the list","There is a 'show more button' at the end of the list"]
+}
 CONTRIBUTOR_EDIT_FIELDS_NUMBER = [
 	"LIMIT", "download_delay", "page_count"
 ]
@@ -188,6 +193,8 @@ CONTRIBUTOR_EDIT_FIELDS = {
 			"start_urls",
 			"item_xpath",
 			"next_page",
+			"deploy_list",
+			"deploy_list_xpath",
 			"parse_follow",
 			"follow_xpath",
 		], 
@@ -241,6 +248,9 @@ CONTRIBUTOR_CORE_FIELDS = {
 
 		"parse_follow" 		: False,	# boolean to know if needs to follow link in page to get all infos
 		"follow_xpath" 		: "",		# xpath to follow item's url to get all info on item
+		
+		"deploy_list"		: False,	# selenium action to click on "show more" button if exists
+		"deploy_list_xpath"	: "",		# xpath to click on if "show more" button exists... 
 
 		"page_needs_splash" : False,	# if page needs jquery to be parsed
 	},

@@ -30,7 +30,8 @@ class APIrestHandlerInfos(BaseHandler):
 		""" main api point for app """
 		
 		self.site_section = "api"
-		
+		# self.set_status(204)
+
 		# get slug
 		slug_ = self.request.arguments
 		app_log.info("••• slug_ : \n %s", pformat(slug_) )
@@ -364,7 +365,7 @@ class APIrestHandlerData(BaseHandler):
 	# @onthread
 	def get(self, slug=None):
 		""" main api point for app """
-
+				
 		# print 
 		# app_log.info("••• APIrestHandler.get ...\n")
 

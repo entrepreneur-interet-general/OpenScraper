@@ -56,6 +56,8 @@ import scrapy
 from multiprocessing 		import Process, Queue
 from twisted.internet 		import reactor, defer
 
+from scrapy.http 			import Request
+
 from scrapy.utils.log 		import configure_logging
 from scrapy.utils.project 	import get_project_settings
 
@@ -66,6 +68,11 @@ from scrapy.crawler 		import CrawlerProcess, CrawlerRunner
 # from scrapy.spiders 	import SitemapSpider, CrawlSpider
 # import scrapy.crawler as 	   crawler
 
+
+### selenium
+from selenium 						import webdriver
+from selenium.webdriver.support.ui 	import WebDriverWait
+from selenium.webdriver.common.keys import Keys
 
 
 ### settings scrapy
@@ -186,6 +193,7 @@ def dictFromDataModelList (datamodel_list ) :
 ### GENERIC SPIDER  #########################################################################
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
+### note : to stop process cf : https://stackoverflow.com/questions/19071512/socket-error-errno-48-address-already-in-use 
 
 class GenericSpider(Spider) :
 	
@@ -251,12 +259,33 @@ class GenericSpider(Spider) :
 		self.dm_item_related 			= self.dm_custom_list + self.dm_core_item_related
 		log_scrap.info("--- GenericSpider / dm_item_related : \n %s", pformat(self.dm_item_related) ) 
 
+		### initiate selenium browser
+		log_scrap.info("--- GenericSpider / starting selenium driver... " ) 
+		# self.driver = webdriver.Chrome()
+		self.driver = webdriver.Firefox()
+		# self.driver = webdriver.PhantomJS() ### deprecated
+		self.driver.wait = WebDriverWait(self.driver, 10)
+		# time.sleep(5)
+		self.driver.quit()
+		log_scrap.info("--- GenericSpider / driver is shut" ) 
 
 
+	def start_requests(self) :
+		
+		# try :
+		for url in self.start_urls :
+			yield Request(url, dont_filter=True)
+		
+		# except : 
+
+	
 	def parse(self, response):
 		""" parsing pages to scrap data """
 
-
+		### close spider if exception
+		if 'Bandwidth exceeded' in response.body:
+			raise CloseSpider('bandwidth_exceeded')
+		
 		print "\n>>> NEW PARSING " + ">>> >>> "*10, "\n"
 		log_scrap.info("--- GenericSpider.parse ..." )
 		
@@ -273,15 +302,13 @@ class GenericSpider(Spider) :
 		### check response to see if API or HTML response
 
 
-
 		log_scrap.info("--- GenericSpider.parse / self.item_xpath : %s", self.item_xpath )
-		
-
-
 
 
 		raw_items_list = response.xpath(self.item_xpath)
 		log_scrap.info("--- GenericSpider.parse / len(raw_items_list) : %d ", len(raw_items_list) )
+
+
 
 		### start parsing page : 
 		# loop through data items in page in response
@@ -360,6 +387,9 @@ class GenericSpider(Spider) :
 				
 				yield response.follow(next_page, callback=self.parse)
 
+
+		### close selenium 
+		# self.browser.close()
 
 
 	### generic function to fill item from result
