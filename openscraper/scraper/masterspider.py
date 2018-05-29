@@ -260,14 +260,17 @@ class GenericSpider(Spider) :
 		log_scrap.info("--- GenericSpider / dm_item_related : \n %s", pformat(self.dm_item_related) ) 
 
 		### initiate selenium browser
-		log_scrap.info("--- GenericSpider / starting selenium driver... " ) 
-		# self.driver = webdriver.Chrome()
-		self.driver = webdriver.Firefox()
-		# self.driver = webdriver.PhantomJS() ### deprecated
-		self.driver.wait = WebDriverWait(self.driver, 10)
-		# time.sleep(5)
-		self.driver.quit()
-		log_scrap.info("--- GenericSpider / driver is shut" ) 
+		# log_scrap.info("--- GenericSpider / starting selenium driver... " ) 
+		# # self.driver = webdriver.Chrome()
+		# self.driver = webdriver.Firefox()
+		# # self.driver = webdriver.PhantomJS() ### deprecated
+		# self.driver.wait = WebDriverWait(self.driver, 10)
+		# # time.sleep(5)
+		# self.driver.quit()
+		# log_scrap.info("--- GenericSpider / driver is shut" ) 
+
+		### SPLASH
+		### cf : https://blog.scrapinghub.com/2015/03/02/handling-javascript-in-scrapy-with-splash/
 
 
 	def start_requests(self) :
