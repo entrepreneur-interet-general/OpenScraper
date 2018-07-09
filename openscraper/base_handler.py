@@ -32,7 +32,7 @@ from	tornado.log import access_log, app_log, gen_log
 from 	tornado import gen, concurrent
 # from 	tornado.concurrent import return_future, run_on_executor
 
-from 	concurrent.futures import ThreadPoolExecutor # need to install futures in pytohn 2.7
+from 	concurrent.futures import ThreadPoolExecutor # need to install futures in python 2.7
 from 	handler_threading import *
 
 

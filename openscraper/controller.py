@@ -26,7 +26,7 @@ from 	pymongo import UpdateOne
 # from 	tornado.concurrent import return_future, run_on_executor
 # from 	tornado.log import access_log, app_log, gen_log # already imported from base_handler
 
-# from 	concurrent.futures import ThreadPoolExecutor # note : need to install "futures" in pytohn 2.7 : pip install futures
+# from 	concurrent.futures import ThreadPoolExecutor # note : need to install "futures" in python 2.7 : pip install futures
 # from 	spider_threading import *
 # from 	handler_threading import *
 
