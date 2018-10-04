@@ -151,10 +151,14 @@ DATAMODEL_DEFAULT_CUSTOM_FIELDS = [
 
 ### radio buttons in 'edit contributor' form
 CONTRIBUTOR_EDIT_FIELDS_RADIO = [
-	"parse_follow", "page_needs_splash", "deploy_list"
+	"parse_follow", 
+	"page_needs_splash", 
+	"deploy_list", 
+	"parse_reactive"
 ]
 CONTRIBUTOR_EDIT_FIELDS_RADIO_TEXTS = {
 	"parse_follow" 		: ["The data is complete in the list ","I need to click a link in the list to show the complete data "] , 
+	"parse_reactive" 	: ["The website is not reactive","The website is reactive"] , 
 	"page_needs_splash" : ["no","yes"], 
 	"deploy_list" 		: ["There is no special button at the end of the list","There is a 'show more button' at the end of the list"]
 }
@@ -197,6 +201,7 @@ CONTRIBUTOR_EDIT_FIELDS = {
 			"deploy_list_xpath",
 			"parse_follow",
 			"follow_xpath",
+			"parse_reactive"	,
 		], 
 		"optional": [
 			"page_needs_splash",
@@ -253,6 +258,7 @@ CONTRIBUTOR_CORE_FIELDS = {
 		"deploy_list_xpath"	: "",		# xpath to click on if "show more" button exists... 
 
 		"page_needs_splash" : False,	# if page needs jquery to be parsed
+		"parse_reactive" 	: False,
 	},
 
 	# scraper - custom for scraping xpaths 

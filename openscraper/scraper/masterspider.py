@@ -70,9 +70,27 @@ from scrapy.crawler 		import CrawlerProcess, CrawlerRunner
 
 
 ### selenium
+# cf : https://stackoverflow.com/questions/30345623/scraping-dynamic-content-using-python-scrapy
+# cf : https://stackoverflow.com/questions/17975471/selenium-with-scrapy-for-dynamic-page 
+# cf : https://github.com/clemfromspace/scrapy-selenium 
 from selenium 						import webdriver
 from selenium.webdriver.support.ui 	import WebDriverWait
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.select import Select
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+
+### cf : https://intoli.com/blog/running-selenium-with-headless-chrome/
+options_selenium = webdriver.ChromeOptions()
+# options.binary_location = '/usr/local/bin/chromedriver'
+options_selenium.add_argument('headless')
+# option.add_argument(' — incognito')
+# set the window size
+options_selenium.add_argument('window-size=1200x600')
+# initialize the driver
+# driver = webdriver.Chrome(chrome_options=options_selenium)
+
 
 
 ### settings scrapy
@@ -259,15 +277,22 @@ class GenericSpider(Spider) :
 		self.dm_item_related 			= self.dm_custom_list + self.dm_core_item_related
 		log_scrap.info("--- GenericSpider / dm_item_related : \n %s", pformat(self.dm_item_related) ) 
 
+
 		### initiate selenium browser
-		# log_scrap.info("--- GenericSpider / starting selenium driver... " ) 
-		# # self.driver = webdriver.Chrome()
+		### cf : https://github.com/voliveirajr/seleniumcrawler/blob/master/seleniumcrawler/spiders/seleniumcrawler_spider.py 
+		log_scrap.info("--- GenericSpider / starting selenium driver... " ) 
+		### specify executable path --> cf where chromedriver was installed when `brew install chromedriver`
+		self.driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver', chrome_options=options_selenium)
+		# self.driver = webdriver.Chrome(chrome_options=options_selenium)
 		# self.driver = webdriver.Firefox()
-		# # self.driver = webdriver.PhantomJS() ### deprecated
+		# self.driver = webdriver.Chrome()
+		# self.driver = webdriver.PhantomJS() ### deprecated
 		# self.driver.wait = WebDriverWait(self.driver, 10)
 		# # time.sleep(5)
-		# self.driver.quit()
+		# self.driver.close()
 		# log_scrap.info("--- GenericSpider / driver is shut" ) 
+
+
 
 		### SPLASH
 		### cf : https://blog.scrapinghub.com/2015/03/02/handling-javascript-in-scrapy-with-splash/
@@ -292,6 +317,25 @@ class GenericSpider(Spider) :
 		print "\n>>> NEW PARSING " + ">>> >>> "*10, "\n"
 		log_scrap.info("--- GenericSpider.parse ..." )
 		
+
+
+
+		### SELENIUM TEST
+		# try :
+		# 	log_scrap.info("--- SELENIUM ..." )
+		# 	self.driver.get(response.url)
+		# 	# while True:
+		# 	# 	next = self.driver.find_element_by_xpath('//td[@class="pagn-next"]/a')
+		# 	# 	try:
+		# 	# 		next.click()
+		# 	# 		# get the data and write it to scrapy items
+		# 	# 	except:
+		# 	# 		break
+		# 	# ### close selenium 
+		# 	# self.driver.close()
+		# except :
+		# 	pass
+
 		# print response
 		# print response.__dict__.keys()
 		# for k, v in response.__dict__.iteritems() : 
@@ -343,14 +387,20 @@ class GenericSpider(Spider) :
 			### if need to follow to extract all data
 			if self.spider_config_flat["parse_follow"] == True : 
 				
+				# click follow link
+				if self.spider_config_flat["parse_reactive"] == True :
+					follow_link 	= self.driver.find_element_by_xpath(self.follow_xpath)	
+					log_scrap.info(" --> follow_link RAW : %s ", follow_link )
+					follow_link.click()
+
 				# extract follow link
-				follow_link 	= raw_data.xpath( self.follow_xpath ).extract_first()	
-				log_scrap.info(" --> follow_link RAW : %s ", follow_link )
+				else :
+					follow_link 	= raw_data.xpath( self.follow_xpath ).extract_first()	
+					log_scrap.info(" --> follow_link RAW : %s ", follow_link )
+					# complete follow link if needed
+					follow_link = self.clean_link(follow_link)		
+					log_scrap.info(" --> follow_link CLEAN : %s ", follow_link )
 
-
-				# complete follow link if needed
-				follow_link = self.clean_link(follow_link)		
-				log_scrap.info(" --> follow_link CLEAN : %s ", follow_link )
 
 				# store follow_link
 				item[ 'link_data' ]	= follow_link
@@ -358,8 +408,12 @@ class GenericSpider(Spider) :
 				log_scrap.info(" --> item : %s ", item )
 
 				try : 
+					### follow with scrapy
 					# yield scrapy.Request(url, callback=self.parse_detailed_page, meta={'item': item})
 					yield scrapy.Request(url, callback=self.parse_detailed_page, meta={'item': item})
+
+					### follow with selenium
+
 				
 				except :
 					yield item
@@ -378,7 +432,18 @@ class GenericSpider(Spider) :
 		if self.test_limit == None or self.page_count <= self.test_limit : 
 
 			### get and go to next page 
-			is_next_page, next_page = self.get_next_page(response)
+
+			# with selenium
+			if self.spider_config_flat["parse_reactive"] == True :
+				pass
+
+			# with scrapy
+			else :
+				is_next_page, next_page = self.get_next_page(response)
+
+	
+
+
 			
 			if is_next_page :
 				
@@ -391,8 +456,7 @@ class GenericSpider(Spider) :
 				yield response.follow(next_page, callback=self.parse)
 
 
-		### close selenium 
-		# self.browser.close()
+		# self.driver.close()
 
 
 	### generic function to fill item from result

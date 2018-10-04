@@ -131,10 +131,23 @@ def check_request_token(method) :
 			user_auth_level = "visitor"
 		else :
 
+			token = token[0]
 
 			### TO DO : decrypt token instead of default 
-			user_auth_level = "user"
-			self.user_email = "default.api.email@openscraper.com"
+			if token in ["pwa", "cis_test", "test_token", "test"] :
+				user_auth_level = "user"
+				self.user_email = "cis_user.api.email@openscraper.com"
+			
+			elif token in ["cis_staff"] : 
+				user_auth_level = "staff"
+				self.user_email = "cis_staff.api.email@openscraper.com"
+			
+			elif token in ["OFQErfsqyer"] : 
+				user_auth_level = "admin"
+				self.user_email = "cis_admin.api.email@openscraper.com"
+			
+			else : 
+				user_auth_level = "visitor"
 		
 
 

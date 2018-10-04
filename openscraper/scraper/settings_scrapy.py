@@ -27,14 +27,24 @@ SPLASH_URL   = 'http://localhost:8050/'
 API_BASE_URL = 'http://localhost:8000/'
 
 
+#### only for python 3
+# from shutil import which
+
+# SELENIUM_DRIVER_NAME='chrome'
+# SELENIUM_DRIVER_EXECUTABLE_PATH=which('geckodriver')
+# SELENIUM_DRIVER_ARGUMENTS=['-headless']  # '--headless' if using chrome instead of firefox
+
+
+
+
 DOWNLOADER_MIDDLEWARES = {
-    'scrapy_splash.SplashCookiesMiddleware': 723,
-    'scrapy_splash.SplashMiddleware': 725,
-    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+	'scrapy_splash.SplashCookiesMiddleware': 723,
+	'scrapy_splash.SplashMiddleware': 725,
+	'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
 }
 
 SPIDER_MIDDLEWARES = {
-    'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+	'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
 }
 
 DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
