@@ -38,7 +38,7 @@ class SpiderHandler(BaseHandler) :
 	@onthread
 	def get(self, slug=None ):
 		
-		print 
+		print()
 		app_log.info("SpiderHandler.get... ")
 
 		# catch error message if any
@@ -63,7 +63,7 @@ class SpiderHandler(BaseHandler) :
 
 
 		app_log.info("SpiderHandler.get / spider_id : %s", spider_id )
-		print spider_oid, type(spider_oid)
+		print (spider_oid, type(spider_oid))
 
 		### retrieve spider config from its name in the db
 		# spider_config = self.application.coll_spiders.find_one({"scraper_config.spidername": spidername})
@@ -158,7 +158,7 @@ class SpiderHandler(BaseHandler) :
 						countdown=None
 					) :
 		
-		print 
+		print()
 		app_log.info("SpiderHandler.run_spider --- " )
 		
 

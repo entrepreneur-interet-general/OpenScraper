@@ -13,12 +13,12 @@ from . import base_fields
 class GenericSpiderMixin(Spider) : 
 	
 	"""Mixin class for the generic spider"""
-	print "\n/// GenericSpiderMix root "
+	print ("\n/// GenericSpiderMix root ")
 
 	# def __init__(self, **kwargs) : 
 	def __init__(self) : 
 
-		print "\n/// GenericSpiderMix / init "
+		print ("\n/// GenericSpiderMix / init ")
 
 		# Default fields for mixin class
 		
