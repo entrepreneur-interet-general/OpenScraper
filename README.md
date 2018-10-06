@@ -1,8 +1,11 @@
 
-
-
 <h1 align=center>  OpenScraper</h1>
 
+----
+
+part 1/3 of the TADATA! sofware suite ([ApiViz](https://github.com/entrepreneur-interet-general/CIS-front) / [Solidata_backend](https://github.com/entrepreneur-interet-general/solidata_backend) / [Solidata_frontend](https://github.com/entrepreneur-interet-general/solidata_frontend) / [OpenScraper](https://github.com/entrepreneur-interet-general/OpenScraper) )
+
+---
 <h4 align=center> a public service for webscraping</h4>
 
 <h2 align=center>

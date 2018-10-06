@@ -85,6 +85,7 @@ from selenium.common.exceptions import TimeoutException
 from time import sleep    
 
 ### cf : https://intoli.com/blog/running-selenium-with-headless-chrome/
+### cf : https://duo.com/decipher/driving-headless-chrome-with-python
 options_selenium = webdriver.ChromeOptions()
 # options.binary_location = '/usr/local/bin/chromedriver'
 options_selenium.add_argument('headless')
@@ -258,6 +259,11 @@ class GenericSpider(Spider) :
 		self.item_count = 0
 		self.page_count = 1
 
+		### for selenium
+		self.delay			= 2
+		self.delay_driver 	= 5
+		self.delay_new_page = 3
+		self.delay_item 	= 1
 
 		### store spider_config_flat
 		log_scrap.info("--- GenericSpider / spider_config_flat : \n %s ", pformat(spider_config_flat) )
@@ -319,12 +325,11 @@ class GenericSpider(Spider) :
 		if 'Bandwidth exceeded' in response.body:
 			raise CloseSpider('bandwidth_exceeded')
 		
-		print ("\n>>> NEW PARSING " + ">>> >>> "*10, "\n")
+		log_scrap.debug("\n>>> NEW PARSING >>>\n" )
 		log_scrap.info("--- GenericSpider.parse ..." )
 		
 		log_scrap.info("\n--- GenericSpider.parse /response  : \n%s" , response)
-		log_scrap.info("\n--- GenericSpider.parse /response  : \n%s" , response.__dict__.keys() )
-		print () 
+		log_scrap.info("\n--- GenericSpider.parse /response  : \n%s \n" , response.__dict__.keys() )
 
 		# for k, v in response.__dict__.iteritems() : 
 		# 	log_scrap.info("\n--- [k] {} : [v] {} : ".format(k,v))
@@ -347,8 +352,8 @@ class GenericSpider(Spider) :
 			### start parsing page : loop through data items in page in response
 			for raw_data in raw_items_list :
 				
-				print ("\n\n>>> NEW ITEM " + ">>> >>> "*10, "\n")
 				self.item_count += 1
+				log_scrap.debug("\n>>> NEW ITEM - Scrapy - item n°{} / page n°{} >>> \n".format(self.item_count, self.page_count) )
 
 				# print ">>> raw_data : \n", raw_data.extract()
 
@@ -360,7 +365,7 @@ class GenericSpider(Spider) :
 				item[ 'spider_id' ]		= self.spider_id
 				item[ 'added_by'  ]		= self.user_id 
 				item[ 'added_at'  ]		= time.time()		# timestamp
-				item[ 'link_src' ]		= response._url
+				item[ 'link_src'  ]		= response._url
 
 				### extract data and feed it to the Item instance based on spider_config_flat
 				item = self.fill_item_from_results_page(raw_data, item)
@@ -369,7 +374,7 @@ class GenericSpider(Spider) :
 				### if need to follow to extract all data
 				if self.spider_config_flat["parse_follow"] == True : 
 
-					print ("\n>>> FOLLOW LINK" + ">>> >>> "*10, "\n")
+					log_scrap.debug("\n>>> FOLLOW LINK >>> \n")
 
 					follow_link 	= raw_data.xpath( self.follow_xpath ).extract_first()	
 					log_scrap.info(" --> follow_link RAW : %s ", follow_link )
@@ -405,7 +410,7 @@ class GenericSpider(Spider) :
 
 				if self.page_count < self.settings_limit :
 
-					log_scrap.info("\n\n\n--- GenericSpider.parse (Scrapy)  >>> NEXT PAGE " )
+					log_scrap.info("\n --- GenericSpider.parse (Scrapy)  >>> PAGE {} DONE -> NEXT PAGE >>> \n".format(self.page_count) )
 
 					### get and go to next page 
 
@@ -420,8 +425,12 @@ class GenericSpider(Spider) :
 						log_scrap.info("--- GenericSpider.parse >>> NEXT PAGE II : %s", next_page )
 
 						yield response.follow(next_page, callback=self.parse)
-				
+
+					else :
+						log_scrap.warning("--- GenericSpider. / NO MORE PAGE TO SCRAP / except -> break" )
+
 				else :
+					log_scrap.warning("--- GenericSpider. / OUT OF TEST_LIMIT / except -> break" )
 					pass
 
 		### start requests with Selenium
@@ -437,7 +446,9 @@ class GenericSpider(Spider) :
 			# self.driver = webdriver.Firefox()
 			# self.driver = webdriver.Chrome()
 			# self.driver = webdriver.PhantomJS() ### deprecated
-			self.driver.wait = WebDriverWait(self.driver, 10)
+			self.wait 		= WebDriverWait(self.driver, self.delay)
+			self.wait_long 	= WebDriverWait(self.driver, self.delay_new_page)
+			self.driver.implicitly_wait(0.5)
 
 			
 			### start parsing with selenium
@@ -462,22 +473,22 @@ class GenericSpider(Spider) :
 			there_is_more_items_to_scrap = True 
 
 			while there_is_more_items_to_scrap : 
-				
+			
 				try : 
 
 					### start parsing page : 
 					log_scrap.info("--- GenericSpider. / self.item_xpath : %s", self.item_xpath )
 					raw_items_list 	= self.driver.find_elements_by_xpath(self.item_xpath)
 					log_scrap.info("--- GenericSpider. / raw_items_list : \n%s", raw_items_list )
-					log_scrap.info("--- GenericSpider. / raw_items_list[0].text : \n%s", raw_items_list[0].text )
+					# log_scrap.info("--- GenericSpider. / raw_items_list[0].text : \n%s", raw_items_list[0].text )
 					
 					current_item_index = 0
 
 					# loop through data items in page in response
 					for raw_data in raw_items_list :
 							
-						print ("\n>>> NEW ITEM " + ">>> >>> "*10, "\n")
 						self.item_count += 1
+						log_scrap.debug("\n>>> NEW ITEM - Selenium - item n°{} / page n°{} >>> \n".format(self.item_count, self.page_count) )
 
 						### instantiate Item to fill from datamodel --> cf items.py 
 						itemclass 	= create_item_class( 'GenericItemClass', fields_list = self.dm_item_related )
@@ -495,6 +506,8 @@ class GenericSpider(Spider) :
 						### find follow link to open detailled item view
 						if self.spider_config_flat["parse_follow"] == True :
 							
+							log_scrap.debug("\n>>> FOLLOW LINK >>> \n")
+
 							### follow link with Scrapy
 							try : 
 								follow_link 	= raw_data.xpath( self.follow_xpath ).extract_first()	
@@ -516,8 +529,9 @@ class GenericSpider(Spider) :
 
 							### follow link with Selenium
 							except : 
-								log_scrap.info("--- GenericSpider. / self.follow_link : %s", self.follow_xpath )
+								log_scrap.info("--- GenericSpider. / self.follow_xpath : %s", self.follow_xpath )
 								follow_link_xpath 	= clean_xpath_for_reactive(self.follow_xpath, strings_to_clean)
+								log_scrap.info("--- GenericSpider. / self.follow_link_xpath : %s", self.follow_link_xpath )
 								follow_link 		=  self.driver.find_element_by_xpath( follow_link_xpath )
 								
 								### open link in new tab ?
@@ -545,41 +559,92 @@ class GenericSpider(Spider) :
 						
 						if self.page_count < self.settings_limit :
 
-							log_scrap.info("\n\n\n--- GenericSpider.parse (Selenium) >>> NEXT PAGE " )
+							log_scrap.info("\n --- GenericSpider.parse (Selenium)  >>> PAGE {} DONE -> NEXT PAGE >>> \n".format(self.page_count) )
 
 							### find next page btn in current view
 							log_scrap.info("--- GenericSpider. / self.next_page : %s", self.next_page )
 							next_page_xpath = clean_xpath_for_reactive(self.next_page, strings_to_clean)
 							log_scrap.info("--- GenericSpider. / next_page_xpath : %s", next_page_xpath )
 							# next_page 	= re.sub("|".join(strings_to_clean), "", next_page )
-							next_page 		= self.driver.find_element_by_xpath( next_page_xpath )
+							
+							# try :
+							element_present = EC.presence_of_element_located((By.XPATH, next_page_xpath ))
+							# log_scrap.info("--- GenericSpider. / next_page present : %s", element_present )
+							# self.wait.until(element_present)
+							# next_page = self.wait.until( EC.element_to_be_clickable(element_present) )
+							# next_page 		= self.driver.find_element_by_xpath( next_page_xpath )
+							next_page 		= self.driver.find_element(By.XPATH, next_page_xpath )
+							
 							log_scrap.info("--- GenericSpider. / next_page : %s", next_page )
 							log_scrap.info("--- GenericSpider. / next_page.text : %s", next_page.text )
-							self.driver.wait = WebDriverWait(self.driver, 10)
-							log_scrap.info("--- ... ---")
+							
+							# except TimeoutException:
+							# except :
+							# 	log_scrap.error("--- GenericSpider. / Timed out waiting for page to load")
+							
+							
+							
+							### click next button and wait for ajax calls to complete (post and get)
+							### cf : http://www.obeythetestinggoat.com/how-to-get-selenium-to-wait-for-page-load-after-a-click.html
+							
+							# def wait_for(condition_function):
+    						# 		start_time = time.time() 
+							# 	while time.time() < start_time + 3: 
+							# 		if condition_function(): 
+							# 			return True 
+							# 		else: 
+							# 			time.sleep(0.1) 
+							# 	raise Exception ('Timeout waiting for {}'.format(condition_function.__name__) )
+
+							# def link_has_gone_stale():
+    						# 		try:
+							# 		# poll the link with an arbitrary call
+							# 		next_page.find_elements_by_xpath(self.item_xpath) 
+							# 		return False
+							# 	except StaleElementReferenceException :
+							# 		return True
+
+							log_scrap.debug("--- ... ---")
 							try : 
 								log_scrap.info("--- GenericSpider. / next_page.click() " )
-								next_page.click()
+								# next_page.click()
 							except : 
-								log_scrap.info("--- GenericSpider. / next_page.send_keys('\n')" )
-								next_page.send_keys("\n")
-							log_scrap.info("--- GenericSpider. / next_page.text : %s", next_page.text )
+								# log_scrap.info("--- GenericSpider. / next_page.send_keys( \ n )" )
+								# next_page.send_keys("\n")
+								# added this step for compatibility of scrolling to the view
+								log_scrap.error("--- GenericSpider. / ALTERNATIVE next_page.click() " )
+								# self.driver.execute_script("return arguments[0].scrollIntoView();", next_page)
+								# next_page.click()
+								self.driver.execute_script("arguments[0].click();", next_page)
+							
+							### wait after click
+							try :
+								log_scrap.info("--- GenericSpider. / wait for ajax to finish... " )
+								# wait_for(link_has_gone_stale)
+								self.wait_long.until(lambda driver: self.driver.execute_script('return jQuery.active') == 0)
+								self.wait_long.until(lambda driver: self.driver.execute_script('return document.readyState') == 'complete')
+								time.sleep(0.5)
+							except : 
+								log_scrap.error("--- GenericSpider. / !!! FAIL / wait for ajax to finish... " )
+
+							### add 1 to parsed pages
 							self.page_count += 1
 						
 						else :
+							log_scrap.warning("--- GenericSpider. / OUT OF PAGES TO SCRAP / except -> break" )
 							there_is_more_items_to_scrap = False
 							self.driver.close()
 							break
 
 					else :
 						there_is_more_items_to_scrap = False
-						log_scrap.warning("--- GenericSpider. / except -> break" )
+						log_scrap.warning("--- GenericSpider. / OUT OF TEST_LIMIT / except -> break" )
 						self.driver.close()
 						log_scrap.info("--- GenericSpider / driver is shut" ) 
 						break
 
 				except :
-					log_scrap.warning("--- GenericSpider. / except -> break" )
+					log_scrap.warning("--- GenericSpider. / NO MORE ITEMS TO SCRAP /except -> break" )
 					self.driver.close()
 					log_scrap.info("--- GenericSpider / driver is shut" ) 
 					break
@@ -787,15 +852,11 @@ class GenericSpider(Spider) :
 	'''
 		
 
-
-
-
-
 	### generic function to fill item from result
 	def fill_item_from_results_page (self, raw_data, item, is_reactive=False, strings_to_clean=None ) : 
 		""" fill item """
 
-		log_scrap.info("-+- fill_item_from_results_page" )
+		log_scrap.info(" -+- fill_item_from_results_page" )
 		log_scrap.info(" -+- item : \n %s \n", pformat(item) )
 		log_scrap.info(" -+- raw_data : \n %s \n", pformat(raw_data) )
 
@@ -808,6 +869,7 @@ class GenericSpider(Spider) :
 				### check if field filled in spider_config_flat is not empty
 				if self.spider_config_flat[ dm_field ] != [] and self.spider_config_flat[ dm_field ] != "" :
 		
+					full_data = None
 					log_scrap.info("\n dm_field : %s | dm_name : %s ", 
 											dm_field, 
 											self.dm_custom[dm_field]["field_name"] )
@@ -817,20 +879,33 @@ class GenericSpider(Spider) :
 
 					### extract data with Scrapy request
 					if is_reactive == False : 
-						log_scrap.info(" -+- extract / with Scrapy ... " )
-						# log_scrap.info(" -+- extract / item_field_xpath : %s ", item_field_xpath )
-						full_data 			= raw_data.xpath( item_field_xpath ).extract()
-					
+						try :
+							log_scrap.info(" -+- extract / with Scrapy ... " )
+							# log_scrap.info(" -+- extract / item_field_xpath : %s ", item_field_xpath )
+							full_data 			= raw_data.xpath( item_field_xpath ).extract()
+						except :
+							log_scrap.error(" -+- !!! extract FAILED / with Scrapy ... " )
+
 					### extract data with Selenium
 					else :
-						log_scrap.info(" -+- extract / with Selenium ... " )
-						# item_field_xpath 	= re.sub("|".join(strings_to_clean), "", item_field_xpath )
-						item_field_xpath = clean_xpath_for_reactive(item_field_xpath, strings_to_clean)
-						log_scrap.info(" -+- extract / item_field_xpath : %s ", item_field_xpath )
-						full_data_list 	= raw_data.find_elements_by_xpath( item_field_xpath )
-						full_data 		= [ data.text for data in full_data_list ]
-						# log_scrap.info(" -+- extract / full_data : %s ", full_data )
-
+						try :
+							log_scrap.info(" -+- extract / with Selenium ... " )
+							# item_field_xpath 	= re.sub("|".join(strings_to_clean), "", item_field_xpath )
+							item_field_xpath = clean_xpath_for_reactive(item_field_xpath, strings_to_clean)
+							log_scrap.info(" -+- extract / item_field_xpath : %s ", item_field_xpath )
+						
+							element_present = EC.presence_of_element_located((By.XPATH, item_field_xpath ))
+							log_scrap.info(" -+- extract / item_field_xpath present : %s ", element_present )
+							# try : 
+								# WebDriverWait(self.driver, self.delay_item).until(element_present)
+							
+							full_data_list 	= raw_data.find_elements_by_xpath( item_field_xpath )
+							full_data 		= [ data.text for data in full_data_list ]
+							# log_scrap.info(" -+- extract / full_data : %s ", full_data )
+							# except TimeoutException:
+							# 	log_scrap.error("-+- extract FAILED / Timed out waiting for page to load")
+						except :
+							log_scrap.error(" -+- !!! extract FAILED / with Selenium ... " )
 
 					log_scrap.warning(" \n field_name : %s \
 										\n item_field_xpath : %s \
@@ -856,7 +931,6 @@ class GenericSpider(Spider) :
 									data = self.clean_link(data)
 									clean_href_list.append(data)
 							full_data = clean_href_list
-
 
 						# delete duplicates and aggregate
 						if full_data != None or full_data != [] or full_data != [u""] : 
