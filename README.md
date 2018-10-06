@@ -62,16 +62,24 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 
 1. **clone or [download](https://github.com/entrepreneur-interet-general/OpenScraper/archive/master.zip) the repo**
 1. **[install MongoDB](https://docs.mongodb.com/manual/installation/) locally** or get the URI of the MongoDB you're using
+1. **install chromedriver**
+	
+	> 
+		$ brew tap caskroom/cask
+		$ brew cask install chromedriver
+
 1. **go to your openscraper folder**
 1. **install the libraries (without [virtual environment](https://pypi.python.org/pypi/virtualenv))**
 
-	> $ pip install -r requirements.txt
+	> 
+		$ pip install -r requirements.txt
 
 1. **update the `config/settings.py` file** with your mongoDB URI (if you're not using default mongoDB connection)
 
 1. **run app** from `$ ~/../app_scrapnado`
 
-	> $ python main.py
+	> 
+		$ python main.py
 
 1. **check in your browser** at `localhost:8000`
 
@@ -97,7 +105,7 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 #### Tech stack
 - _Language_ : **Python**... because let's be honest, I don't manage so many languages for that kind of project
 - _Backend_  : **[Tornado](http://www.tornadoweb.org/en/stable/)**... one of the few async/non-blocking Python frameworks
-- _Scraping_ : **[Scrapy](https://scrapy.org/)**, perhaps with **[Selenium](http://selenium-python.readthedocs.io/) for Python**  inside specific instances of the generic spider, or **Splash** for jquery follow-up...
+- _Scraping_ : **[Scrapy](https://scrapy.org/)**, with **[Selenium](http://selenium-python.readthedocs.io/) for Python**  inside specific instances of the generic spider, or **Splash** for jquery follow-up...
 - _Frontend_ : **[Bulma](https://bulma.io/)**  (to make it nice) and then **[Vue.js](https://vuejs.org/)** (to make it even nicer and bi-directional)
 
 #### Tech goals for a MVP
