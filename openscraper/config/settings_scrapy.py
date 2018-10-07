@@ -1,5 +1,9 @@
 # -*- encoding: utf-8 -*-
 
+from 	tornado.log import enable_pretty_logging, LogFormatter, access_log, app_log, gen_log
+
+gen_log.info("--> importing .settings_scrapy")
+
 from settings_example import *
 # from settings import *		# for prod
 

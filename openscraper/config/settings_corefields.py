@@ -163,10 +163,24 @@ CONTRIBUTOR_EDIT_FIELDS_RADIO_TEXTS = {
 	"deploy_list" 		: ["There is no special button at the end of the list","There is a 'show more button' at the end of the list"]
 }
 CONTRIBUTOR_EDIT_FIELDS_NUMBER = [
-	"LIMIT", "download_delay", "page_count"
+	"LIMIT_PAGES", 
+	"LIMIT_ITEMS",
+
+	"download_delay", 
+
+	"wait_driver" 	,	# delay for ajax response wait
+	"wait_page" 	,	# delay for new page response wait
+	"wait_implicit" ,	# delay for implicit response wait
+
+	"page_count"
 ]
 CONTRIBUTOR_EDIT_FIELDS_FLOAT = [
-	"download_delay"
+	"download_delay",
+
+	"wait_driver" 	,	# delay for ajax response wait
+	"wait_page" 	,	# delay for new page response wait
+	"wait_implicit" ,	# delay for implicit response wait
+
 ]
 ### to display form for edit contributor
 CONTRIBUTOR_EDIT_FIELDS = {
@@ -214,8 +228,15 @@ CONTRIBUTOR_EDIT_FIELDS = {
 		"needed" : [
 		],
 		"optional" : [
-			"LIMIT" 			,	# max number of pages to be crawled
+			"LIMIT_PAGES" 			,	# max number of pages to be crawled
+			"LIMIT_ITEMS" 		,	# max number of items to be scraped
+
 			"download_delay" 	,	# delay
+
+			"wait_driver" 		,	# delay for ajax response wait
+			"wait_page" 		,	# delay for new page response wait
+			"wait_implicit" 	,	# delay for implicit response wait
+
 			# "page_count" 		,	# keep track of how many pages were crawled
 		]
 	},
@@ -268,9 +289,17 @@ CONTRIBUTOR_CORE_FIELDS = {
 
 	# scraper - global settings	
 	"scraper_settings" : {
-		"LIMIT" 			: 100,	# max number of pages to be crawled
-		"download_delay" 	: 0.1,	# delay
-		"page_count" 		: 1,	# keep track of how many pages were crawled
+
+		"LIMIT_PAGES" 				: 100,	# max number of pages to be crawled
+		"LIMIT_ITEMS" 			: 0,	# max number of items to be scraped 
+		
+		"download_delay" 		: 0.25,	# delay
+		
+		"wait_driver" 			: 5.0,	# delay for ajax response wait
+		"wait_page" 			: 1.5,	# delay for new page response wait
+		"wait_implicit" 		: 0.5,	# delay for implicit response wait
+		
+		"page_count" 			: 1,	# keep track of how many pages were crawled
 	},
 
 	# scraper - log and stats	
