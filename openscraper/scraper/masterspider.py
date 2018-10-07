@@ -388,9 +388,10 @@ class GenericSpider(Spider) :
 					if self.spider_config_flat["parse_follow"] == True : 
 
 						log_scrap.debug(">>> FOLLOW LINK - item n°{} / page n°{} >>>>>> \n".format(self.item_count, self.page_count) )
+						log_scrap.info("--- GenericSpider. / self.follow_xpath : %s", self.follow_xpath )
 
 						follow_link 	= raw_data.xpath( self.follow_xpath ).extract_first()	
-						log_scrap.info(" --> follow_link RAW : %s ", follow_link )
+						# log_scrap.info(" --> follow_link RAW : %s ", follow_link )
 						# complete follow link if needed
 						follow_link = self.clean_link(follow_link)		
 						log_scrap.info(" --> follow_link CLEAN : %s ", follow_link )
@@ -398,15 +399,14 @@ class GenericSpider(Spider) :
 						# store follow_link
 						item[ 'link_data' ]	= follow_link
 						url 				= item['link_data']
-						log_scrap.info(" --> item : %s ", item )
 
 						try : 
-							# return scrapy.Request(url, callback=self.parse_detailed_page, meta={'item': item})
 							yield scrapy.Request(url, callback=self.parse_detailed_page, meta={'item': item})
 
 						except :
 							yield item
 
+					### if no follow link
 					else : 		
 
 						### item completion is finished - yield and so spark pipeline for item (store in db for instance)
@@ -415,6 +415,8 @@ class GenericSpider(Spider) :
 						yield item
 
 						# print ("\n>>> NEXT ITEM " + ">>> >>> "*10, "\n")
+
+					log_scrap.info(" --> item : \n %s \n", pformat(item) )
 
 				else : 
 					log_scrap.warning("--- GenericSpider. / OUT OF LIMIT_ITEMS - items count : {} - LIMIT_ITEMS : {}".format(self.item_count, self.LIMIT_ITEMS) )
@@ -540,11 +542,11 @@ class GenericSpider(Spider) :
 								try : 
 									log_scrap.debug("--- GenericSpider. / follow link with Scrapy ..." )
 
-									log_scrap.debug("--- GenericSpider. /  get href of follow_link ..." )
+									# log_scrap.debug("--- GenericSpider. /  get href of follow_link ..." )
 									follow_link_xpath 	= clean_xpath_for_reactive(self.follow_xpath, strings_to_clean)
 									follow_link			= raw_data.find_element_by_xpath( follow_link_xpath ).get_attribute('href')
 
-									log_scrap.info(" --> follow_link RAW : %s ", follow_link )
+									# log_scrap.info(" --> follow_link RAW : %s ", follow_link )
 									# complete follow link if needed
 									follow_link = self.clean_link(follow_link)	
 									log_scrap.info(" --> follow_link CLEAN : %s ", follow_link )
@@ -552,7 +554,6 @@ class GenericSpider(Spider) :
 									# store follow_link
 									item[ 'link_data' ]	= follow_link
 									url_follow			= item['link_data']
-									log_scrap.info(" --> item : %s ", item )
 
 									try : 
 										yield scrapy.Request(url_follow, callback=self.parse_detailed_page, meta={'item': item})
@@ -560,7 +561,10 @@ class GenericSpider(Spider) :
 									except :
 										yield item
 
+
 								### follow link with Selenium
+								### NOT TESTED YET
+								### FIND A WEBSITE TEST FOR REACTIVE DETAILLED PAGES
 								except : 
 									log_scrap.debug("--- GenericSpider. / follow link with Selenium ..." )
 
@@ -574,20 +578,22 @@ class GenericSpider(Spider) :
 									### get data and save data
 									try :
 										log_scrap.debug("--- GenericSpider. / get data and save data ..." )
-										item = self.fill_item_from_results_page(response, item, is_reactive=True, strings_to_clean=strings_to_clean )
+										item = self.fill_item_from_results_page(raw_data, item, is_reactive=True, strings_to_clean=strings_to_clean )
+										
 										### back to previous page and scrap from where it left
 										### cf : https://selenium-python.readthedocs.io/navigating.html#navigation-history-and-location
 										self.driver.back()
+										
 										yield item 
 
 									except : 
 										yield item
 
-								
 							### if no follow link
 							else : 
-								### save data
 								yield item
+
+							log_scrap.info(" --> item : \n %s \n", pformat(item) )
 
 						else :
 							self.there_is_more_items_to_scrap = False
@@ -921,18 +927,19 @@ class GenericSpider(Spider) :
 				if self.spider_config_flat[ dm_field ] != [] and self.spider_config_flat[ dm_field ] != "" :
 		
 					full_data = None
-					# log_scrap.info("\n dm_field : %s | dm_name : %s ", 
-					# 						dm_field, 
-					# 						self.dm_custom[dm_field]["field_name"] )
-					
+					# dm_name   = str( self.dm_custom[dm_field]["field_name"] )
+					dm_name   = self.dm_custom[dm_field]["field_name"]
+					# log_scrap.info(" -+- extract / dm_name : %s ", dm_name )
+
 					### fill item field corresponding to xpath
 					item_field_xpath 	= self.spider_config_flat[ dm_field ]					
 
 					### extract data with Scrapy request
 					if is_reactive == False : 
 						try :
-							log_scrap.debug(" -+- extract / with Scrapy ... " )
-							# log_scrap.info(" -+- extract / item_field_xpath : %s ", item_field_xpath )
+							# log_scrap.debug(" -+- extract / with Scrapy ... " )
+							# log_scrap.info(" -+- extract / item_field_xpath : {} ".format(item_field_xpath ))
+							log_scrap.info(" -+- extract / dm_name : %s - item_field_xpath : %s " %(dm_name, item_field_xpath ))
 							full_data 			= raw_data.xpath( item_field_xpath ).extract()
 						except :
 							log_scrap.error(" -+- !!! extract FAILED / with Scrapy ... " )
@@ -940,11 +947,12 @@ class GenericSpider(Spider) :
 					### extract data with Selenium
 					else :
 						try :
-							log_scrap.debug(" -+- extract / with Selenium ... " )
+							# log_scrap.debug(" -+- extract / with Selenium ... " )
 							# item_field_xpath 	= re.sub("|".join(strings_to_clean), "", item_field_xpath )
 							item_field_xpath = clean_xpath_for_reactive(item_field_xpath, strings_to_clean)
-							log_scrap.info(" -+- extract / item_field_xpath : %s ", item_field_xpath )
-						
+							# log_scrap.info(" -+- extract / item_field_xpath : {} ".format(item_field_xpath ))
+							log_scrap.info(" -+- extract / dm_name : %s - item_field_xpath : %s " %(dm_name, item_field_xpath ))
+
 							# element_present = EC.presence_of_element_located((By.XPATH, item_field_xpath ))
 							# log_scrap.info(" -+- extract / item_field_xpath present : %s ", element_present )
 							# try : 
@@ -970,7 +978,7 @@ class GenericSpider(Spider) :
 					# check if data exists at all
 					if full_data != None and full_data != [] and full_data != [u""] : 
 						
-						log_scrap.debug(" -+- extract / full_data ..." )
+						# log_scrap.debug(" -+- extract / full_data ..." )
 
 						### clean data from break lines etc...
 						full_data = self.clean_data_list(full_data)
@@ -1001,7 +1009,7 @@ class GenericSpider(Spider) :
 
 		
 		log_scrap.warning(">>> ITEM n°{} / page n°{} >>> END OF : fill_item_from_results_page >>>".format(self.item_count, self.page_count))
-		log_scrap.warning("\n %s \n", item)
+		# log_scrap.warning("\n %s \n", pformat(item))
 
 		return item
 
@@ -1009,13 +1017,13 @@ class GenericSpider(Spider) :
 	### go to follow link and retrieve remaining data for Item
 	def parse_detailed_page (self, response) :
 		""" parse_detailed_page """
-
-		log_scrap.info(" === GenericSpider / parse_detailed_page ... " )
-		log_scrap.debug("=== GenericSpider / VARIABLES - item n°{} - there_is_more_items_to_scrap : {} ".format(self.item_count, self.there_is_more_items_to_scrap) )
 		
 		item = response.meta["item"]
 
-		if self.there_is_more_items_to_scrap : 
+		if self.there_is_more_items_to_scrap :
+
+			log_scrap.info(" === GenericSpider / parse_detailed_page ... " )
+			log_scrap.debug("=== GenericSpider / VARIABLES - item n°{} - there_is_more_items_to_scrap : {} ".format(self.item_count, self.there_is_more_items_to_scrap) )
 
 			item = self.fill_item_from_results_page(response, item)
 
