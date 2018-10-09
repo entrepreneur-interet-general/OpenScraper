@@ -354,7 +354,6 @@ class GenericSpider(Spider) :
 
 
 
-
 		### TO DO ### 
 		### start request with API crawler
 		if self.spider_config_flat["parse_api"] == True :

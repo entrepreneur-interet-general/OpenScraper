@@ -18,7 +18,8 @@ gen_log.info("---> importing .scraper at __init__")
 
 
 ### needs imports here to be called from controller.py
-from items              import *
-from masterspider       import *
-from pipelines          import *
+from items				import *
+from masterspider		import *
+from pipelines			import *
+from downloaders		import *
 from settings_scrapy	import *
