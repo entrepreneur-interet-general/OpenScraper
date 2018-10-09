@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from 	tornado.log import enable_pretty_logging, LogFormatter, access_log, app_log, gen_log
+from 	tornado.options import options
 
 gen_log.info("--> importing .masterspider")
 
@@ -23,8 +24,8 @@ import 	json
 """
 
 ### import app settings
-from config.settings_example import * 
-# from config.settings import *  		# for prod
+# from config.settings_example	import APP_PROD
+# from config.settings_secret 	import APP_PROD
 
 from config.settings_scrapy import * 
 from config.settings_cleaning import *
@@ -82,7 +83,7 @@ from scrapy.exceptions		import CloseSpider
 # cf : https://stackoverflow.com/questions/17975471/selenium-with-scrapy-for-dynamic-page 
 # cf : https://github.com/clemfromspace/scrapy-selenium 
 from selenium 						import webdriver
-from selenium.webdriver.support.ui 	import WebDriverWait
+from selenium.webdriver.support.ui	import WebDriverWait
 import selenium.webdriver.support.ui as ui
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
@@ -101,8 +102,9 @@ options_selenium.add_argument('headless')
 options_selenium.add_argument('window-size=1200x600')
 # initialize the driver
 # driver = webdriver.Chrome(chrome_options=options_selenium)
+
 ### executable path for chrome driver
-exec_chromedriver = "/usr/local/bin/chromedriver"
+# exec_chromedriver = "/usr/local/bin/chromedriver"
 
 
 ### settings scrapy
@@ -129,7 +131,7 @@ settings = Settings()
 
 settings.set( "BOT_NAME"					, BOT_NAME )
 settings.set( "USER_AGENT"					, USER_AGENT )
-# settings.set( "ROBOTSTXT_OBEY"				, ROBOTSTXT_OBEY )
+# settings.set( "ROBOTSTXT_OBEY"			, ROBOTSTXT_OBEY )
 
 settings.set( "ITEM_PIPELINES"				, ITEM_PIPELINES )
 
@@ -137,6 +139,9 @@ settings.set( "DB_DATA_URI" 				, DB_DATA_URI )
 settings.set( "DB_DATA_DATABASE" 			, DB_DATA_DATABASE )
 settings.set( "DB_DATA_COLL_SCRAP" 			, DB_DATA_COLL_SCRAP )
 
+# retrieve exec path for chromedriver from settings_scrapy.py
+CHROMEDRIVER_PATH = CHROMEDRIVER_PATH_LIST[ APP_MODE ]
+settings.set( "CHROMEDRIVER_PATH" , CHROMEDRIVER_PATH )
 
 log_scrap.debug (">>> settings scrapy : \n %s \n", pformat(dict(settings)) )
 # pprint(dict(settings))
@@ -144,6 +149,7 @@ log_scrap.debug (">>> settings scrapy : \n %s \n", pformat(dict(settings)) )
 log_scrap.debug ("--- run_generic_spider / BOT_NAME : %s", settings.get('BOT_NAME'))
 log_scrap.debug ("--- run_generic_spider / USER_AGENT : %s",	settings.get('USER_AGENT'))
 log_scrap.debug ("--- run_generic_spider / ITEM_PIPELINES : %s \n", settings.get('ITEM_PIPELINES').__dict__)
+log_scrap.debug ("--- run_generic_spider / CHROMEDRIVER_PATH : %s", settings.get('CHROMEDRIVER_PATH'))
 
 
 
@@ -536,7 +542,7 @@ class GenericSpider(Spider) :
 			
 			### specify executable path to launch webdriver--> 
 			# cf : where chromedriver was installed when `brew install chromedriver`
-			self.driver = webdriver.Chrome(executable_path=exec_chromedriver, chrome_options=options_selenium)
+			self.driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=options_selenium)
 			# self.driver = webdriver.Chrome(chrome_options=options_selenium)
 			# self.driver = webdriver.Firefox()
 			# self.driver = webdriver.Chrome()
@@ -1073,12 +1079,12 @@ def run_generic_spider( user_id				= None,
 			### send/create custom spider from run_spider_config
 			### cf : https://stackoverflow.com/questions/35662146/dynamic-spider-generation-with-scrapy-subclass-init-error
 			
-			deferred = process.crawl( GenericSpider, 
-										user_id				= user_id,
-										datamodel 			= datamodel , 
-										spider_id 			= spider_id ,
-										spider_config_flat	= spider_config_flat,
-										test_limit			= test_limit 
+			deferred = process.crawl( 	GenericSpider, 
+											user_id				= user_id,
+											datamodel 			= datamodel , 
+											spider_id 			= spider_id ,
+											spider_config_flat	= spider_config_flat,
+											test_limit			= test_limit 
 									)			
 			deferred.addBoth(lambda _: reactor.stop())
 			reactor.run()

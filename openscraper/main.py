@@ -170,7 +170,7 @@ setup_loggers()
 
 ### scrapy dependencies
 # from scrapy.crawler import CrawlerRunner
-from scraper import *
+# from scraper import *
 # crawl_runner = CrawlerRunner()      # requires the Twisted reactor to run
 
 ### import dependencies
@@ -191,8 +191,9 @@ from controller import *
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 
-# define default port to listen to
+# # define default port to listen to + mode
 define( "port", default=APP_PORT, help="run on the given port", type=int )
+define( "mode", default='default', help="mode for run : default, production", type=str )
 
 
 
@@ -563,28 +564,37 @@ def main():
 	parser.add_argument('-m', '--mode', type=str, default="default")
 	args = parser.parse_args()
 
+	# update port with args.port
+	options.port = args.port
+	options.mode = args.mode
+
+	# set os environment variable for mode
+	os.environ['APP_MODE'] = str(options.mode)
+
 	app_log.info(">>> ARG.PORT FROM COMMAND LINE : %s ", args.port)
 	app_log.info(">>> ARG.MODE FROM COMMAND LINE : %s ", args.mode)
 
 	# read optionnal args from command line
 	# tornado.options.parse_command_line()
-	app_log.info(">>> options.__dict__ : %s", pformat(options.__dict__))
+	app_log.info(">>> options.__dict__ : \n%s", pformat(options.__dict__))
 
 	# print port for reminder
 	app_log.info( ">>> starting tornado / options.port    : %s ", options.port)
 	app_log.info( ">>> starting tornado / options.logging : %s ", options.logging)
 	app_log.info( ">>> starting tornado / options.help    : %s ", options.help)
+	app_log.info( ">>> starting tornado / options.mode    : %s ", options.mode)
 
-	# create server
+	# create server with args.mode
 	http_server = tornado.httpserver.HTTPServer(Application( mode=args.mode ))
 	app_log.info( ">>> http_server ready ...")
+
 
 	# for local dev --> debug
 	if APP_DEBUG == True : 
 		http_server.listen(options.port)
 		tornado.ioloop.IOLoop.instance().start()
 
-	# for prod --> doesn't work with autoreaload == True
+	# for prod --> doesn't work with autoreload == True
 	# cf : http://www.tornadoweb.org/en/stable/guide/running.html
 	elif APP_DEBUG == False : 
 		http_server.bind(options.port)	

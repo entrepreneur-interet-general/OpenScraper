@@ -4,11 +4,18 @@ from 	tornado.log import enable_pretty_logging, LogFormatter, access_log, app_lo
 
 gen_log.info("--> importing .settings_scrapy")
 
+import os
 from settings_example import *
 # from settings import *		# for prod
 
-### settings variables for scrapy
+### GET APP MODE FROM ENV VARS
+APP_MODE = os.environ.get('APP_MODE', 'default')
+gen_log.debug("--> APP_MODE : %s", APP_MODE)
 
+
+
+
+### settings variables for scrapy
 
 
 ### POLITE WEBSCRAPING
@@ -58,4 +65,10 @@ DB_DATA_COLL_SCRAP	= 	MONGODB_COLL_DATASCRAPPED
 # default values for runner
 DEFAULT_COUNTDOWN = 3 	# countdown in seconds before running generic spider
 
+
+# possible chromedriver path
+CHROMEDRIVER_PATH_LIST = {
+	'default' 		: '/usr/local/bin/chromedriver',			# in mac
+	'production' 	: '/usr/lib/chromium-browser/chromedriver',	# in Ubuntu 
+}
 
