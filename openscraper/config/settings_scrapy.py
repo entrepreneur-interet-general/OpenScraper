@@ -37,10 +37,10 @@ RANDOMIZE_DOWNLOAD_DELAY 	= False
 # downloaders registration to disable SSL certification
 # cf : https://doc.scrapy.org/en/1.0/topics/downloader-middleware.html
 # cf : https://stackoverflow.com/questions/32950694/disable-ssl-certificate-verification-in-scrapy
-DOWNLOAD_HANDLERS = {
-	# 'https': 'scrapy.core.downloader.handlers.http.HttpDownloadHandler', ## --default for https-- 
-	'https': 'scraper.downloaders.https.HttpsDownloaderIgnoreCNError',
-}
+# DOWNLOAD_HANDLERS = {
+# 	# 'https': 'scrapy.core.downloader.handlers.http.HttpDownloadHandler', ## --default for https-- 
+# 	'https': 'scraper.downloaders.https.HttpsDownloaderIgnoreCNError',
+# }
 
 # pipelines registration
 ITEM_PIPELINES	= 	{ 
