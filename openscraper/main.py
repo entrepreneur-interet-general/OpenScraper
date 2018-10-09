@@ -15,6 +15,9 @@ import 	json
 import 	datetime
 from 	uuid import uuid4
 import 	pprint
+from 	pprint import pformat
+import 	time
+from datetime import datetime
 
 from 	bson import json_util
 from	bson.json_util import dumps
@@ -164,21 +167,23 @@ def setup_loggers ():
 
 setup_loggers()
 
+
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
-
-
-
 ### scrapy dependencies
+
 # from scrapy.crawler import CrawlerRunner
 # from scraper import *
 # crawl_runner = CrawlerRunner()      # requires the Twisted reactor to run
 
 ### import dependencies
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+# ### import controller : url functions
+
 import urls
-
-
-### import controller : url functions
 from controller import *
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 
 ### snippet DB
@@ -583,6 +588,14 @@ def main():
 	app_log.info( ">>> starting tornado / options.logging : %s ", options.logging)
 	app_log.info( ">>> starting tornado / options.help    : %s ", options.help)
 	app_log.info( ">>> starting tornado / options.mode    : %s ", options.mode)
+
+
+	# ### import dependencies
+	# import urls
+
+	### import controller : url functions
+	# from controller import *
+
 
 	# create server with args.mode
 	http_server = tornado.httpserver.HTTPServer(Application( mode=args.mode ))

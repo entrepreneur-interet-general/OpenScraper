@@ -139,9 +139,6 @@ settings.set( "DB_DATA_URI" 				, DB_DATA_URI )
 settings.set( "DB_DATA_DATABASE" 			, DB_DATA_DATABASE )
 settings.set( "DB_DATA_COLL_SCRAP" 			, DB_DATA_COLL_SCRAP )
 
-# retrieve exec path for chromedriver from settings_scrapy.py
-CHROMEDRIVER_PATH = CHROMEDRIVER_PATH_LIST[ APP_MODE ]
-settings.set( "CHROMEDRIVER_PATH" , CHROMEDRIVER_PATH )
 
 log_scrap.debug (">>> settings scrapy : \n %s \n", pformat(dict(settings)) )
 # pprint(dict(settings))
@@ -149,7 +146,6 @@ log_scrap.debug (">>> settings scrapy : \n %s \n", pformat(dict(settings)) )
 log_scrap.debug ("--- run_generic_spider / BOT_NAME : %s", settings.get('BOT_NAME'))
 log_scrap.debug ("--- run_generic_spider / USER_AGENT : %s",	settings.get('USER_AGENT'))
 log_scrap.debug ("--- run_generic_spider / ITEM_PIPELINES : %s \n", settings.get('ITEM_PIPELINES').__dict__)
-log_scrap.debug ("--- run_generic_spider / CHROMEDRIVER_PATH : %s", settings.get('CHROMEDRIVER_PATH'))
 
 
 
@@ -540,9 +536,16 @@ class GenericSpider(Spider) :
 			### cf : https://github.com/voliveirajr/seleniumcrawler/blob/master/seleniumcrawler/spiders/seleniumcrawler_spider.py 
 			log_scrap.info("\n--- GenericSpider.parse / starting Selenium driver... " ) 
 			
+			# retrieve exec path for chromedriver from settings_scrapy.py
+			### GET APP MODE FROM ENV VARS
+			app_mode = os.environ.get('APP_MODE', 'default')
+			log_scrap.debug("--- GenericSpider.parse / APP_MODE : %s", APP_MODE)
+			chromedriver_path = CHROMEDRIVER_PATH_LIST[ app_mode ]
+			log_scrap.debug("--- GenericSpider.parse / chromedriver_path : %s", chromedriver_path)
+
 			### specify executable path to launch webdriver--> 
 			# cf : where chromedriver was installed when `brew install chromedriver`
-			self.driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=options_selenium)
+			self.driver = webdriver.Chrome(executable_path=chromedriver_path, chrome_options=options_selenium)
 			# self.driver = webdriver.Chrome(chrome_options=options_selenium)
 			# self.driver = webdriver.Firefox()
 			# self.driver = webdriver.Chrome()
