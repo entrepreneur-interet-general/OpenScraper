@@ -152,15 +152,17 @@ DATAMODEL_DEFAULT_CUSTOM_FIELDS = [
 ### radio buttons in 'edit contributor' form
 CONTRIBUTOR_EDIT_FIELDS_RADIO = [
 	"parse_follow", 
-	"page_needs_splash", 
-	"deploy_list", 
-	"parse_reactive"
+	# "page_needs_splash", 
+	# "deploy_list", 
+	"parse_reactive",
+	"parse_api",
 ]
 CONTRIBUTOR_EDIT_FIELDS_RADIO_TEXTS = {
 	"parse_follow" 		: ["The data is complete in the list ","I need to click a link in the list to show the complete data "] , 
 	"parse_reactive" 	: ["The website is not reactive","The website is reactive"] , 
-	"page_needs_splash" : ["no","yes"], 
-	"deploy_list" 		: ["There is no special button at the end of the list","There is a 'show more button' at the end of the list"]
+	"parse_api"			: ["The website has no API", "The website has an API"],
+	# "page_needs_splash" : ["no","yes"], 
+	# "deploy_list" 		: ["There is no special button at the end of the list","There is a 'show more button' at the end of the list"]
 }
 CONTRIBUTOR_EDIT_FIELDS_NUMBER = [
 	"LIMIT_PAGES", 
@@ -192,10 +194,10 @@ CONTRIBUTOR_EDIT_FIELDS = {
 	# custom infos 
 	"infos" : {
 		"needed" : [
-			"name", 
+			"name", 			# spider name
 			"licence",			# licence of all data scrapped by this spider
-			"page_url",
-			"logo_url",
+			"page_url",			# root url 
+			"logo_url",			# logo's url of the website
 			# "added_by",
 		],
 		"optional" : [
@@ -211,14 +213,15 @@ CONTRIBUTOR_EDIT_FIELDS = {
 			"start_urls",
 			"item_xpath",
 			"next_page",
-			"deploy_list",
-			"deploy_list_xpath",
+			# "deploy_list",
+			# "deploy_list_xpath",
 			"parse_follow",
 			"follow_xpath",
-			"parse_reactive"	,
+			"parse_reactive",
+			"parse_api",
 		], 
 		"optional": [
-			"page_needs_splash",
+			# "page_needs_splash",
 			"item_list_xpath",
 		]
 	 },
@@ -275,11 +278,13 @@ CONTRIBUTOR_CORE_FIELDS = {
 		"parse_follow" 		: False,	# boolean to know if needs to follow link in page to get all infos
 		"follow_xpath" 		: "",		# xpath to follow item's url to get all info on item
 		
-		"deploy_list"		: False,	# selenium action to click on "show more" button if exists
-		"deploy_list_xpath"	: "",		# xpath to click on if "show more" button exists... 
+		# "deploy_list"		: False,	# selenium action to click on "show more" button if exists
+		# "deploy_list_xpath"	: "",		# xpath to click on if "show more" button exists... 
 
-		"page_needs_splash" : False,	# if page needs jquery to be parsed
-		"parse_reactive" 	: False,
+		# "page_needs_splash" : False,	# if page needs jquery to be parsed
+		"parse_reactive" 	: False,	# if page needs javascript to be parsed
+	
+		"parse_api"			: False,	# use the website's API to get data 
 	},
 
 	# scraper - custom for scraping xpaths 
