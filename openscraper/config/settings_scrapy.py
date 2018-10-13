@@ -8,9 +8,9 @@ import os
 from settings_example import *
 # from settings import *		# for prod
 
-### GET APP MODE FROM ENV VARS
-APP_MODE = os.environ.get('APP_MODE', 'default')
-gen_log.debug("--> APP_MODE : %s", APP_MODE)
+# ### GET APP MODE FROM ENV VARS
+# APP_MODE = os.environ.get('APP_MODE', 'default')
+# gen_log.debug("--> APP_MODE : %s", APP_MODE)
 
 
 
@@ -39,7 +39,7 @@ HTTPCACHE_ENABLED 			= True
 # See also autothrottle settings and docs
 DOWNLOAD_DELAY 				= .25
 RANDOMIZE_DOWNLOAD_DELAY 	= False
-
+JOBDIR_FOLDER 				= "running_spiders"
 
 # downloaders registration to disable SSL certification
 # cf : https://doc.scrapy.org/en/1.0/topics/downloader-middleware.html

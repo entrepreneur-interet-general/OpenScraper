@@ -26,6 +26,8 @@ config.cfg
 ### BACKUP FILES
 openscraper/_backups_collections/*.json
 
+### RUNNING SPIDERS
+openscraper/running_spiders
 
 ### BOWER
 bower_components

@@ -135,6 +135,14 @@
 								</span>
 							</th>
 							
+							{# reactive spider #}
+							<th class="has-text-centered">
+								<span class="icon has-text-grey is-small tooltip"
+										data-tooltip="the website is reactive" >
+									<i class="fab fa-js-square"></i>
+								</span>
+							</th>
+
 							<th>added by</th>
 							{# <th>page_url</th> #}
 							
@@ -335,6 +343,20 @@
 							</td>
 
 
+							{# spider is reactive #}
+							<th> 
+								{% if contrib["scraper_config"]["parse_reactive"] %}
+									<span 	class="icon is-small has-text-info tooltip is-tooltip-right"
+											data-tooltip="this website is reactive">
+										<i class="fas fa-check"></i>
+									</span>
+								{% else %}
+									<span class="icon is-small has-text-light">
+										<i class="fas fa-times"></i>
+									</span>
+								{% end %}
+							</th>
+
 							{# spider added by #}
 							<td> 
 								{{ escape (contrib["scraper_log"]["added_by"]) }}
@@ -505,22 +527,23 @@
 										</span>
 									</a>
 								
-								{% elif is_running %}
+								{# {% elif is_running %}
 									
 									<span 	class="icon has-text-info tooltip is-tooltip-right"
 											data-tooltip="spider is running, please refresh the page">
 										<i class="fas fa-spinner fa-pulse"></i>
-									</span>
+									</span> #}
 
 								{% else %}
 
 									{% if count_data == 0 %}
 										{# <a class="button is-text"> #}
-											<span 	class="icon has-text-info tooltip is-tooltip-right"
-													data-tooltip="no data to see">
-												<i class="fas fa-times"></i>
-											</span>
+										<span 	class="icon has-text-info tooltip is-tooltip-right"
+												data-tooltip="no data to see">
+											<i class="fas fa-times"></i>
+										</span>
 										{# </a> #}
+
 									{% else %}	
 
 										<a class="button is-{{color_data}} is-rounded is-small "

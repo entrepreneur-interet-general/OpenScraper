@@ -539,7 +539,7 @@ class GenericSpider(Spider) :
 			# retrieve exec path for chromedriver from settings_scrapy.py
 			### GET APP MODE FROM ENV VARS
 			app_mode = os.environ.get('APP_MODE', 'default')
-			log_scrap.debug("--- GenericSpider.parse / APP_MODE : %s", APP_MODE)
+			log_scrap.debug("--- GenericSpider.parse / APP_MODE : %s", app_mode)
 			chromedriver_path = CHROMEDRIVER_PATH_LIST[ app_mode ]
 			log_scrap.debug("--- GenericSpider.parse / chromedriver_path : %s", chromedriver_path)
 
@@ -581,9 +581,10 @@ class GenericSpider(Spider) :
 
 				try : 
 
-					### debug page content
+					### wait / debug page content
 					page_source_code = self.driver.page_source.encode("utf-8")
-					log_scrap.debug("--- GenericSpider. / page_source_code : \n %s ", page_source_code )
+					# log_scrap.debug("--- GenericSpider. / page_source_code : \n %s ", page_source_code )
+					time.sleep(self.delay_new_page) 
 
 					### start parsing page : 
 					log_scrap.info("--- GenericSpider. / self.item_xpath : %s", self.item_xpath )
@@ -1063,10 +1064,14 @@ def run_generic_spider( user_id				= None,
 	log_scrap.info("--- run_generic_spider / BOT_NAME :       %s ", settings.get('BOT_NAME') ) 
 	log_scrap.info("--- run_generic_spider / USER_AGENT :     %s ", settings.get('USER_AGENT') )
 	log_scrap.info("--- run_generic_spider / ITEM_PIPELINES : %s ", settings.get('ITEM_PIPELINES').__dict__ )
+	
+
 	# specific settings for this scrapy process
 	settings.set( "CURRENT_SPIDER_ID" 				, spider_id )
 	settings.set( "RANDOMIZE_DOWNLOAD_DELAY"		, RANDOMIZE_DOWNLOAD_DELAY )
-	
+	# cf : https://doc.scrapy.org/en/latest/topics/jobs.html#job-directory
+	settings.set('JOBDIR'							, JOBDIR_FOLDER + "/" + spider_id )
+
 	### custom settings for scrapy process
 	# settings.set( "DOWNLOAD_DELAY" 				, DOWNLOAD_DELAY )
 	settings.set( "DOWNLOAD_DELAY" 					, spider_config_flat["download_delay"] )

@@ -64,9 +64,14 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 1. **[install MongoDB](https://docs.mongodb.com/manual/installation/) locally** or get the URI of the MongoDB you're using
 1. **install chromedriver**
 	
-	> 
+	- on MacOS :
+	>
 		$ brew tap caskroom/cask
 		$ brew cask install chromedriver
+
+	- on Ubuntu :
+	>
+		$ sudo apt-get install chromium-chromedriver
 
 1. **go to your openscraper folder**
 1. **install the libraries (without [virtual environment](https://pypi.python.org/pypi/virtualenv))**
