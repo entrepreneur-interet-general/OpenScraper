@@ -197,6 +197,17 @@ def clean_xpath_for_reactive(xpath_str, strings_to_clean) :
 	return xpath_str
 
 
+def get_dictvalue_from_xpath(full_dict, path_string):
+	""" get a value in a dict given a path's string """
+
+	key_value = full_dict
+
+	for i in path_string.split('/')[1:] : 
+		key_value = key_value[i]
+
+	return key_value
+
+
 # to be used in GenericSpider class
 '''
 def dictFromDataModelList (datamodel_list ) : 
@@ -364,7 +375,8 @@ class GenericSpider(Spider) :
 			jsonresponse = json.loads(response.body_as_unicode())
 			log_scrap.info("--- GenericSpider.parse / jsonresponse : \n%s", jsonresponse )
 
-			raw_items_list = jsonresponse[self.item_xpath]
+			raw_items_list = get_dictvalue_from_xpath(jsonresponse, self.item_xpath)
+			# raw_items_list = jsonresponse[self.item_xpath]
 			log_scrap.info("--- GenericSpider.parse / raw_items_list : \n%s\n...", raw_items_list[0] )
 
 			### start parsing page : loop through data items in page in response
@@ -394,7 +406,7 @@ class GenericSpider(Spider) :
 
 						### TO DO : switcher inside ###
 						### extract data and feed it to the Item instance based on spider_config_flat
-						item = self.fill_item_from_results_page(raw_data, item)
+						item = self.fill_item_from_results_page(raw_data, item, is_api_rest=True)
 
 						yield item
 
@@ -816,9 +828,10 @@ class GenericSpider(Spider) :
 	### generic function to fill item from result
 	def fill_item_from_results_page (self, 
 										raw_data, item, 
-										is_reactive=False, 
+										is_reactive=False,
+										is_api_rest=False, 
 										strings_to_clean=None,
-										) : 
+									) : 
 		""" fill item """
 
 		log_scrap.debug(" -+- fill_item_from_results_page : item n°{}".format( self.item_count ) )
@@ -843,14 +856,22 @@ class GenericSpider(Spider) :
 					item_field_xpath 	= self.spider_config_flat[ dm_field ]					
 
 					### extract data with Scrapy request
-					if is_reactive == False : 
+					if is_reactive == False and is_api_rest == False : 
 						try :
 							# log_scrap.debug(" -+- extract / with Scrapy ... " )
 							# log_scrap.info(" -+- extract / item_field_xpath : {} ".format(item_field_xpath ))
-							log_scrap.info(" -+- extract / dm_name : %s - item_field_xpath : %s " %(dm_name, item_field_xpath ))
+							log_scrap.info(" -+- extract Scrapy / dm_name : %s - item_field_xpath : %s " %(dm_name, item_field_xpath ))
 							full_data 			= raw_data.xpath( item_field_xpath ).extract()
 						except :
 							log_scrap.error(" -+- !!! extract FAILED / with Scrapy ... " )
+
+
+					### TO DO 
+					### extract data for API REST scraper with Scrapy request
+					elif is_reactive == False and is_api_rest == True : 
+						
+						log_scrap.info(" -+- extract API / dm_name : %s - item_field_xpath : %s " %(dm_name, item_field_xpath ))
+						full_data = get_dictvalue_from_xpath(raw_data, item_field_xpath)
 
 					### extract data with Selenium
 					else :
@@ -859,7 +880,7 @@ class GenericSpider(Spider) :
 							# item_field_xpath 	= re.sub("|".join(strings_to_clean), "", item_field_xpath )
 							item_field_xpath = clean_xpath_for_reactive(item_field_xpath, strings_to_clean)
 							# log_scrap.info(" -+- extract / item_field_xpath : {} ".format(item_field_xpath ))
-							log_scrap.info(" -+- extract / dm_name : %s - item_field_xpath : %s " %(dm_name, item_field_xpath ))
+							log_scrap.info(" -+- extract Selenium / dm_name : %s - item_field_xpath : %s " %(dm_name, item_field_xpath ))
 
 							# element_present = EC.presence_of_element_located((By.XPATH, item_field_xpath ))
 							# log_scrap.info(" -+- extract / item_field_xpath present : %s ", element_present )
