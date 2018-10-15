@@ -153,7 +153,8 @@ class SpiderConfig :
 						self.spider_config["scraper_config_xpaths"][field_custom] = form[field_custom]
 
 			### add specifics in infos / scraperconfig
-			self.spider_config["scraper_config"]["spidername"]	= unicode(spidername)
+			# self.spider_config["scraper_config"]["spidername"]	= unicode(spidername)
+			self.spider_config["scraper_config"]["spidername"]	= spidername
 			if new_spider == True :
 				self.spider_config["scraper_log"]["added_by"] 		= user
 				self.spider_config["scraper_log"]["modified_by"] 	= user

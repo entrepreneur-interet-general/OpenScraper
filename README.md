@@ -23,6 +23,15 @@ OpenScraper is a minimalistic, open source webscraper with a simple interface, <
 <p align=center>#python #tornado #scrapy #mongodb #bulma</p>
 
 ----
+## WHAT IS NEW ? 
+
+
+- v1.1 - 15/10/2018 : parser adapts to API Rest, configuration based on "/" description for the path inside the JSON 
+- v1.0 - 10/06/2018 : parser adapts to reactive website (SPA, vue, etc...)
+- vBeta : Scrapy parser based on spider configuration with Xpaths
+
+----
+
 ## ARGUMENT
 
 #### **To which needs this project aims to answer ?**

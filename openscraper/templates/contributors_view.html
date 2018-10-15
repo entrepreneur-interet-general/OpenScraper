@@ -143,6 +143,14 @@
 								</span>
 							</th>
 
+							{# API spider #}
+							<th class="has-text-centered">
+								<span class="icon has-text-grey is-small tooltip"
+										data-tooltip="the spider crawls an API Rest" >
+									<i class="fas fa-code"></i>
+								</span>
+							</th>
+
 							<th>added by</th>
 							{# <th>page_url</th> #}
 							
@@ -348,6 +356,20 @@
 								{% if contrib["scraper_config"]["parse_reactive"] %}
 									<span 	class="icon is-small has-text-info tooltip is-tooltip-right"
 											data-tooltip="this website is reactive">
+										<i class="fas fa-check"></i>
+									</span>
+								{% else %}
+									<span class="icon is-small has-text-light">
+										<i class="fas fa-times"></i>
+									</span>
+								{% end %}
+							</th>
+
+							{# spider is API #}
+							<th> 
+								{% if contrib["scraper_config"]["parse_api"] %}
+									<span 	class="icon is-small has-text-info tooltip is-tooltip-right"
+											data-tooltip="this spider crawls an API">
 										<i class="fas fa-check"></i>
 									</span>
 								{% else %}
