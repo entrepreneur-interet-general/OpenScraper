@@ -135,6 +135,15 @@
 								</span>
 							</th>
 							
+
+							{# following link spider #}
+							<th class="has-text-centered">
+								<span class="icon has-text-grey is-small tooltip"
+										data-tooltip="the spider tries to get the detailed page" >
+									<i class="fas fa-external-link-alt"></i>
+								</span>
+							</th>
+
 							{# reactive spider #}
 							<th class="has-text-centered">
 								<span class="icon has-text-grey is-small tooltip"
@@ -349,6 +358,21 @@
 								{% end %}
 
 							</td>
+
+
+							{# spider follows link #}
+							<th> 
+								{% if contrib["scraper_config"]["parse_follow"] %}
+									<span 	class="icon is-small has-text-info tooltip is-tooltip-right"
+											data-tooltip="this spider tries to follow a link to a detailed page">
+										<i class="fas fa-check"></i>
+									</span>
+								{% else %}
+									<span class="icon is-small has-text-light">
+										<i class="fas fa-times"></i>
+									</span>
+								{% end %}
+							</th>
 
 
 							{# spider is reactive #}
