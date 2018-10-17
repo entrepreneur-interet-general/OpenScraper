@@ -445,6 +445,9 @@ class Application(tornado.web.Application):
 
 		self.coll_spiders.update_many({'scraper_config.parse_reactive'		: {"$exists" : False}}, {"$set": {'scraper_config.parse_reactive' : False }})
 		self.coll_spiders.update_many({'scraper_config.parse_api'			: {"$exists" : False}}, {"$set": {'scraper_config.parse_api' : False }})
+		self.coll_spiders.update_many({'scraper_config.api_pagination_root'	: {"$exists" : False}}, {"$set": {'scraper_config.api_pagination_root' : "" }})
+		# self.coll_spiders.update_many({'scraper_config.api_url_root'			: {"$exists" : False}}, {"$set": {'scraper_config.api_url_root' : "" }})
+		
 		self.coll_spiders.update_many({'scraper_config.deploy_list'			: {"$exists" : False}}, {"$set": {'scraper_config.deploy_list' : False }})
 		self.coll_spiders.update_many({'scraper_config.deploy_list_xpath'	: {"$exists" : False}}, {"$set": {'scraper_config.deploy_list_xpath' : "" }})
 

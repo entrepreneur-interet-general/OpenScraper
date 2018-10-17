@@ -372,7 +372,10 @@ class GenericSpider(Spider) :
 		start_url = response.meta["start_url"]
 		log_scrap.info("--- GenericSpider.parse / start_url : %s", start_url )
 
+
+		### - - - - - - - - - - - - - - - - - - - - - - - ###
 		### start request with API crawler
+		### - - - - - - - - - - - - - - - - - - - - - - - ###
 		if self.spider_config_flat["parse_api"] == True :
 
 			log_scrap.info("\n--- GenericSpider.parse / starting request on API endpoint... " ) 
@@ -384,48 +387,128 @@ class GenericSpider(Spider) :
 			# raw_items_list = jsonresponse[self.item_xpath]
 			log_scrap.info("--- GenericSpider.parse / raw_items_list : \n%s\n...", raw_items_list[0] )
 
+			### - - - - - - - - - - ###
+			### PARSING PAGE - API 
 			### start parsing page : loop through data items in page in response
-			for raw_data in raw_items_list :
-				
-				if self.there_is_more_items_to_scrap_dict[start_url] :
-				# if self.there_is_more_items_to_scrap : 
+			if len(raw_items_list) != 0 :
+					
+				for raw_data in raw_items_list :
+					
+					if self.there_is_more_items_to_scrap_dict[start_url] :
+					# if self.there_is_more_items_to_scrap : 
 
-					self.item_count += 1
+						self.item_count += 1
 
-					### check if can continue depending on item_count
-					if self.settings_limit_items == 0 or self.item_count <= self.settings_limit_items : 
-						
-						print()
-						log_scrap.debug(">>> NEW ITEM - spider_url_root : {} >>>".format(self.spider_url_root) )
-						log_scrap.debug(">>> NEW ITEM - current start_url : {} >>>".format(start_url) )
-						log_scrap.debug(">>> NEW ITEM - Scrapy - item n°{} >>> \n".format(self.item_count) )
+						### check if can continue depending on item_count
+						if self.settings_limit_items == 0 or self.item_count <= self.settings_limit_items : 
+							
+							print()
+							log_scrap.debug(">>> NEW ITEM - spider_url_root : {} >>>".format(self.spider_url_root) )
+							log_scrap.debug(">>> NEW ITEM - current start_url : {} >>>".format(start_url) )
+							log_scrap.debug(">>> NEW ITEM - Scrapy - item n°{} >>> \n".format(self.item_count) )
 
-						### instantiate Item to fill from datamodel --> cf items.py 
-						itemclass 	= create_item_class( 'GenericItemClass', fields_list = self.dm_item_related )
-						item 		= itemclass()
+							### instantiate Item to fill from datamodel --> cf items.py 
+							itemclass 	= create_item_class( 'GenericItemClass', fields_list = self.dm_item_related )
+							item 		= itemclass()
 
-						### add global info to item : i.e. core fields in dm_core_item_related list
-						item[ 'spider_id' ]		= self.spider_id
-						item[ 'added_by'  ]		= self.user_id 
-						item[ 'added_at'  ]		= time.time()		# timestamp
-						item[ 'link_src'  ]		= response._url
+							### add global info to item : i.e. core fields in dm_core_item_related list
+							item[ 'spider_id' ]		= self.spider_id
+							item[ 'added_by'  ]		= self.user_id 
+							item[ 'added_at'  ]		= time.time()		# timestamp
+							item[ 'link_src'  ]		= response._url
 
-						### TO DO : switcher inside ###
-						### extract data and feed it to the Item instance based on spider_config_flat
-						item = self.fill_item_from_results_page(raw_data, item, is_api_rest=True)
+							item[ 'page_n'  ]		= self.page_count
+							item[ 'item_n'  ]		= self.item_count
 
-						yield item
+							### extract data and feed it to the Item instance based on spider_config_flat
+							item = self.fill_item_from_results_page(raw_data, item, is_api_rest=True)
+
+
+
+							### TO DO 
+							### if need to follow to extract all data
+							if self.spider_config_flat["parse_follow"] == True : 
+
+								log_scrap.debug(">>> FOLLOW LINK - item n°{} / page n°{} >>>>>> \n".format(self.item_count, self.page_count) )
+								log_scrap.info("--- GenericSpider. / self.follow_xpath : %s", self.follow_xpath )
+
+
+								follow_link 	= raw_data[ self.follow_xpath ]
+								# follow_link		= self.api_url_root + "/" + follow_link 
+								follow_link		= self.page_url + "/" + follow_link 
+
+
+								# log_scrap.info(" --> follow_link RAW : %s ", follow_link )
+								# complete follow link if needed
+								follow_link = self.clean_link(follow_link)		
+								log_scrap.info(" --> follow_link CLEAN : %s ", follow_link )
+
+								# store follow_link
+								item[ 'link_data' ]	= follow_link
+								url 				= item['link_data']
+
+								try : 
+									yield scrapy.Request(url, callback=self.parse_detailed_page, meta={ 'item': item, 'start_url' : start_url })
+
+								except :
+									yield item
+
+							### if no follow link
+							else : 		
+
+								### item completion is finished - yield and so spark pipeline for item (store in db for instance)
+								yield item
+
+
+						else : 
+							log_scrap.warning("--- GenericSpider. / OUT OF LIMIT_ITEMS - items count : {} - LIMIT_ITEMS : {}".format(self.item_count, self.LIMIT_ITEMS) )
+							raise CloseSpider('OUT OF LIMIT_ITEMS')
 
 					else : 
-						log_scrap.warning("--- GenericSpider. / OUT OF LIMIT_ITEMS - items count : {} - LIMIT_ITEMS : {}".format(self.item_count, self.LIMIT_ITEMS) )
-						raise CloseSpider('OUT OF LIMIT_ITEMS')
+						log_scrap.warning("--- GenericSpider. / OUT OF ITEMS - items count : {} - LIMIT_ITEMS : {}".format(self.item_count, self.LIMIT_ITEMS) )
+						raise CloseSpider('OUT OF ITEMS')
 
-				else : 
-					log_scrap.warning("--- GenericSpider. / OUT OF ITEMS - items count : {} - LIMIT_ITEMS : {}".format(self.item_count, self.LIMIT_ITEMS) )
-					raise CloseSpider('OUT OF ITEMS')
+			else : 
+				# self.there_is_more_items_to_scrap = False
+				self.there_is_more_items_to_scrap_dict[start_url] = False
+				log_scrap.warning("--- GenericSpider. / OUT OF TEST_LIMIT - items count : {} - LIMIT_ITEMS : {} / except -> break".format(self.item_count, self.LIMIT_ITEMS) )
+				raise CloseSpider('OUT OF ITEMS')
+
+			### TO DO 
+			### - - - - - - - - - - ###
+			### NEXT PAGE - API 
+			### check if there is a test_limit
+			if self.test_limit == None or self.page_count < self.test_limit : 
+
+				if self.page_count < self.settings_limit_pages or self.settings_limit_pages == 0 :
+
+					log_scrap.debug(">>> NEXT PAGE - SPIDERNAME : {} >>>".format(self.spider_name) )
+					log_scrap.info("--- GenericSpider.parse (Scrapy)  >>> PAGE n°{} DONE -> NEXT PAGE >>> \n".format(self.page_count) )
+
+					self.page_count += 1
+
+					log_scrap.debug(">>> NEXT PAGE - spider_url_root : {} >>>".format(self.spider_url_root) )
+
+					next_page = self.api_pagination_root + str(self.page_count)
+
+					yield response.follow(next_page, callback=self.parse, meta={'start_url': start_url} )
+
+				else :
+					# self.there_is_more_items_to_scrap = False
+					self.there_is_more_items_to_scrap_dict[start_url] = False
+					log_scrap.warning("--- GenericSpider. / OUT OF TEST_LIMIT - page n°{} - limit : {} - test_limit : {} / except -> break".format(self.page_count, self.settings_limit_pages, self.test_limit) )
+					raise CloseSpider('OUT OF TEST_LIMIT')
+
+			else : 
+				# self.there_is_more_items_to_scrap = False
+				self.there_is_more_items_to_scrap_dict[start_url] = False
+				log_scrap.warning("--- GenericSpider. / OUT OF TEST_LIMIT - items count : {} - LIMIT_ITEMS : {} / except -> break".format(self.item_count, self.LIMIT_ITEMS) )
+				raise CloseSpider('OUT OF TEST_LIMIT')
 
 
+		### - - - - - - - - - - - - - - - - - - - - - - - ###
 		### start requests with pure Scrapy requests
+		### - - - - - - - - - - - - - - - - - - - - - - - ###
 		elif self.spider_config_flat["parse_reactive"] == False :
 
 			log_scrap.info("\n--- GenericSpider.parse / starting requests with Scrapy... " ) 
@@ -437,6 +520,8 @@ class GenericSpider(Spider) :
 			log_scrap.info("--- GenericSpider.parse / len(raw_items_list) : %d ", len(raw_items_list) )
 
 
+			### - - - - - - - - - - ###
+			### PARSING PAGE - SCRAPY 
 			### start parsing page : loop through data items in page in response
 			if len(raw_items_list) != 0 :
 			
@@ -463,6 +548,9 @@ class GenericSpider(Spider) :
 						item[ 'added_by'  ]		= self.user_id 
 						item[ 'added_at'  ]		= time.time()		# timestamp
 						item[ 'link_src'  ]		= response._url
+
+						item[ 'page_n'  ]		= self.page_count
+						item[ 'item_n'  ]		= self.item_count
 
 						### extract data and feed it to the Item instance based on spider_config_flat
 						item = self.fill_item_from_results_page(raw_data, item)
@@ -511,7 +599,9 @@ class GenericSpider(Spider) :
 				self.there_is_more_items_to_scrap_dict[start_url] = False
 				log_scrap.warning("--- GenericSpider. / OUT OF TEST_LIMIT - items count : {} - LIMIT_ITEMS : {} / except -> break".format(self.item_count, self.LIMIT_ITEMS) )
 				raise CloseSpider('OUT OF ITEMS')
-
+			
+			### - - - - - - - - - - ###
+			### NEXT PAGE - SCRAPY 
 			### check if there is a test_limit
 			if self.test_limit == None or self.page_count < self.test_limit : 
 
@@ -526,10 +616,15 @@ class GenericSpider(Spider) :
 											
 						self.page_count += 1
 
+						url_root = None
+						if self.api_pagination_root != "" :
+							url_root = self.api_pagination_root
+
+						log_scrap.debug(">>> NEXT PAGE - SPIDERNAME : {} >>>".format(self.spider_name) )
 						log_scrap.debug(">>> NEXT PAGE - spider_url_root : {} >>>".format(self.spider_url_root) )
 						log_scrap.debug(">>> NEXT PAGE - current start_url : {} >>>".format(start_url) )
 						log_scrap.info("--- GenericSpider.parse >>> NEXT PAGE I  : %s", next_page )
-						next_page = self.clean_link(next_page)	
+						next_page = self.clean_link(next_page, url_root=url_root)	
 						log_scrap.info("--- GenericSpider.parse >>> NEXT PAGE II : %s", next_page )
 
 						yield response.follow(next_page, callback=self.parse, meta={'start_url': start_url} )
@@ -553,7 +648,9 @@ class GenericSpider(Spider) :
 				raise CloseSpider('OUT OF TEST_LIMIT')
 
 
+		### - - - - - - - - - - - - - - - - - - - - - - - ###
 		### start requests with Selenium
+		### - - - - - - - - - - - - - - - - - - - - - - - ###
 		else :
 			### initiate selenium browser
 			### cf : https://github.com/voliveirajr/seleniumcrawler/blob/master/seleniumcrawler/spiders/seleniumcrawler_spider.py 
@@ -626,6 +723,8 @@ class GenericSpider(Spider) :
 					
 					# current_item_index = 0
 
+					### - - - - - - - - - - - - ###
+					### PARSING PAGE - SELENIUM 
 					# loop through data items in page in response
 					if len(raw_items_list) != 0 : 
 
@@ -634,7 +733,7 @@ class GenericSpider(Spider) :
 							### add +1 to items count 
 							self.item_count += 1
 
-							log_scrap.debug("--- GenericSpider. / VARIABLES - item n°{} - there_is_more_items_to_scrap_dict[start_url] : {} ".format(self.item_count, self.there_is_more_items_to_scrap_dict[start_url]) )
+							log_scrap.debug("--- GenericSpider. / VARIABLES - spider_name : {} - item n°{} - there_is_more_items_to_scrap_dict[start_url] : {} ".format(self.spider_name, self.item_count, self.there_is_more_items_to_scrap_dict[start_url]) )
 
 							### check if can continue depending on item_count
 							if self.settings_limit_items == 0 or self.item_count <= self.settings_limit_items : 
@@ -652,6 +751,9 @@ class GenericSpider(Spider) :
 								item[ 'added_by'  ]		= self.user_id 
 								item[ 'added_at'  ]		= time.time()		# timestamp
 								item[ 'link_src'  ]		= response._url
+
+								item[ 'page_n'  ]		= self.page_count
+								item[ 'item_n'  ]		= self.item_count
 
 								### extract data and feed it to the Item instance based on spider_config_flat
 								item = self.fill_item_from_results_page(raw_data, item, is_reactive=True, strings_to_clean=strings_to_clean )
@@ -737,6 +839,8 @@ class GenericSpider(Spider) :
 						# raise CloseSpider('OUT OF TEST_LIMIT')
 						break
 
+					### - - - - - - - - - - - - ###
+					### NEXT PAGE - SELENIUM 
 					if self.test_limit == None or self.page_count < self.test_limit :
 						
 						if self.there_is_more_items_to_scrap_dict[start_url] :
@@ -745,7 +849,8 @@ class GenericSpider(Spider) :
 							if self.page_count < self.settings_limit_pages or self.settings_limit_pages == 0 :
 
 								print ()
-								log_scrap.info("\n --- GenericSpider.parse (Selenium)  >>> PAGE n°{} DONE -> NEXT PAGE >>> \n".format(self.page_count) )
+								log_scrap.debug(">>> NEXT PAGE - SPIDERNAME : {} >>>".format(self.spider_name) )
+								log_scrap.info(" --- GenericSpider.parse (Selenium)  >>> PAGE n°{} DONE -> NEXT PAGE >>> \n".format(self.page_count) )
 
 								### add +1 to parsed pages
 								self.page_count += 1
@@ -925,6 +1030,10 @@ class GenericSpider(Spider) :
 								full_data 		= [ data.get_attribute('datetime') for data in full_data_list ]
 							elif dm_type == "email" : 
 								full_data 		= [ data.get_attribute('mailto') for data in full_data_list ]
+							elif dm_type == "integer" :  
+								full_data 		= [ int(data.text) for data in full_data_list ]
+							elif dm_type == "float" :  
+								full_data 		= [ float(data.text) for data in full_data_list ]
 							else : 
 								full_data 		= [ data.text for data in full_data_list ]
 
@@ -993,7 +1102,9 @@ class GenericSpider(Spider) :
 		# if self.there_is_more_items_to_scrap :
 
 			log_scrap.info(" === GenericSpider / parse_detailed_page ... " )
-			log_scrap.debug("=== GenericSpider / VARIABLES - item n°{} - there_is_more_items_to_scrap_dict[start_url] : {} ".format(self.item_count, self.there_is_more_items_to_scrap_dict[start_url]) )
+			# log_scrap.debug(" === GenericSpider / VARIABLES - item n°{} - there_is_more_items_to_scrap_dict[start_url] : {} ".format(self.item_count, self.there_is_more_items_to_scrap_dict[start_url]) )
+			# log_scrap.debug(" === GenericSpider / VARIABLES - spider_name : {} - item n°{} - there_is_more_items_to_scrap_dict[start_url] : {} ".format(self.spider_name, self.item_count, self.there_is_more_items_to_scrap_dict[start_url]) )
+			log_scrap.debug(" === GenericSpider / VARIABLES - spider_name : {} - item n°{} ".format(self.spider_name, self.item_count) )
 
 			item = self.fill_item_from_results_page(response, item)
 
@@ -1009,7 +1120,7 @@ class GenericSpider(Spider) :
 		
 		# start_url 	= response.meta["start_url"]
 
-		log_scrap.info(" === GenericSpider / get_next_page ... " )
+		log_scrap.info(" === GenericSpider / get_next_page / SPIDERNAME : %s ", self.spider_name )
 		log_scrap.debug("=== GenericSpider / VARIABLES - item n°{} - there_is_more_items_to_scrap_dict[start_url] : {} ".format(self.item_count, self.there_is_more_items_to_scrap_dict[start_url]) )
 
 		try :
@@ -1038,30 +1149,30 @@ class GenericSpider(Spider) :
 
 
 	### clean a link if http is missing
-	def clean_link(self, link=None):
+	def clean_link(self, link=None, url_root=None):
 		""" complete a link if needed """
 		
 		### erase all spaces in original link
 		link = ' '.join(link.split())
 		link = link.replace(" ","").replace('\n', '').replace('\r', '')
 		
+		### get url_root if needed
+		if url_root == None :
+			url_root_ = self.page_url
+		else :
+			url_root_ = url_root
+
 		if "@" in link :
 			if link.startswith("mailto"):
 				pass
-				# return link
 			else :
 				link = "mailto:" + link
-				# return link
 
 		elif not link.startswith("http"): 
 			separator = ""
-			if not link.startswith("/"):
+			if not link.startswith("/") and url_root == None :
 				separator = "/"
-			link 	= "{}{}{}".format( self.page_url, separator, link)			
-			# return link
-		
-		# else : 
-		# 	return link
+			link 	= "{}{}{}".format( url_root_, separator, link)			
 
 		return link
 

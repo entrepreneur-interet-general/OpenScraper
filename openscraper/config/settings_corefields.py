@@ -75,13 +75,15 @@ USER_CORE_FIELDS = [
 ### to initiate datamodel core fields in mongoDB
 # field_type options in form and db
 DATAMODEL_FIELDS_TYPES = [
-	"url", 
-	"text", 
-	"email", 
-	"image", 
+	"url", 		# href
+	"text", 	# default
+	"email", 	# mailto
+	"image", 	# src
 	"adress", 
-	"date", 
+	"date", 	# datetime
 	"tags", 
+	"integer",
+	"float",
 	"price",
 	"list"		# note : not sure about this one ... 
 ]
@@ -115,7 +117,10 @@ DATAMODEL_CORE_FIELDS = [
 
 	{"field_name" : "modified_by", 		"field_type" : "email",	"field_open" : "opendata" }, 	# spider-related
 	{"field_name" : "modified_at", 		"field_type" : "date", 	"field_open" : "opendata" }, 	# spider-related
-	
+
+	{"field_name" : "page_n", 			"field_type" : "integer", "field_open" : "opendata" },		# item-related = to be stored in item
+	{"field_name" : "item_n", 			"field_type" : "integer", "field_open" : "opendata" },		# item-related = to be stored in item
+
 	# just for debugging purposes
 	# {"field_name" : "testClass", 		"field_type" : "text"}		# item-related = to be stored in item
 ]
@@ -132,6 +137,9 @@ DATAMODEL_CORE_FIELDS_ITEM = [
 
 	"modified_by",
 	"modified_at",
+
+	"page_n", 
+	"item_n", 
 
 	# "testClass"
 ]
@@ -218,7 +226,10 @@ CONTRIBUTOR_EDIT_FIELDS = {
 			"parse_follow",
 			"follow_xpath",
 			"parse_reactive",
+
 			"parse_api",
+			"api_pagination_root",
+			# "api_url_root",
 		], 
 		"optional": [
 			# "page_needs_splash",
@@ -285,6 +296,8 @@ CONTRIBUTOR_CORE_FIELDS = {
 		"parse_reactive" 	: False,	# if page needs javascript to be parsed
 	
 		"parse_api"			: False,	# use the website's API to get data 
+		"api_pagination_root" : "",
+		# "api_url_root"	: "",
 	},
 
 	# scraper - custom for scraping xpaths 

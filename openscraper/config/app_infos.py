@@ -4,8 +4,8 @@ app_infos = {
 	"project"   : "Open Scraper",
 	"licence"   : "MIT",
 	"authors"   : [ "Julien Paris (aka JPy)"],
-	"version"   : "1.1",
-	"date"      : "2018-10-15",
+	"version"   : "1.2",
+	"date"      : "2018-10-17",
 	"link_git"  : "https://github.com/entrepreneur-interet-general/OpenScraper",
 	"link_online" : "http://cis-openscraper.com"
 }
