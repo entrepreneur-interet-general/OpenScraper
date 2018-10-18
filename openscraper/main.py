@@ -440,16 +440,17 @@ class Application(tornado.web.Application):
 		self.coll_data		= self.db[ MONGODB_COLL_DATASCRAPPED ]
 
 		# create default fields in spiders collection in case fields are missing
-		self.coll_spiders.update_many({'infos.logo_url'						: {"$exists" : False}}, {"$set": {'infos.logo_url' : "" }})
-		self.coll_spiders.update_many({'infos.licence'						: {"$exists" : False}}, {"$set": {'infos.licence' : "" }})
+		self.coll_spiders.update_many({'infos.logo_url'						: {"$exists" : False}}, {"$set": {'infos.logo_url' 	: "" }})
+		self.coll_spiders.update_many({'infos.licence'						: {"$exists" : False}}, {"$set": {'infos.licence' 	: "" }})
 
-		self.coll_spiders.update_many({'scraper_config.parse_reactive'		: {"$exists" : False}}, {"$set": {'scraper_config.parse_reactive' : False }})
-		self.coll_spiders.update_many({'scraper_config.parse_api'			: {"$exists" : False}}, {"$set": {'scraper_config.parse_api' : False }})
-		self.coll_spiders.update_many({'scraper_config.api_pagination_root'	: {"$exists" : False}}, {"$set": {'scraper_config.api_pagination_root' : "" }})
-		self.coll_spiders.update_many({'scraper_config.api_follow_root'		: {"$exists" : False}}, {"$set": {'scraper_config.api_follow_root' : "" }})
+		self.coll_spiders.update_many({'scraper_config.parse_reactive'		: {"$exists" : False}}, {"$set": {'scraper_config.parse_reactive' 		: False }})
+		self.coll_spiders.update_many({'scraper_config.parse_api'			: {"$exists" : False}}, {"$set": {'scraper_config.parse_api' 			: False }})
+		self.coll_spiders.update_many({'scraper_config.follow_is_api'		: {"$exists" : False}}, {"$set": {'scraper_config.follow_is_api' 		: False }})
+		self.coll_spiders.update_many({'scraper_config.api_pagination_root'	: {"$exists" : False}}, {"$set": {'scraper_config.api_pagination_root' 	: "" }})
+		self.coll_spiders.update_many({'scraper_config.api_follow_root'		: {"$exists" : False}}, {"$set": {'scraper_config.api_follow_root' 		: "" }})
 		
-		self.coll_spiders.update_many({'scraper_config.deploy_list'			: {"$exists" : False}}, {"$set": {'scraper_config.deploy_list' : False }})
-		self.coll_spiders.update_many({'scraper_config.deploy_list_xpath'	: {"$exists" : False}}, {"$set": {'scraper_config.deploy_list_xpath' : "" }})
+		self.coll_spiders.update_many({'scraper_config.deploy_list'			: {"$exists" : False}}, {"$set": {'scraper_config.deploy_list' 			: False }})
+		self.coll_spiders.update_many({'scraper_config.deploy_list_xpath'	: {"$exists" : False}}, {"$set": {'scraper_config.deploy_list_xpath' 	: "" }})
 
 		# self.coll_spiders.update_many({'scraper_settings.download_delay'		: {"$exists" : False}}, {"$set": {'scraper_settings.download_delay' : 0.25 }})
 		self.coll_spiders.update_many({'scraper_settings.RETRY_TIMES'			: {"$exists" : False}}, {"$set": {'scraper_settings.RETRY_TIMES' 		: 3 }})

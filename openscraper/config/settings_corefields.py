@@ -175,11 +175,13 @@ CONTRIBUTOR_EDIT_FIELDS_RADIO = [
 	# "deploy_list", 
 	"parse_reactive",
 	"parse_api",
+	"follow_is_api",
 ]
 CONTRIBUTOR_EDIT_FIELDS_RADIO_TEXTS = {
 	"parse_follow" 		: ["The data is complete in the list ","I need to click a link in the list to show the complete data "] , 
 	"parse_reactive" 	: ["The website is not reactive","The website is reactive"] , 
 	"parse_api"			: ["The website has no API", "The website has an API"],
+	"follow_is_api"		: ["The follow page is an HTML page", "The follow page is an API"],
 	# "page_needs_splash" : ["no","yes"], 
 	# "deploy_list" 		: ["There is no special button at the end of the list","There is a 'show more button' at the end of the list"]
 }
@@ -246,6 +248,7 @@ CONTRIBUTOR_EDIT_FIELDS = {
 			"parse_api",
 			"api_pagination_root",
 			"api_follow_root",
+			"follow_is_api",
 		], 
 		"optional": [
 			# "page_needs_splash",
@@ -317,6 +320,7 @@ CONTRIBUTOR_CORE_FIELDS = {
 		"parse_api"				: False,	# use the website's API to get data 
 		"api_pagination_root" 	: "",
 		"api_follow_root"		: "",
+		"follow_is_api"			: False,
 	},
 
 	# scraper - custom for scraping xpaths 
