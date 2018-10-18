@@ -141,18 +141,21 @@ class MongodbPipeline(object):
 	def process_item(self, item, spider):
 		"""handle each item and post it to db"""
 
+		print()
 		log_pipe.debug(">>> MongodbPipeline / process_item ...")
 
 		# item object to dict
 		item_dict = dict(item)
-		# log_pipe.info(">>> MongodbPipeline / item_dict : \n %s \n", pformat(item_dict) ) 
+		log_pipe.debug(">>> MongodbPipeline / process_item - item_dict : \n %s \n", pformat(item_dict) ) 
 
 
 		# TO DO : for now all docs from this spider are wiped out at "open_spider" level 
 		# check if already exists in db
 		# item_exists = self.application.coll_data.find({ "field_name" : item["field_name"]})
 
+
 		# insert / update in db
 		self.coll_data.insert(item_dict)
+		log_pipe.debug(">>> MongodbPipeline / process_item - item saved ...")
 
 		return item

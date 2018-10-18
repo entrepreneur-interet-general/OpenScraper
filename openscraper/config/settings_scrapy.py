@@ -37,9 +37,21 @@ HTTPCACHE_ENABLED 			= True
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY 				= .25
-RANDOMIZE_DOWNLOAD_DELAY 	= False
+# RETRY_TIMES					= 5
+# DOWNLOAD_DELAY 				= .7
+RANDOMIZE_DOWNLOAD_DELAY 	= True
 JOBDIR_FOLDER 				= "running_spiders"
+
+# CONCURRENT_ITEMS				= 200
+# CONCURRENT_REQUESTS			= 100
+CONCURRENT_REQUESTS_PER_DOMAIN 	= 8
+REDIRECT_MAX_TIMES				= 20
+
+DOWNLOAD_MAXSIZE		= 0 
+DEPTH_PRIORITY 			= 1
+SCHEDULER_DISK_QUEUE 	= 'scrapy.squeue.PickleFifoDiskQueue'
+SCHEDULER_MEMORY_QUEUE 	= 'scrapy.squeue.FifoMemoryQueue'
+
 
 # downloaders registration to disable SSL certification
 # cf : https://doc.scrapy.org/en/1.0/topics/downloader-middleware.html

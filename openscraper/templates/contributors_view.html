@@ -10,15 +10,6 @@
 	
 
 	<div class="container has-text-centered">
-		
-		{# <h1 class="title">
-			List of contributors
-			<div class="has-text-weight-light"> {% module MainTabs() %}</div>
-		</h1>
-		
-		<h2 class="subtitle">
-			this is the list of websites you want to scrap from
-		</h2> #}
 
 		<div class="dropdown is-hoverable">
 			
@@ -26,7 +17,7 @@
 				
 				<button class="button is-large is-rounded" aria-haspopup="true" aria-controls="dropdown-menu-contributors">
 					<span>
-						<b>List of contributors</b>  
+						<b>List of contributors (spiders)</b>  
 					</span>
 				</button>
 				
@@ -79,11 +70,10 @@
 				<span>refresh page</span>
 			</a>
 
-			<a 	class="button is-warning is-rounded" disabled>
+			{# <a 	class="button is-warning is-rounded" disabled>
 				<span class="icon is-small"><i class="fas fa-play"></i></span>
 				<span>run all spiders</span>
-			</a>
-
+			</a> #}
 
 		{% end %}
 
@@ -259,11 +249,19 @@
 															
 								{% if is_running %}
 
-									<span 	class="icon has-text-info tooltip"
+									{# <span 	class="icon has-text-info tooltip"
 											data-tooltip="spider is running, please refresh the page">
 										<i class="fas fa-spinner fa-pulse"></i>
-									</span>
+									</span> #}
 
+									<a 	href="{{ current_page }}"
+										>
+										<span 	class="icon has-text-info tooltip"
+												data-tooltip="spider is running, please refresh the page">
+											<i class="fas fa-spinner fa-pulse"></i>
+										</span>
+									</a>
+									
 								{% elif start_urls == [] %}
 
 									<span 	class="icon has-text-danger tooltip"
@@ -455,11 +453,19 @@
 
 									{% if is_running %}
 										
-										<span 	class="icon has-text-info tooltip is-tooltip-right"
+										{# <span 	class="icon has-text-info tooltip is-tooltip-right"
 												data-tooltip="spider is running, please refresh the page">
 											<i class="fas fa-spinner fa-pulse"></i>
-										</span>
-									
+										</span> #}
+
+										<a 	href="{{ current_page }}"
+											>
+											<span 	class="icon has-text-info tooltip"
+													data-tooltip="spider is running, please refresh the page">
+												<i class="fas fa-spinner fa-pulse"></i>
+											</span>
+										</a>
+										
 									{% elif start_urls == [] %}
 
 										<span 	class="icon has-text-danger tooltip is-tooltip-right"
@@ -515,11 +521,19 @@
 
 									{% if is_running %}
 										
-										<span 	class="icon has-text-info tooltip is-tooltip-right"
+										{# <span 	class="icon has-text-info tooltip is-tooltip-right"
 												data-tooltip="spider is running, please refresh the page">
 											<i class="fas fa-spinner fa-pulse"></i>
-										</span>
+										</span> #}
 
+										<a 	href="{{ current_page }}"
+											>
+											<span 	class="icon has-text-info tooltip"
+													data-tooltip="spider is running, please refresh the page">
+												<i class="fas fa-spinner fa-pulse"></i>
+											</span>
+										</a>
+										
 									{% elif start_urls == [] %}
 
 										<span 	class="icon has-text-danger tooltip is-tooltip-right"
@@ -566,6 +580,7 @@
 							<td class="has-text-centered"> 
 
 								{% if start_urls == [] %}
+									
 									<a class="button is-text is-small">
 										<span 	class="icon has-text-danger tooltip is-tooltip-right"
 												data-tooltip="spider is incomplete">
@@ -631,11 +646,19 @@
 
 									{% if is_running %}
 										
-										<span 	class="icon has-text-info tooltip is-tooltip-right"
+										{# <span 	class="icon has-text-info tooltip is-tooltip-right"
 												data-tooltip="spider is running, please refresh the page">
 											<i class="fas fa-spinner fa-pulse"></i>
-										</span>
+										</span> #}
 
+										<a 	href="{{ current_page }}"
+											>
+											<span 	class="icon has-text-info tooltip"
+													data-tooltip="spider is running, please refresh the page">
+												<i class="fas fa-spinner fa-pulse"></i>
+											</span>
+										</a>
+										
 									{% elif start_urls == [] %}
 
 										<span 	class="icon has-text-danger tooltip is-tooltip-right"
@@ -694,11 +717,11 @@
 
 		{% else %}
 			
-		<hr>
-		<div class="container has-text-centered">
-			<p class="is-centered"> no results </p>
-		</div>
-		<br>
+			<hr>
+			<div class="container has-text-centered">
+				<p class="is-centered"> no results </p>
+			</div>
+			<br>
 	
 		{% end %}
 

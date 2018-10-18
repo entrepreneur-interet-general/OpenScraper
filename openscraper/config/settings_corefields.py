@@ -157,6 +157,17 @@ DATAMODEL_DEFAULT_CUSTOM_FIELDS = [
 ### CONTRIBUTORS ############################################################################
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
+### TO DO : let user tag the spider to show state
+CONTRIBUTOR_FLAG_STATUS = [
+	"ok",
+	"incomplete",
+	"follow_not_working",
+	"next_not_working",
+	"reactive_not_working",
+	"api_not_working",
+	"bug"
+]
+
 ### radio buttons in 'edit contributor' form
 CONTRIBUTOR_EDIT_FIELDS_RADIO = [
 	"parse_follow", 
@@ -173,9 +184,13 @@ CONTRIBUTOR_EDIT_FIELDS_RADIO_TEXTS = {
 	# "deploy_list" 		: ["There is no special button at the end of the list","There is a 'show more button' at the end of the list"]
 }
 CONTRIBUTOR_EDIT_FIELDS_NUMBER = [
+	
+	"RETRY_TIMES",
 	"LIMIT_PAGES", 
 	"LIMIT_ITEMS",
-
+	"CONCURRENT_ITEMS", 
+	"CONCURRENT_REQUESTS", 
+	
 	"download_delay", 
 
 	"wait_driver" 	,	# delay for ajax response wait
@@ -185,6 +200,7 @@ CONTRIBUTOR_EDIT_FIELDS_NUMBER = [
 	"page_count"
 ]
 CONTRIBUTOR_EDIT_FIELDS_FLOAT = [
+
 	"download_delay",
 
 	"wait_driver" 	,	# delay for ajax response wait
@@ -229,7 +245,7 @@ CONTRIBUTOR_EDIT_FIELDS = {
 
 			"parse_api",
 			"api_pagination_root",
-			# "api_url_root",
+			"api_follow_root",
 		], 
 		"optional": [
 			# "page_needs_splash",
@@ -242,8 +258,11 @@ CONTRIBUTOR_EDIT_FIELDS = {
 		"needed" : [
 		],
 		"optional" : [
+			"RETRY_TIMES"			,
 			"LIMIT_PAGES" 			,	# max number of pages to be crawled
-			"LIMIT_ITEMS" 		,	# max number of items to be scraped
+			"LIMIT_ITEMS" 			,	# max number of items to be scraped
+			"CONCURRENT_ITEMS"		, 
+			"CONCURRENT_REQUESTS" 	, 
 
 			"download_delay" 	,	# delay
 
@@ -295,9 +314,9 @@ CONTRIBUTOR_CORE_FIELDS = {
 		# "page_needs_splash" : False,	# if page needs jquery to be parsed
 		"parse_reactive" 	: False,	# if page needs javascript to be parsed
 	
-		"parse_api"			: False,	# use the website's API to get data 
-		"api_pagination_root" : "",
-		# "api_url_root"	: "",
+		"parse_api"				: False,	# use the website's API to get data 
+		"api_pagination_root" 	: "",
+		"api_follow_root"		: "",
 	},
 
 	# scraper - custom for scraping xpaths 
@@ -308,10 +327,13 @@ CONTRIBUTOR_CORE_FIELDS = {
 	# scraper - global settings	
 	"scraper_settings" : {
 
-		"LIMIT_PAGES" 				: 100,	# max number of pages to be crawled
+		"RETRY_TIMES"			: 3,
+		"LIMIT_PAGES" 			: 150,	# max number of pages to be crawled
 		"LIMIT_ITEMS" 			: 0,	# max number of items to be scraped 
+		"CONCURRENT_ITEMS" 		: 200, 
+		"CONCURRENT_REQUESTS" 	: 100, 
 		
-		"download_delay" 		: 0.25,	# delay
+		"download_delay" 		: 0.5,	# delay
 		
 		"wait_driver" 			: 5.0,	# delay for ajax response wait
 		"wait_page" 			: 1.5,	# delay for new page response wait

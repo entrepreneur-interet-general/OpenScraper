@@ -446,17 +446,20 @@ class Application(tornado.web.Application):
 		self.coll_spiders.update_many({'scraper_config.parse_reactive'		: {"$exists" : False}}, {"$set": {'scraper_config.parse_reactive' : False }})
 		self.coll_spiders.update_many({'scraper_config.parse_api'			: {"$exists" : False}}, {"$set": {'scraper_config.parse_api' : False }})
 		self.coll_spiders.update_many({'scraper_config.api_pagination_root'	: {"$exists" : False}}, {"$set": {'scraper_config.api_pagination_root' : "" }})
-		# self.coll_spiders.update_many({'scraper_config.api_url_root'			: {"$exists" : False}}, {"$set": {'scraper_config.api_url_root' : "" }})
+		self.coll_spiders.update_many({'scraper_config.api_follow_root'		: {"$exists" : False}}, {"$set": {'scraper_config.api_follow_root' : "" }})
 		
 		self.coll_spiders.update_many({'scraper_config.deploy_list'			: {"$exists" : False}}, {"$set": {'scraper_config.deploy_list' : False }})
 		self.coll_spiders.update_many({'scraper_config.deploy_list_xpath'	: {"$exists" : False}}, {"$set": {'scraper_config.deploy_list_xpath' : "" }})
 
-		# self.coll_spiders.update_many({'scraper_settings.download_delay'	: {"$exists" : False}}, {"$set": {'scraper_settings.download_delay' : 0.25 }})
-		self.coll_spiders.update_many({'scraper_settings.wait_driver'		: {"$exists" : False}}, {"$set": {'scraper_settings.wait_driver' 	: 5.0 }})
-		self.coll_spiders.update_many({'scraper_settings.wait_page'			: {"$exists" : False}}, {"$set": {'scraper_settings.wait_page' 		: 1.5 }})
-		self.coll_spiders.update_many({'scraper_settings.wait_implicit'		: {"$exists" : False}}, {"$set": {'scraper_settings.wait_implicit' 	: 0.5 }})
-		self.coll_spiders.update_many({'scraper_settings.LIMIT_ITEMS'		: {"$exists" : False}}, {"$set": {'scraper_settings.LIMIT_ITEMS' : 0 }})
-		self.coll_spiders.update_many({'scraper_settings.LIMIT_PAGES'		: {"$exists" : False}}, {"$set": {'scraper_settings.LIMIT_PAGES' : 100 }})
+		# self.coll_spiders.update_many({'scraper_settings.download_delay'		: {"$exists" : False}}, {"$set": {'scraper_settings.download_delay' : 0.25 }})
+		self.coll_spiders.update_many({'scraper_settings.RETRY_TIMES'			: {"$exists" : False}}, {"$set": {'scraper_settings.RETRY_TIMES' 		: 3 }})
+		self.coll_spiders.update_many({'scraper_settings.LIMIT_ITEMS'			: {"$exists" : False}}, {"$set": {'scraper_settings.LIMIT_ITEMS' 		: 0 }})
+		self.coll_spiders.update_many({'scraper_settings.LIMIT_PAGES'			: {"$exists" : False}}, {"$set": {'scraper_settings.LIMIT_PAGES'		: 100 }})
+		self.coll_spiders.update_many({'scraper_settings.CONCURRENT_ITEMS'		: {"$exists" : False}}, {"$set": {'scraper_settings.CONCURRENT_ITEMS'	: 200 }})
+		self.coll_spiders.update_many({'scraper_settings.CONCURRENT_REQUESTS'	: {"$exists" : False}}, {"$set": {'scraper_settings.CONCURRENT_REQUESTS': 100 }})
+		self.coll_spiders.update_many({'scraper_settings.wait_driver'			: {"$exists" : False}}, {"$set": {'scraper_settings.wait_driver' 		: 5.0 }})
+		self.coll_spiders.update_many({'scraper_settings.wait_page'				: {"$exists" : False}}, {"$set": {'scraper_settings.wait_page' 			: 1.5 }})
+		self.coll_spiders.update_many({'scraper_settings.wait_implicit'			: {"$exists" : False}}, {"$set": {'scraper_settings.wait_implicit' 		: 0.5 }})
 
 
 		# create index for every collection needing it  

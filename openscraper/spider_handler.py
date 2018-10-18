@@ -77,26 +77,54 @@ class SpiderHandler(BaseHandler) :
 		except : 
 			spider_config = None
 		
-		
+		### retrieve reactive spiders already running
+		try : 
+			spider_reactive_running = self.application.coll_spiders.find_one( 
+				{"$and": [
+					{"scraper_config.parse_reactive" 	: True },
+					{"scraper_log.is_running" 			: True },
+					{"$not" : {"_id": spider_oid }}
+				] } 
+			)
+			app_log.info("SpiderHandler.get --- another spider_reactive_running : \n%s", spider_reactive_running ) 
+		except : 
+			spider_reactive_running = None
+
+
 		### if no spider_config
 		if spider_config == None : 
 			
 			app_log.warning("SpiderHandler.get --- !!! spider_id -%s- not found : test spider with test_config", spider_id ) 
 			
 			self.error_msg = self.add_error_message_to_slug( 
-								error_string	= "ERROR !!! there is no spider configuration with -%s- spider_id in the DB" %(str(spider_id)),
-								args_to_delete	= QUERY_CRAWL_BY_DEFAULT.keys()
+									error_string	= "ERROR !!! there is no spider configuration with -%s- spider_id in the DB" %(str(spider_id)),
+									args_to_delete	= QUERY_CRAWL_BY_DEFAULT.keys()
 								)
 
 			# redirect client before starting spider
 			self.redirect("/contributors" + self.error_msg )
 			
-		
+			
+		### if other spider_reactive_running
+		elif spider_reactive_running != None : 
+			
+			app_log.warning("SpiderHandler.get --- !!! another reactive spider is already running ..." ) 
+			
+			self.error_msg = self.add_error_message_to_slug( 
+									error_string	= "ERROR !!! another reactive spider is already running, please retry later",
+									args_to_delete	= QUERY_CRAWL_BY_DEFAULT.keys()
+								)
+
+			# redirect client before starting spider
+			self.redirect("/contributors" + self.error_msg )
+
 		### if a spider config exists
 		else : 
 
+			
 			# get spider status : if already running prohibit spider from running again
 			is_running 	= spider_config["scraper_log"]["is_running"]
+			is_reactive = spider_config["scraper_config"]["parse_reactive"]
 			spider_name	= spider_config["infos"]["name"]
 
 			if is_running == True : 
@@ -112,6 +140,7 @@ class SpiderHandler(BaseHandler) :
 				self.redirect("/contributors" + self.error_msg )
 
 			else : 
+
 
 				# redirect client before starting spider
 				self.redirect("/contributors"  )
