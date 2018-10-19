@@ -794,7 +794,8 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		app_log.info( "ContributorEditHandler.get / contributor : \n %s", pformat(contributor))
 
 		### render page
-		self.render("contributor_edit.html",
+		# self.render("contributor_edit.html",
+		self.render("contributor_edit_accordion.html",
 			
 			page_title 				= app_main_texts["main_title"],
 			site_section			= self.site_section,

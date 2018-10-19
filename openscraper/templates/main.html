@@ -24,6 +24,9 @@
 		<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-divider.min.css') }}">
 		<script type="text/javascript" language="javascript" src="{{ static_url ('css/bulma-ext/bulma-steps.min.js') }}"></script>
 		<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-badge.min.css') }}">
+		
+		<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-accordion.min.css') }}">
+		<script type="text/javascript" language="javascript" src="{{ static_url ('css/bulma-ext/bulma-accordion.min.js') }}"></script>
 
 
 		{# CHARTS #}
@@ -78,6 +81,12 @@
 	{# SCRIPTS JS : charts / custom ...  #}
 	{# <script src="{{ static_url("js/script.js") }}"></script> #}
 	
+
+
 	</body>
+
+	<script>
+		var accordions = bulmaAccordion.attach(); // accordions now contains an array of all Accordion instances
+	</script>
 
 </html>
