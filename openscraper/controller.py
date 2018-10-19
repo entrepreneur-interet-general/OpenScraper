@@ -1329,6 +1329,65 @@ class AjaxHandler(BaseHandler):
 
 
 
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### INFOS / DOC  ############################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+
+class WhoHandler(BaseHandler) : 
+	"""
+	"""
+	@print_separate(APP_DEBUG)
+	def get(self):
+
+		app_log.info("WhoHandler.get... ")
+
+		self.render(
+			"who.html",
+			page_title 				= app_main_texts["main_title"],
+			user					= self.current_user,
+			is_user_connected 		= self.is_user_connected,
+			user_email				= self.user_email,
+			user_auth_level			= self.user_auth_level,
+			user_auth_level_dict 	= self.user_auth_level_dict,
+		)
+
+class TutoHandler(BaseHandler) : 
+	"""
+	"""
+	@print_separate(APP_DEBUG)
+	def get(self):
+
+		app_log.info("TutoHandler.get... ")
+
+		self.render(
+			"tuto.html",
+			page_title 				= app_main_texts["main_title"],
+			user					= self.current_user,
+			is_user_connected 		= self.is_user_connected,
+			user_email				= self.user_email,
+			user_auth_level			= self.user_auth_level,
+			user_auth_level_dict 	= self.user_auth_level_dict,
+		)
+
+class APIdocHandler(BaseHandler) : 
+	"""
+	"""
+	@print_separate(APP_DEBUG)
+	def get(self):
+
+		app_log.info("APIdocHandler.get... ")
+
+		self.render(
+			"api_doc.html",
+			page_title 				= app_main_texts["main_title"],
+			user					= self.current_user,
+			is_user_connected 		= self.is_user_connected,
+			user_email				= self.user_email,
+			user_auth_level			= self.user_auth_level,
+			user_auth_level_dict 	= self.user_auth_level_dict,
+		)
+
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 ### SNIPPETS handlers #######################################################################
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
@@ -1386,7 +1445,7 @@ class TestBulmaHandler(BaseHandler) :
 
 		self.render(
 			"test_bulma_extensions.html",
-			page_title = app_main_texts["main_title"],
+			page_title 				= app_main_texts["main_title"],
 			user					= self.current_user,
 			is_user_connected 		= self.is_user_connected,
 			user_email				= self.user_email,

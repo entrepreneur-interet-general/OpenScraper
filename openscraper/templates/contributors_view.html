@@ -107,7 +107,15 @@
 
 							<th>status</th>
 
-							<th>name</th>
+							<th>spider name</th>
+
+							{# added by #}
+							<th class="has-text-centered">
+								<span class="icon has-text-grey is-small tooltip"
+										data-tooltip="user who added the scraper" >
+									<i class="fas fa-user-cog"></i>
+								</span>
+							</th>
 
 							{# edit spider #}
 							<th class="has-text-centered">
@@ -130,7 +138,8 @@
 							<th class="has-text-centered">
 								<span class="icon has-text-grey is-small tooltip"
 										data-tooltip="the spider tries to get the detailed page" >
-									<i class="fas fa-external-link-alt"></i>
+									{# <i class="fas fa-external-link-alt"></i> #}
+									<i class="fas fa-external-link-square-alt"></i>
 								</span>
 							</th>
 
@@ -150,10 +159,17 @@
 								</span>
 							</th>
 
-							<th>added by</th>
+
 							{# <th>page_url</th> #}
 							
-							<th>start_urls</th>
+							{# start_urls #}
+							<th class="has-text-centered">
+								<span class="icon has-text-grey is-small tooltip"
+										data-tooltip="start_urls" >
+									<i class="fas fa-external-link-alt"></i>
+									start_urls
+								</span>
+							</th>
 
 							{# for test #}
 							<th class="has-text-centered">
@@ -216,12 +232,12 @@
 						{# set hrefs #}
 						{% set href_test_crawl = None %}
 						{% if start_urls != [] %}
-							{% set href_test_crawl = 'href="/crawl?spider_id=%s&test=true&test_limit=1"' %( contrib_id ) %}
+							{% set href_test_crawl = 'href="/crawl?spider_id=%s&test=true&test_limit=1&next=%s"' %( contrib_id, pagination_dict["current_page_n"] ) %}
 						{% end %}
 
 						{% set href_crawl = None %}
 						{% if is_working %}
-							{% set href_crawl = 'href="/crawl?spider_id=%s"' %( contrib_id )  %}
+							{% set href_crawl = 'href="/crawl?spider_id=%s&next=%s"' %( contrib_id, pagination_dict["current_page_n"] )  %}
 						{% end %}
 
 						{# set other hrefs and some UI variables #}
@@ -303,6 +319,20 @@
 								</a>
 							</th>
 							
+
+							{# spider added by #}
+							<td> 
+
+								<span 	class="icon is-small has-text-grey-light tooltip is-tooltip-right"
+										data-tooltip="added by : {{ escape (contrib['scraper_log']['added_by']) }}">
+									<i class="fas fa-user"></i>
+								</span>
+
+								
+								{# { { linkify (contrib["infos"]["page_url"]) }} #}
+							</td>
+
+
 							{# edit spider #}
 							{# add an user authorization here #}
 							<td class="has-text-centered"> 
@@ -401,11 +431,7 @@
 								{% end %}
 							</th>
 
-							{# spider added by #}
-							<td> 
-								{{ escape (contrib["scraper_log"]["added_by"]) }}
-								{# { { linkify (contrib["infos"]["page_url"]) }} #}
-							</td>
+
 							 
 
 							{# start urls #}

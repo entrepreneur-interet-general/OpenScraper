@@ -58,6 +58,12 @@ class SpiderHandler(BaseHandler) :
 		query_contrib = self.filter_slug( slug_, slug_class="crawl" )
 		app_log.info("SpiderHandler.get / query_contrib : \n %s ", pformat(query_contrib) )
 
+		# get next page
+		app_log.info("SpiderHandler.get / next : ")
+		# next_url = self.get_argument('next', '')
+		next_url = query_contrib["next"]
+		app_log.info("next_url : %s", next_url)
+
 		# get spider_id to crawl
 		spider_id 	= query_contrib["spider_id"]
 		spider_oid 	= ObjectId(spider_id)
@@ -121,7 +127,6 @@ class SpiderHandler(BaseHandler) :
 		### if a spider config exists
 		else : 
 
-			
 			# get spider status : if already running prohibit spider from running again
 			is_running 	= spider_config["scraper_log"]["is_running"]
 			is_reactive = spider_config["scraper_config"]["parse_reactive"]
@@ -143,7 +148,10 @@ class SpiderHandler(BaseHandler) :
 
 
 				# redirect client before starting spider
-				self.redirect("/contributors"  )
+				if next_url != "1" : 
+					self.redirect("/contributors?page_n=" + str(next_url)  )
+				else :
+					self.redirect("/contributors"  )
 
 				app_log.info("SpiderHandler.get --- spider_id     : %s ", spider_id )
 				app_log.info("SpiderHandler.get --- spider_config : %s ", pformat(spider_config["infos"]) )

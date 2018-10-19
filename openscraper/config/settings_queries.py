@@ -119,15 +119,18 @@ QUERY_CRAWL_BY_DEFAULT = {
 	"spider_id" 	: None,
 	# "test"			: False,
 	"test_limit" 	: None,
+	"next"			: None
 }
 QUERIES_CRAWL_ALLOWED_UNIQUE = {
 	"spider_id",
 	"test",
 	"test_limit",
 	"token", 
+	"next",
 }
 QUERIES_CRAWL_ALLOWED_INTEGERS = {
 	"test_limit",
+	"next",
 }
 QUERIES_CRAWL_ALLOWED_POSITIVES = {
 	"test_limit",
