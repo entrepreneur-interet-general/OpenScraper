@@ -26,6 +26,7 @@ OpenScraper is a minimalistic, open source webscraper with a simple interface, <
 ## WHAT IS NEW ? 
 
 
+- v1.3 - 20/10/2018 : added first csv converter and downloader for every spider's dataset and first routes to documentation
 - v1.2 - 18/10/2018 : a spider can adapt to follow pages either if they are API or HTML
 - v1.1 - 15/10/2018 : parser adapts to API Rest, configuration based on "/" description for the path inside the JSON 
 - v1.0 - 10/06/2018 : parser adapts to reactive website (SPA, vue, etc...)
@@ -145,22 +146,20 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 1. DONE - integrate generic spider + tests + run
 1. DONE - make Tornado and a basic scrapy spider work together (non-blocking)
 1. DONE - make a nice front in Bulma 
-1. add API points for JSON feeds
+1. DONE - add Selenium to mimic navigation by clics on reactive websites
+1. DONE - add API points for JSON feeds
+1. DONE - add an "export csv" button and function to download the dataset
 1. deploy a demo at [http://www.cis-openscraper.com/](http://www.cis-openscraper.com/)
 1. ... nicer front in vue.js
 1. integrate JWT and hash private infos for users and API
-1. add an "exposrt csv" button and function to download the dataset
 
 
 #### Currently : 
-- currently at step(s) /10 and /11
-- working on the API points
+- adding documentation ...
 - ...
 
 #### Notes for later / issues :
-- must add logic to masterspider to request APIs
 - must migrate/copy data to a Elastic search (not only MongoDB) 
-- must add a feature to use Selenium inside a spider if needed (ajax or .click function)
 - containerize the app for simpler deployment (locally or in production)
 - ...
 
