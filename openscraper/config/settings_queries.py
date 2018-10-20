@@ -80,7 +80,7 @@ QUERIES_DATA_ALLOWED_BOOLEAN = [
 ### SPIDER QUERIES FROM URL - reconstruct from slug
 QUERY_SPIDER_BY_DEFAULT = {
 	"page_n"			: 1,		# page number
-	"results_per_page" 	: 25,		# self-explanatory
+	"results_per_page" 	: 10,		# self-explanatory
 	"token"				: None, 	# TO DO LATER : client's JWT (token) to check permissions 
 	"spider_id"			: ["all"], 	# spider_id for contributor(s)
 	"is_working"		: "any",	# 

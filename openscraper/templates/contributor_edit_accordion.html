@@ -78,7 +78,7 @@
 
 		<div class="columns is-centered">
 
-			<div class="column is-8">
+			<div class="column is-7">
 
 				<br>
 
@@ -94,119 +94,186 @@
 						{# GLOBAL FIELDS #}
 						<article class="accordion is-primary is-active">
 							<div class="accordion-header  toggle">
-								<h3> <strong>GLOBAL FIELDS</strong></h3>
+								<h3> 
+									<span class="icon">
+										<i class="fas fa-dot-circle"></i>
+									</span>
+									<strong>GLOBAL FIELDS</strong>
+								</h3>
 								<p class="is-small">describe the website you want to crawl</p>							</div>
 							<div class="accordion-body">
 								<div class="accordion-content">
 									
-									<div class="content">
+									<div class="content has-text-centered">
 										<p>
 											Read the documentation and tutorial before starting to set a spider
 										</p>
 									</div>
 
-									{# loop through contributor_edit_fields #}
-									{% for field, value in contributor_edit_fields.items() %}
 
-										{# needed values #}
-										{% for needed in value["needed"] %}
+											{# loop through contributor_edit_fields #}
+											{% for field, value in contributor_edit_fields.items() %}
 
-											<div class="field has-addons is-horizontal">
-											
-												<div class="field-label button is-static ">
-													<label class="label ">
-														{{ needed }} *
-													</label>
-												</div>
-
-												<div class="field-body">
+												{# needed values #}
+												{% for needed in value["needed"] %}
 													
-													<div class="field">
-														
-														{# except radio buttons #}
-														{% if needed not in contributor_edit_radio  %}
+													<div class="field has-addons is-horizontal">
 
-															<p class="control is-expanded has-icons-left">
-																<input 	class="input" 
-																		
-																		{% if needed not in contributor_edit_numbers %}
-																		type="text" 
-																		{% else %}
-																		type="number"
-																		{% end %}
+														<div class="field-label is-static">
+															{# <label class="label "> #}
+																{{ needed }}
+															{# </label> #}
+														</div>
+
+														<div class="field-body">
+															
+															<div class="field">
 																
-																		placeholder="{% if needed =='next_page' %}xpath for {% end %}{{ needed }}"
-																		name="{{ needed }}"
+																{# except radio buttons #}
+																{% if needed not in contributor_edit_radio  %}
 
-																		{% if needed == "start_urls" %}
-																			value="{% for i in contributor[field].get(needed, '') %}{{ escape(i) }} {% end %}"
-
-																		{% elif needed in contributor_edit_numbers %}
-																			value="{{ contributor[field].get(needed, '') }}"
-
-																		{% else %}
-																			value="{{ escape (contributor[field].get(needed, '')) }}"
+																	<p class="control is-expanded has-icons-left">
+																		<input 	class="input" 
+																				
+																				{% if needed not in contributor_edit_numbers %}
+																				type="text" 
+																				{% else %}
+																				type="number"
+																				{% end %}
 																		
-																		{% end %}
+																				placeholder="{% if needed =='next_page' %}xpath for {% end %}{{ needed }}"
+																				name="{{ needed }}"
+
+																				{% if needed == "start_urls" %}
+																					value="{% for i in contributor[field].get(needed, '') %}{{ escape(i) }} {% end %}"
+
+																				{% elif needed in contributor_edit_numbers %}
+																					value="{{ contributor[field].get(needed, '') }}"
+
+																				{% else %}
+																					value="{{ escape (contributor[field].get(needed, '')) }}"
+																				
+																				{% end %}
+																				
+																				>
+																	</p>
+
+
+																{% elif needed in contributor_edit_radio  %}
+
+																	{# radio buttons #}
+																	<div class="control">
 																		
-																		>
-															</p>
+																		{# fill radio "checked" value in contributor data #}
+																		{% set checked = contributor[field][needed] %}
 
+																		<label class="radio">
+																			<input 	type="radio" name="{{ needed }}" value="false"
+																					{% if not checked %} checked {% end %}
+																			>
+																			{# The data is complete in the list   #}
+																			{{ contributor_edit_radio_texts[needed][0] }}
+																		</label>
+																		
+																		<br>
 
-														{% elif needed in contributor_edit_radio  %}
+																		<label class="radio">
+																			<input 	type="radio" name="{{ needed }}" value="true"
+																					{% if checked %} checked {% end %} 
+																			>
+																			{# I need to click in the list to have the complete data #}
+																			{{ contributor_edit_radio_texts[needed][1] }}
+																		</label>
 
-															{# radio buttons #}
-															<div class="control">
-																
-																{# fill radio "checked" value in contributor data #}
-																{% set checked = contributor[field][needed] %}
+																	</div>
 
-																<label class="radio">
-																	<input 	type="radio" name="{{ needed }}" value="false"
-																			{% if not checked %} checked {% end %}
-																	>
-																	{# The data is complete in the list   #}
-																	{{ contributor_edit_radio_texts[needed][0] }}
-																</label>
-																
-																<br>
-
-																<label class="radio">
-																	<input 	type="radio" name="{{ needed }}" value="true"
-																			{% if checked %} checked {% end %} 
-																	>
-																	{# I need to click in the list to have the complete data #}
-																	{{ contributor_edit_radio_texts[needed][1] }}
-																</label>
+																{% end %}
 
 															</div>
-
-														{% end %}
+														</div>
 
 													</div>
-												</div>
-											</div>
 
 
-										{% end %}
+												{% end %}
 
-									{% end %}
-									
+											{% end %}
+
+								
 								</div>
 							</div>
 						</article>
 
 
-						{# ADVANCES SETTINGS #}
-						<article class="accordion is-warning">
+						{# CUSTOM FIELDS #}
+						<article class="accordion is-primary ">
 							<div class="accordion-header toggle">
-								<h3> <strong>ADVANCED SETTINGS</strong></h3>
-								<p class="is-small">settings about the spider performances</p>
+								<h3>
+									<span class="icon">
+										<i class="fas fa-dot-circle"></i>
+									</span>
+									<strong>CUSTOM FIELDS</strong>
+								</h3>
+								<p class="is-small">
+									where do you find your data on the pages you will crawl (add xpaths) ?
+								</p>
+								{# <button class="toggle" aria-label="toggle"></button> #}
 							</div>
 							<div class="accordion-body">
 								<div class="accordion-content">
 
-									<div class="content">
+									<div class="content has-text-centered">
+										<p>
+											you can also modify the data model 
+											<a href="/datamodel/edit">here </a>
+											or add a field <a href="/datamodel/add_field">here </a>
+										</p>
+									</div>
+
+									{% for dm in datamodel %}
+
+										<div class="field is-horizontal">
+
+											<div class="field-label is-static is-small">
+												{# <label class="label "> #}
+													{{ dm[u'field_name'] }}
+												{# </label> #}
+											</div>
+
+											<div class="field-body">
+												<div class="field">
+													<p class="control is-expanded has-icons-left">
+														<input class="input is-normal" type="text" 
+																placeholder="xpath for -{{ dm[u'field_name'] }}-"
+																name="{{ dm[u'_id'] }}"
+																value="{{ escape( contributor[u'scraper_config_xpaths'].get( dm[u'_id'], '') )  }}">
+													</p>
+												</div>
+											</div>
+										</div>
+
+									{% end %}
+
+								</div>
+							</div>
+						</article>
+
+
+						{# ADVANCED SETTINGS #}
+						<article class="accordion is-warning">
+							<div class="accordion-header toggle">
+								<h3>
+									<span class="icon">
+										<i class="fas fa-dot-circle"></i>
+									</span>
+									<strong>ADVANCED SETTINGS</strong>
+								</h3>
+								<p class="is-small">settings to enhance the spider's performances</p>
+							</div>
+							<div class="accordion-body">
+								<div class="accordion-content">
+
+									<div class="content has-text-centered">
 										<p>
 											Please read Scrapy and Selenium documentation before changing default values
 										</p>
@@ -217,10 +284,10 @@
 
 											<div class="field has-addons is-horizontal">
 											
-												<div class="field-label button is-static is-small">
-													<label class="label">
-														{{ advanced_setting }} *
-													</label>
+												<div class="field-label is-static is-small">
+													{# <label class="label"> #}
+														{{ advanced_setting }}
+													{# </label> #}
 												</div>
 
 												<div class="field-body">
@@ -295,59 +362,15 @@
 						</article>
 
 
-
-						{# CUSTOM FIELDS #}
-						<article class="accordion is-primary ">
+						{# NOTES #}
+						<article class="accordion is-warning ">
 							<div class="accordion-header toggle">
-								<h3> <strong>CUSTOM FIELDS</strong></h3>
-								<p class="is-small">
-									where do you find your data on the pages you will crawl (add xpaths) ?
-								</p>
-								{# <button class="toggle" aria-label="toggle"></button> #}
-							</div>
-							<div class="accordion-body">
-								<div class="accordion-content">
-
-									<div class="content">
-										<p>
-											you can also modify the data model 
-											<a href="/datamodel/edit">here </a>
-											or add a field <a href="/datamodel/add_field">here </a>
-										</p>
-									</div>
-
-									{% for dm in datamodel %}
-
-										<div class="field is-horizontal">
-
-											<div class="field-label button is-static is-small">
-												<label class="label ">
-													{{ dm[u'field_name'] }}
-												</label>
-											</div>
-
-											<div class="field-body">
-												<div class="field">
-													<p class="control is-expanded has-icons-left">
-														<input class="input is-small" type="text" 
-																placeholder="xpath for -{{ dm[u'field_name'] }}-"
-																name="{{ dm[u'_id'] }}"
-																value="{{ escape( contributor[u'scraper_config_xpaths'].get( dm[u'_id'], '') )  }}">
-													</p>
-												</div>
-											</div>
-										</div>
-
-									{% end %}
-
-								</div>
-							</div>
-						</article>
-
-
-						<article class="accordion is-light ">
-							<div class="accordion-header toggle">
-								<h3> <strong>NOTES</strong></h3>
+								<h3>
+									<span class="icon">
+										<i class="fas fa-dot-circle"></i>
+									</span>
+									<strong>NOTES</strong>
+								</h3>
 								<p class="is-small">
 									your notes about this spider
 								</p>
@@ -360,15 +383,15 @@
 								{# notes on spider #}
 								<div class="field has-addons is-horizontal">
 									
-									<div class="field-label button is-static is-small">
-										<label class="label ">
+									<div class="field-label is-static is-medium">
+										{# <label class="label "> #}
 											notes
-										</label>
+										{# </label> #}
 									</div>
 
 									<div class="field-body">
 										<div class="field">
-											<textarea class="textarea is-small" 
+											<textarea class="textarea is-medium" 
 														name="notes"
 														rows="1"
 														placeholder="your notes on this spider">
