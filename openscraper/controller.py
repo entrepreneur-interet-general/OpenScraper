@@ -1403,13 +1403,13 @@ class AjaxHandler(BaseHandler):
 ### INFOS / DOC  ############################################################################
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
-class WhoHandler(BaseHandler) : 
+class InfosWhoHandler(BaseHandler) : 
 	"""
 	"""
 	@print_separate(APP_DEBUG)
 	def get(self):
 
-		app_log.info("WhoHandler.get... ")
+		app_log.info("InfosWhoHandler.get... ")
 
 		self.render(
 			"who.html",
@@ -1421,13 +1421,13 @@ class WhoHandler(BaseHandler) :
 			user_auth_level_dict 	= self.user_auth_level_dict,
 		)
 
-class TutoHandler(BaseHandler) : 
+class InfosTutoHandler(BaseHandler) : 
 	"""
 	"""
 	@print_separate(APP_DEBUG)
 	def get(self):
 
-		app_log.info("TutoHandler.get... ")
+		app_log.info("InfosTutoHandler.get... ")
 
 		self.render(
 			"tuto.html",
@@ -1439,16 +1439,52 @@ class TutoHandler(BaseHandler) :
 			user_auth_level_dict 	= self.user_auth_level_dict,
 		)
 
-class APIdocHandler(BaseHandler) : 
+class InfosAPIdocHandler(BaseHandler) : 
 	"""
 	"""
 	@print_separate(APP_DEBUG)
 	def get(self):
 
-		app_log.info("APIdocHandler.get... ")
+		app_log.info("InfosAPIdocHandler.get... ")
 
 		self.render(
 			"api_doc.html",
+			page_title 				= app_main_texts["main_title"],
+			user					= self.current_user,
+			is_user_connected 		= self.is_user_connected,
+			user_email				= self.user_email,
+			user_auth_level			= self.user_auth_level,
+			user_auth_level_dict 	= self.user_auth_level_dict,
+		)
+
+class InfosStackHandler(BaseHandler) : 
+	"""
+	"""
+	@print_separate(APP_DEBUG)
+	def get(self):
+
+		app_log.info("InfosStackHandler.get... ")
+
+		self.render(
+			"stack.html",
+			page_title 				= app_main_texts["main_title"],
+			user					= self.current_user,
+			is_user_connected 		= self.is_user_connected,
+			user_email				= self.user_email,
+			user_auth_level			= self.user_auth_level,
+			user_auth_level_dict 	= self.user_auth_level_dict,
+		)
+
+class InfosCreditsHandler(BaseHandler) : 
+	"""
+	"""
+	@print_separate(APP_DEBUG)
+	def get(self):
+
+		app_log.info("InfosCreditsHandler.get... ")
+
+		self.render(
+			"credits.html",
 			page_title 				= app_main_texts["main_title"],
 			user					= self.current_user,
 			is_user_connected 		= self.is_user_connected,

@@ -1,0 +1,254 @@
+
+{% extends "main.html" %}
+
+
+{% block body %}
+
+
+<br>
+
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered">
+			<div class="column is-two-thirds">
+				<div class="content">
+
+
+					<br>
+					<h1 class="title has-text-centered">
+						Technical stack
+					</h1>
+					<br>
+
+
+					<div class="tile is-ancestor is-vertical">
+						
+
+						{# INTRO #}
+						<div class="tile is-parent">
+							<div class="tile is-child ">
+								<div class="content">
+									<p>
+										All the libraries and frameworks used to develop and make Open Scraper functional are 100% open source.
+									</p>
+									<p>
+										We encourage you to discover all those great frameworks, 
+										and we would like to thank and applaude all the contributors involved in those projects without whom we wouldn't have been able to make Open Scraper possible.
+									</p>
+									<br>
+								</div>
+							</div>
+						</div>
+
+						{# SERVER-SIDE #}
+						<div class="tile is-parent">
+							<div class="tile is-child has-text-centered notification is-primary has-text-centered">
+								<div class="content">
+									<p class="title">server side</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="tile is-parent">
+
+							<div class="tile is-child card">
+
+								<div class="card-image">
+									<br>
+									<a href="https://www.python.org/">
+										<figure class="image 1">
+											<img src="{{ static_url ('images/stack/python-logo.png') }}">
+										</figure>
+									</a>
+								</div>
+								<div class="card-content">
+									<div class="media">
+										<div class="media-content">
+											{# <p class="title is-4">Python</p> #}
+											<p class="subtitle is-6">
+												<blockquote>"Python is a programming language that lets you work quickly and integrate systems more effectively."</blockquote>
+											</p>
+										</div>
+									</div>
+
+									<div class="content">
+										Open Scraper uses Python as the backend language  <br>
+										<a href="https://www.python.org/">Discover Python</a>
+										<br>
+									</div>
+								</div>
+							</div>
+							
+							<div class="tile is-child card">
+								<div class="card-image">
+									<br>
+									<a href="https://www.tornadoweb.org/en/stable/">
+										<figure class="image 1">
+											<img src="{{ static_url ('images/stack/tornado-logo.png') }}">
+										</figure>
+									</a>
+								</div>
+								<div class="card-content">
+									<div class="media">
+										<div class="media-content">
+											{# <p class="title is-4">Python</p> #}
+											<p class="subtitle is-6">
+												<blockquote>"Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed. By using non-blocking network I/O, Tornado can scale to tens of thousands of open connections, making it ideal for long polling, WebSockets, and other applications that require a long-lived connection to each user."</blockquote>
+											</p>
+										</div>
+									</div>
+
+									<div class="content">
+										Open Scraper uses Tornado as its web server  <br>
+										<a href="https://www.tornadoweb.org/en/stable/">Discover Tornado</a>
+										<br>
+									</div>
+								</div>
+							</div>
+
+						</div>
+
+						{# SCRAPING #}
+						<div class="tile is-parent">
+							<div class="tile is-child has-text-centered notification is-primary has-text-centered">
+								<div class="content">
+									<p class="title">scraping</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="tile is-parent">
+
+							<div class="tile is-child card">
+
+								<div class="card-image 1">
+									<br>
+									<a href="https://scrapy.org/" target="_blank">
+										<figure class="image">
+											<img src="{{ static_url ('images/stack/scrapy-logo.png') }}">
+										</figure>
+									</a>
+								</div>
+								<div class="card-content">
+									<div class="media">
+										<div class="media-content">
+											<p class="subtitle is-6">
+												<blockquote>"An open source and collaborative framework for extracting the data you need from websites. In a fast, simple, yet extensible way."</blockquote>
+											</p>
+										</div>
+									</div>
+
+									<div class="content">
+										Open Scraper uses Scrapy as its primary framework for scraping <br>
+										<a href="https://scrapy.org/" target="_blank">Discover Scrapy</a>
+										<br>
+									</div>
+								</div>
+							</div>
+							
+							<div class="tile is-child card">
+								<div class="card-image">
+									<br>
+									<a href="https://selenium-python.readthedocs.io/" target="_blank">
+										<figure class="image 1">
+											<img src="{{ static_url ('images/stack/selenium-logo.png') }}">
+										</figure>
+									</a>
+								</div>
+								<div class="card-content">
+									<div class="media">
+										<div class="media-content">
+											<p class="subtitle is-6">
+												<blockquote>"Through Selenium Python API you can access all functionalities of Selenium WebDriver in an intuitive way."</blockquote>
+											</p>
+										</div>
+									</div>
+
+									<div class="content">
+										Open Scraper uses Selenium Python as its secondary framework for scraping <br>
+										<a href="https://selenium-python.readthedocs.io/" target="_blank">Discover Selenium Python</a>
+										<br>
+									</div>
+								</div>
+							</div>
+
+						</div>
+
+						{# DATABASE / CSS #}
+						<div class="tile is-parent">
+							<div class="tile is-child has-text-centered notification is-primary has-text-centered">
+								<div class="content">
+									<p class="title">database and CSS</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="tile is-parent">
+							
+							<div class="tile is-child card">
+								<div class="card-image">
+									<br>
+									<a href="https://www.mongodb.com/what-is-mongodb"  target="_blank">
+										<figure class="image 1">
+											<img src="{{ static_url ('images/stack/mongodb-logo.jpg') }}">
+										</figure>
+									</a>
+								</div>
+								<div class="card-content">
+									<div class="media">
+										<div class="media-content">
+											<p class="subtitle is-6">
+												<blockquote>"MongoDB is a document database with the scalability and flexibility that you want with the querying and indexing that you need"</blockquote>
+											</p>
+										</div>
+									</div>
+
+									<div class="content">
+										Open Scraper uses MongoDB as its database   <br>
+										<a href="https://www.mongodb.com/what-is-mongodb" target="_blank">Discover MongoDB</a>
+										<br>
+									</div>
+								</div>
+							</div>
+
+							<div class="tile is-child card">
+								<div class="card-image">
+									<br>
+									<a href="https://bulma.io/" target="_blank">
+										<figure class="image 1">
+											<img src="{{ static_url ('images/stack/bulma-logo.png') }}">
+										</figure>
+									</a>
+								</div>
+								<div class="card-content">
+									<div class="media">
+										<div class="media-content">
+											<p class="subtitle is-6">
+												<blockquote>"Bulma is an open source CSS framework based on Flexbox and used by more than 100,000 developers"</blockquote>
+											</p>
+										</div>
+									</div>
+
+									<div class="content">
+										Open Scraper uses Bulma as its CSS framework <br>
+										<a href="https://bulma.io/" target="_blank">Discover Bulma</a>
+										<br>
+									</div>
+								</div>
+							</div>
+
+						</div>
+
+
+					</div>
+
+					<br>
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+{% end %}

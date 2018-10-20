@@ -42,9 +42,11 @@ urls = [
 	(r'/preferences/', 	UserPreferences),
 
 	### infos
-	(r'/infos/who', 		WhoHandler),
-	(r'/infos/tuto', 		TutoHandler),
-	(r'/infos/api', 		APIdocHandler),
+	(r'/infos/who', 		InfosWhoHandler),
+	(r'/infos/tuto', 		InfosTutoHandler),
+	(r'/infos/api', 		InfosAPIdocHandler),
+	(r'/infos/stack', 		InfosStackHandler),
+	(r'/infos/credits', 	InfosCreditsHandler),
 
 	### bulma tests : just for debugging and speeding UI front dev
 	(r"/datamodel/form", FormHandler),
