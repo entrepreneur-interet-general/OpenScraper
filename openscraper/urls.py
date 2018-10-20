@@ -71,7 +71,7 @@ urls = [
 	# cf : https://stackoverflow.com/questions/10726486/tornado-url-query-parameters 
 	(r"/dataset/view([^/]*)", 		DataScrapedHandler), 	### get optional(*) parameters in slug like : dataset/view?page=0&stuff=3
 	# (r"/dataset/view/(\w+)",		DataScrapedViewOneHandler),
-	
+
 
 	### spider launchers / runners
 	(r"/crawl?([^/]*)?", 			SpiderHandler), ### get spidername as input

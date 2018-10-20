@@ -986,20 +986,33 @@ class BaseHandler(tornado.web.RequestHandler):
 		all_results = False
 		if "all_results" in query_obj : 
 			all_results		= query_obj["all_results"]
-		
+
+		# check if query is meant to export csv
+		export_as_csv = False
+		if "export_as_csv" in query_obj : 
+			export_as_csv	= query_obj["export_as_csv"]
 
 		# TO DO : check if user has right to use specific query fields
 		
 
+		app_log.info("... all_results : %s ", all_results )
+		app_log.info("... export_as_csv : %s ", export_as_csv )
+
 		# TO DO 
 		# retrieve all results at once 
 		if all_results==True : 
+			
 			### TO DO 
 			if user_token != None : # and 
 				pass
 			else : 
-				all_results = False
-				
+				if export_as_csv == True :
+					pass
+				else :
+					all_results = False
+		
+		app_log.info("... all_results : %s ", all_results )
+		app_log.info("... export_as_csv : %s ", export_as_csv )
 
 		### DB OPERATIONS
 
@@ -1050,6 +1063,9 @@ class BaseHandler(tornado.web.RequestHandler):
 		# retrieve docs
 		limit_results 	= query_obj["results_per_page"]
 
+		app_log.info("... all_results : %s ", all_results )
+		app_log.info("... export_as_csv : %s ", export_as_csv )
+
 		# if query from "api" ignore pagination --> 
 		# script doesn't do that if query_from == "app" or == "api_paginated"
 		if query_from == "api"  : 
@@ -1057,35 +1073,42 @@ class BaseHandler(tornado.web.RequestHandler):
 			page_n_max   	= None
 			# docs_from_db 	= list(cursor[ : limit_results ])
 			docs_from_db 	= cursor_list[ : limit_results ]
+
+
 		# if query from "app" limit according to pagination
 		else : 
-			### compute max_pages, start index, stop index
-			page_n 			= query_obj["page_n"]
-			page_n_max 		= self.compute_count_and_page_n_max(count_results_tot, limit_results)
+			# if query from app + all_results + export_as_csv
+			if all_results and export_as_csv : 
+				page_n_max   	= None
+				docs_from_db 	= cursor_list
+			else :
+				### compute max_pages, start index, stop index
+				page_n 			= query_obj["page_n"]
+				page_n_max 		= self.compute_count_and_page_n_max(count_results_tot, limit_results)
 
-			app_log.info("... results_cout : %s", count_results_tot ) 
-			app_log.info("... page_n_max   : %s ", page_n_max ) 
-			app_log.info("... page_n       : %s ", page_n )
+				app_log.info("... results_cout : %s", count_results_tot ) 
+				app_log.info("... page_n_max   : %s ", page_n_max ) 
+				app_log.info("... page_n       : %s ", page_n )
 
-			### select items to retrieve from list and indices start and stop
-			# all results case
-			# if all_results==True : 		
-			# 	docs_from_db = list(cursor)
-			# else : 
-			# page queried is higher than page_n_max or inferior to 1
-			if page_n > page_n_max or page_n < 1 :
-				docs_from_db = []	
-			# slice cursor : get documents from start index to stop index
-			else : 
-				results_i_start	= ( page_n-1 ) * limit_results 
-				results_i_stop	= ( results_i_start + limit_results + 1 ) - 1
-				app_log.info("... results_i_start : %s ", results_i_start )
-				app_log.info("... results_i_stop  : %s ", results_i_stop )
-				# docs_from_db 	= list(cursor[ results_i_start : results_i_stop ])
-				docs_from_db 	= cursor_list[ results_i_start : results_i_stop ]
-			
-			app_log.info("... docs_from_db : \n ....")
-			# app_log.info("%s", pformat(docs_from_db[0]) )
+				### select items to retrieve from list and indices start and stop
+				# all results case
+				# if all_results==True : 		
+				# 	docs_from_db = list(cursor)
+				# else : 
+				# page queried is higher than page_n_max or inferior to 1
+				if page_n > page_n_max or page_n < 1 :
+					docs_from_db = []	
+				# slice cursor : get documents from start index to stop index
+				else : 
+					results_i_start	= ( page_n-1 ) * limit_results 
+					results_i_stop	= ( results_i_start + limit_results + 1 ) - 1
+					app_log.info("... results_i_start : %s ", results_i_start )
+					app_log.info("... results_i_stop  : %s ", results_i_stop )
+					# docs_from_db 	= list(cursor[ results_i_start : results_i_stop ])
+					docs_from_db 	= cursor_list[ results_i_start : results_i_stop ]
+				
+				app_log.info("... docs_from_db : \n ....")
+				# app_log.info("%s", pformat(docs_from_db[0]) )
 
 
 		# flag if the cursor is empty
