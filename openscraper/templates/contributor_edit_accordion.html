@@ -87,6 +87,7 @@
 
 					{# hidden input to get  #}
 					<input name="_id" type="hidden" value="{{ str(contributor.get('_id', 'new_spider') ) }}"></input>
+					<input name="next_contrib_page" type="hidden" value="{{ next_contrib_page }}"></input>
 
 
 					<section class="accordions">
@@ -119,7 +120,7 @@
 													
 													<div class="field has-addons is-horizontal">
 
-														<div class="field-label is-static">
+														<div class="field-label is-static is-small">
 															{# <label class="label "> #}
 																{{ needed }}
 															{# </label> #}
@@ -416,7 +417,7 @@
 					<div class="field is-grouped is-grouped-centered">
 
 						<p class="control">
-							<a class="button is-light is-rounded" href="/contributors">
+							<a class="button is-light is-rounded" href="/contributors?page_n={{next_contrib_page}}">
 								<span class="icon"><i class="fas fa-times"></i></span>
 								<span>cancel</span>
 							</a>

@@ -749,6 +749,11 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		self.site_section = "contributors"
 
 
+		app_log.info("ContributorEditHandler.get / next : ")
+		next_url = self.get_argument('next', '/')
+		app_log.info(next_url)
+
+
 		### check user auth level 
 		# redirect if user doesn't have adapted auth level
 		auth_level = self.user_auth_level_dict[self.site_section]
@@ -799,6 +804,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			
 			page_title 				= app_main_texts["main_title"],
 			site_section			= self.site_section,
+			next_contrib_page 		= next_url,
 			
 			create_or_update 		= create_or_update,
 			
@@ -843,6 +849,9 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		spider_config_form = self.request.arguments
 		app_log.info("ContributorEditHandler.post /spider_config_form : \n %s", pformat(spider_config_form) )
 
+		### get next page arg
+		# next_contrib_page = 1
+		next_contrib_page = spider_config_form["next_contrib_page"][0]
 
 		# check if spider already exists
 		is_new = True
@@ -905,7 +914,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 			
 			### redirection
-			self.redirect("/contributors")
+			self.redirect("/contributors?page_n=%s" %(next_contrib_page) )
 
 
 class ContributorDeleteHandler(BaseHandler) : 

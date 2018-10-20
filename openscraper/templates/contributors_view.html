@@ -132,7 +132,6 @@
 									<i class="fas fa-trash"></i>
 								</span>
 							</th>
-							
 
 							{# following link spider #}
 							<th class="has-text-centered">
@@ -333,14 +332,17 @@
 
 							{# spider added by #}
 							<td> 
-
-								<span 	class="icon is-small has-text-grey-light tooltip is-tooltip-right"
-										data-tooltip="added by : {{ escape (contrib['scraper_log']['added_by']) }}">
-									<i class="fas fa-user"></i>
-								</span>
-
-								
-								{# { { linkify (contrib["infos"]["page_url"]) }} #}
+								{% if user_email == escape (contrib['scraper_log']['added_by']) %}
+									<span 	class="icon is-small has-text-info tooltip is-tooltip-right"
+											data-tooltip="you added this spider">
+										<i class="fas fa-user"></i>
+									</span>
+								{% else %}
+									<span 	class="icon is-small has-text-grey-light tooltip is-tooltip-right"
+											data-tooltip="added by : {{ escape (contrib['scraper_log']['added_by']) }}">
+										<i class="fas fa-user"></i>
+									</span>
+								{% end %}
 							</td>
 
 
@@ -350,7 +352,7 @@
 								{% if can_edit %}
 									<a 	class="has-text-centered button is-primary is-rounded is-small  tooltip is-tooltip-right"
 										data-tooltip="edit this spider" 
-										href="/contributor/edit/{{ contrib_id }}" 
+										href="/contributor/edit/{{ contrib_id }}?next={{query_obj['page_n']}}" 
 										>
 										<span class="icon is-small ">
 											<i class="fas fa-edit"></i>

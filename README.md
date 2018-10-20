@@ -20,7 +20,7 @@ OpenScraper is a minimalistic, open source webscraper with a simple interface, <
 
 <h4 align=center> OpenScraper is a project by <a href=https://entrepreneur-interet-general.etalab.gouv.fr/defi/2017/09/26/socialconnect/ >SocialConnect</a></h4>
 
-<p align=center>#python #tornado #scrapy #mongodb #bulma</p>
+<p align=center>#python #tornado #scrapy #selenium #mongodb #bulma</p>
 
 ----
 ## WHAT IS NEW ? 
