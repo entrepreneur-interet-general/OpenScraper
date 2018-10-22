@@ -784,6 +784,14 @@ class BaseHandler(tornado.web.RequestHandler):
 				q_spider = { "spider_id" : { "$in" : query_obj["spider_id"] } } #  for q in query_obj["spider_id"] }
 				query.update(q_spider)
 
+		# search by item_id
+		if "item_id" in query_obj : 
+			if query_obj["item_id"] == None :
+				pass
+			else : 
+				q_item = { "_id" : ObjectId(query_obj["item_id"])  } 
+				query.update(q_item)
+
 		### search by content --> collection need to be indexed
 		# cf : https://stackoverflow.com/questions/6790819/searching-for-value-of-any-field-in-mongodb-without-explicitly-naming-it
 		if "search_for" in query_obj : 

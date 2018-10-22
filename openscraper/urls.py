@@ -42,7 +42,7 @@ urls = [
 	(r'/preferences/', 	UserPreferences),
 
 	### infos
-	(r'/infos/who', 		InfosWhoHandler),
+	(r'/infos/why', 		InfosWhyHandler),
 	(r'/infos/tuto', 		InfosTutoHandler),
 	(r'/infos/api', 		InfosAPIdocHandler),
 	(r'/infos/stack', 		InfosStackHandler),

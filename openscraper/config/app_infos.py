@@ -5,7 +5,7 @@ app_infos = {
 	"licence"   : "MIT",
 	"authors"   : [ "Julien Paris (aka JPy)"],
 	"version"   : "1.3",
-	"date"      : "2018-10-17",
+	"date"      : "2018-10-22",
 	"link_git"  : "https://github.com/entrepreneur-interet-general/OpenScraper",
 	"link_online" : "http://cis-openscraper.com"
 }

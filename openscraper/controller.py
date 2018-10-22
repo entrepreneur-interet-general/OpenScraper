@@ -1403,16 +1403,16 @@ class AjaxHandler(BaseHandler):
 ### INFOS / DOC  ############################################################################
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
-class InfosWhoHandler(BaseHandler) : 
+class InfosWhyHandler(BaseHandler) : 
 	"""
 	"""
 	@print_separate(APP_DEBUG)
 	def get(self):
 
-		app_log.info("InfosWhoHandler.get... ")
+		app_log.info("InfosWhyHandler.get... ")
 
 		self.render(
-			"who.html",
+			"why.html",
 			page_title 				= app_main_texts["main_title"],
 			user					= self.current_user,
 			is_user_connected 		= self.is_user_connected,
@@ -1445,11 +1445,27 @@ class InfosAPIdocHandler(BaseHandler) :
 	@print_separate(APP_DEBUG)
 	def get(self):
 
-		app_log.info("InfosAPIdocHandler.get... ")
+		app_log.info("InfosAPIdocHandler.get...")
+		# app_log.info("InfosAPIdocHandler.get... \n : ", pformat(self.request.__dict__))
+		
+		example_item 	= self.application.coll_data.find()[0]
+		example_item_id = str(example_item["_id"])
+		
+		example_spider 	= self.application.coll_spiders.find()[0]
+		example_spider_id = str(example_spider["_id"])
+
+		example_user 	= self.application.coll_users.find()[0]
+		example_user_id = str(example_user["_id"])
 
 		self.render(
 			"api_doc.html",
 			page_title 				= app_main_texts["main_title"],
+
+			app_host				= self.request.host,
+			example_item_id			= example_item_id,
+			example_spider_id		= example_spider_id,
+			example_user_id			= example_user_id,
+
 			user					= self.current_user,
 			is_user_connected 		= self.is_user_connected,
 			user_email				= self.user_email,

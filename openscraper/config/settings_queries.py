@@ -30,6 +30,7 @@ QUERY_DATA_BY_DEFAULT = {
 	"results_per_page" 	: 25,			# self-explanatory
 	"token"				: None, 		# TO DO LATER : client's JWT (token) to check permissions 
 	"spider_id"			: ["all"], 		# spider_id for contributor(s)
+	"item_id"			: None, 		# item_id for item(s)
 	"is_complete"		: False, 		# only complete records... a bit optimistic isn't it ?
 	"search_for"		: [],			# list of words to search in data collection
 	# "search_in"		: [],			# list of fields to search in
@@ -55,6 +56,7 @@ QUERIES_DATA_ALLOWED_UNIQUE = [
 	"page_n", 
 	"results_per_page", 
 	"token", 
+	"item_id", 
 	"is_complete", 
 	"open_level",
 	"all_results",

@@ -10,7 +10,7 @@
 <section class="section">
 	<div class="container">
 		<div class="columns is-mobile is-centered">
-		  	<div class="column is-two-thirds">
+		  	<div class="column is-three-quarters">
 				<div class="content">
 
 
@@ -20,10 +20,60 @@
 					</h1>
 					<br>
 
-					<p>
-						Not ready yet but we're working on it, swear !
-					</p>
 				
+
+
+					{# API DOC / DATA #}
+					{% set site_root = "http://" + app_host  %}
+					{% set QUERY_DATA_BY_DEFAULT = [
+							{ "name" : "page_n",			"dft" : "1",		"ex" : "3",					"type" : "integer", 	"descr" : "page number of the results" },
+							{ "name" : "results_per_page", 	"dft" : "25",		"ex" : "14",				"type" : "integer", 	"descr" : "number of items by page" },
+							{ "name" : "token",				"dft" : "None", 	"ex" : "my_token",			"type" : "unique", 		"descr" : "client's JWT (token) to check user's permissions " },
+							{ "name" : "spider_id", 		"dft" : "all",		"ex" : example_spider_id,	"type" : "id_spider",	"descr" : "search items from a spider or a list of spiders by its/their id" },
+							{ "name" : "item_id", 			"dft" : "None", 	"ex" : example_spider_id,	"type" : "id_item", 	"descr" : "search for an item by its id" },
+							{ "name" : "is_complete", 		"dft" : "False", 	"ex" : "true",				"type" : "unique", 		"descr" : "only complete records... a bit optimistic isn't it ?" },
+							{ "name" : "search_for", 		"dft" : '[]',		"ex" : "my_query_string",	"type" : "list", 		"descr" : "list of words to search in data collection" },
+							{ "name" : "open_level", 		"dft" : "opendata",	"ex" : "commons",			"type" : "unique", 		"descr" : "fields of data to be shown ( 'all' == 'opendata' + 'commons' + 'private' ) " },
+							{ "name" : "all_results", 		"dft" : 'False',	"ex" : "true",				"type" : "unique", 		"descr" : "to override results_per_page " },
+							{ "name" : "added_by", 			"dft" : 'None',		"ex" : example_user_id,		"type" : "id_user", 	"descr" : "list of user having added the data " },
+							{ "name" : "sort_by", 			"dft" : 'None',		"ex" : "spider_name",		"type" : "unique", 		"descr" : "sort the results by a custom field id or a default field" }, 
+							{ "name" : "shuffle_seed", 		"dft" : 'None',		"ex" : "123456",			"type" : "unique", 		"descr" : "seed to randomize list order" },
+						]
+					%}
+							{# { "name" : "export_as_csv",		"dft" : 'False',		"ex" : "True",				"type" : "unique", 		"descr" : "export as csv" }, #}
+					<table class="table is-striped is-fullwidth">
+						<thead>
+							<tr>
+								<th><abbr title="Argument">Arg</abbr></th>
+								<th><abbr title="Default value">Default Value</abbr></th>
+								<th><abbr title="Type">Type</abbr></th>
+								<th><abbr title="Description">Description</abbr></th>
+								<th><abbr title="Example">Example</abbr></th>
+
+							</tr>
+						</thead>
+
+						<tbody>
+
+							{% for arg in QUERY_DATA_BY_DEFAULT %}
+							<tr>
+								<th><code>{{ arg["name"] }}</code></th>
+								<td><em>{{ arg["dft"] }}</em></td>
+								<td><em>{{ arg["type"] }}</em></td>
+								<td>{{ arg["descr"] }}</td>
+								<td>
+									<a href='{{ site_root + "/api/data?" + arg["name"] + "=" + arg["ex"] }}' target="_blank">
+									<code>{{ site_root }}/api/data?{{ arg["name"] }}={{ arg["ex"] }}</code>
+									</a>
+								</td>
+							</tr>
+							{% end %}
+
+						</tbody>
+					</table>
+
+
+
 
 				</div>
 			</div>
