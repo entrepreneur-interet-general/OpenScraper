@@ -37,8 +37,8 @@ class APIrestHandlerInfos(BaseHandler):
 		app_log.info("••• slug_ : \n %s", pformat(slug_) )
 
 		# filter slug
-		# query_data = self.filter_slug( slug_, slug_class="data", query_from=self.site_section )
-		# app_log.info("••• query_data : \n %s ", pformat(query_data) )
+		query_data = self.filter_slug( slug_, slug_class="data", query_from=self.site_section )
+		app_log.info("••• query_data : \n %s ", pformat(query_data) )
 
 		### get datamodel set infos
 		dm_set = self.get_datamodel_set( exclude_fields={"added_by" : 0, "modified_by" : 0 } )
@@ -52,35 +52,60 @@ class APIrestHandlerInfos(BaseHandler):
 		count_docs_by_spiders = self.count_docs_by_field(coll_name="data", field_name="spider_id")
 		# app_log.info("count_docs_by_spiders : \n %s",  pformat(count_docs_by_spiders) )
 
+		if query_data["only_dm_list"] : 
+			
+			full_json = {
+				"datamodel" : {
+					"data_model_custom_dict"	: dm_set["data_model_custom_dict"],
+					"data_model_core_dict" 		: dm_set["data_model_core_dict"],
+				},
+			}
 
-		full_json = {
+		if query_data["only_spiders_list"] : 
 
-			"datamodel" : {
-				"data_model_custom_dict"	: dm_set["data_model_custom_dict"],
-				"data_model_core_dict" 		: dm_set["data_model_core_dict"],
-			},
+			full_json = {
+				"spiders" 	: {
+					"spiders_dict"	: spiders_dict,
+					"spiders_list"	: [ 
+							{
+								"id" 		: k,
+								"name" 		: v["name"],
+								"fullname" 	: v["name"] 
+							} for k,v in spiders_dict.iteritems() if k in count_docs_by_spiders.keys() 
+						],
+				},
+			}
 
-			"spiders" 	: {
-				"spiders_dict"	: spiders_dict,
-				"spiders_list"	: [ 
-						{
-							"id" 		: k,
-							"name" 		: v["name"],
-							"fullname" 	: v["name"] 
-						} for k,v in spiders_dict.iteritems() if k in count_docs_by_spiders.keys() 
-					],
-			},
+		else : 
 
-			"counts" 	: {
+			full_json = {
 
-				"data_by_spiders"	: count_docs_by_spiders,
-				"datamodel_custom"	: self.count_documents(coll_name="datamodel", 	 query={ "field_class" : "custom" }), 
-				"spiders_tested"	: self.count_documents(coll_name="contributors", query={ "scraper_log.is_tested" : True}), 
-				"data"				: self.count_documents(coll_name="data"), 
-				"users"				: self.count_documents(coll_name="users"), 
-			} 
+				"datamodel" : {
+					"data_model_custom_dict"	: dm_set["data_model_custom_dict"],
+					"data_model_core_dict" 		: dm_set["data_model_core_dict"],
+				},
 
-		}
+				"spiders" 	: {
+					"spiders_dict"	: spiders_dict,
+					"spiders_list"	: [ 
+							{
+								"id" 		: k,
+								"name" 		: v["name"],
+								"fullname" 	: v["name"] 
+							} for k,v in spiders_dict.iteritems() if k in count_docs_by_spiders.keys() 
+						],
+				},
+
+				"counts" 	: {
+
+					"data_by_spiders"	: count_docs_by_spiders,
+					"datamodel_custom"	: self.count_documents(coll_name="datamodel", 	 query={ "field_class" : "custom" }), 
+					"spiders_tested"	: self.count_documents(coll_name="contributors", query={ "scraper_log.is_tested" : True}), 
+					"data"				: self.count_documents(coll_name="data"), 
+					"users"				: self.count_documents(coll_name="users"), 
+				} 
+
+			}
 
 
 		### write data as json
@@ -111,6 +136,10 @@ class APIrestHandlerStats(BaseHandler):
 		# get slug
 		slug_ = self.request.arguments
 		app_log.info("••• slug_ : \n %s", pformat(slug_) )
+
+		# filter slug
+		query_data = self.filter_slug( slug_, slug_class="data", query_from=self.site_section )
+		app_log.info("••• query_data : \n %s ", pformat(query_data) )
 
 		### get datamodel set infos
 		dm_set = self.get_datamodel_set( exclude_fields={"added_by" : 0, "modified_by" : 0 } )

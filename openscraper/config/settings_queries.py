@@ -40,6 +40,8 @@ QUERY_DATA_BY_DEFAULT = {
 	"added_by"			: None,			# list of user having added the data 
 	"sort_by"			: None,
 	"shuffle_seed"		: None,			# seed to randomize list order
+	"only_dm_list"		: False,		# retrieve only dm_set list 
+	"only_spiders_list"	: False,		# retrieve only spiders list 
 	"export_as_csv"		: False,		# export as csv
 }
 # adding search_in_* by field type if present in slug == authorized DATAMODEL_FIELDS_TYPES
@@ -62,6 +64,8 @@ QUERIES_DATA_ALLOWED_UNIQUE = [
 	"all_results",
 	"sort_by",
 	"shuffle_seed",
+	"only_dm_list",
+	"only_spiders_list",
 	"export_as_csv",
 ]
 QUERIES_DATA_ALLOWED_INTEGERS  	= [
@@ -71,7 +75,7 @@ QUERIES_DATA_ALLOWED_POSITIVES 	= [
 	"page_n", "results_per_page", "shuffle_seed"
 ]
 QUERIES_DATA_ALLOWED_BOOLEAN = [
-	"is_complete", "all_results", "export_as_csv"
+	"is_complete", "all_results", "only_dm_list", "only_spiders_list", "export_as_csv"
 ]
 
 
