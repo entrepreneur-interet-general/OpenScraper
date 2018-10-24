@@ -21,6 +21,78 @@ QUERIES_MAX_RESULTS_IF_API = 100
 
 
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### QUERIES ARGS - INFOS #####################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+
+### DATA QUERIES FROM URL - reconstruct from slug
+QUERY_INFOS_BY_DEFAULT = {
+	"only_dm_list"		: False,		# retrieve only dm_set list 
+	"only_spiders_list"	: False,		# retrieve only spiders list 
+}
+# # adding search_in_* by field type if present in slug == authorized DATAMODEL_FIELDS_TYPES
+# QUERY_INFOS_BY_TYPE = {
+# 	"search_in_" + field_type : None for field_type in DATAMODEL_FIELDS_TYPES
+# }
+# QUERY_INFOS_BY_TYPE_REVERSE = {
+# 	"search_in_" + field_type : field_type for field_type in DATAMODEL_FIELDS_TYPES
+# }
+# QUERY_INFOS_BY_DEFAULT.update(QUERY_DATA_BY_TYPE)
+
+
+QUERIES_INFOS_ALLOWED_UNIQUE = [
+	"only_dm_list",
+	"only_spiders_list",
+]
+QUERIES_INFOS_ALLOWED_INTEGERS  	= [
+	
+]
+QUERIES_INFOS_ALLOWED_POSITIVES 	= [
+	
+]
+QUERIES_INFOS_ALLOWED_BOOLEAN = [
+	"only_dm_list", "only_spiders_list"
+]
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### QUERIES ARGS - STATS #####################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+
+### DATA QUERIES FROM URL - reconstruct from slug
+QUERY_STATS_BY_DEFAULT = {
+	"only_counts_simple"	: False,		# retrieve only 
+	"only_tags_stats"		: False,		# retrieve only 
+	"only_spiders_stats"	: False,		# retrieve only 
+}
+# # adding search_in_* by field type if present in slug == authorized DATAMODEL_FIELDS_TYPES
+# QUERY_INFOS_BY_TYPE = {
+# 	"search_in_" + field_type : None for field_type in DATAMODEL_FIELDS_TYPES
+# }
+# QUERY_INFOS_BY_TYPE_REVERSE = {
+# 	"search_in_" + field_type : field_type for field_type in DATAMODEL_FIELDS_TYPES
+# }
+# QUERY_INFOS_BY_DEFAULT.update(QUERY_DATA_BY_TYPE)
+
+
+QUERIES_STATS_ALLOWED_UNIQUE = [
+	"only_counts_simple",
+	"only_tags_stats",
+	"only_spiders_stats",
+]
+QUERIES_STATS_ALLOWED_INTEGERS  	= [
+	
+]
+QUERIES_STATS_ALLOWED_POSITIVES 	= [
+	
+]
+QUERIES_STATS_ALLOWED_BOOLEAN = [
+	"only_counts_simple",
+	"only_tags_stats",
+	"only_spiders_stats",
+]
+
+
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 ### QUERIES ARGS - DATA #####################################################################
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
@@ -40,8 +112,8 @@ QUERY_DATA_BY_DEFAULT = {
 	"added_by"			: None,			# list of user having added the data 
 	"sort_by"			: None,
 	"shuffle_seed"		: None,			# seed to randomize list order
-	"only_dm_list"		: False,		# retrieve only dm_set list 
-	"only_spiders_list"	: False,		# retrieve only spiders list 
+	# "only_dm_list"		: False,		# retrieve only dm_set list 
+	# "only_spiders_list"	: False,		# retrieve only spiders list 
 	"export_as_csv"		: False,		# export as csv
 }
 # adding search_in_* by field type if present in slug == authorized DATAMODEL_FIELDS_TYPES
@@ -64,8 +136,8 @@ QUERIES_DATA_ALLOWED_UNIQUE = [
 	"all_results",
 	"sort_by",
 	"shuffle_seed",
-	"only_dm_list",
-	"only_spiders_list",
+	# "only_dm_list",
+	# "only_spiders_list",
 	"export_as_csv",
 ]
 QUERIES_DATA_ALLOWED_INTEGERS  	= [
@@ -75,7 +147,10 @@ QUERIES_DATA_ALLOWED_POSITIVES 	= [
 	"page_n", "results_per_page", "shuffle_seed"
 ]
 QUERIES_DATA_ALLOWED_BOOLEAN = [
-	"is_complete", "all_results", "only_dm_list", "only_spiders_list", "export_as_csv"
+	"is_complete", "all_results", 
+	# "only_dm_list", 
+	# "only_spiders_list", 
+	"export_as_csv"
 ]
 
 

@@ -20,55 +20,182 @@
 					</h1>
 					<br>
 
+					{% set site_root = "http://" + app_host  %}
+
+
+					{# API DOC / STATS #}
+					<h2>
+						<a href='{{ site_root }}/api/stats' target="_blank">
+							<code>api/stats</code>
+						</a>
+					</h2>					
+					<hr>
+					<div>
+						{% set QUERY_STATS_BY_DEFAULT = [
+								{ "name" : "only_counts_simple", 	"returns" : "",  "dft" : 'False',	"ex" : "true",	"type" : "unique", 	"descr" : "retrieve only simple counts " },
+								{ "name" : "only_tags_stats",		"returns" : "",  "dft" : 'False',	"ex" : "true",	"type" : "unique", 	"descr" : "retrieve only stats counts " },
+								{ "name" : "only_spiders_stats", 	"returns" : "",  "dft" : 'False',	"ex" : "true",	"type" : "unique", 	"descr" : "retrieve only stats counts " },
+							]
+						%}
+						<table class="table is-striped is-fullwidth">
+							<thead>
+								<tr>
+									<th><abbr title="Argument">Argument</abbr></th>
+									<th><abbr title="Default value">Default Value</abbr></th>
+									<th><abbr title="Type">Type</abbr></th>
+									<th><abbr title="Description">Description</abbr></th>
+									<th><abbr title="Example">Example</abbr></th>
+									<th><abbr title="Returns">Returns</abbr></th>
+
+								</tr>
+							</thead>
+
+							<tbody>
+
+								{% for arg in QUERY_STATS_BY_DEFAULT %}
+								<tr>
+									<th>
+										<a href='{{ site_root + "/api/stats?" + arg["name"] + "=" + arg["dft"] }}' target="_blank">
+											<code>{{ arg["name"] }}</code>
+										</a>									</th>
+									<td><em>{{ arg["dft"] }}</em></td>
+									<td><em>{{ arg["type"] }}</em></td>
+									<td>{{ arg["descr"] }}</td>
+									<td>
+										<a href='{{ site_root + "/api/stats?" + arg["name"] + "=" + arg["ex"] }}' target="_blank">
+											<code>{{ site_root }}/api/stats?{{ arg["name"] }}={{ arg["ex"] }}</code>
+										</a>
+									</td>
+									<td><em>{{ arg["returns"] }}</em></td>
+								</tr>
+								{% end %}
+
+							</tbody>
+						</table>
+					</div>
+
+
+					<br>
+
+					{# API DOC / INFOS #}
+					<h2>
+						<a href='{{ site_root }}/api/infos' target="_blank">
+							<code>api/infos</code>
+						</a>
+					</h2>					
+					<hr>
+					<div>
+						{% set QUERY_INFOS_BY_DEFAULT = [
+								{ "name" : "only_dm_list", 		"returns" : "",  "dft" : "False", 	"ex" : "true",	"type" : "unique", 	"descr" : "retrieve only the datamodel" },
+								{ "name" : "only_spiders_list", "returns" : "",  "dft" : 'False',	"ex" : "true",	"type" : "unique", 	"descr" : "retrieve only the list of spiders " },
+							]
+						%}
+						<table class="table is-striped is-fullwidth">
+							<thead>
+								<tr>
+									<th><abbr title="Argument">Argument</abbr></th>
+									<th><abbr title="Default value">Default Value</abbr></th>
+									<th><abbr title="Type">Type</abbr></th>
+									<th><abbr title="Description">Description</abbr></th>
+									<th><abbr title="Example">Example</abbr></th>
+									<th><abbr title="Returns">Returns</abbr></th>
+
+								</tr>
+							</thead>
+
+							<tbody>
+
+								{% for arg in QUERY_INFOS_BY_DEFAULT %}
+								<tr>
+									<th>
+										<a href='{{ site_root + "/api/infos?" + arg["name"] + "=" + arg["dft"] }}' target="_blank">
+											<code>{{ arg["name"] }}</code>
+										</a>
+									</th>
+									<td><em>{{ arg["dft"] }}</em></td>
+									<td><em>{{ arg["type"] }}</em></td>
+									<td>{{ arg["descr"] }}</td>
+									<td>
+										<a href='{{ site_root + "/api/infos?" + arg["name"] + "=" + arg["ex"] }}' target="_blank">
+											<code>{{ site_root }}/api/infos?{{ arg["name"] }}={{ arg["ex"] }}</code>
+										</a>
+									</td>
+									<td><em>{{ arg["returns"] }}</em></td>
+								</tr>
+								{% end %}
+
+							</tbody>
+						</table>
+					</div>
+
+
+					<br>
 
 					{# API DOC / DATA #}
-					{% set site_root = "http://" + app_host  %}
-					{% set QUERY_DATA_BY_DEFAULT = [
-							{ "name" : "page_n",			"dft" : "1",		"ex" : "3",					"type" : "integer", 	"descr" : "page number of the results" },
-							{ "name" : "results_per_page", 	"dft" : "25",		"ex" : "14",				"type" : "integer", 	"descr" : "number of items by page" },
-							{ "name" : "token",				"dft" : "None", 	"ex" : "my_token",			"type" : "unique", 		"descr" : "client's JWT (token) to check user's permissions " },
-							{ "name" : "spider_id", 		"dft" : "all",		"ex" : example_spider_id,	"type" : "id_spider",	"descr" : "search items from a spider or a list of spiders by its/their id" },
-							{ "name" : "item_id", 			"dft" : "None", 	"ex" : example_spider_id,	"type" : "id_item", 	"descr" : "search for an item by its id" },
-							{ "name" : "is_complete", 		"dft" : "False", 	"ex" : "true",				"type" : "unique", 		"descr" : "only complete records... a bit optimistic isn't it ?" },
-							{ "name" : "search_for", 		"dft" : '[]',		"ex" : "my_query_string",	"type" : "list", 		"descr" : "list of words to search in data collection" },
-							{ "name" : "open_level", 		"dft" : "opendata",	"ex" : "commons",			"type" : "unique", 		"descr" : "fields of data to be shown ( 'all' == 'opendata' + 'commons' + 'private' ) " },
-							{ "name" : "all_results", 		"dft" : 'False',	"ex" : "true",				"type" : "unique", 		"descr" : "to override results_per_page " },
-							{ "name" : "added_by", 			"dft" : 'None',		"ex" : example_user_id,		"type" : "id_user", 	"descr" : "list of user having added the data " },
-							{ "name" : "sort_by", 			"dft" : 'None',		"ex" : "spider_name",		"type" : "unique", 		"descr" : "sort the results by a custom field id or a default field" }, 
-							{ "name" : "shuffle_seed", 		"dft" : 'None',		"ex" : "123456",			"type" : "unique", 		"descr" : "seed to randomize list order" },
-						]
-					%}
-							{# { "name" : "export_as_csv",		"dft" : 'False',		"ex" : "True",				"type" : "unique", 		"descr" : "export as csv" }, #}
-					<table class="table is-striped is-fullwidth">
-						<thead>
-							<tr>
-								<th><abbr title="Argument">Arg</abbr></th>
-								<th><abbr title="Default value">Default Value</abbr></th>
-								<th><abbr title="Type">Type</abbr></th>
-								<th><abbr title="Description">Description</abbr></th>
-								<th><abbr title="Example">Example</abbr></th>
+					<h2>
+						<a href='{{ site_root }}/api/data' target="_blank">
+							<code>api/data</code>
+						</a>
+					</h2>
+					<hr>
+					<div>
+						{% set QUERY_DATA_BY_DEFAULT = [
+								{ "name" : "page_n",			"returns" : "",  "dft" : "1",		"ex" : "3",					"type" : "integer", 	"descr" : "page number of the results" },
+								{ "name" : "results_per_page", 	"returns" : "",  "dft" : "25",		"ex" : "14",				"type" : "integer", 	"descr" : "number of items by page" },
+								{ "name" : "token",				"returns" : "",  "dft" : "None", 	"ex" : "my_token",			"type" : "unique", 		"descr" : "client's JWT (token) to check user's permissions " },
+								{ "name" : "spider_id", 		"returns" : "",  "dft" : "all",		"ex" : example_spider_id,	"type" : "id_spider",	"descr" : "search items from a spider or a list of spiders by its/their id" },
+								{ "name" : "item_id", 			"returns" : "",  "dft" : "None", 	"ex" : example_spider_id,	"type" : "id_item", 	"descr" : "search for an item by its id" },
+								{ "name" : "is_complete", 		"returns" : "",  "dft" : "False", 	"ex" : "true",				"type" : "unique", 		"descr" : "only complete records... a bit optimistic isn't it ?" },
+								{ "name" : "search_for", 		"returns" : "",  "dft" : '[]',		"ex" : "my_query_string",	"type" : "list", 		"descr" : "list of words to search in data collection" },
+								{ "name" : "open_level", 		"returns" : "",  "dft" : "opendata",	"ex" : "commons",			"type" : "unique", 		"descr" : "fields of data to be shown ( 'all' == 'opendata' + 'commons' + 'private' ) " },
+								{ "name" : "all_results", 		"returns" : "",  "dft" : 'False',	"ex" : "true",				"type" : "unique", 		"descr" : "to override results_per_page " },
+								{ "name" : "added_by", 			"returns" : "",  "dft" : 'None',		"ex" : example_user_id,		"type" : "id_user", 	"descr" : "list of user having added the data " },
+								{ "name" : "sort_by", 			"returns" : "",  "dft" : 'None',		"ex" : "spider_name",		"type" : "unique", 		"descr" : "sort the results by a custom field id or a default field" }, 
+								{ "name" : "shuffle_seed", 		"returns" : "",  "dft" : 'None',		"ex" : "123456",			"type" : "unique", 		"descr" : "seed to randomize list order" },
+							]
+						%}
+								{# { "name" : "export_as_csv",		"returns" : "",  "dft" : 'False',		"ex" : "True",				"type" : "unique", 		"descr" : "export as csv" }, #}
+						<table class="table is-striped is-fullwidth">
+							<thead>
+								<tr>
+									<th><abbr title="Argument">Argument</abbr></th>
+									<th><abbr title="Default value">Default Value</abbr></th>
+									<th><abbr title="Type">Type</abbr></th>
+									<th><abbr title="Description">Description</abbr></th>
+									<th><abbr title="Example">Example</abbr></th>
+									<th><abbr title="Returns">Returns</abbr></th>
 
-							</tr>
-						</thead>
+								</tr>
+							</thead>
 
-						<tbody>
+							<tbody>
 
-							{% for arg in QUERY_DATA_BY_DEFAULT %}
-							<tr>
-								<th><code>{{ arg["name"] }}</code></th>
-								<td><em>{{ arg["dft"] }}</em></td>
-								<td><em>{{ arg["type"] }}</em></td>
-								<td>{{ arg["descr"] }}</td>
-								<td>
-									<a href='{{ site_root + "/api/data?" + arg["name"] + "=" + arg["ex"] }}' target="_blank">
-									<code>{{ site_root }}/api/data?{{ arg["name"] }}={{ arg["ex"] }}</code>
-									</a>
-								</td>
-							</tr>
-							{% end %}
+								{% for arg in QUERY_DATA_BY_DEFAULT %}
+								<tr>
+									<th>
+										<a href='{{ site_root + "/api/data?" + arg["name"] + "=" + arg["dft"] }}' target="_blank">
+											<code>{{ arg["name"] }}</code>
+										</a>
+									</th>
+									<td><em>{{ arg["dft"] }}</em></td>
+									<td><em>{{ arg["type"] }}</em></td>
+									<td>{{ arg["descr"] }}</td>
+									<td>
+										<a href='{{ site_root + "/api/data?" + arg["name"] + "=" + arg["ex"] }}' target="_blank">
+											<code>{{ site_root }}/api/infos?{{ arg["name"] }}={{ arg["ex"] }}</code>
+										</a>
+									</td>
+									<td><em>{{ arg["returns"] }}</em></td>
+								</tr>
+								{% end %}
 
-						</tbody>
-					</table>
+							</tbody>
+						</table>
+					</div>
+
+
+
+
 
 
 

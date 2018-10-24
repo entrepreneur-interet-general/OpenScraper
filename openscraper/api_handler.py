@@ -37,7 +37,7 @@ class APIrestHandlerInfos(BaseHandler):
 		app_log.info("••• slug_ : \n %s", pformat(slug_) )
 
 		# filter slug
-		query_data = self.filter_slug( slug_, slug_class="data", query_from=self.site_section )
+		query_data = self.filter_slug( slug_, slug_class="infos", query_from=self.site_section )
 		app_log.info("••• query_data : \n %s ", pformat(query_data) )
 
 		### get datamodel set infos
@@ -52,18 +52,33 @@ class APIrestHandlerInfos(BaseHandler):
 		count_docs_by_spiders = self.count_docs_by_field(coll_name="data", field_name="spider_id")
 		# app_log.info("count_docs_by_spiders : \n %s",  pformat(count_docs_by_spiders) )
 
-		if query_data["only_dm_list"] : 
+
+		full_json_dft = {	
 			
+			"status" : "ok", 
+
+			# header of the json with infos 
+			"query_log" : {
+				"_description"			: "synthesis of the query made by the user",
+				"query"					: query_data ,
+				"uri"					: self.request.uri ,
+			},
+		}
+
+		if query_data["only_dm_list"] : 
+
 			full_json = {
+
 				"datamodel" : {
 					"data_model_custom_dict"	: dm_set["data_model_custom_dict"],
 					"data_model_core_dict" 		: dm_set["data_model_core_dict"],
 				},
 			}
 
-		if query_data["only_spiders_list"] : 
+		elif query_data["only_spiders_list"] : 
 
 			full_json = {
+
 				"spiders" 	: {
 					"spiders_dict"	: spiders_dict,
 					"spiders_list"	: [ 
@@ -109,6 +124,9 @@ class APIrestHandlerInfos(BaseHandler):
 
 
 		### write data as json
+
+		full_json.update(full_json_dft)
+
 		# cf : https://stackoverflow.com/questions/35083374/how-to-decode-a-unicode-string-python
 		results = json.dumps(full_json, ensure_ascii=False, default=json_util.default).encode('utf8')
 
@@ -138,8 +156,9 @@ class APIrestHandlerStats(BaseHandler):
 		app_log.info("••• slug_ : \n %s", pformat(slug_) )
 
 		# filter slug
-		query_data = self.filter_slug( slug_, slug_class="data", query_from=self.site_section )
+		query_data = self.filter_slug( slug_, slug_class="stats", query_from=self.site_section )
 		app_log.info("••• query_data : \n %s ", pformat(query_data) )
+
 
 		### get datamodel set infos
 		dm_set = self.get_datamodel_set( exclude_fields={"added_by" : 0, "modified_by" : 0 } )
@@ -187,29 +206,108 @@ class APIrestHandlerStats(BaseHandler):
 									"stats" 		: tags_by_spiders 
 								} )
 
+	
+	
 		### stack stats in dict
-		full_json = {
 
-			"counts_stats" 	: {
+		full_json_dft = {	
+			
+			"status" : "ok", 
 
-				"spiders_stats"	: count_docs_by_spiders,
-				"tags_stats"	: tags_counts,
-
+			# header of the json with infos 
+			"query_log" : {
+				"_description"			: "synthesis of the query made by the user",
+				"query"					: query_data ,
+				"uri"					: self.request.uri ,
 			},
-
-			"counts_simple" : {
-
-				"datamodel_custom"	: self.count_documents(coll_name="datamodel", 	 query={ "field_class" : "custom" }), 
-				"spiders_tested"	: self.count_documents(coll_name="contributors", query={ "scraper_log.is_tested" : True}), 
-				"data"				: self.count_documents(coll_name="data"), 
-				"users"				: self.count_documents(coll_name="users"), 
-
-			} 
-
 		}
+
+		if query_data["only_counts_simple"] : 
+
+			full_json = {
+
+				"counts_simple" : {
+
+					"datamodel_custom"	: self.count_documents(coll_name="datamodel", 	 query={ "field_class" : "custom" }), 
+					"spiders_tested"	: self.count_documents(coll_name="contributors", query={ "scraper_log.is_tested" : True}), 
+					"data"				: self.count_documents(coll_name="data"), 
+					"users"				: self.count_documents(coll_name="users"), 
+
+				} 
+			}
+
+		elif query_data["only_tags_stats"] : 
+
+			full_json = {
+
+				"counts_simple" : {
+
+					"datamodel_custom"	: self.count_documents(coll_name="datamodel", 	 query={ "field_class" : "custom" }), 
+					"spiders_tested"	: self.count_documents(coll_name="contributors", query={ "scraper_log.is_tested" : True}), 
+					"data"				: self.count_documents(coll_name="data"), 
+					"users"				: self.count_documents(coll_name="users"), 
+
+				},
+
+				"counts_stats" 	: {
+
+					# "spiders_stats"	: count_docs_by_spiders,
+					"tags_stats"	: tags_counts,
+
+				},
+
+			}
+
+		elif query_data["only_spiders_stats"] : 
+
+			full_json = {
+
+				"counts_simple" : {
+
+					"datamodel_custom"	: self.count_documents(coll_name="datamodel", 	 query={ "field_class" : "custom" }), 
+					"spiders_tested"	: self.count_documents(coll_name="contributors", query={ "scraper_log.is_tested" : True}), 
+					"data"				: self.count_documents(coll_name="data"), 
+					"users"				: self.count_documents(coll_name="users"), 
+
+				},
+
+				"counts_stats" 	: {
+
+					"spiders_stats"	: count_docs_by_spiders,
+					# "tags_stats"	: tags_counts,
+					
+				},
+
+			}
+
+		else : 
+
+			full_json = {
+
+
+				"counts_simple" : {
+
+					"datamodel_custom"	: self.count_documents(coll_name="datamodel", 	 query={ "field_class" : "custom" }), 
+					"spiders_tested"	: self.count_documents(coll_name="contributors", query={ "scraper_log.is_tested" : True}), 
+					"data"				: self.count_documents(coll_name="data"), 
+					"users"				: self.count_documents(coll_name="users"), 
+
+				}, 
+
+				"counts_stats" 	: {
+
+					"spiders_stats"	: count_docs_by_spiders,
+					"tags_stats"	: tags_counts,
+
+				},
+
+			}
 
 
 		### write data as json
+
+		full_json.update(full_json_dft)
+
 		# cf : https://stackoverflow.com/questions/35083374/how-to-decode-a-unicode-string-python
 		results = json.dumps(full_json, ensure_ascii=False, default=json_util.default).encode('utf8')
 
@@ -339,8 +437,7 @@ class APIrestHandlerData(BaseHandler):
 			data 			= "no data for this query"
 
 
-		### add header to tell user which level auth he/she gets to get
-		full_json = { 
+		full_json_dft = { 
 			
 			"status" : "ok", 
 
@@ -360,7 +457,31 @@ class APIrestHandlerData(BaseHandler):
 
 				"query_mongo"			: query,
 
-			},
+			}
+		}
+
+		### add header to tell user which level auth he/she gets to get
+		full_json = { 
+			
+			# "status" : "ok", 
+
+			# # header of the json with infos 
+			# "query_log" : {
+
+			# 	"_description"			: "synthesis of the query made by the user",
+
+			# 	"auth_level" 			: open_level ,
+			# 	"query"					: query_data ,
+			# 	"uri"					: self.request.uri ,
+
+			# 	"page_n"				: count_results,
+			# 	"page_n_max"			: page_n_max,
+			# 	"count_results"			: count_results,
+			# 	"count_results_tot"		: count_results_tot,
+
+			# 	"query_mongo"			: query,
+
+			# },
 
 			"fields_open_level" 	: { 
 				"_description" 		: "fields returned by the query with their level of opendata" , 
@@ -382,6 +503,8 @@ class APIrestHandlerData(BaseHandler):
 		} 
 
 		app_log.info("--- API / headers : \n %s", pformat(self._headers.__dict__) )
+
+		full_json.update(full_json_dft)
 
 		return full_json
 
