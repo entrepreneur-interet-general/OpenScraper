@@ -1232,6 +1232,9 @@ class GenericSpider(Spider) :
 	def clean_link(self, link=None, url_root=""):
 		""" complete a link if needed """
 		
+		if link == None :
+			link = "" 
+				
 		### erase all spaces in original link
 		link = ' '.join(link.split())
 		link = link.replace(" ","").replace('\n', '').replace('\r', '')

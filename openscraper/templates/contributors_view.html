@@ -6,6 +6,8 @@
 
 <br>
 
+
+
 <section class="section">
 	
 
@@ -100,10 +102,13 @@
 				<table 	id="t_contributors" 
 						class="table display is-striped is-narrow is-hoverable is-fullwidth" 
 						width="100%" 
-						cellspacing="0">
+						cellspacing="0"
+						style="">
 					
 					<thead>
 						<tr>
+
+							<th class="has-text-centered">logo</th>
 
 							<th>status</th>
 
@@ -266,12 +271,20 @@
 						{% end %}
 
 
-						<tr id="{{ contrib_id }}" >
+						<tr id="{{ contrib_id }}">
 							
 
+							{# logo spider #}
+							<td class="has-text-centered" style="vertical-align: middle;"> 
+								<a 	href='{{ escape (contrib["infos"]["page_url"]) }}' target="_blank">
+									<figure class="image is-32x32">
+										<img src="{{ escape (contrib['infos']['logo_url']) }}">
+									</figure>
+								</a>
+							</td>
+
 							{# spider status : is_working / is_running / ... #}
-							<td class="has-text-centered"> 
-								
+							<td class="has-text-centered" style="vertical-align: middle;"> 
 															
 								{% if is_running %}
 
@@ -318,9 +331,8 @@
 
 
 
-
 							{# name spider #}
-							<th> 
+							<th class="vertic-centered"	style="vertical-align: middle;"> 
 								<a 	href='{{ escape (contrib["infos"]["page_url"]) }}' target="_blank"
 								 	class="tooltip is-tooltip-right"
 									 data-tooltip='{{ escape (contrib["infos"]["page_url"]) }}'
@@ -330,8 +342,9 @@
 							</th>
 							
 
+
 							{# spider added by #}
-							<td> 
+							<td style="vertical-align: middle;"> 
 								{% if user_email == escape (contrib['scraper_log']['added_by']) %}
 									<span 	class="icon is-small has-text-info tooltip is-tooltip-right"
 											data-tooltip="you added this spider">
@@ -348,7 +361,7 @@
 
 							{# edit spider #}
 							{# add an user authorization here #}
-							<td class="has-text-centered"> 
+							<td class="has-text-centered" style="vertical-align: middle;"> 
 								{% if can_edit %}
 									<a 	class="has-text-centered button is-primary is-rounded is-small  tooltip is-tooltip-right"
 										data-tooltip="edit this spider" 
@@ -374,7 +387,7 @@
 
 							{# delete spider #}
 							{# add an user authorization here #}
-							<td class="has-text-centered">
+							<td class="has-text-centered" style="vertical-align: middle;">
 								
 								{% if can_edit %}
 									<a class="has-text-centered button is-text is-small is-rounded tooltip is-tooltip-right is-tooltip-danger"
@@ -402,7 +415,7 @@
 
 
 							{# spider follows link #}
-							<th> 
+							<th style="vertical-align: middle;"> 
 								{% if contrib["scraper_config"]["parse_follow"] %}
 									<span 	class="icon is-small has-text-info tooltip is-tooltip-right"
 											data-tooltip="this spider tries to follow a link to a detailed page">
@@ -417,7 +430,7 @@
 
 
 							{# spider is reactive #}
-							<th> 
+							<th style="vertical-align: middle;"> 
 								{% if contrib["scraper_config"]["parse_reactive"] %}
 									<span 	class="icon is-small has-text-info tooltip is-tooltip-right"
 											data-tooltip="this website is reactive">
@@ -431,7 +444,7 @@
 							</th>
 
 							{# spider is API #}
-							<th> 
+							<th style="vertical-align: middle;"> 
 								{% if contrib["scraper_config"]["parse_api"] %}
 									<span 	class="icon is-small has-text-info tooltip is-tooltip-right"
 											data-tooltip="this spider crawls an API">
@@ -448,7 +461,7 @@
 							 
 
 							{# start urls #}
-							<td>
+							<td style="vertical-align: middle;">
 								{% for url_ in start_urls %} 
 									<a href="{{ url_ }}" target="_blank"> 
 										<span class="tag is-white tooltip is-tooltip-right"
@@ -476,7 +489,7 @@
 
 							{# test spider #}
 							{# add an user authorization here #}
-							<td class="has-text-centered">
+							<td class="has-text-centered" style="vertical-align: middle;">
 							
 								{% if not can_edit %}
 									<a class="button is-text is-small">
@@ -543,7 +556,7 @@
 
 							{# spider run crawler #}
 							{# add an user authorization here #}
-							<td class="has-text-centered"> 
+							<td class="has-text-centered" style="vertical-align: middle;"> 
 
 								{% if not can_edit %}
 									<a class="button is-text is-small">
@@ -616,7 +629,7 @@
 							
 
 							{# spider view data #}
-							<td class="has-text-centered"> 
+							<td class="has-text-centered" style="vertical-align: middle;"> 
 
 								{% if start_urls == [] %}
 									
@@ -667,7 +680,7 @@
 
 
 							{# spider reset data #}
-							<td class="has-text-centered"> 
+							<td class="has-text-centered" style="vertical-align: middle;"> 
 
 								{% if not can_edit %}
 
@@ -734,7 +747,7 @@
 							</td>
 
 							{# download as csv #}
-							<td class="has-text-centered">
+							<td class="has-text-centered" style="vertical-align: middle;">
 
 								{% if count_data == 0 %}
 									<span 	class="icon has-text-info tooltip is-tooltip-right"
