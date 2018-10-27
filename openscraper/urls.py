@@ -46,6 +46,7 @@ urls = [
 	(r'/infos/tuto', 		InfosTutoHandler),
 	(r'/infos/api', 		InfosAPIdocHandler),
 	(r'/infos/stack', 		InfosStackHandler),
+	(r'/infos/contribute', 	InfosContributeHandler),
 	(r'/infos/credits', 	InfosCreditsHandler),
 
 	### bulma tests : just for debugging and speeding UI front dev
@@ -72,6 +73,7 @@ urls = [
 	### dataset routes
 	# cf : https://stackoverflow.com/questions/10726486/tornado-url-query-parameters 
 	(r"/dataset/view([^/]*)", 		DataScrapedHandler), 	### get optional(*) parameters in slug like : dataset/view?page=0&stuff=3
+	(r"/dataset/dataviz", 			DataDatavizHandler), 	
 	# (r"/dataset/view/(\w+)",		DataScrapedViewOneHandler),
 
 

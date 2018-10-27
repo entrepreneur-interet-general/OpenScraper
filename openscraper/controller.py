@@ -98,7 +98,8 @@ class PageNotFoundHandler(BaseHandler):
 		self.render("404.html",
 
 			page_title  		= app_main_texts["main_title"],
-			
+			app_host			= self.request.host,
+
 			site_section 		= self.site_section,
 			
 			error_msg 			= self.error_msg,
@@ -146,6 +147,8 @@ class WelcomeHandler(BaseHandler):
 			site_section 		= self.site_section,
 			counts 				= counts,
 			
+			app_host			= self.request.host,
+
 			user				= self.current_user,
 			is_user_connected 	= self.is_user_connected,
 			user_email			= self.user_email,
@@ -192,6 +195,7 @@ class LoginHandler(BaseHandler):
 		self.render('login_register.html',
 			page_title  		= app_main_texts["main_title"],
 			site_section		= self.site_section,
+			app_host			= self.request.host,
 			login_or_register 	= "login",
 			next_url			= next_url,
 			error_msg			= self.error_msg,
@@ -278,6 +282,7 @@ class RegisterHandler(BaseHandler):
 		self.render('login_register.html',
 			page_title  		= app_main_texts["main_title"],
 			site_section		= self.site_section,
+			app_host			= self.request.host,
 			next_url 			= next_url,
 			login_or_register 	= "register",
 			error_msg			= self.error_msg,
@@ -430,6 +435,8 @@ class DataModelViewHandler(BaseHandler):
 			page_title 			= app_main_texts["main_title"],
 			site_section		= self.site_section,
 			
+			app_host			= self.request.host,
+
 			datamodel_custom 	= data_model_custom,
 			datamodel_core 		= data_model_core,
 			error_msg			= self.error_msg,
@@ -474,7 +481,9 @@ class DataModelEditHandler(BaseHandler):
 			"datamodel_edit.html",
 			page_title 			= app_main_texts["main_title"],
 			site_section		= self.site_section,
-			
+
+			app_host			= self.request.host,
+
 			field_types 		= DATAMODEL_FIELDS_TYPES,
 			field_keep_vars	 	= DATAMODEL_FIELD_KEEP_VARS,
 			field_open_vars	 	= DATAMODEL_FIELD_OPEN_VARS,
@@ -595,6 +604,7 @@ class DataModelAddFieldHandler(BaseHandler) :
 			"datamodel_new_field.html",
 			page_title 			= app_main_texts["main_title"],
 			site_section		= self.site_section,
+			app_host			= self.request.host,
 			field_types			= DATAMODEL_FIELDS_TYPES,
 			field_open_vars		= DATAMODEL_FIELD_OPEN_VARS,
 			error_msg			= self.error_msg,
@@ -713,6 +723,7 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 			
 			page_title  			= app_main_texts["main_title"],
 			site_section			= self.site_section, 
+			app_host				= self.request.host,
 			current_page			= current_page,
 
 			query_obj				= query_contrib,
@@ -804,6 +815,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 			
 			page_title 				= app_main_texts["main_title"],
 			site_section			= self.site_section,
+			app_host				= self.request.host,
 			next_contrib_page 		= next_url,
 			
 			create_or_update 		= create_or_update,
@@ -952,13 +964,14 @@ class ContributorDeleteHandler(BaseHandler) :
 			
 				self.render( "contributor_delete.html",
 					
-					page_title  			= app_main_texts["main_title"],
-					# site_section			= self.site_section, 
+					page_title  		= app_main_texts["main_title"],
+					# site_section		= self.site_section, 
+					app_host			= self.request.host,
 
-					spider_id				= spider_id,
-					contributor				= contributor,
+					spider_id			= spider_id,
+					contributor			= contributor,
 
-					error_msg				= self.error_msg,
+					error_msg			= self.error_msg,
 					
 					user				= self.current_user,
 					is_user_connected 	= self.is_user_connected,
@@ -1055,13 +1068,15 @@ class ContributorResetDataHandler(BaseHandler) :
 				# redirect
 				self.render(
 					"contributor_reset_data.html",
-					page_title  			= app_main_texts["main_title"],
-					# site_section			= self.site_section, 
+					page_title  		= app_main_texts["main_title"],
+					# site_section		= self.site_section, 
 
-					spider_id				= spider_id,
-					contributor				= contributor,
+					app_host			= self.request.host,
 
-					error_msg				= self.error_msg,
+					spider_id			= spider_id,
+					contributor			= contributor,
+
+					error_msg			= self.error_msg,
 					
 					user				= self.current_user,
 					is_user_connected 	= self.is_user_connected,
@@ -1164,7 +1179,6 @@ class DataScrapedHandler(BaseHandler):
 		app_log.info("DataScrapedHandler.get ... : ")
 		app_log.info("... request.path : %s ", self.request.path )
 		app_log.info("... request.uri  : %s ", self.request.uri )
-
 
 
 
@@ -1288,6 +1302,8 @@ class DataScrapedHandler(BaseHandler):
 				page_title			= app_main_texts["main_title"],
 				query_obj			= query_data,
 				
+				app_host			= self.request.host,
+
 				datamodel_custom 	  = data_model_custom_list,
 				allowed_custom_fields = allowed_custom_fields,
 
@@ -1355,6 +1371,47 @@ class DataScrapedHandler(BaseHandler):
 			
 
 
+class DataDatavizHandler(BaseHandler):
+	"""
+	dataviz of all data scraped from db.data_scraped 
+	"""
+	@print_separate(APP_DEBUG)
+	@check_user_permissions
+	def get (self ):
+		
+		print
+		app_log.info("DataDatavizHandler.get ... : \n")
+
+		self.site_section = "data"
+
+		app_log.info("DataDatavizHandler.get / request : " )
+		pprint.pprint (self.request )
+
+		print
+		app_log.info("DataDatavizHandler.get ... : ")
+		app_log.info("... request.path : %s ", self.request.path )
+		app_log.info("... request.uri  : %s ", self.request.uri )
+
+
+
+
+
+
+		self.render(
+			"dataviz.html",
+			page_title 				= app_main_texts["main_title"],
+
+			app_host				= self.request.host,
+			site_section			= self.site_section,
+
+			user					= self.current_user,
+			is_user_connected 		= self.is_user_connected,
+			user_email				= self.user_email,
+			user_auth_level			= self.user_auth_level,
+			user_auth_level_dict 	= self.user_auth_level_dict,
+
+
+		)
 
 
 
@@ -1411,9 +1468,13 @@ class InfosWhyHandler(BaseHandler) :
 
 		app_log.info("InfosWhyHandler.get... ")
 
+		self.site_section = "infos"
+
 		self.render(
 			"why.html",
 			page_title 				= app_main_texts["main_title"],
+			app_host				= self.request.host,
+			site_section			= self.site_section,
 			user					= self.current_user,
 			is_user_connected 		= self.is_user_connected,
 			user_email				= self.user_email,
@@ -1429,9 +1490,15 @@ class InfosTutoHandler(BaseHandler) :
 
 		app_log.info("InfosTutoHandler.get... ")
 
+		self.site_section = "infos"
+
 		self.render(
 			"tuto.html",
 			page_title 				= app_main_texts["main_title"],
+
+			app_host				= self.request.host,
+			site_section			= self.site_section,
+
 			user					= self.current_user,
 			is_user_connected 		= self.is_user_connected,
 			user_email				= self.user_email,
@@ -1448,6 +1515,8 @@ class InfosAPIdocHandler(BaseHandler) :
 		app_log.info("InfosAPIdocHandler.get...")
 		# app_log.info("InfosAPIdocHandler.get... \n : ", pformat(self.request.__dict__))
 		
+		self.site_section = "infos"
+
 		example_item 	= self.application.coll_data.find()[0]
 		example_item_id = str(example_item["_id"])
 		
@@ -1462,6 +1531,8 @@ class InfosAPIdocHandler(BaseHandler) :
 			page_title 				= app_main_texts["main_title"],
 
 			app_host				= self.request.host,
+			site_section			= self.site_section,
+
 			example_item_id			= example_item_id,
 			example_spider_id		= example_spider_id,
 			example_user_id			= example_user_id,
@@ -1481,9 +1552,39 @@ class InfosStackHandler(BaseHandler) :
 
 		app_log.info("InfosStackHandler.get... ")
 
+		self.site_section = "infos"
+
 		self.render(
 			"stack.html",
 			page_title 				= app_main_texts["main_title"],
+
+			app_host				= self.request.host,
+			site_section			= self.site_section,
+
+			user					= self.current_user,
+			is_user_connected 		= self.is_user_connected,
+			user_email				= self.user_email,
+			user_auth_level			= self.user_auth_level,
+			user_auth_level_dict 	= self.user_auth_level_dict,
+		)
+
+class InfosContributeHandler(BaseHandler) : 
+	"""
+	"""
+	@print_separate(APP_DEBUG)
+	def get(self):
+
+		app_log.info("InfosContributeHandler.get... ")
+
+		self.site_section = "infos"
+
+		self.render(
+			"contribute.html",
+			page_title 				= app_main_texts["main_title"],
+
+			app_host				= self.request.host,
+			site_section			= self.site_section,
+
 			user					= self.current_user,
 			is_user_connected 		= self.is_user_connected,
 			user_email				= self.user_email,
@@ -1499,15 +1600,23 @@ class InfosCreditsHandler(BaseHandler) :
 
 		app_log.info("InfosCreditsHandler.get... ")
 
+		self.site_section = "infos"
+
 		self.render(
 			"credits.html",
 			page_title 				= app_main_texts["main_title"],
+
+			app_host				= self.request.host,
+			site_section			= self.site_section,
+	
 			user					= self.current_user,
 			is_user_connected 		= self.is_user_connected,
 			user_email				= self.user_email,
 			user_auth_level			= self.user_auth_level,
 			user_auth_level_dict 	= self.user_auth_level_dict,
 		)
+
+
 
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 ### SNIPPETS handlers #######################################################################

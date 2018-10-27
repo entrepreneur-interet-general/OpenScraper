@@ -28,6 +28,7 @@ QUERIES_MAX_RESULTS_IF_API = 100
 QUERY_INFOS_BY_DEFAULT = {
 	"only_dm_list"		: False,		# retrieve only dm_set list 
 	"only_spiders_list"	: False,		# retrieve only spiders list 
+	"get_all_spiders"	: False,		# retrieve only spiders list 
 }
 # # adding search_in_* by field type if present in slug == authorized DATAMODEL_FIELDS_TYPES
 # QUERY_INFOS_BY_TYPE = {
@@ -42,6 +43,7 @@ QUERY_INFOS_BY_DEFAULT = {
 QUERIES_INFOS_ALLOWED_UNIQUE = [
 	"only_dm_list",
 	"only_spiders_list",
+	"get_all_spiders",
 ]
 QUERIES_INFOS_ALLOWED_INTEGERS  	= [
 	
@@ -50,7 +52,9 @@ QUERIES_INFOS_ALLOWED_POSITIVES 	= [
 	
 ]
 QUERIES_INFOS_ALLOWED_BOOLEAN = [
-	"only_dm_list", "only_spiders_list"
+	"only_dm_list", 
+	"only_spiders_list",
+	"get_all_spiders",
 ]
 
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###

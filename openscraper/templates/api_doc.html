@@ -88,6 +88,7 @@
 						{% set QUERY_INFOS_BY_DEFAULT = [
 								{ "name" : "only_dm_list", 		"returns" : "",  "dft" : "False", 	"ex" : "true",	"type" : "unique", 	"descr" : "retrieve only the datamodel" },
 								{ "name" : "only_spiders_list", "returns" : "",  "dft" : 'False',	"ex" : "true",	"type" : "unique", 	"descr" : "retrieve only the list of spiders " },
+								{ "name" : "get_all_spiders", 	"returns" : "",  "dft" : 'False',	"ex" : "true",	"type" : "unique", 	"descr" : "retrieve all spiders infos, even not tested " },
 							]
 						%}
 						<table class="table is-striped is-fullwidth">
@@ -182,7 +183,7 @@
 									<td>{{ arg["descr"] }}</td>
 									<td>
 										<a href='{{ site_root + "/api/data?" + arg["name"] + "=" + arg["ex"] }}' target="_blank">
-											<code>{{ site_root }}/api/infos?{{ arg["name"] }}={{ arg["ex"] }}</code>
+											<code>{{ site_root }}/api/data?{{ arg["name"] }}={{ arg["ex"] }}</code>
 										</a>
 									</td>
 									<td><em>{{ arg["returns"] }}</em></td>

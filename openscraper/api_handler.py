@@ -45,7 +45,10 @@ class APIrestHandlerInfos(BaseHandler):
 		# app_log.info("••• data_model_custom_list : \n %s ", pformat(dm_set) ) 
 
 		### get spiders_list
-		spiders_dict = self.get_spiders_infos(as_dict=True, query={ "scraper_log.is_tested" : True})
+		if query_data["get_all_spiders"] : 
+			spiders_dict = self.get_spiders_infos(as_dict=True, query={} )
+		else :
+			spiders_dict = self.get_spiders_infos(as_dict=True, query={ "scraper_log.is_tested" : True} )
 		# app_log.info("••• spiders_dict : \n %s ", pformat(spiders_dict) ) 
 
 		# count docs by spider_id
@@ -316,6 +319,7 @@ class APIrestHandlerStats(BaseHandler):
 		self.write( results )
 		
 		self.finish()
+
 
 
 class APIrestHandlerData(BaseHandler): 

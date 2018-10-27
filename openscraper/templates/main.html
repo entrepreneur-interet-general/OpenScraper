@@ -3,9 +3,10 @@
 
 	<head>
 		<title>{{ page_title }}</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=0.8">
 		{# <link rel="stylesheet" href="{{ static_url("css/style.css") }}" /> #}
 
+		<meta name="app_host" content="{{ app_host }}">
 
 		{# JQUERY #}
 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -31,7 +32,7 @@
 
 
 		{# CHARTS #}
-		<script type="text/javascript" language="javascript" src="https://cdnjs.com/libraries/Chart.js"></script>		
+		<script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>		
 
 
 		{# DATATABLE #}
