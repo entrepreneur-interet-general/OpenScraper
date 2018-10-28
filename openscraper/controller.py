@@ -1464,6 +1464,7 @@ class InfosWhyHandler(BaseHandler) :
 	"""
 	"""
 	@print_separate(APP_DEBUG)
+	@check_user_permissions
 	def get(self):
 
 		app_log.info("InfosWhyHandler.get... ")
@@ -1486,6 +1487,7 @@ class InfosTutoHandler(BaseHandler) :
 	"""
 	"""
 	@print_separate(APP_DEBUG)
+	@check_user_permissions
 	def get(self):
 
 		app_log.info("InfosTutoHandler.get... ")
@@ -1510,6 +1512,7 @@ class InfosAPIdocHandler(BaseHandler) :
 	"""
 	"""
 	@print_separate(APP_DEBUG)
+	@check_user_permissions
 	def get(self):
 
 		app_log.info("InfosAPIdocHandler.get...")
@@ -1548,6 +1551,7 @@ class InfosStackHandler(BaseHandler) :
 	"""
 	"""
 	@print_separate(APP_DEBUG)
+	@check_user_permissions
 	def get(self):
 
 		app_log.info("InfosStackHandler.get... ")
@@ -1572,6 +1576,7 @@ class InfosContributeHandler(BaseHandler) :
 	"""
 	"""
 	@print_separate(APP_DEBUG)
+	@check_user_permissions
 	def get(self):
 
 		app_log.info("InfosContributeHandler.get... ")
@@ -1596,6 +1601,7 @@ class InfosCreditsHandler(BaseHandler) :
 	"""
 	"""
 	@print_separate(APP_DEBUG)
+	@check_user_permissions
 	def get(self):
 
 		app_log.info("InfosCreditsHandler.get... ")
