@@ -20,11 +20,20 @@
 					</h1>
 					<br>
 
+
+					<p>
+						One the main features of Open Scraper is to allow the scraped data and the spiders' information to exit the application thanks to an API (Application Programming Interface).
+					</p>
+					<p>
+						Here are listed the url routes and arguments you can use to request the data to the Open Scraper app. You can test these routes by clicking on the example corresponding to the argument.
+					</p>
+					<br>
+
+
 					{% set site_root = "http://" + app_host  %}
 
-
 					{# API DOC / STATS #}
-					<h2>
+					<h2> route : 
 						<a href='{{ site_root }}/api/stats' target="_blank">
 							<code>api/stats</code>
 						</a>
@@ -78,7 +87,7 @@
 					<br>
 
 					{# API DOC / INFOS #}
-					<h2>
+					<h2> route : 
 						<a href='{{ site_root }}/api/infos' target="_blank">
 							<code>api/infos</code>
 						</a>
@@ -133,7 +142,7 @@
 					<br>
 
 					{# API DOC / DATA #}
-					<h2>
+					<h2> route : 
 						<a href='{{ site_root }}/api/data' target="_blank">
 							<code>api/data</code>
 						</a>
