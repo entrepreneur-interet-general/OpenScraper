@@ -1,0 +1,486 @@
+{% extends "main.html" %}
+{% autoescape None %}
+
+{% block body %}
+
+
+<br>
+
+<section class="section">
+	
+	{# TITLE #}
+	<div class="container has-text-centered">
+		
+		{# { % if create_or_update == "create" %}
+			<h1 class="title">
+				ADD A NEW SPIDER
+			</h1>
+			<h2 class="subtitle">
+				Fill the form to create a new spider.
+			</h2>
+		
+		{ % else %}
+			<h1 class="title">
+			EDIT THE SPIDER <br> 
+			"{{ escape (contributor['infos']['name']) }}"
+			</h1>
+		
+		{ % end %} #}
+
+
+		<div class="dropdown is-hoverable">
+			
+			<div class="dropdown-trigger"> 
+				
+				<button class="button is-large is-rounded" aria-haspopup="true" aria-controls="dropdown-menu-contributors-edit">
+					<span>
+						<b>
+							{% if create_or_update == "create" %}
+								ADD A NEW SPIDER
+							{% else %}
+								EDIT THE SPIDER
+								"{{ escape (contributor['infos']['name']) }}"							
+							{% end %}						
+						</b>  
+					</span>
+				</button>
+				
+				<button class="button  is-text" aria-haspopup="true" aria-controls="dropdown-menu-contributors">
+					<span class="icon">
+						<i class="fas fa-question-circle"></i>
+					</span>
+				</button>
+				
+				{# tabs #}
+				<div class="has-text-weight-light"> {% module MainTabs(site_section) %}</div>
+			
+			</div>
+
+			<div class="dropdown-menu" id="dropdown-menu-contributors-edit" role="menu">
+			<div class="dropdown-content">
+				<div class="dropdown-item">
+					<p>
+						Fill the form to create a new spider.
+					</p>
+				</div>
+			</div>
+			</div>
+
+		</div>
+
+
+
+	</div>
+
+
+	{# TEST ACCORDION #}
+	<div class="container">
+
+		<div class="columns is-centered">
+
+			<div class="column is-7">
+
+				<br>
+
+				<form method="POST">
+				{% module xsrf_form_html() %}
+
+					{# hidden input to get  #}
+					<input name="_id" type="hidden" value="{{ str(contributor.get('_id', 'new_spider') ) }}"></input>
+					<input name="next_contrib_page" type="hidden" value="{{ next_contrib_page }}"></input>
+
+
+					<section class="accordions">
+
+						{# GLOBAL FIELDS #}
+						<article class="accordion is-primary is-active">
+							<div class="accordion-header  toggle">
+								<h3> 
+									<span class="icon">
+										<i class="fas fa-dot-circle"></i>
+									</span>
+									<strong>GLOBAL FIELDS</strong>
+								</h3>
+								<p class="is-small">describe the website you want to crawl</p>							</div>
+							<div class="accordion-body">
+								<div class="accordion-content">
+									
+									<div class="content has-text-centered">
+										<p>
+											Read the documentation and tutorial before starting to set a spider
+										</p>
+									</div>
+
+
+											{# loop through contributor_edit_fields #}
+											{% for field, value in contributor_edit_fields.items() %}
+
+												{# needed values #}
+												{% for needed in value["needed"] %}
+													
+													<div class="field has-addons is-horizontal">
+
+														<div class="field-label is-static is-small">
+															{# <label class="label "> #}
+																{{ needed }}
+															{# </label> #}
+														</div>
+
+														<div class="field-body">
+															
+															<div class="field">
+																
+																{# except radio buttons #}
+																{% if needed not in contributor_edit_radio  %}
+
+																	<p class="control is-expanded has-icons-left">
+																		<input 	class="input" 
+																				
+																				{% if needed not in contributor_edit_numbers %}
+																				type="text" 
+																				{% else %}
+																				type="number"
+																				{% end %}
+																		
+																				placeholder="{% if needed =='next_page' %}xpath for {% end %}{{ needed }}"
+																				name="{{ needed }}"
+
+																				{% if needed == "start_urls" %}
+																					value="{% for i in contributor[field].get(needed, '') %}{{ escape(i) }} {% end %}"
+
+																				{% elif needed in contributor_edit_numbers %}
+																					value="{{ contributor[field].get(needed, '') }}"
+
+																				{% else %}
+																					value="{{ escape (contributor[field].get(needed, '')) }}"
+																				
+																				{% end %}
+																				
+																				>
+																	</p>
+
+
+																{% elif needed in contributor_edit_radio  %}
+
+																	{# radio buttons #}
+																	<div class="control">
+																		
+																		{# fill radio "checked" value in contributor data #}
+																		{% set checked = contributor[field][needed] %}
+
+																		<label class="radio">
+																			<input 	type="radio" name="{{ needed }}" value="false"
+																					{% if not checked %} checked {% end %}
+																			>
+																			{# The data is complete in the list   #}
+																			{{ contributor_edit_radio_texts[needed][0] }}
+																		</label>
+																		
+																		<br>
+
+																		<label class="radio">
+																			<input 	type="radio" name="{{ needed }}" value="true"
+																					{% if checked %} checked {% end %} 
+																			>
+																			{# I need to click in the list to have the complete data #}
+																			{{ contributor_edit_radio_texts[needed][1] }}
+																		</label>
+
+																	</div>
+
+																{% end %}
+
+															</div>
+														</div>
+
+													</div>
+
+
+												{% end %}
+
+											{% end %}
+
+								
+								</div>
+							</div>
+						</article>
+
+
+						{# CUSTOM FIELDS #}
+						<article class="accordion is-primary ">
+							<div class="accordion-header toggle">
+								<h3>
+									<span class="icon">
+										<i class="fas fa-dot-circle"></i>
+									</span>
+									<strong>CUSTOM FIELDS</strong>
+								</h3>
+								<p class="is-small">
+									where do you find your data on the pages you will crawl (add xpaths) ?
+								</p>
+								{# <button class="toggle" aria-label="toggle"></button> #}
+							</div>
+							<div class="accordion-body">
+								<div class="accordion-content">
+
+									<div class="content has-text-centered">
+										<p>
+											you can also modify the data model 
+											<a href="/datamodel/edit">here </a>
+											or add a field <a href="/datamodel/add_field">here </a>
+										</p>
+									</div>
+
+									{% for dm in datamodel %}
+
+										<div class="field is-horizontal">
+
+											<div class="field-label is-static is-small">
+												{# <label class="label "> #}
+													{{ dm[u'field_name'] }}
+												{# </label> #}
+											</div>
+
+											<div class="field-body">
+												<div class="field">
+													<p class="control is-expanded has-icons-left">
+														<input class="input is-normal" type="text" 
+																placeholder="xpath for -{{ dm[u'field_name'] }}-"
+																name="{{ dm[u'_id'] }}"
+																value="{{ escape( contributor[u'scraper_config_xpaths'].get( dm[u'_id'], '') )  }}">
+													</p>
+												</div>
+											</div>
+										</div>
+
+									{% end %}
+
+								</div>
+							</div>
+						</article>
+
+
+						{# ADVANCED SETTINGS #}
+						<article class="accordion is-warning">
+							<div class="accordion-header toggle">
+								<h3>
+									<span class="icon">
+										<i class="fas fa-dot-circle"></i>
+									</span>
+									<strong>ADVANCED SETTINGS</strong>
+								</h3>
+								<p class="is-small">settings to enhance the spider's performances</p>
+							</div>
+							<div class="accordion-body">
+								<div class="accordion-content">
+
+									<div class="content has-text-centered">
+										<p>
+											Please read Scrapy and Selenium documentation before changing default values
+										</p>
+									</div>
+
+									{% set contributor_adv = contributor["scraper_settings"] %}
+									{% for advanced_setting in contributor_edit_fields["scraper_settings"]["optional"] %}
+
+											<div class="field has-addons is-horizontal">
+											
+												<div class="field-label is-static is-small">
+													{# <label class="label"> #}
+														{{ advanced_setting }}
+													{# </label> #}
+												</div>
+
+												<div class="field-body">
+													
+													<div class="field ">
+														
+														{% if advanced_setting not in contributor_edit_radio %}
+
+															<p class="control is-expanded has-icons-left">
+																<input 	class="input is-small" 
+																		
+																		{% if advanced_setting not in contributor_edit_numbers %}
+																		type="text" 
+																		
+																		{% else %}
+																		type="number" min="0" 
+																			{% if advanced_setting in contributor_edit_floats %}
+																			step="0.1"
+																			{% end %}
+																		{% end %}
+																
+																		placeholder="{{ advanced_setting }}"
+																		name="{{ advanced_setting }}"
+
+																		{% if advanced_setting in contributor_edit_numbers %}
+																			value="{{ contributor_adv.get(advanced_setting, '') }}"
+
+																		{% else %}
+																			value="{{ escape (contributor_adv.get(advanced_setting, '')) }}"
+																		
+																		{% end %}
+																		
+																		>
+															</p>
+
+														{% elif advanced_setting in contributor_edit_radio  %}
+
+															{# radio buttons #}
+															<div class="control">
+																
+																{# fill radio "checked" value in contributor data #}
+																{% set checked = contributor_adv[advanced_setting] %}
+																<label class="radio">
+																	<input 	type="radio" class="is-small" name="{{ advanced_setting }}" value="false"
+																			{% if not checked %} checked {% end %}
+																	>
+																	false
+																</label>
+																
+																<br>
+
+																<label class="radio">
+																	<input 	type="radio" class="is-small" name="{{ advanced_setting }}" value="true"
+																			{% if checked %} checked {% end %} 
+																	>
+																	true
+																</label>
+
+															</div>
+
+														{% end %}
+
+													</div>
+												</div>
+											</div>
+
+
+									{% end %}
+									
+								</div>
+							</div>
+						</article>
+
+
+						{# NOTES #}
+						<article class="accordion is-warning ">
+							<div class="accordion-header toggle">
+								<h3>
+									<span class="icon">
+										<i class="fas fa-dot-circle"></i>
+									</span>
+									<strong>NOTES</strong>
+								</h3>
+								<p class="is-small">
+									your notes about this spider
+								</p>
+								{# <button class="toggle" aria-label="toggle"></button> #}
+							</div>
+							<div class="accordion-body">
+								<div class="accordion-content">
+
+
+								{# notes on spider #}
+								<div class="field has-addons is-horizontal">
+									
+									<div class="field-label is-static is-medium">
+										{# <label class="label "> #}
+											notes
+										{# </label> #}
+									</div>
+
+									<div class="field-body">
+										<div class="field">
+											<textarea class="textarea is-medium" 
+														name="notes"
+														rows="1"
+														placeholder="your notes on this spider">
+														{{ escape (contributor['infos'].get('notes', ''))  }}
+														{# value="{{ escape (contributor['infos'].get('notes', '') ) }}"> #}
+											</textarea>
+										</div>
+									</div>
+								</div>
+								
+
+								</div>
+							</div>
+						</article>
+
+
+					</section>
+
+
+					<br>
+					{# submit button #}
+					<div class="field is-grouped is-grouped-centered">
+
+						<p class="control">
+							<a class="button is-light is-rounded" href="/contributors?page_n={{next_contrib_page}}">
+								<span class="icon"><i class="fas fa-times"></i></span>
+								<span>cancel</span>
+							</a>
+						</p>
+						
+						{# <p class="control">
+							<input 	class="button is-primary is-rounded" 
+									type="submit" 
+									value="{{ create_or_update }} contributor"
+								>
+							</input>
+						</p> #}
+
+						<p class="control">
+							
+							<label 	for="spiderSubmit" 
+									class="button is-primary is-rounded">
+								<span class="icon is-small">
+									<i class="fas fa-save"></i>
+								</span>
+								<span>
+									{{ create_or_update }} contributor
+								</span>
+							</label>
+
+							<input 	id="spiderSubmit"
+									class="is-hidden" 
+									type="submit" 
+								>
+							</input>
+						</p>
+						
+						{# 
+						{ % if create_or_update == "update" %}
+						<p class="control">
+							<a class="has-text-centered button is-warning is-rounded"
+									href="/crawl?spider_id{{ escape (str(contributor[u'_id'])) }}&test=True&test_limit=1" >
+								<span class="icon is-small"><i class="fas fa-step-forward"></i></span>
+								<span>test spider</span>
+							</a> 
+						</p>
+						{% end % } 
+						#}
+					
+					
+					</div>
+
+
+
+				</form>
+			
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+</section>
+
+
+
+
+
+{% end %}

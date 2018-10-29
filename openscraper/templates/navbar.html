@@ -67,11 +67,11 @@
 				Overview of the complete dataset
 			</a>
 			<a class="navbar-item" href="/dataset/dataviz">
-				Simple data visualisation of the data set
+				Data visualisation of the full dataset
 			</a>
-			<a class="navbar-item" href="/dataset/export">
+			{# <a class="navbar-item" href="/dataset/export">
 				Export data
-			</a>
+			</a> #}
 			<a class="navbar-item" href="/api/data">
 				Data API
 			</a>
@@ -83,25 +83,40 @@
 		{# dropdowns datamodel #}
 		<div class="navbar-item has-dropdown is-hoverable">
 		
-		<a class="navbar-link" href="/datamodel/view">
+		<a class="navbar-link" href="/infos/who">
 			Documentation
 		</a>
 		<div class="navbar-dropdown is-boxed">
-			<a class="navbar-item" href="/infos/who">
-				Who created this and why ?
+			<a class="navbar-item" href="/infos/why">
+				Why create an open source scraping app ?
+				{# + slides  #}
 			</a>
 			 <a class="navbar-item" href="/infos/tuto">
-				How to use {{page_title}}
+				How to use {{ page_title }}
 			</a>
 			<a class="navbar-item" href="/infos/api">
 				API documentation 
 			</a>
-			<a class="navbar-item" href="/datamodel/form">
+			<a class="navbar-item" href="/infos/stack">
+
+				The technologies under the hood
+			</a>
+			<a class="navbar-item" href="/infos/contribute">
+				{# repo + roadmap #}
+				Contribute !
+			</a>
+			<a class="navbar-item" href="/infos/legal">
+				Legal
+			</a>
+			<a class="navbar-item" href="/infos/credits">
+				Credits
+			</a>
+			{# <a class="navbar-item" href="/datamodel/form">
 				Example form
 			</a>
 			<a class="navbar-item" href="/test_bulma_ext">
 				Examples bulma extensions
-			</a>
+			</a> #}
 		</div>
 
 		</div>

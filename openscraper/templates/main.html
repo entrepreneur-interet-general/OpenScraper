@@ -3,9 +3,10 @@
 
 	<head>
 		<title>{{ page_title }}</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=0.8">
 		{# <link rel="stylesheet" href="{{ static_url("css/style.css") }}" /> #}
 
+		<meta name="app_host" content="{{ app_host }}">
 
 		{# JQUERY #}
 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -14,24 +15,35 @@
 		
 		{# BULMA #}
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
-		<script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
-		
+		{# <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script> #}
+		<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+
 		{# BULMA EXTENSIONS FOR WHOLE WEBSITE #}
 		<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-checkradio.min.css') }}">
 		<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-tooltip.min.css') }}">
 		<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-steps.min.css') }}">
+		<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-divider.min.css') }}">
 		<script type="text/javascript" language="javascript" src="{{ static_url ('css/bulma-ext/bulma-steps.min.js') }}"></script>
 		<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-badge.min.css') }}">
+		
+		<link rel="stylesheet" type="text/css" href="{{ static_url ('css/bulma-ext/bulma-accordion.min.css') }}">
+		<script type="text/javascript" language="javascript" src="{{ static_url ('css/bulma-ext/bulma-accordion.min.js') }}"></script>
 
 
 		{# CHARTS #}
-		<script type="text/javascript" language="javascript" src="https://cdnjs.com/libraries/Chart.js"></script>		
+		<script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>		
 
 
 		{# DATATABLE #}
 		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
 		<script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-1.12.4.js"></script>
 		<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
+
+		{# CUSTOM STYLES #}
+		<link rel="stylesheet" type="text/css" href="{{ static_url ('css/custom.css') }}">
+
 
 		{% block err %}{% end %}
 	</head>
@@ -76,6 +88,12 @@
 	{# SCRIPTS JS : charts / custom ...  #}
 	{# <script src="{{ static_url("js/script.js") }}"></script> #}
 	
+
+
 	</body>
+
+	<script>
+		var accordions = bulmaAccordion.attach(); // accordions now contains an array of all Accordion instances
+	</script>
 
 </html>

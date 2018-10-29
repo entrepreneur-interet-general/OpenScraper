@@ -1,4 +1,9 @@
+# -*- encoding: utf-8 -*-
 
+from 	tornado.log import enable_pretty_logging, LogFormatter, access_log, app_log, gen_log
+
+
+gen_log.info("--> importing .urls")
 
 from controller 	import *
 from spider_handler	import *
@@ -36,6 +41,13 @@ urls = [
 	# TO DO 
 	(r'/preferences/', 	UserPreferences),
 
+	### infos
+	(r'/infos/why', 		InfosWhyHandler),
+	(r'/infos/tuto', 		InfosTutoHandler),
+	(r'/infos/api', 		InfosAPIdocHandler),
+	(r'/infos/stack', 		InfosStackHandler),
+	(r'/infos/contribute', 	InfosContributeHandler),
+	(r'/infos/credits', 	InfosCreditsHandler),
 
 	### bulma tests : just for debugging and speeding UI front dev
 	(r"/datamodel/form", FormHandler),
@@ -61,8 +73,9 @@ urls = [
 	### dataset routes
 	# cf : https://stackoverflow.com/questions/10726486/tornado-url-query-parameters 
 	(r"/dataset/view([^/]*)", 		DataScrapedHandler), 	### get optional(*) parameters in slug like : dataset/view?page=0&stuff=3
+	(r"/dataset/dataviz", 			DataDatavizHandler), 	
 	# (r"/dataset/view/(\w+)",		DataScrapedViewOneHandler),
-	
+
 
 	### spider launchers / runners
 	(r"/crawl?([^/]*)?", 			SpiderHandler), ### get spidername as input

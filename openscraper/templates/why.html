@@ -1,0 +1,87 @@
+
+{% extends "main.html" %}
+
+
+{% block body %}
+
+
+<br>
+
+<section class="section">
+	<div class="container">
+		<div class="columns is-mobile is-centered">
+		  	<div class="column is-two-thirds">
+				<div class="content">
+
+
+					<br>
+					<h1 class="title has-text-centered">
+						Why OpenScraper has been created ? 
+					</h1>
+					<br>
+
+
+
+					<p>
+						Scraping can quickly become a mess, mostly if you need to scrap several websites in order to eventually get a structured dataset. Usually you need to set up several scrapers for every website, configure the spiders one by one, get the data from every website, and clean up the mess to get from this raw material one structured dataset you know that exists...
+					</p>
+					<p>
+						Yes, similar solutions already does exist... but...
+					</p>
+
+					<p>
+						So you have mainly three options when it comes to scrap the web :
+
+						<ul>
+							<li>either use a proprietary and quite expensive service (like Apify or import.io) and depend on an external service ;</li>
+							<li>ask a friend if you are lucky, ask a developer or a company to do it for you if you have money for that...</li>
+							<li>or if you have the know-how write your own code (for instance based on BeautifulSoup or Scrapy), adapt it for your own purposes, and usually be the only one (I mean the only developer around) to be able to use/adapt it.</li>
+						</ul>
+					</p>
+
+
+					<div class="divider"></div>
+
+					<h2>
+						A theoretical use case
+					</h2>
+					<p>
+						So let's say you are a researcher, a journalist, a public servant in an administration, a member of any association who want to survey some evolutions in the society... Let's say you need data not easy to get, and you can't afford to spend thousand of euros in using a private service for webscraping.
+					</p>
+					<p>
+						You'd have a list of different websites you want to scrap similar information from, each website having some urls where are listed those data (in our first case social innovation projects). For every information you know it could be similarly described with : a title, an abstract, an image, a list of tags, an url, and the name and url of the source website, and so on...
+					</p>
+
+					<p>
+						So to use OpenScraper you would have to :
+						<ul>
+							<li>specify the data structure you expect ("title", "abstract", etc...) ;</li>
+							<li>add a new contributor (a source website) : at least its name and the start_url from which you'll do the scraping ;</li>
+							<li>configure the spider for every contributor, i.e. specify the xpaths for every field (xpath for "title", xpath for "abstract", etc... );</li>
+							<li>save the contributor spider configuration, and click on the "run spider" button...</li>
+							<li>the data will be stored in the OpenScraper database (MongoDB), so you could later retrieve the structured data (with an API endpoint or in a tabular format like a .csv file)</li>
+						</ul>
+					</p>
+					
+					<div class="divider"></div>
+
+					<h2>
+						An open scraper for more digital commons
+					</h2>
+					<p>
+						To make that job a bit easier (and far cheaper) OpenScraper aims to display an online GUI interface (a webapp on the client side) so you'll just have to set the field names (the data structure you expect), then enter a list of websites to scrap, for each one set up the xpath to scrap for each field, and finally click on a button to run the scraper configured for each website...
+					</p>
+					<p>
+						... and tadaaaa, you'll have your data : you will be able able to import it, share it, and visualize it (at least we're working on it as quickly as we can)...
+
+						OpenScraper is developped in open source, and will provide a documentation as much as a legal framework (licence and CGU) aiming to make the core system of OpenScraper fit the RGPD, in the letter and in the spirit.
+					</p>
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+{% end %}

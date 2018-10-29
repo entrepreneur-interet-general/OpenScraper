@@ -1,5 +1,10 @@
 # -*- encoding: utf-8 -*-
 
+from 	tornado.log import enable_pretty_logging, LogFormatter, access_log, app_log, gen_log
+
+gen_log.info("--> importing .controller")
+
+
 # import base handler and some utils..;
 # controller being downhill from base_handler means that 
 # doing so imports also many basic libs : pprint, math, 
@@ -93,7 +98,8 @@ class PageNotFoundHandler(BaseHandler):
 		self.render("404.html",
 
 			page_title  		= app_main_texts["main_title"],
-			
+			app_host			= self.request.host,
+
 			site_section 		= self.site_section,
 			
 			error_msg 			= self.error_msg,
@@ -141,6 +147,8 @@ class WelcomeHandler(BaseHandler):
 			site_section 		= self.site_section,
 			counts 				= counts,
 			
+			app_host			= self.request.host,
+
 			user				= self.current_user,
 			is_user_connected 	= self.is_user_connected,
 			user_email			= self.user_email,
@@ -187,6 +195,7 @@ class LoginHandler(BaseHandler):
 		self.render('login_register.html',
 			page_title  		= app_main_texts["main_title"],
 			site_section		= self.site_section,
+			app_host			= self.request.host,
 			login_or_register 	= "login",
 			next_url			= next_url,
 			error_msg			= self.error_msg,
@@ -273,6 +282,7 @@ class RegisterHandler(BaseHandler):
 		self.render('login_register.html',
 			page_title  		= app_main_texts["main_title"],
 			site_section		= self.site_section,
+			app_host			= self.request.host,
 			next_url 			= next_url,
 			login_or_register 	= "register",
 			error_msg			= self.error_msg,
@@ -425,6 +435,8 @@ class DataModelViewHandler(BaseHandler):
 			page_title 			= app_main_texts["main_title"],
 			site_section		= self.site_section,
 			
+			app_host			= self.request.host,
+
 			datamodel_custom 	= data_model_custom,
 			datamodel_core 		= data_model_core,
 			error_msg			= self.error_msg,
@@ -469,7 +481,9 @@ class DataModelEditHandler(BaseHandler):
 			"datamodel_edit.html",
 			page_title 			= app_main_texts["main_title"],
 			site_section		= self.site_section,
-			
+
+			app_host			= self.request.host,
+
 			field_types 		= DATAMODEL_FIELDS_TYPES,
 			field_keep_vars	 	= DATAMODEL_FIELD_KEEP_VARS,
 			field_open_vars	 	= DATAMODEL_FIELD_OPEN_VARS,
@@ -590,6 +604,7 @@ class DataModelAddFieldHandler(BaseHandler) :
 			"datamodel_new_field.html",
 			page_title 			= app_main_texts["main_title"],
 			site_section		= self.site_section,
+			app_host			= self.request.host,
 			field_types			= DATAMODEL_FIELDS_TYPES,
 			field_open_vars		= DATAMODEL_FIELD_OPEN_VARS,
 			error_msg			= self.error_msg,
@@ -708,6 +723,7 @@ class ContributorsHandler(BaseHandler): #(tornado.web.RequestHandler):
 			
 			page_title  			= app_main_texts["main_title"],
 			site_section			= self.site_section, 
+			app_host				= self.request.host,
 			current_page			= current_page,
 
 			query_obj				= query_contrib,
@@ -742,6 +758,11 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		app_log.info("ContributorEditHandler.get / spider_id : {}".format( spider_id ) )
 
 		self.site_section = "contributors"
+
+
+		app_log.info("ContributorEditHandler.get / next : ")
+		next_url = self.get_argument('next', '/')
+		app_log.info(next_url)
 
 
 		### check user auth level 
@@ -789,10 +810,13 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		app_log.info( "ContributorEditHandler.get / contributor : \n %s", pformat(contributor))
 
 		### render page
-		self.render("contributor_edit.html",
+		# self.render("contributor_edit.html",
+		self.render("contributor_edit_accordion.html",
 			
 			page_title 				= app_main_texts["main_title"],
 			site_section			= self.site_section,
+			app_host				= self.request.host,
+			next_contrib_page 		= next_url,
 			
 			create_or_update 		= create_or_update,
 			
@@ -837,6 +861,9 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 		spider_config_form = self.request.arguments
 		app_log.info("ContributorEditHandler.post /spider_config_form : \n %s", pformat(spider_config_form) )
 
+		### get next page arg
+		# next_contrib_page = 1
+		next_contrib_page = spider_config_form["next_contrib_page"][0]
 
 		# check if spider already exists
 		is_new = True
@@ -899,7 +926,7 @@ class ContributorEditHandler(BaseHandler): #(tornado.web.RequestHandler):
 
 			
 			### redirection
-			self.redirect("/contributors")
+			self.redirect("/contributors?page_n=%s" %(next_contrib_page) )
 
 
 class ContributorDeleteHandler(BaseHandler) : 
@@ -937,13 +964,14 @@ class ContributorDeleteHandler(BaseHandler) :
 			
 				self.render( "contributor_delete.html",
 					
-					page_title  			= app_main_texts["main_title"],
-					# site_section			= self.site_section, 
+					page_title  		= app_main_texts["main_title"],
+					# site_section		= self.site_section, 
+					app_host			= self.request.host,
 
-					spider_id				= spider_id,
-					contributor				= contributor,
+					spider_id			= spider_id,
+					contributor			= contributor,
 
-					error_msg				= self.error_msg,
+					error_msg			= self.error_msg,
 					
 					user				= self.current_user,
 					is_user_connected 	= self.is_user_connected,
@@ -1040,13 +1068,15 @@ class ContributorResetDataHandler(BaseHandler) :
 				# redirect
 				self.render(
 					"contributor_reset_data.html",
-					page_title  			= app_main_texts["main_title"],
-					# site_section			= self.site_section, 
+					page_title  		= app_main_texts["main_title"],
+					# site_section		= self.site_section, 
 
-					spider_id				= spider_id,
-					contributor				= contributor,
+					app_host			= self.request.host,
 
-					error_msg				= self.error_msg,
+					spider_id			= spider_id,
+					contributor			= contributor,
+
+					error_msg			= self.error_msg,
 					
 					user				= self.current_user,
 					is_user_connected 	= self.is_user_connected,
@@ -1153,7 +1183,6 @@ class DataScrapedHandler(BaseHandler):
 
 
 
-
 		### SPIDERS 
 
 		### retrieve all spiders from db to make correspondances spider_id --> spider_name
@@ -1182,6 +1211,11 @@ class DataScrapedHandler(BaseHandler):
 		### clean slug as data query
 		query_data = self.filter_slug( slug_, slug_class="data", query_from="app" )
 		app_log.info("DataScrapedHandler / query_data : \n %s ", pformat(query_data) )
+
+		# get export_as_csv arg
+		export_as_csv = query_data["export_as_csv"]
+		app_log.info("DataScrapedHandler.get / export_as_csv : %s", export_as_csv)
+
 
 
 		open_level = self.user_auth_level_dict["data"] # generated by @check_request_token
@@ -1236,10 +1270,6 @@ class DataScrapedHandler(BaseHandler):
 
 
 
-
-
-
-
 		### operations if there is data
 		pagination_dict = None
 		if is_data : 
@@ -1248,7 +1278,7 @@ class DataScrapedHandler(BaseHandler):
 			pagination_dict = self.wrap_pagination( 
 									page_n		= query_data["page_n"], 
 									page_n_max	= page_n_max
-									)
+								)
 			print
 			app_log.info("DataScrapedHandler / pagination_dict : \n %s ", pformat(pagination_dict))
 
@@ -1261,27 +1291,128 @@ class DataScrapedHandler(BaseHandler):
 			app_log.info("DataScrapedHandler / items_from_db[0] : \n %s ", pformat(items_from_db[0]) )
 			print "..."
 
-		self.render(
-			"data_view.html",
-			page_title			= app_main_texts["main_title"],
-			query_obj			= query_data,
-			
-			datamodel_custom 	  = data_model_custom_list,
-			allowed_custom_fields = allowed_custom_fields,
 
-			# spiders_list		= spiders_list,
-			items				= items_from_db,
-			is_data				= is_data,
-			pagination_dict		= pagination_dict,
-			site_section		= self.site_section,
-			error_msg			= self.error_msg,
+
+		if export_as_csv == False : 
+
+			app_log.info("DataScrapedHandler / serve html...")
+
+			self.render(
+				"data_view.html",
+				page_title			= app_main_texts["main_title"],
+				query_obj			= query_data,
+				
+				app_host			= self.request.host,
+
+				datamodel_custom 	  = data_model_custom_list,
+				allowed_custom_fields = allowed_custom_fields,
+
+				# spiders_list		= spiders_list,
+				items				= items_from_db,
+				is_data				= is_data,
+				pagination_dict		= pagination_dict,
+				site_section		= self.site_section,
+				error_msg			= self.error_msg,
+				
+				user				= self.current_user,
+				is_user_connected 	= self.is_user_connected,
+				user_email			= self.user_email,
+				user_auth_level		= self.user_auth_level,		
+				user_auth_level_dict = self.user_auth_level_dict,
+			)
+		
+		else : 
+			app_log.info("DataScrapedHandler / export results as csv...")
+
+			spider_id_string_list = query_data["spider_id"]
+			spider_id_string_list = "_".join(spider_id_string_list)
+
+			# cf : https://stackoverflow.com/questions/43920868/how-to-specify-csv-file-encoding-when-downloading-it-with-tornado-in-python
+			filename = "export_openscraper_{}.csv".format(spider_id_string_list)
+			self.set_header('Content-Type', "text/csv; charset=UTF-8")
+			self.set_header('Content-Disposition', 'attachment; filename=' + filename)
 			
-			user				= self.current_user,
-			is_user_connected 	= self.is_user_connected,
-			user_email			= self.user_email,
-			user_auth_level		= self.user_auth_level,		
-			user_auth_level_dict = self.user_auth_level_dict,
+			### TO DO 
+
+			### cf : check data_view.html to see how to map fields and items' values 
+
+			### clean fields to keep 
+			app_log.info("DataScrapedHandler / export csv / data_model_custom_list[:2] ...")
+			pprint.pprint(data_model_custom_list[:2])
+			print "..."
+			csv_headers = ["spider_name", "link_src", "link_data"] 
+			for field in data_model_custom_list :
+				id_field 	= str(field[u"_id"])
+				if id_field in allowed_custom_fields :
+					csv_headers.append(field['field_name'])
+			app_log.info("DataScrapedHandler / export csv / csv_headers ...")
+			pprint.pprint(csv_headers)
+			titles = '|'.join(csv_headers)
+			self.write(titles.encode("UTF-8"))
+
+			### clean items_from_db to flat list of items values
+			app_log.info("DataScrapedHandler / export csv / items_from_db[:2] ...")
+			pprint.pprint(items_from_db[:2])
+			print "..."
+			for item in items_from_db :
+				item_list = [ 
+					item["spider_name"], 
+					item["link_src"],
+				]
+				item_list.append(item["link_data"] if "link_data" in item.keys() else '')
+				for field in data_model_custom_list :
+					id_field 	= str(field[u"_id"])
+					if id_field in allowed_custom_fields : 
+						type_field 	= str(field[u"field_type"])
+						if id_field in item.keys() :
+							item_list.append( " ".join(item[ id_field ]) )
+				csv_item = '\n'+'|'.join(item_list)
+				self.write(csv_item.encode("UTF-8"))
+			
+
+
+class DataDatavizHandler(BaseHandler):
+	"""
+	dataviz of all data scraped from db.data_scraped 
+	"""
+	@print_separate(APP_DEBUG)
+	@check_user_permissions
+	def get (self ):
+		
+		print
+		app_log.info("DataDatavizHandler.get ... : \n")
+
+		self.site_section = "data"
+
+		app_log.info("DataDatavizHandler.get / request : " )
+		pprint.pprint (self.request )
+
+		print
+		app_log.info("DataDatavizHandler.get ... : ")
+		app_log.info("... request.path : %s ", self.request.path )
+		app_log.info("... request.uri  : %s ", self.request.uri )
+
+
+
+
+
+
+		self.render(
+			"dataviz.html",
+			page_title 				= app_main_texts["main_title"],
+
+			app_host				= self.request.host,
+			site_section			= self.site_section,
+
+			user					= self.current_user,
+			is_user_connected 		= self.is_user_connected,
+			user_email				= self.user_email,
+			user_auth_level			= self.user_auth_level,
+			user_auth_level_dict 	= self.user_auth_level_dict,
+
+
 		)
+
 
 
 # class DataScrapedViewOneHandler(BaseHandler):
@@ -1321,6 +1452,175 @@ class AjaxHandler(BaseHandler):
 		
 		self.write(json.dumps({'status': 'ok', 'sent': dic}))
 		self.finish()
+
+
+
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### INFOS / DOC  ############################################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+
+class InfosWhyHandler(BaseHandler) : 
+	"""
+	"""
+	@print_separate(APP_DEBUG)
+	@check_user_permissions
+	def get(self):
+
+		app_log.info("InfosWhyHandler.get... ")
+
+		self.site_section = "infos"
+
+		self.render(
+			"why.html",
+			page_title 				= app_main_texts["main_title"],
+			app_host				= self.request.host,
+			site_section			= self.site_section,
+			user					= self.current_user,
+			is_user_connected 		= self.is_user_connected,
+			user_email				= self.user_email,
+			user_auth_level			= self.user_auth_level,
+			user_auth_level_dict 	= self.user_auth_level_dict,
+		)
+
+class InfosTutoHandler(BaseHandler) : 
+	"""
+	"""
+	@print_separate(APP_DEBUG)
+	@check_user_permissions
+	def get(self):
+
+		app_log.info("InfosTutoHandler.get... ")
+
+		self.site_section = "infos"
+
+		self.render(
+			"tuto.html",
+			page_title 				= app_main_texts["main_title"],
+
+			app_host				= self.request.host,
+			site_section			= self.site_section,
+
+			user					= self.current_user,
+			is_user_connected 		= self.is_user_connected,
+			user_email				= self.user_email,
+			user_auth_level			= self.user_auth_level,
+			user_auth_level_dict 	= self.user_auth_level_dict,
+		)
+
+class InfosAPIdocHandler(BaseHandler) : 
+	"""
+	"""
+	@print_separate(APP_DEBUG)
+	@check_user_permissions
+	def get(self):
+
+		app_log.info("InfosAPIdocHandler.get...")
+		# app_log.info("InfosAPIdocHandler.get... \n : ", pformat(self.request.__dict__))
+		
+		self.site_section = "infos"
+
+		example_item 	= self.application.coll_data.find()[0]
+		example_item_id = str(example_item["_id"])
+		
+		example_spider 	= self.application.coll_spiders.find()[0]
+		example_spider_id = str(example_spider["_id"])
+
+		example_user 	= self.application.coll_users.find()[0]
+		example_user_id = str(example_user["_id"])
+
+		self.render(
+			"api_doc.html",
+			page_title 				= app_main_texts["main_title"],
+
+			app_host				= self.request.host,
+			site_section			= self.site_section,
+
+			example_item_id			= example_item_id,
+			example_spider_id		= example_spider_id,
+			example_user_id			= example_user_id,
+
+			user					= self.current_user,
+			is_user_connected 		= self.is_user_connected,
+			user_email				= self.user_email,
+			user_auth_level			= self.user_auth_level,
+			user_auth_level_dict 	= self.user_auth_level_dict,
+		)
+
+class InfosStackHandler(BaseHandler) : 
+	"""
+	"""
+	@print_separate(APP_DEBUG)
+	@check_user_permissions
+	def get(self):
+
+		app_log.info("InfosStackHandler.get... ")
+
+		self.site_section = "infos"
+
+		self.render(
+			"stack.html",
+			page_title 				= app_main_texts["main_title"],
+
+			app_host				= self.request.host,
+			site_section			= self.site_section,
+
+			user					= self.current_user,
+			is_user_connected 		= self.is_user_connected,
+			user_email				= self.user_email,
+			user_auth_level			= self.user_auth_level,
+			user_auth_level_dict 	= self.user_auth_level_dict,
+		)
+
+class InfosContributeHandler(BaseHandler) : 
+	"""
+	"""
+	@print_separate(APP_DEBUG)
+	@check_user_permissions
+	def get(self):
+
+		app_log.info("InfosContributeHandler.get... ")
+
+		self.site_section = "infos"
+
+		self.render(
+			"contribute.html",
+			page_title 				= app_main_texts["main_title"],
+
+			app_host				= self.request.host,
+			site_section			= self.site_section,
+
+			user					= self.current_user,
+			is_user_connected 		= self.is_user_connected,
+			user_email				= self.user_email,
+			user_auth_level			= self.user_auth_level,
+			user_auth_level_dict 	= self.user_auth_level_dict,
+		)
+
+class InfosCreditsHandler(BaseHandler) : 
+	"""
+	"""
+	@print_separate(APP_DEBUG)
+	@check_user_permissions
+	def get(self):
+
+		app_log.info("InfosCreditsHandler.get... ")
+
+		self.site_section = "infos"
+
+		self.render(
+			"credits.html",
+			page_title 				= app_main_texts["main_title"],
+
+			app_host				= self.request.host,
+			site_section			= self.site_section,
+	
+			user					= self.current_user,
+			is_user_connected 		= self.is_user_connected,
+			user_email				= self.user_email,
+			user_auth_level			= self.user_auth_level,
+			user_auth_level_dict 	= self.user_auth_level_dict,
+		)
 
 
 
@@ -1381,7 +1681,7 @@ class TestBulmaHandler(BaseHandler) :
 
 		self.render(
 			"test_bulma_extensions.html",
-			page_title = app_main_texts["main_title"],
+			page_title 				= app_main_texts["main_title"],
 			user					= self.current_user,
 			is_user_connected 		= self.is_user_connected,
 			user_email				= self.user_email,

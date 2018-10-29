@@ -153,7 +153,8 @@ class SpiderConfig :
 						self.spider_config["scraper_config_xpaths"][field_custom] = form[field_custom]
 
 			### add specifics in infos / scraperconfig
-			self.spider_config["scraper_config"]["spidername"]	= unicode(spidername)
+			# self.spider_config["scraper_config"]["spidername"]	= unicode(spidername)
+			self.spider_config["scraper_config"]["spidername"]	= spidername
 			if new_spider == True :
 				self.spider_config["scraper_log"]["added_by"] 		= user
 				self.spider_config["scraper_log"]["modified_by"] 	= user
@@ -205,6 +206,9 @@ class QueryFromSlug :
 		self.slug 		= slug
 		self.slug_class = slug_class
 
+		app_log.info("== QueryfromSlug / slug : \n %s", pformat(slug))
+		app_log.info("== QueryfromSlug / slug_class : %s", slug_class )
+
 		self.default_query 		= {}
 		self.default_uniques 	= []
 		self.default_integers 	= []
@@ -218,12 +222,28 @@ class QueryFromSlug :
 			self.default_integers 	= QUERIES_DATA_ALLOWED_INTEGERS
 			self.default_positives 	= QUERIES_DATA_ALLOWED_POSITIVES
 			self.default_bool 		= QUERIES_DATA_ALLOWED_BOOLEAN
+
+		elif self.slug_class 		== "stats" : 
+			self.default_query 		= QUERY_STATS_BY_DEFAULT
+			self.default_uniques 	= QUERIES_STATS_ALLOWED_UNIQUE
+			self.default_integers 	= QUERIES_STATS_ALLOWED_INTEGERS
+			self.default_positives 	= QUERIES_STATS_ALLOWED_POSITIVES
+			self.default_bool 		= QUERIES_STATS_ALLOWED_BOOLEAN
+
+		elif self.slug_class 		== "infos" : 
+			self.default_query 		= QUERY_INFOS_BY_DEFAULT
+			self.default_uniques 	= QUERIES_INFOS_ALLOWED_UNIQUE
+			self.default_integers 	= QUERIES_INFOS_ALLOWED_INTEGERS
+			self.default_positives 	= QUERIES_INFOS_ALLOWED_POSITIVES
+			self.default_bool 		= QUERIES_INFOS_ALLOWED_BOOLEAN
+
 		elif self.slug_class 	== "contributors" : 
 			self.default_query 		= QUERY_SPIDER_BY_DEFAULT
 			self.default_uniques 	= QUERIES_SPIDER_ALLOWED_UNIQUE
 			self.default_integers 	= QUERIES_SPIDER_ALLOWED_INTEGERS
 			self.default_positives 	= QUERIES_SPIDER_ALLOWED_POSITIVES
 			self.default_bool 		= QUERIES_SPIDER_ALLOWED_BOOLEAN
+
 		elif self.slug_class 	== "crawl" : 
 			self.default_query 		= QUERY_CRAWL_BY_DEFAULT
 			self.default_uniques 	= QUERIES_CRAWL_ALLOWED_UNIQUE
@@ -232,7 +252,7 @@ class QueryFromSlug :
 			self.default_bool 		= QUERIES_CRAWL_ALLOWED_BOOLEAN
 
 		# clean default_query if query is coming from api 
-		if query_from in ["api", "api_paginated"] :
+		if query_from in ["api", "api_paginated"] and self.slug_class not in ["infos","stats"] :
 			app_log.info( "QUERIES_ARGS_TO_IGNORE_IF_API : %s ", QUERIES_ARGS_TO_IGNORE_IF_API )
 			self.default_query = { k : v for k,v in self.default_query.iteritems() if k not in QUERIES_ARGS_TO_IGNORE_IF_API }
 			self.default_query["results_per_page"] = QUERIES_MAX_RESULTS_IF_API
@@ -241,7 +261,7 @@ class QueryFromSlug :
 		self.query_obj 	= deepcopy(self.default_query)
 
 		# populate default query with args from slug if a slug
-		if slug != {} and self.slug_class in ["data", "contributors", "crawl"] :
+		if slug != {} and self.slug_class in ["data", "contributors", "crawl", "stats", "infos"] :
 			self.populate_query()
 
 		if slug == {} and self.slug_class in ["data"] : 

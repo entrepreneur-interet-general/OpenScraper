@@ -75,13 +75,15 @@ USER_CORE_FIELDS = [
 ### to initiate datamodel core fields in mongoDB
 # field_type options in form and db
 DATAMODEL_FIELDS_TYPES = [
-	"url", 
-	"text", 
-	"email", 
-	"image", 
+	"url", 		# href
+	"text", 	# default
+	"email", 	# mailto
+	"image", 	# src
 	"adress", 
-	"date", 
+	"date", 	# datetime
 	"tags", 
+	"integer",
+	"float",
 	"price",
 	"list"		# note : not sure about this one ... 
 ]
@@ -115,7 +117,10 @@ DATAMODEL_CORE_FIELDS = [
 
 	{"field_name" : "modified_by", 		"field_type" : "email",	"field_open" : "opendata" }, 	# spider-related
 	{"field_name" : "modified_at", 		"field_type" : "date", 	"field_open" : "opendata" }, 	# spider-related
-	
+
+	{"field_name" : "page_n", 			"field_type" : "integer", "field_open" : "opendata" },		# item-related = to be stored in item
+	{"field_name" : "item_n", 			"field_type" : "integer", "field_open" : "opendata" },		# item-related = to be stored in item
+
 	# just for debugging purposes
 	# {"field_name" : "testClass", 		"field_type" : "text"}		# item-related = to be stored in item
 ]
@@ -133,6 +138,9 @@ DATAMODEL_CORE_FIELDS_ITEM = [
 	"modified_by",
 	"modified_at",
 
+	"page_n", 
+	"item_n", 
+
 	# "testClass"
 ]
 # TO DO / IMPLEMENT AT MAIN.PY : default fields for first 
@@ -149,20 +157,58 @@ DATAMODEL_DEFAULT_CUSTOM_FIELDS = [
 ### CONTRIBUTORS ############################################################################
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
+### TO DO : let user tag the spider to show state
+CONTRIBUTOR_FLAG_STATUS = [
+	"ok",
+	"incomplete",
+	"follow_not_working",
+	"next_not_working",
+	"reactive_not_working",
+	"api_not_working",
+	"bug"
+]
+
 ### radio buttons in 'edit contributor' form
 CONTRIBUTOR_EDIT_FIELDS_RADIO = [
-	"parse_follow", "page_needs_splash", "deploy_list"
+	"parse_follow", 
+	# "page_needs_splash", 
+	# "deploy_list", 
+	"parse_reactive",
+	"parse_api",
+	"follow_is_api",
 ]
 CONTRIBUTOR_EDIT_FIELDS_RADIO_TEXTS = {
 	"parse_follow" 		: ["The data is complete in the list ","I need to click a link in the list to show the complete data "] , 
-	"page_needs_splash" : ["no","yes"], 
-	"deploy_list" 		: ["There is no special button at the end of the list","There is a 'show more button' at the end of the list"]
+	"parse_reactive" 	: ["The website is not reactive","The website is reactive"] , 
+	"parse_api"			: ["The website has no API", "The website has an API"],
+	"follow_is_api"		: ["The follow page is an HTML page", "The follow page is an API"],
+	# "page_needs_splash" : ["no","yes"], 
+	# "deploy_list" 		: ["There is no special button at the end of the list","There is a 'show more button' at the end of the list"]
 }
 CONTRIBUTOR_EDIT_FIELDS_NUMBER = [
-	"LIMIT", "download_delay", "page_count"
+	
+	"RETRY_TIMES",
+	"LIMIT_PAGES", 
+	"LIMIT_ITEMS",
+	"CONCURRENT_ITEMS", 
+	"CONCURRENT_REQUESTS", 
+	
+	"download_delay", 
+
+	"wait_driver" 	,	# delay for ajax response wait
+	"wait_page" 	,	# delay for new page response wait
+	"wait_implicit" ,	# delay for implicit response wait
+
+	"page_count"
 ]
 CONTRIBUTOR_EDIT_FIELDS_FLOAT = [
-	"download_delay"
+
+	"download_delay",
+
+	"wait_driver" 	,	# delay for ajax response wait
+	"wait_page" 	,	# delay for new page response wait
+	"wait_implicit" ,	# delay for implicit response wait
+
 ]
 ### to display form for edit contributor
 CONTRIBUTOR_EDIT_FIELDS = {
@@ -174,10 +220,10 @@ CONTRIBUTOR_EDIT_FIELDS = {
 	# custom infos 
 	"infos" : {
 		"needed" : [
-			"name", 
+			"name", 			# spider name
 			"licence",			# licence of all data scrapped by this spider
-			"page_url",
-			"logo_url",
+			"page_url",			# root url 
+			"logo_url",			# logo's url of the website
 			# "added_by",
 		],
 		"optional" : [
@@ -193,13 +239,19 @@ CONTRIBUTOR_EDIT_FIELDS = {
 			"start_urls",
 			"item_xpath",
 			"next_page",
-			"deploy_list",
-			"deploy_list_xpath",
+			# "deploy_list",
+			# "deploy_list_xpath",
 			"parse_follow",
 			"follow_xpath",
+			"parse_reactive",
+
+			"parse_api",
+			"api_pagination_root",
+			"api_follow_root",
+			"follow_is_api",
 		], 
 		"optional": [
-			"page_needs_splash",
+			# "page_needs_splash",
 			"item_list_xpath",
 		]
 	 },
@@ -209,8 +261,18 @@ CONTRIBUTOR_EDIT_FIELDS = {
 		"needed" : [
 		],
 		"optional" : [
-			"LIMIT" 			,	# max number of pages to be crawled
+			"RETRY_TIMES"			,
+			"LIMIT_PAGES" 			,	# max number of pages to be crawled
+			"LIMIT_ITEMS" 			,	# max number of items to be scraped
+			"CONCURRENT_ITEMS"		, 
+			"CONCURRENT_REQUESTS" 	, 
+
 			"download_delay" 	,	# delay
+
+			"wait_driver" 		,	# delay for ajax response wait
+			"wait_page" 		,	# delay for new page response wait
+			"wait_implicit" 	,	# delay for implicit response wait
+
 			# "page_count" 		,	# keep track of how many pages were crawled
 		]
 	},
@@ -249,10 +311,16 @@ CONTRIBUTOR_CORE_FIELDS = {
 		"parse_follow" 		: False,	# boolean to know if needs to follow link in page to get all infos
 		"follow_xpath" 		: "",		# xpath to follow item's url to get all info on item
 		
-		"deploy_list"		: False,	# selenium action to click on "show more" button if exists
-		"deploy_list_xpath"	: "",		# xpath to click on if "show more" button exists... 
+		# "deploy_list"		: False,	# selenium action to click on "show more" button if exists
+		# "deploy_list_xpath"	: "",		# xpath to click on if "show more" button exists... 
 
-		"page_needs_splash" : False,	# if page needs jquery to be parsed
+		# "page_needs_splash" : False,	# if page needs jquery to be parsed
+		"parse_reactive" 	: False,	# if page needs javascript to be parsed
+	
+		"parse_api"				: False,	# use the website's API to get data 
+		"api_pagination_root" 	: "",
+		"api_follow_root"		: "",
+		"follow_is_api"			: False,
 	},
 
 	# scraper - custom for scraping xpaths 
@@ -262,9 +330,20 @@ CONTRIBUTOR_CORE_FIELDS = {
 
 	# scraper - global settings	
 	"scraper_settings" : {
-		"LIMIT" 			: 100,	# max number of pages to be crawled
-		"download_delay" 	: 0.1,	# delay
-		"page_count" 		: 1,	# keep track of how many pages were crawled
+
+		"RETRY_TIMES"			: 3,
+		"LIMIT_PAGES" 			: 150,	# max number of pages to be crawled
+		"LIMIT_ITEMS" 			: 0,	# max number of items to be scraped 
+		"CONCURRENT_ITEMS" 		: 200, 
+		"CONCURRENT_REQUESTS" 	: 100, 
+		
+		"download_delay" 		: 0.5,	# delay
+		
+		"wait_driver" 			: 5.0,	# delay for ajax response wait
+		"wait_page" 			: 1.5,	# delay for new page response wait
+		"wait_implicit" 		: 0.5,	# delay for implicit response wait
+		
+		"page_count" 			: 1,	# keep track of how many pages were crawled
 	},
 
 	# scraper - log and stats	

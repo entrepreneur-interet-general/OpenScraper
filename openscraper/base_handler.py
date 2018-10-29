@@ -65,7 +65,7 @@ def check_user_permissions(method):
 	@wraps(method)
 	def wrapper(self, *args, **kwargs):
 
-		print
+		print()
 		app_log.info(" ... check_user_permissions ... ")
 		app_log.info(" ... check_user_permissions / self.request.full_url() : \n %s ", self.request.full_url())
 
@@ -101,7 +101,7 @@ def check_user_permissions(method):
 
 		# 	raise HTTPError(403)
 
-		print
+		print()
 
 		return method(self, *args, **kwargs)
 	return wrapper
@@ -114,7 +114,7 @@ def check_request_token(method) :
 	@wraps(method)
 	def wrapper(self, *args, **kwargs):
 
-		print
+		print()
 		app_log.info(" ... check_request_token ... ")
 		app_log.info(" ... check_request_token / self.request.full_url() : \n %s ", self.request.full_url())
 
@@ -131,10 +131,23 @@ def check_request_token(method) :
 			user_auth_level = "visitor"
 		else :
 
+			token = token[0]
 
 			### TO DO : decrypt token instead of default 
-			user_auth_level = "user"
-			self.user_email = "default.api.email@openscraper.com"
+			if token in ["pwa", "cis_test", "test_token", "test"] :
+				user_auth_level = "user"
+				self.user_email = "cis_user.api.email@openscraper.com"
+			
+			elif token in ["cis_staff"] : 
+				user_auth_level = "staff"
+				self.user_email = "cis_staff.api.email@openscraper.com"
+			
+			elif token in ["OFQErfsqyer"] : 
+				user_auth_level = "admin"
+				self.user_email = "cis_admin.api.email@openscraper.com"
+			
+			else : 
+				user_auth_level = "visitor"
 		
 
 
@@ -168,7 +181,7 @@ def check_request_token(method) :
 
 		# 	raise HTTPError(403)
 
-		print
+		print()
 
 		return method(self, *args, **kwargs)
 	return wrapper
@@ -313,7 +326,7 @@ class BaseHandler(tornado.web.RequestHandler):
 	def clean_slug(self, slug, args_list_to_delete=[]) :
 		""" clean slug from unwanted args """
 
-		print 
+		print() 
 		app_log.info("... clean_slug ..."  )
 		app_log.info("... clean_slug / slug : %s "					, slug  )
 		app_log.info("... clean_slug / args_list_to_delete : %s "	, args_list_to_delete  )
@@ -327,14 +340,14 @@ class BaseHandler(tornado.web.RequestHandler):
 			except :
 				pass
 
-		print 
+		print() 
 
 		return slug
 
 	def wrap_pagination (self, page_n, page_n_max ):
 		""" wrap all pagination args in a dict """
 
-		print
+		print()
 		app_log.info("... wrap_pagination : ... ")
 		app_log.info("... wrap_pagination / request.path : %s ", self.request.path )
 
@@ -432,7 +445,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		- note : duplicates a bit the work done for api sluf query
 		""" 
 
-		print 
+		print() 
 		app_log.info("... get_current_uri_without_error_slug ..." )
 
 		base_path 	= self.request.path
@@ -592,7 +605,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		ex : query={"field_class" : "custom"}
 		"""
 
-		print 
+		print() 
 		app_log.info("... count_documents / coll_name : %s", coll_name)
 
 		coll  = self.choose_collection ( coll_name=coll_name )
@@ -615,7 +628,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		counts 	= { "count_{}".format(k) : self.count_documents(coll_name=k, query=v) for k,v in collections_to_count.iteritems() }
 		
-		print 
+		print() 
 
 		return counts
 
@@ -678,7 +691,7 @@ class BaseHandler(tornado.web.RequestHandler):
 	def get_datamodel_set(self, sort_fields_by="field_open", visible_custom=True, exclude_fields=None ) : 
 		### retrieve datamodel from DB top make correspondances field's _id --> field_name
 		
-		print 
+		print() 
 		app_log.info("... get_datamodel_set ")
 
 		# custom fields
@@ -719,7 +732,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		retrieve a list of authorized fields given datamodel and open_level 
 		for data query, mainly
 		"""
-		print
+		print()
 		# app_log.info("... get_authorized_datamodel_fields" )
 
 		allowed_open_levels 	= OPEN_LEVEL_DICT[open_level]
@@ -741,7 +754,7 @@ class BaseHandler(tornado.web.RequestHandler):
 	def filter_slug(self, slug, slug_class=None, query_from="app") : 
 		""" filter args from slug """
 		
-		print
+		print()
 		app_log.info("... filter_slug / slug : \n %s ", pformat(slug) ) 
 
 		# recreate query from slug
@@ -755,7 +768,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		build the query according to allowed fields ...
 		"""
 
-		print
+		print()
 		app_log.info("... query_obj : \n %s ", pformat(query_obj) )
 		app_log.info("... keep_fields_list : \n %s ", pformat(keep_fields_list) )
 		app_log.info("... data_model_custom_dict : \n %s \n", pformat(data_model_custom_dict) )
@@ -770,6 +783,14 @@ class BaseHandler(tornado.web.RequestHandler):
 			else : 
 				q_spider = { "spider_id" : { "$in" : query_obj["spider_id"] } } #  for q in query_obj["spider_id"] }
 				query.update(q_spider)
+
+		# search by item_id
+		if "item_id" in query_obj : 
+			if query_obj["item_id"] == None :
+				pass
+			else : 
+				q_item = { "_id" : ObjectId(query_obj["item_id"])  } 
+				query.update(q_item)
 
 		### search by content --> collection need to be indexed
 		# cf : https://stackoverflow.com/questions/6790819/searching-for-value-of-any-field-in-mongodb-without-explicitly-naming-it
@@ -799,11 +820,11 @@ class BaseHandler(tornado.web.RequestHandler):
 				# else :
 				# 	field_qs = []
 				# 	for f in query_obj["search_in"] :
-				# 		print f
+				# 		print() f
 				# 		# check if f is custom or core
 				# 		if f in data_model_custom_dict_names : 
 				# 			f = unicode(data_model_custom_dict_names[f][u"_id"])
-				# 			print f, type(f)
+				# 			print() f, type(f)
 						
 				# 		if f in keep_fields_list : 
 				# 			# search for strings containing s + case insensitive --> "$options" : "-i"
@@ -962,7 +983,7 @@ class BaseHandler(tornado.web.RequestHandler):
 							) :
 		""" get items from db """
 
-		print
+		print()
 		app_log.info("... query_obj : \n %s \n", 			pformat(query_obj) )
 		app_log.info("... allowed_fields_list : \n %s \n", 	pformat(allowed_fields_list) )
 		app_log.info("... ignore_fields_list : \n %s \n", 	pformat(ignore_fields_list) )
@@ -973,20 +994,33 @@ class BaseHandler(tornado.web.RequestHandler):
 		all_results = False
 		if "all_results" in query_obj : 
 			all_results		= query_obj["all_results"]
-		
+
+		# check if query is meant to export csv
+		export_as_csv = False
+		if "export_as_csv" in query_obj : 
+			export_as_csv	= query_obj["export_as_csv"]
 
 		# TO DO : check if user has right to use specific query fields
 		
 
+		app_log.info("... all_results : %s ", all_results )
+		app_log.info("... export_as_csv : %s ", export_as_csv )
+
 		# TO DO 
 		# retrieve all results at once 
 		if all_results==True : 
+			
 			### TO DO 
 			if user_token != None : # and 
 				pass
 			else : 
-				all_results = False
-				
+				if export_as_csv == True :
+					pass
+				else :
+					all_results = False
+		
+		app_log.info("... all_results : %s ", all_results )
+		app_log.info("... export_as_csv : %s ", export_as_csv )
 
 		### DB OPERATIONS
 
@@ -1037,6 +1071,9 @@ class BaseHandler(tornado.web.RequestHandler):
 		# retrieve docs
 		limit_results 	= query_obj["results_per_page"]
 
+		app_log.info("... all_results : %s ", all_results )
+		app_log.info("... export_as_csv : %s ", export_as_csv )
+
 		# if query from "api" ignore pagination --> 
 		# script doesn't do that if query_from == "app" or == "api_paginated"
 		if query_from == "api"  : 
@@ -1044,35 +1081,42 @@ class BaseHandler(tornado.web.RequestHandler):
 			page_n_max   	= None
 			# docs_from_db 	= list(cursor[ : limit_results ])
 			docs_from_db 	= cursor_list[ : limit_results ]
+
+
 		# if query from "app" limit according to pagination
 		else : 
-			### compute max_pages, start index, stop index
-			page_n 			= query_obj["page_n"]
-			page_n_max 		= self.compute_count_and_page_n_max(count_results_tot, limit_results)
+			# if query from app + all_results + export_as_csv
+			if all_results and export_as_csv : 
+				page_n_max   	= None
+				docs_from_db 	= cursor_list
+			else :
+				### compute max_pages, start index, stop index
+				page_n 			= query_obj["page_n"]
+				page_n_max 		= self.compute_count_and_page_n_max(count_results_tot, limit_results)
 
-			app_log.info("... results_cout : %s", count_results_tot ) 
-			app_log.info("... page_n_max   : %s ", page_n_max ) 
-			app_log.info("... page_n       : %s ", page_n )
+				app_log.info("... results_cout : %s", count_results_tot ) 
+				app_log.info("... page_n_max   : %s ", page_n_max ) 
+				app_log.info("... page_n       : %s ", page_n )
 
-			### select items to retrieve from list and indices start and stop
-			# all results case
-			# if all_results==True : 		
-			# 	docs_from_db = list(cursor)
-			# else : 
-			# page queried is higher than page_n_max or inferior to 1
-			if page_n > page_n_max or page_n < 1 :
-				docs_from_db = []	
-			# slice cursor : get documents from start index to stop index
-			else : 
-				results_i_start	= ( page_n-1 ) * limit_results 
-				results_i_stop	= ( results_i_start + limit_results + 1 ) - 1
-				app_log.info("... results_i_start : %s ", results_i_start )
-				app_log.info("... results_i_stop  : %s ", results_i_stop )
-				# docs_from_db 	= list(cursor[ results_i_start : results_i_stop ])
-				docs_from_db 	= cursor_list[ results_i_start : results_i_stop ]
-			
-			app_log.info("... docs_from_db : \n ....")
-			# app_log.info("%s", pformat(docs_from_db[0]) )
+				### select items to retrieve from list and indices start and stop
+				# all results case
+				# if all_results==True : 		
+				# 	docs_from_db = list(cursor)
+				# else : 
+				# page queried is higher than page_n_max or inferior to 1
+				if page_n > page_n_max or page_n < 1 :
+					docs_from_db = []	
+				# slice cursor : get documents from start index to stop index
+				else : 
+					results_i_start	= ( page_n-1 ) * limit_results 
+					results_i_stop	= ( results_i_start + limit_results + 1 ) - 1
+					app_log.info("... results_i_start : %s ", results_i_start )
+					app_log.info("... results_i_stop  : %s ", results_i_stop )
+					# docs_from_db 	= list(cursor[ results_i_start : results_i_stop ])
+					docs_from_db 	= cursor_list[ results_i_start : results_i_stop ]
+				
+				app_log.info("... docs_from_db : \n ....")
+				# app_log.info("%s", pformat(docs_from_db[0]) )
 
 
 		# flag if the cursor is empty

@@ -6,19 +6,12 @@
 
 <br>
 
+
+
 <section class="section">
 	
 
 	<div class="container has-text-centered">
-		
-		{# <h1 class="title">
-			List of contributors
-			<div class="has-text-weight-light"> {% module MainTabs() %}</div>
-		</h1>
-		
-		<h2 class="subtitle">
-			this is the list of websites you want to scrap from
-		</h2> #}
 
 		<div class="dropdown is-hoverable">
 			
@@ -26,7 +19,7 @@
 				
 				<button class="button is-large is-rounded" aria-haspopup="true" aria-controls="dropdown-menu-contributors">
 					<span>
-						<b>List of contributors</b>  
+						<b>List of contributors (spiders)</b>  
 					</span>
 				</button>
 				
@@ -79,11 +72,10 @@
 				<span>refresh page</span>
 			</a>
 
-			<a 	class="button is-warning is-rounded" disabled>
+			{# <a 	class="button is-warning is-rounded" disabled>
 				<span class="icon is-small"><i class="fas fa-play"></i></span>
 				<span>run all spiders</span>
-			</a>
-
+			</a> #}
 
 		{% end %}
 
@@ -110,14 +102,25 @@
 				<table 	id="t_contributors" 
 						class="table display is-striped is-narrow is-hoverable is-fullwidth" 
 						width="100%" 
-						cellspacing="0">
+						cellspacing="0"
+						style="">
 					
 					<thead>
 						<tr>
 
+							<th class="has-text-centered">logo</th>
+
 							<th>status</th>
 
-							<th>name</th>
+							<th>spider name</th>
+
+							{# added by #}
+							<th class="has-text-centered">
+								<span class="icon has-text-grey is-small tooltip"
+										data-tooltip="user who added the scraper" >
+									<i class="fas fa-user"></i>
+								</span>
+							</th>
 
 							{# edit spider #}
 							<th class="has-text-centered">
@@ -134,11 +137,43 @@
 									<i class="fas fa-trash"></i>
 								</span>
 							</th>
-							
-							<th>added by</th>
+
+							{# following link spider #}
+							<th class="has-text-centered">
+								<span class="icon has-text-grey is-small tooltip"
+										data-tooltip="the spider tries to get the detailed page" >
+									{# <i class="fas fa-external-link-alt"></i> #}
+									<i class="fas fa-external-link-square-alt"></i>
+								</span>
+							</th>
+
+							{# reactive spider #}
+							<th class="has-text-centered">
+								<span class="icon has-text-grey is-small tooltip"
+										data-tooltip="the website is reactive" >
+									<i class="fab fa-js-square"></i>
+								</span>
+							</th>
+
+							{# API spider #}
+							<th class="has-text-centered">
+								<span class="icon has-text-grey is-small tooltip"
+										data-tooltip="the spider crawls an API Rest" >
+									<i class="fas fa-code"></i>
+								</span>
+							</th>
+
+
 							{# <th>page_url</th> #}
 							
-							<th>start_urls</th>
+							{# start_urls #}
+							<th class="has-text-centered tooltip" data-tooltip="start_urls">
+								<span class="icon has-text-grey is-small "
+										 aria-hidden="true" >
+									<i class="fas fa-external-link-alt"></i>
+								</span>
+								<span> start_urls</span>
+							</th>
 
 							{# for test #}
 							<th class="has-text-centered">
@@ -171,6 +206,17 @@
 									<i class="fas fa-redo"></i>
 								</span>
 							</th>
+
+
+							{# download file #}
+							<th class="has-text-centered">
+								<span class="icon has-text-grey is-small tooltip"
+										data-tooltip="download the set as a .tsv file" >
+									<i class="fas fa-download"></i>
+								</span>
+							</th>
+
+
 						</tr>
 					</thead>
 
@@ -201,12 +247,12 @@
 						{# set hrefs #}
 						{% set href_test_crawl = None %}
 						{% if start_urls != [] %}
-							{% set href_test_crawl = 'href="/crawl?spider_id=%s&test=true&test_limit=1"' %( contrib_id ) %}
+							{% set href_test_crawl = 'href="/crawl?spider_id=%s&test=true&test_limit=1&next=%s"' %( contrib_id, pagination_dict["current_page_n"] ) %}
 						{% end %}
 
 						{% set href_crawl = None %}
 						{% if is_working %}
-							{% set href_crawl = 'href="/crawl?spider_id=%s"' %( contrib_id )  %}
+							{% set href_crawl = 'href="/crawl?spider_id=%s&next=%s"' %( contrib_id, pagination_dict["current_page_n"] )  %}
 						{% end %}
 
 						{# set other hrefs and some UI variables #}
@@ -225,20 +271,36 @@
 						{% end %}
 
 
-						<tr id="{{ contrib_id }}" >
+						<tr id="{{ contrib_id }}">
 							
 
+							{# logo spider #}
+							<td class="has-text-centered" style="vertical-align: middle;"> 
+								<a 	href='{{ escape (contrib["infos"]["page_url"]) }}' target="_blank">
+									<figure class="image is-32x32">
+										<img src="{{ escape (contrib['infos']['logo_url']) }}">
+									</figure>
+								</a>
+							</td>
+
 							{# spider status : is_working / is_running / ... #}
-							<td class="has-text-centered"> 
-								
+							<td class="has-text-centered" style="vertical-align: middle;"> 
 															
 								{% if is_running %}
 
-									<span 	class="icon has-text-info tooltip"
+									{# <span 	class="icon has-text-info tooltip"
 											data-tooltip="spider is running, please refresh the page">
 										<i class="fas fa-spinner fa-pulse"></i>
-									</span>
+									</span> #}
 
+									<a 	href="{{ current_page }}"
+										>
+										<span 	class="icon has-text-info tooltip"
+												data-tooltip="spider is running, please refresh the page">
+											<i class="fas fa-spinner fa-pulse"></i>
+										</span>
+									</a>
+									
 								{% elif start_urls == [] %}
 
 									<span 	class="icon has-text-danger tooltip"
@@ -269,9 +331,8 @@
 
 
 
-
 							{# name spider #}
-							<th> 
+							<th class="vertic-centered"	style="vertical-align: middle;"> 
 								<a 	href='{{ escape (contrib["infos"]["page_url"]) }}' target="_blank"
 								 	class="tooltip is-tooltip-right"
 									 data-tooltip='{{ escape (contrib["infos"]["page_url"]) }}'
@@ -280,13 +341,31 @@
 								</a>
 							</th>
 							
+
+
+							{# spider added by #}
+							<td style="vertical-align: middle;"> 
+								{% if user_email == escape (contrib['scraper_log']['added_by']) %}
+									<span 	class="icon is-small has-text-info tooltip is-tooltip-right"
+											data-tooltip="you added this spider">
+										<i class="fas fa-user"></i>
+									</span>
+								{% else %}
+									<span 	class="icon is-small has-text-grey-light tooltip is-tooltip-right"
+											data-tooltip="added by : {{ escape (contrib['scraper_log']['added_by']) }}">
+										<i class="far fa-user"></i>
+									</span>
+								{% end %}
+							</td>
+
+
 							{# edit spider #}
 							{# add an user authorization here #}
-							<td class="has-text-centered"> 
+							<td class="has-text-centered" style="vertical-align: middle;"> 
 								{% if can_edit %}
 									<a 	class="has-text-centered button is-primary is-rounded is-small  tooltip is-tooltip-right"
 										data-tooltip="edit this spider" 
-										href="/contributor/edit/{{ contrib_id }}" 
+										href="/contributor/edit/{{ contrib_id }}?next={{query_obj['page_n']}}" 
 										>
 										<span class="icon is-small ">
 											<i class="fas fa-edit"></i>
@@ -308,7 +387,7 @@
 
 							{# delete spider #}
 							{# add an user authorization here #}
-							<td class="has-text-centered">
+							<td class="has-text-centered" style="vertical-align: middle;">
 								
 								{% if can_edit %}
 									<a class="has-text-centered button is-text is-small is-rounded tooltip is-tooltip-right is-tooltip-danger"
@@ -335,15 +414,54 @@
 							</td>
 
 
-							{# spider added by #}
-							<td> 
-								{{ escape (contrib["scraper_log"]["added_by"]) }}
-								{# { { linkify (contrib["infos"]["page_url"]) }} #}
-							</td>
+							{# spider follows link #}
+							<th style="vertical-align: middle;"> 
+								{% if contrib["scraper_config"]["parse_follow"] %}
+									<span 	class="icon is-small has-text-info tooltip is-tooltip-right"
+											data-tooltip="this spider tries to follow a link to a detailed page">
+										<i class="fas fa-check"></i>
+									</span>
+								{% else %}
+									<span class="icon is-small has-text-light">
+										<i class="fas fa-times"></i>
+									</span>
+								{% end %}
+							</th>
+
+
+							{# spider is reactive #}
+							<th style="vertical-align: middle;"> 
+								{% if contrib["scraper_config"]["parse_reactive"] %}
+									<span 	class="icon is-small has-text-info tooltip is-tooltip-right"
+											data-tooltip="this website is reactive">
+										<i class="fas fa-check"></i>
+									</span>
+								{% else %}
+									<span class="icon is-small has-text-light">
+										<i class="fas fa-times"></i>
+									</span>
+								{% end %}
+							</th>
+
+							{# spider is API #}
+							<th style="vertical-align: middle;"> 
+								{% if contrib["scraper_config"]["parse_api"] %}
+									<span 	class="icon is-small has-text-info tooltip is-tooltip-right"
+											data-tooltip="this spider crawls an API">
+										<i class="fas fa-check"></i>
+									</span>
+								{% else %}
+									<span class="icon is-small has-text-light">
+										<i class="fas fa-times"></i>
+									</span>
+								{% end %}
+							</th>
+
+
 							 
 
 							{# start urls #}
-							<td>
+							<td style="vertical-align: middle;">
 								{% for url_ in start_urls %} 
 									<a href="{{ url_ }}" target="_blank"> 
 										<span class="tag is-white tooltip is-tooltip-right"
@@ -371,7 +489,7 @@
 
 							{# test spider #}
 							{# add an user authorization here #}
-							<td class="has-text-centered">
+							<td class="has-text-centered" style="vertical-align: middle;">
 							
 								{% if not can_edit %}
 									<a class="button is-text is-small">
@@ -387,11 +505,19 @@
 
 									{% if is_running %}
 										
-										<span 	class="icon has-text-info tooltip is-tooltip-right"
+										{# <span 	class="icon has-text-info tooltip is-tooltip-right"
 												data-tooltip="spider is running, please refresh the page">
 											<i class="fas fa-spinner fa-pulse"></i>
-										</span>
-									
+										</span> #}
+
+										<a 	href="{{ current_page }}"
+											>
+											<span 	class="icon has-text-info tooltip"
+													data-tooltip="spider is running, please refresh the page">
+												<i class="fas fa-spinner fa-pulse"></i>
+											</span>
+										</a>
+										
 									{% elif start_urls == [] %}
 
 										<span 	class="icon has-text-danger tooltip is-tooltip-right"
@@ -430,7 +556,7 @@
 
 							{# spider run crawler #}
 							{# add an user authorization here #}
-							<td class="has-text-centered"> 
+							<td class="has-text-centered" style="vertical-align: middle;"> 
 
 								{% if not can_edit %}
 									<a class="button is-text is-small">
@@ -447,11 +573,19 @@
 
 									{% if is_running %}
 										
-										<span 	class="icon has-text-info tooltip is-tooltip-right"
+										{# <span 	class="icon has-text-info tooltip is-tooltip-right"
 												data-tooltip="spider is running, please refresh the page">
 											<i class="fas fa-spinner fa-pulse"></i>
-										</span>
+										</span> #}
 
+										<a 	href="{{ current_page }}"
+											>
+											<span 	class="icon has-text-info tooltip"
+													data-tooltip="spider is running, please refresh the page">
+												<i class="fas fa-spinner fa-pulse"></i>
+											</span>
+										</a>
+										
 									{% elif start_urls == [] %}
 
 										<span 	class="icon has-text-danger tooltip is-tooltip-right"
@@ -495,9 +629,10 @@
 							
 
 							{# spider view data #}
-							<td class="has-text-centered"> 
+							<td class="has-text-centered" style="vertical-align: middle;"> 
 
 								{% if start_urls == [] %}
+									
 									<a class="button is-text is-small">
 										<span 	class="icon has-text-danger tooltip is-tooltip-right"
 												data-tooltip="spider is incomplete">
@@ -505,22 +640,23 @@
 										</span>
 									</a>
 								
-								{% elif is_running %}
+								{# {% elif is_running %}
 									
 									<span 	class="icon has-text-info tooltip is-tooltip-right"
 											data-tooltip="spider is running, please refresh the page">
 										<i class="fas fa-spinner fa-pulse"></i>
-									</span>
+									</span> #}
 
 								{% else %}
 
 									{% if count_data == 0 %}
 										{# <a class="button is-text"> #}
-											<span 	class="icon has-text-info tooltip is-tooltip-right"
-													data-tooltip="no data to see">
-												<i class="fas fa-times"></i>
-											</span>
+										<span 	class="icon has-text-info tooltip is-tooltip-right"
+												data-tooltip="no data to see">
+											<i class="fas fa-times"></i>
+										</span>
 										{# </a> #}
+
 									{% else %}	
 
 										<a class="button is-{{color_data}} is-rounded is-small "
@@ -544,7 +680,7 @@
 
 
 							{# spider reset data #}
-							<td class="has-text-centered"> 
+							<td class="has-text-centered" style="vertical-align: middle;"> 
 
 								{% if not can_edit %}
 
@@ -562,11 +698,19 @@
 
 									{% if is_running %}
 										
-										<span 	class="icon has-text-info tooltip is-tooltip-right"
+										{# <span 	class="icon has-text-info tooltip is-tooltip-right"
 												data-tooltip="spider is running, please refresh the page">
 											<i class="fas fa-spinner fa-pulse"></i>
-										</span>
+										</span> #}
 
+										<a 	href="{{ current_page }}"
+											>
+											<span 	class="icon has-text-info tooltip"
+													data-tooltip="spider is running, please refresh the page">
+												<i class="fas fa-spinner fa-pulse"></i>
+											</span>
+										</a>
+										
 									{% elif start_urls == [] %}
 
 										<span 	class="icon has-text-danger tooltip is-tooltip-right"
@@ -602,9 +746,36 @@
 
 							</td>
 
+							{# download as csv #}
+							<td class="has-text-centered" style="vertical-align: middle;">
 
+								{% if count_data == 0 %}
+									<span 	class="icon has-text-info tooltip is-tooltip-right"
+											data-tooltip="no data to see">
+										<i class="fas fa-times"></i>
+									</span>
 
+								{% elif is_running %}
 
+									<a 	href="{{ current_page }}">
+										<span 	class="icon has-text-info tooltip"
+												data-tooltip="spider is running, please refresh the page">
+											<i class="fas fa-spinner fa-pulse"></i>
+										</span>
+									</a>
+
+								{% else %}	
+								
+									<a 	href="{{ '/dataset/view?spider_id=%s'%( contrib_id ) + '&export_as_csv=true&all_results=true' }}">
+										<span class="icon has-text-grey is-small tooltip is-tooltip-left"
+												data-tooltip="download the set of {{ count_data }} items as a .tsv file" >
+											<i class="fas fa-download"></i>
+										</span>
+									</a>
+
+								{% end %}
+
+							</td>
 
 						</tr>
 					{% end %}
@@ -625,11 +796,11 @@
 
 		{% else %}
 			
-		<hr>
-		<div class="container has-text-centered">
-			<p class="is-centered"> no results </p>
-		</div>
-		<br>
+			<hr>
+			<div class="container has-text-centered">
+				<p class="is-centered"> no results </p>
+			</div>
+			<br>
 	
 		{% end %}
 

@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from 	tornado.log import enable_pretty_logging, LogFormatter, access_log, app_log, gen_log
+
+gen_log.info("--> importing .mixins")
+
 import scrapy
 from scrapy import Spider 
 
@@ -13,12 +17,12 @@ from . import base_fields
 class GenericSpiderMixin(Spider) : 
 	
 	"""Mixin class for the generic spider"""
-	print "\n/// GenericSpiderMix root "
+	gen_log.info ("\n/// GenericSpiderMix root ")
 
 	# def __init__(self, **kwargs) : 
 	def __init__(self) : 
 
-		print "\n/// GenericSpiderMix / init "
+		gen_log.info ("\n/// GenericSpiderMix / init ")
 
 		# Default fields for mixin class
 		

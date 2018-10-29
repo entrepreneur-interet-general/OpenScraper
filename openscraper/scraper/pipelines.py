@@ -1,4 +1,10 @@
 # -*- encoding: utf-8 -*-
+
+
+from 	tornado.log import enable_pretty_logging, LogFormatter, access_log, app_log, gen_log
+
+gen_log.info("---> importing .pipelines")
+
 import 	os
 import 	json 
 from 	pprint import pprint, pformat
@@ -35,6 +41,7 @@ log_pipe.info('>>> Completed configuring log_pipe !')
 ### TO DO 
 # define a JSON writer pipeline
 class JsonWriterPipeline(object):
+	
 	def __init__(self):
 		self.file = open('items.jl', 'wb')
 
@@ -70,7 +77,6 @@ class MongodbPipeline(object):
 					mongo_coll_scrap = None
 					):
 
-		print
 		log_pipe.info(">>> MongodbPipeline / __init__ ...")
 		
 		self.spider_id			= spider_id
@@ -78,15 +84,13 @@ class MongodbPipeline(object):
 		self.mongo_db			= mongo_db
 		self.mongo_coll_scrap 	= mongo_coll_scrap
 		
-		log_pipe.info("--- MongodbPipeline / os.getcwd() : %s ", os.getcwd() )
-		print
+		log_pipe.info("--- MongodbPipeline / os.getcwd() : %s \n", os.getcwd() )
 
 
 	@classmethod
 	def from_crawler(cls, crawler):
 		
-		print
-		log_pipe.info(">>> MongodbPipeline / @classmethod + from_crawler ...")
+		log_pipe.debug(">>> MongodbPipeline / @classmethod + from_crawler ...\n")
 		
 		## pull in information from crawler.settings
 		pipeline = cls(
@@ -109,8 +113,7 @@ class MongodbPipeline(object):
 	def open_spider(self, spider):
 		"""" initializing spider """
 
-		print
-		log_pipe.info(">>> MongodbPipeline / open_spider ...")
+		log_pipe.debug(">>> MongodbPipeline / open_spider ...\n")
 
 		## opening db connection
 		self.client 	= MongoClient( 
@@ -125,34 +128,34 @@ class MongodbPipeline(object):
 		item_exists = self.coll_data.find({ "spider_id" : self.spider_id })
 		if item_exists != None :
 			self.coll_data.delete_many({ "spider_id" : self.spider_id })
-		print 
 
 
 
 	def close_spider(self, spider) :
 		## clean up when spider is closed
 		
-		print
-		log_pipe.info(">>> MongodbPipeline / close_spider ...")
-		print
+		log_pipe.debug(">>> MongodbPipeline / close_spider ...\n\n")
 		self.client.close()
 
 
 	def process_item(self, item, spider):
 		"""handle each item and post it to db"""
 
-		print
-		log_pipe.info(">>> MongodbPipeline / process_item ...")
+		print()
+		log_pipe.debug(">>> MongodbPipeline / process_item ...")
 
 		# item object to dict
 		item_dict = dict(item)
-		log_pipe.info(">>> MongodbPipeline / item_dict : \n %s", pformat(item_dict) ) 
+		log_pipe.debug(">>> MongodbPipeline / process_item - item_dict : \n %s \n", pformat(item_dict) ) 
+
 
 		# TO DO : for now all docs from this spider are wiped out at "open_spider" level 
 		# check if already exists in db
 		# item_exists = self.application.coll_data.find({ "field_name" : item["field_name"]})
 
+
 		# insert / update in db
 		self.coll_data.insert(item_dict)
+		log_pipe.debug(">>> MongodbPipeline / process_item - item saved ...")
 
 		return item

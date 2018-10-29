@@ -12,7 +12,8 @@
 			{# logo and tagline #}
 				<div class="level">
 					<div class="level-item">
-						<figure class="image is-128x128">
+						<figure class="image is-96x96">
+							<br>
 							{# <img src="http://www.pvhc.net/img5/onmbyubllatmozmvsdtf.png"> #}
 							<img src="{{ static_url ('images/brush.png') }}">
 						</figure>
@@ -28,14 +29,16 @@
 				<div class="level">
 					<div class="level-item">
 						<h2 class="subtitle">
-							an 
-							online
-							open source
-							free
+							brush, 
+							gather or export data 
+							from (almost) any website or API
+							<hr>
+							online +
+							open source +
+							free +
+							API +
+							{# csv + #}
 							webscraper 
-							<br>you can customize to brush and 
-							gather data 
-							from (almost) any website
 						</h2>
 					</div>
 				</div>
@@ -232,10 +235,10 @@
 
 						<li class="step-item is-white is-completed">
 							<div 	class="step-marker tooltip is-tooltip-bottom" 
-									data-tooltip="visualize the dataset on several charts (working on it)">
+									data-tooltip="visualize the dataset composition">
 								<a 	class="button is-small is-rounded is-white"
-									href="/dataviz"
-									disabled>
+									href="/dataset/dataviz"
+									>
 									<span class="icon">
 										<i class="fa fa-chart-bar"></i>
 									</span>
@@ -293,13 +296,13 @@
 				</div>
 				<div class="level-item has-text-centered">
 					<div>
-						<p class="heading">data scrapped</p>
+						<p class="heading">data scraped</p>
 						<p class="title">{{ counts["count_data"] }} structured data</p>
 					</div>
 				</div>
 				<div class="level-item has-text-centered">
 					<div>
-						<p class="heading">scrapped from </p>
+						<p class="heading">scraped from </p>
 						<p class="title">{{ counts["count_contributors"] }} websites</p>
 					</div>
 				</div>

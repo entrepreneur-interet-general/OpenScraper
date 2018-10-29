@@ -12,9 +12,14 @@ a project by ...
 import 	os, os.path
 import 	sys
 import 	json
+import  csv
 import 	datetime
 from 	uuid import uuid4
 import 	pprint
+from 	pprint import pformat
+import 	time
+from datetime import datetime
+# import random
 
 from 	bson import json_util
 from	bson.json_util import dumps
@@ -62,17 +67,125 @@ from config.settings_secret import *
 
 
 
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### SETUP LOGGERS with custom format
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+def setup_loggers ():
+	"""
+	set up tornado loggers with custom format
+	
+	logger has 5 severity levels : 
+		D - DEBUG (lowest)
+		I - INFO
+		W - WARNING
+		E - ERROR
+		C - CRITICAL (highest)
+	"""
+
+	# config logger output in console
+	# logging.basicConfig(	level 	= logging.DEBUG, 
+	# 						format 	= "%(name)s - %(funcName)s - %(levelname)s : %(message)s" )
+
+	# Create a Formatter for formatting the log messages
+	# log_formatter = logging.Formatter('%(name)s -- %(funcName)s - %(levelname)s - %(message)s')
+	openscraper_log_format = '%(color)s::: %(levelname)s %(name)s %(asctime)s ::: %(module)s:%(lineno)d -in- %(funcName)s() :::%(end_color)s \
+		%(message)s' 
+	# datefmt='%y%m%d %H:%M:%S'
+	# style='%'
+	# color=True
+	# colors={40: 1, 10: 4, 20: 2, 30: 3}
+	"""	
+	default tornado format for logging : 
+		fmt='%(color)s[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d]%(end_color)s %(message)s'
+		datefmt='%y%m%d %H:%M:%S'
+		style='%'
+		color=True
+		colors={40: 1, 10: 4, 20: 2, 30: 3}
+		))
+	"""
+	# log_formatter = logging.Formatter( fmt=openscraper_log_format )
+	tornado_log_formatter = LogFormatter(fmt=openscraper_log_format, color=True)
+
+	enable_pretty_logging()
+
+	### Logger as self var
+	# create the Logger
+	# dictConfig(logging_config)
+	# self.log 		= logging.getLogger(__name__)
+	# self.logger 	= logging.getLogger()
+	# self.access_log = logging.getLogger("tornado.access")
+	# self.app_log 	= logging.getLogger("tornado.application")
+	# self.gen_log 	= logging.getLogger("tornado.general")
+
+	### Get root logger
+	root_logger 	= logging.getLogger()
+	# print root_logger.__dict__
+
+	### Format root_logger stream
+	# parent_logger = app_log.parent
+	# print parent_logger.__dict__
+	# root_stream_handler = parent_logger.handlers
+	# root_stream_handler[0].setFormatter(tornado_log_formatter)
+	root_logger.handlers[0].setFormatter(tornado_log_formatter)
+
+	# streamHandler 	= logging.StreamHandler() # stream=sys.stdout
+	# streamHandler.setFormatter(tornado_log_formatter)
+	# self.gen_log.addHandler(streamHandler)
+	# self.app_log.addHandler(streamHandler)
+	# self.access_log.addHandler(streamHandler)
+
+	# self.log.setLevel(logging.DEBUG)
+
+
+
+	# Create the Handlers for logging data to log files
+	gen_log_handler 	= logging.FileHandler('logs/openscraper_general.log')
+	gen_log_handler.setLevel(logging.WARNING)
+
+	access_log_handler 	= logging.FileHandler('logs/openscraper_access.log')
+	access_log_handler.setLevel(logging.WARNING)
+
+	app_log_handler 	= logging.FileHandler('logs/openscraper_app.log')
+	app_log_handler.setLevel(logging.WARNING)
+
+	# Add the Formatter to the Handler
+	gen_log_handler.setFormatter(tornado_log_formatter)
+	access_log_handler.setFormatter(tornado_log_formatter)
+	app_log_handler.setFormatter(tornado_log_formatter)
+
+
+	# Add the Handler to the Logger
+	gen_log.addHandler(gen_log_handler)
+	access_log.addHandler(access_log_handler)	
+	app_log.addHandler(app_log_handler)	
+	
+	# test loggers
+	print()
+	app_log.info('>>> this is app_log ')
+	gen_log.info('>>> this is gen_log ')
+	access_log.info('>>> this is access_log ')
+	print()
+
+
+setup_loggers()
+
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 ### scrapy dependencies
+
 # from scrapy.crawler import CrawlerRunner
-from scraper import *
+# from scraper import *
 # crawl_runner = CrawlerRunner()      # requires the Twisted reactor to run
 
 ### import dependencies
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+# ### import controller : url functions
+
 import urls
-
-
-### import controller : url functions
 from controller import *
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 
 ### snippet DB
@@ -85,8 +198,9 @@ from controller import *
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 
-# define default port to listen to
+# # define default port to listen to + mode
 define( "port", default=APP_PORT, help="run on the given port", type=int )
+define( "mode", default='default', help="mode for run : default, production", type=str )
 
 
 
@@ -94,7 +208,7 @@ define( "port", default=APP_PORT, help="run on the given port", type=int )
 ### UTILS AT MAIN LEVEL #####################################################################
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
-
+'''
 def setup_loggers ():
 	"""
 	set up tornado loggers with custom format
@@ -192,6 +306,10 @@ def setup_loggers ():
 	print 
 
 
+### setup loggers with custom format
+setup_loggers()
+'''
+
 def create_datamodel_fields( logger, coll_model, fields_list, field_class ) : 
 	"""
 	create datamodel fields from list of field basic dict like DATAMODEL_CORE_FIELDS
@@ -217,7 +335,7 @@ def create_datamodel_fields( logger, coll_model, fields_list, field_class ) :
 		} for field in fields_list
 	]
 
-	logger.info("... create_datamodel_fields / datamodel - fields_ : ")
+	logger.warning("... create_datamodel_fields / datamodel - fields_ : ")
 
 	# upsert fields as bulk job in mongoDB
 	# cf : https://stackoverflow.com/questions/5292370/fast-or-bulk-upsert-in-pymongo
@@ -234,18 +352,19 @@ def create_datamodel_fields( logger, coll_model, fields_list, field_class ) :
 	coll_model.bulk_write(operations)
 
 
+
 def reset_is_running_on_all_spider( coll_model ) :
 	"""
 	reset is_running on all spiders to avoid errors if app shut down while one spider was running 
 	"""
 
-	print 
+	print ()
 
-	app_log.info('>>> reset_is_running_on_all_spider ... ')
+	app_log.warning('>>> reset_is_running_on_all_spider ... ')
 	
 	# find if any spider was running
 	running_spiders = coll_model.find({"scraper_log.is_running" : True})
-	print list(running_spiders)
+	app_log.info(">>> running_spiders : \n %s" , list(running_spiders) )
 
 	coll_model.update_many({'scraper_log.is_running' : True }, {"$set": {'scraper_log.is_running' : False }})
 
@@ -264,6 +383,8 @@ def backup_mongo_collection(coll, filepath) :
 	dumps all documents in collection in _backups_collections 
 	"""
 
+	app_log.warning('>>> backup_mongo_collection ... ')
+
 	cursor 		= coll.find({})
 	backup_file = open(filepath, "w")
 	backup_file.write('[')
@@ -272,6 +393,7 @@ def backup_mongo_collection(coll, filepath) :
 		backup_file.write(',')
 	backup_file.write(']')
 
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 
 ### MAIN TORNADO APPLICATION WRAPPER
@@ -319,14 +441,28 @@ class Application(tornado.web.Application):
 		self.coll_spiders 	= self.db[ MONGODB_COLL_CONTRIBUTORS ]
 		self.coll_data		= self.db[ MONGODB_COLL_DATASCRAPPED ]
 
-		# create default fields if missing
-		self.coll_spiders.update_many({'infos.logo_url'		: {"$exists" : False}}, {"$set": {'infos.logo_url' : "" }})
-		self.coll_spiders.update_many({'infos.licence'		: {"$exists" : False}}, {"$set": {'infos.licence' : "" }})
+		# create default fields in spiders collection in case fields are missing
+		self.coll_spiders.update_many({'infos.logo_url'						: {"$exists" : False}}, {"$set": {'infos.logo_url' 	: "" }})
+		self.coll_spiders.update_many({'infos.licence'						: {"$exists" : False}}, {"$set": {'infos.licence' 	: "" }})
+
+		self.coll_spiders.update_many({'scraper_config.parse_reactive'		: {"$exists" : False}}, {"$set": {'scraper_config.parse_reactive' 		: False }})
+		self.coll_spiders.update_many({'scraper_config.parse_api'			: {"$exists" : False}}, {"$set": {'scraper_config.parse_api' 			: False }})
+		self.coll_spiders.update_many({'scraper_config.follow_is_api'		: {"$exists" : False}}, {"$set": {'scraper_config.follow_is_api' 		: False }})
+		self.coll_spiders.update_many({'scraper_config.api_pagination_root'	: {"$exists" : False}}, {"$set": {'scraper_config.api_pagination_root' 	: "" }})
+		self.coll_spiders.update_many({'scraper_config.api_follow_root'		: {"$exists" : False}}, {"$set": {'scraper_config.api_follow_root' 		: "" }})
 		
-		self.coll_spiders.update_many({'scraper_config.deploy_list'			: {"$exists" : False}}, {"$set": {'scraper_config.deploy_list' : False }})
-		self.coll_spiders.update_many({'scraper_config.deploy_list_xpath'	: {"$exists" : False}}, {"$set": {'scraper_config.deploy_list_xpath' : "" }})
+		self.coll_spiders.update_many({'scraper_config.deploy_list'			: {"$exists" : False}}, {"$set": {'scraper_config.deploy_list' 			: False }})
+		self.coll_spiders.update_many({'scraper_config.deploy_list_xpath'	: {"$exists" : False}}, {"$set": {'scraper_config.deploy_list_xpath' 	: "" }})
 
-
+		# self.coll_spiders.update_many({'scraper_settings.download_delay'		: {"$exists" : False}}, {"$set": {'scraper_settings.download_delay' : 0.25 }})
+		self.coll_spiders.update_many({'scraper_settings.RETRY_TIMES'			: {"$exists" : False}}, {"$set": {'scraper_settings.RETRY_TIMES' 		: 3 }})
+		self.coll_spiders.update_many({'scraper_settings.LIMIT_ITEMS'			: {"$exists" : False}}, {"$set": {'scraper_settings.LIMIT_ITEMS' 		: 0 }})
+		self.coll_spiders.update_many({'scraper_settings.LIMIT_PAGES'			: {"$exists" : False}}, {"$set": {'scraper_settings.LIMIT_PAGES'		: 100 }})
+		self.coll_spiders.update_many({'scraper_settings.CONCURRENT_ITEMS'		: {"$exists" : False}}, {"$set": {'scraper_settings.CONCURRENT_ITEMS'	: 200 }})
+		self.coll_spiders.update_many({'scraper_settings.CONCURRENT_REQUESTS'	: {"$exists" : False}}, {"$set": {'scraper_settings.CONCURRENT_REQUESTS': 100 }})
+		self.coll_spiders.update_many({'scraper_settings.wait_driver'			: {"$exists" : False}}, {"$set": {'scraper_settings.wait_driver' 		: 5.0 }})
+		self.coll_spiders.update_many({'scraper_settings.wait_page'				: {"$exists" : False}}, {"$set": {'scraper_settings.wait_page' 			: 1.5 }})
+		self.coll_spiders.update_many({'scraper_settings.wait_implicit'			: {"$exists" : False}}, {"$set": {'scraper_settings.wait_implicit' 		: 0.5 }})
 
 
 		# create index for every collection needing it  
@@ -421,11 +557,12 @@ def main():
 	start / run app
 	"""
 
-	print "\n\n{}".format("+ + + "*20)
-	print "\n\n>>> MAIN / RE-STARTING SERVER ... >>>\n"
-
 	### setup loggers with custom format
-	setup_loggers()
+	# setup_loggers()
+
+	print()
+	print( "{}".format("+ + + "*20))
+	gen_log.warning( ">>> MAIN / RE-STARTING SERVER ... >>>\n")
 
 	# printing current IP adress
 	import socket
@@ -441,35 +578,52 @@ def main():
 	parser.add_argument('-m', '--mode', type=str, default="default")
 	args = parser.parse_args()
 
+	# update port with args.port
+	options.port = args.port
+	options.mode = args.mode
+
+	# set os environment variable for mode
+	os.environ['APP_MODE'] = str(options.mode)
+
 	app_log.info(">>> ARG.PORT FROM COMMAND LINE : %s ", args.port)
 	app_log.info(">>> ARG.MODE FROM COMMAND LINE : %s ", args.mode)
 
 	# read optionnal args from command line
 	# tornado.options.parse_command_line()
-	app_log.info(">>> options.__dict__ : %s", pformat(options.__dict__))
+	app_log.info(">>> options.__dict__ : \n%s", pformat(options.__dict__))
 
 	# print port for reminder
 	app_log.info( ">>> starting tornado / options.port    : %s ", options.port)
 	app_log.info( ">>> starting tornado / options.logging : %s ", options.logging)
 	app_log.info( ">>> starting tornado / options.help    : %s ", options.help)
+	app_log.info( ">>> starting tornado / options.mode    : %s ", options.mode)
 
-	# create server
+
+	# ### import dependencies
+	# import urls
+
+	### import controller : url functions
+	# from controller import *
+
+
+	# create server with args.mode
 	http_server = tornado.httpserver.HTTPServer(Application( mode=args.mode ))
 	app_log.info( ">>> http_server ready ...")
+
 
 	# for local dev --> debug
 	if APP_DEBUG == True : 
 		http_server.listen(options.port)
 		tornado.ioloop.IOLoop.instance().start()
 
-	# for prod --> doesn't work with autoreaload == True
+	# for prod --> doesn't work with autoreload == True
 	# cf : http://www.tornadoweb.org/en/stable/guide/running.html
 	elif APP_DEBUG == False : 
 		http_server.bind(options.port)	
 		http_server.start(0)  			# forks one process per cpu
 		tornado.ioloop.IOLoop.current().start()
 
-	print "\n{}\n".format("+ + + "*20)
+	print ("\n{}\n".format("+ + + "*20))
 
 
 

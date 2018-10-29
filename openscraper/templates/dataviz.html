@@ -1,0 +1,192 @@
+
+{% extends "main.html" %}
+
+
+{% block body %}
+
+
+<br>
+
+<section class="section">
+	<div class="container">
+		<div class="columns is-mobile is-centered">
+		  	<div class="column is-two-thirds">
+				<div class="content">
+
+
+					<br>
+					<h1 class="title has-text-centered">
+						Datavisualisation of the dataset
+					</h1>
+					<br>
+					
+
+					{# cf : http://tobiasahlin.com/blog/chartjs-charts-to-get-you-started/#7-horizontal-bar-chart #}
+					<canvas 
+						id="bar-chart-horizontal" 
+						width="100%" 
+						height="100%"
+						host={{ app_host }}
+					>
+					</canvas>
+
+
+					<script>
+
+						
+						//const APISearchOrigin = 'http://localhost:8000';
+						// const APISearchOrigin = 'http://cis-openscraper.com';
+						const APISearchOrigin = "http://" + document.getElementsByName('app_host')[0].getAttribute('content')
+						console.log('A0 - APISearchOrigin : ', APISearchOrigin) ;
+
+						var BarChart = new Chart(document.getElementById("bar-chart-horizontal"), {
+							type: 'horizontalBar',
+							data: {
+								labels: ["getting spiders stats..."],
+								datasets: [
+									{
+										data: [0],
+									}
+								]
+							},
+							options: {
+								legend: { display: false },
+								title: {
+									display: false,
+									text: 'Items scraped'
+								},
+								scales: {
+									xAxes: [{
+										display: true,
+										ticks: {
+											beginAtZero: true,
+											stepValue: 500,
+											max : 4000,
+										}
+									}]
+								}
+							}
+						});
+
+						function getRandomColor() {
+							var letters = '0123456789ABCDEF'.split('');
+							var color = '#';
+							for (var i = 0; i < 6; i++ ) {
+								color += letters[Math.floor(Math.random() * 16)];
+							}
+							return color;
+						}
+
+						function getSpiders_dicts(){
+							let url = `${APISearchOrigin}/api/infos?only_spiders_list=true&get_all_spiders=true`;
+							return fetch(url)
+							.then(r => r.json())
+						}
+
+						function getSpiders_stats(){
+							let url = `${APISearchOrigin}/api/stats`;
+							return fetch(url)
+							.then(r => r.json())
+						}
+
+						// cf : https://stackoverflow.com/questions/49102256/best-way-to-rename-object-properties-in-es6
+						function renameKeys(obj, newKeys) {
+							const keyValues = Object.keys(obj).map(key => {
+								console.log('C1 - newKeys[key] : ', newKeys[key]) ;
+								const newKey = newKeys[key]["name"] || key;
+								return { [newKey]: obj[key] };
+							});
+							return Object.assign({}, ...keyValues);
+						}
+
+						getSpiders_stats()
+						.then( spiders_stats => {
+
+							let Spiders_stats = spiders_stats.counts_stats.spiders_stats ; 
+							console.log('A1 - Spiders_stats : ', Spiders_stats) ;
+
+							getSpiders_dicts()
+							.then(spiders_dict => {
+								
+								// console.log('B1 - spiders_dict : ', spiders_dict) ;
+								let Spiders_dict = spiders_dict.spiders.spiders_dict ; 
+
+								console.log('B2 - Spiders_dict : ', Spiders_dict) ;
+
+								var BarColors = [] ;
+								for ( let key in Spiders_stats ) {
+									BarColors.push( getRandomColor() ) ;
+								} ; 
+								
+								/*
+								let NewSpidersStats = Object.keys(Spiders_stats).reduce((acc, key) => {
+									acc[ Spiders_dict[key]["name"] ] = Spiders_stats[key];
+									return acc;
+								}, {} ); 
+								*/
+
+								const NewSpidersStats = renameKeys(Spiders_stats, Spiders_dict);
+								console.log('B3 - NewSpidersStats : ', NewSpidersStats) ;
+
+								/*
+								new Chart(document.getElementById("bar-chart-horizontal"), {
+									type: 'horizontalBar',
+									data: {
+										labels: Object.keys(NewSpidersStats),
+										datasets: [
+											{
+												label: "Items scraped for this spider",
+												 
+												backgroundColor: BarColors,
+												
+												data: Object.values(NewSpidersStats),
+											}
+										]
+									},
+									options: {
+										legend: { display: false },
+										title: {
+											display: false,
+											text: 'Items scraped'
+										}
+									}
+								});
+								*/
+
+								BarChart.data = {
+									
+										labels: Object.keys(NewSpidersStats),
+										datasets: [
+											{
+												label: "Items scraped for this spider",
+												backgroundColor: BarColors,
+												data: Object.values(NewSpidersStats),
+											}
+										]
+									
+								};
+
+								BarChart.update();
+
+							})
+						})
+
+						.catch(err => console.error('err getSpiders', text, err))
+
+
+
+					</script>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+
+
+
+
+
+{% end %}

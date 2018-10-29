@@ -18,10 +18,10 @@ QUERY_TYPE = {
 ### CLEANING STRINGS ########################################################################
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
-STRIP_STRING			= u"\n\t"
+STRIP_STRING			= u"\n\t\r"
 DATA_CONTENT_TO_IGNORE 	= [ "", u"", u" ", u"-", u",", u", ", u"- "]
-SYNONYMS_TRUE			= ["yes", "YES", "true", "True", "TRUE", "1", "t", "T"]
-SYNONYMS_FALSE			= ["no", "NO", "false", "False", "FALSE", "0", "f", "F"]
+SYNONYMS_TRUE			= ["yes", "Yes", "YES", "true", "True", "TRUE", "1", "t", "T"]
+SYNONYMS_FALSE			= ["no", "No", "NO", "false", "False", "FALSE", "0", "f", "F"]
 
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 ### CLEANING SLUGS ##########################################################################

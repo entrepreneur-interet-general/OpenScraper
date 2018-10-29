@@ -1,8 +1,11 @@
 
-
-
 <h1 align=center>  OpenScraper</h1>
 
+----
+
+part 1/3 of the TADATA! sofware suite ([ApiViz](https://github.com/entrepreneur-interet-general/CIS-front) / [Solidata_backend](https://github.com/entrepreneur-interet-general/solidata_backend) / [Solidata_frontend](https://github.com/entrepreneur-interet-general/solidata_frontend) / [OpenScraper](https://github.com/entrepreneur-interet-general/OpenScraper) )
+
+---
 <h4 align=center> a public service for webscraping</h4>
 
 <h2 align=center>
@@ -17,9 +20,20 @@ OpenScraper is a minimalistic, open source webscraper with a simple interface, <
 
 <h4 align=center> OpenScraper is a project by <a href=https://entrepreneur-interet-general.etalab.gouv.fr/defi/2017/09/26/socialconnect/ >SocialConnect</a></h4>
 
-<p align=center>#python #tornado #scrapy #mongodb #bulma</p>
+<p align=center>#python #tornado #scrapy #selenium #mongodb #bulma</p>
 
 ----
+## WHAT IS NEW ? 
+
+
+- v1.3 - 20/10/2018 : added first csv converter and downloader for every spider's dataset and first routes to documentation
+- v1.2 - 18/10/2018 : a spider can adapt to follow pages either if they are API or HTML
+- v1.1 - 15/10/2018 : parser adapts to API Rest, configuration based on "/" description for the path inside the JSON 
+- v1.0 - 10/06/2018 : parser adapts to reactive website (SPA, vue, etc...)
+- vBeta : Scrapy parser based on spider configuration with Xpaths
+
+----
+
 ## ARGUMENT
 
 #### **To which needs this project aims to answer ?**
@@ -59,16 +73,29 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 
 1. **clone or [download](https://github.com/entrepreneur-interet-general/OpenScraper/archive/master.zip) the repo**
 1. **[install MongoDB](https://docs.mongodb.com/manual/installation/) locally** or get the URI of the MongoDB you're using
+1. **install chromedriver**
+	
+	- on MacOS :
+	>
+		$ brew tap caskroom/cask
+		$ brew cask install chromedriver
+
+	- on Ubuntu :
+	>
+		$ sudo apt-get install chromium-chromedriver
+
 1. **go to your openscraper folder**
 1. **install the libraries (without [virtual environment](https://pypi.python.org/pypi/virtualenv))**
 
-	> $ pip install -r requirements.txt
+	> 
+		$ pip install -r requirements.txt
 
 1. **update the `config/settings.py` file** with your mongoDB URI (if you're not using default mongoDB connection)
 
 1. **run app** from `$ ~/../app_scrapnado`
 
-	> $ python main.py
+	> 
+		$ python main.py
 
 1. **check in your browser** at `localhost:8000`
 
@@ -94,7 +121,7 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 #### Tech stack
 - _Language_ : **Python**... because let's be honest, I don't manage so many languages for that kind of project
 - _Backend_  : **[Tornado](http://www.tornadoweb.org/en/stable/)**... one of the few async/non-blocking Python frameworks
-- _Scraping_ : **[Scrapy](https://scrapy.org/)**, perhaps with **[Selenium](http://selenium-python.readthedocs.io/) for Python**  inside specific instances of the generic spider, or **Splash** for jquery follow-up...
+- _Scraping_ : **[Scrapy](https://scrapy.org/)**, with **[Selenium](http://selenium-python.readthedocs.io/) for Python**  inside specific instances of the generic spider, or **Splash** for jquery follow-up...
 - _Frontend_ : **[Bulma](https://bulma.io/)**  (to make it nice) and then **[Vue.js](https://vuejs.org/)** (to make it even nicer and bi-directional)
 
 #### Tech goals for a MVP
@@ -119,22 +146,20 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 1. DONE - integrate generic spider + tests + run
 1. DONE - make Tornado and a basic scrapy spider work together (non-blocking)
 1. DONE - make a nice front in Bulma 
-1. add API points for JSON feeds
+1. DONE - add Selenium to mimic navigation by clics on reactive websites
+1. DONE - add API points for JSON feeds
+1. DONE - add an "export csv" button and function to download the dataset
 1. deploy a demo at [http://www.cis-openscraper.com/](http://www.cis-openscraper.com/)
 1. ... nicer front in vue.js
 1. integrate JWT and hash private infos for users and API
-1. add an "exposrt csv" button and function to download the dataset
 
 
 #### Currently : 
-- currently at step(s) /10 and /11
-- working on the API points
+- adding documentation ...
 - ...
 
 #### Notes for later / issues :
-- must add logic to masterspider to request APIs
 - must migrate/copy data to a Elastic search (not only MongoDB) 
-- must add a feature to use Selenium inside a spider if needed (ajax or .click function)
 - containerize the app for simpler deployment (locally or in production)
 - ...
 

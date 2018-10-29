@@ -1,0 +1,434 @@
+
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" prefix="content: http://purl.org/rss/1.0/modules/content/  dc: http://purl.org/dc/terms/  foaf: http://xmlns.com/foaf/0.1/  og: http://ogp.me/ns#  rdfs: http://www.w3.org/2000/01/rdf-schema#  schema: http://schema.org/  sioc: http://rdfs.org/sioc/ns#  sioct: http://rdfs.org/sioc/types#  skos: http://www.w3.org/2004/02/skos/core#  xsd: http://www.w3.org/2001/XMLSchema# " class="no-js">
+  <head>
+    <meta charset="utf-8" />
+<meta name="title" content="A.C.O.R | Fondation Crédit Coopératif" />
+<meta name="description" content="A.CO.R est un organisme d’insertion professionnelle qui accompagne les demandeurs d’emplois en situation d’exclusion." />
+<script>var _paq = _paq || [];(function(){var u=(("https:" == document.location.protocol) ? "https://piwik.insite.coop/" : "http://piwik.insite.coop/");_paq.push(["setSiteId", "64"]);_paq.push(["setTrackerUrl", u+"piwik.php"]);_paq.push(["setDoNotTrack", 1]);_paq.push(["trackPageView"]);_paq.push(["setIgnoreClasses", ["no-tracking","colorbox"]]);_paq.push(["enableLinkTracking"]);var d=document,g=d.createElement("script"),s=d.getElementsByTagName("script")[0];g.type="text/javascript";g.defer=true;g.async=true;g.src=u+"piwik.js";s.parentNode.insertBefore(g,s);})();</script>
+<meta name="Generator" content="Drupal 8 (https://www.drupal.org)" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>function euCookieComplianceLoadScripts() {}</script>
+<style>div#sliding-popup, div#sliding-popup .eu-cookie-withdraw-banner, .eu-cookie-withdraw-tab {background: #0779bf} div#sliding-popup.eu-cookie-withdraw-wrapper { background: transparent; } #sliding-popup h1, #sliding-popup h2, #sliding-popup h3, #sliding-popup p, .eu-cookie-compliance-more-button, .eu-cookie-compliance-secondary-button, .eu-cookie-withdraw-tab { color: #ffffff;} .eu-cookie-withdraw-tab { border-color: #ffffff;}</style>
+<link rel="shortcut icon" href="/themes/custom/fondation_creditcoop/favicon.ico" type="image/vnd.microsoft.icon" />
+<link rel="canonical" href="/acor" />
+<link rel="shortlink" href="/node/152" />
+<link rel="revision" href="/acor" />
+
+    <title>A.C.O.R | Fondation Crédit Coopératif</title>
+    <link rel="stylesheet" href="/sites/default/files/css/css_CTk6G7ATxhg2laQ4LEg4wNjBcEgKdISV-wT9ZEma134.css?pflv7b" media="all" />
+<link rel="stylesheet" href="/sites/default/files/css/css_3fovfvnwhPgsWGMh7eFUAvWFQDi3c3idYHgfwo0dF1M.css?pflv7b" media="all" />
+
+    
+<!--[if lte IE 8]>
+<script src="/sites/default/files/js/js_VtafjXmRvoUgAzqzYTA3Wrjkx9wcWhjP0G4ZnnqRamA.js"></script>
+<![endif]-->
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+  </head>
+  <body class="path-node not-front page--node-type-laureat">
+    <div class="skiplinks">
+      <a href="#main" class="skiplinks__link visually-hidden focusable">Aller au contenu principal</a>
+    </div>
+    
+      <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    
+        <div class="region region-preheader">
+    <div class="wrapper-container">
+      <div class="search-form settings-tray-editable block block--block-de-recherche" data-drupal-selector="search-form" id="block-blockderecherche" data-drupal-settingstray="editable">
+  
+    
+      <div class="block__content">
+      <form action="/acor" method="post" id="search-form" accept-charset="UTF-8">
+  <div class="js-form-item form-item js-form-type-textfield form-type-textfield js-form-item-search form-item-search form-no-label">
+        <input placeholder="Rechercher" data-drupal-selector="edit-search" type="text" id="edit-search" name="search" value="" size="60" maxlength="128" class="form-text required" required="required" aria-required="true" />
+
+        </div>
+<input autocomplete="off" data-drupal-selector="form-6ttxvp8qqy6ad0bd4ea67cjnxmcjghj7hlsho8pkj6m" type="hidden" name="form_build_id" value="form-6TtXVP8qQy6ad0Bd4ea67CJNXMcjGhj7HlsHo8pKj6M" />
+<input data-drupal-selector="edit-search-form" type="hidden" name="form_id" value="search_form" />
+<div data-drupal-selector="edit-actions" class="form-actions js-form-wrapper form-wrapper" id="edit-actions"><span class="submit"><input data-drupal-selector="edit-submit" type="submit" id="edit-submit" name="op" value="" class="button button--primary js-form-submit form-submit" /></span></div>
+
+</form>
+
+    </div>
+  </div>
+<div id="block-socialblock" class="settings-tray-editable block block--social-block" data-drupal-settingstray="editable">
+  
+    
+      <div class="block__content">
+      <a class="home-link" href="/" title="Accueil" rel="home"></a>
+
+<ul class="preheader-links">
+      <li>
+      <a href="/form/contact" class="social header mail">Mail</a>
+    </li>
+      <li>
+      <a href="https://twitter.com/Fondation_CC" class="social header twitter">Twitter</a>
+    </li>
+      <li>
+      <a href="https://www.youtube.com/user/FondationCC" class="social header youtube">YouTube</a>
+    </li>
+  </ul>
+    </div>
+  </div>
+
+    </div>
+  </div>
+
+  
+        <div class="region region-header">
+    <div class="region-header-left">
+          <a class="site-name" href="/" title="Accueil" rel="home">
+          <img class="logo-cc" src="/themes/custom/fondation_creditcoop/logo.svg" alt="">
+        </a>
+      </div>
+
+
+<div class="region-header-right">
+  <div class="desktop-ct">
+
+    <div class="border-links">
+      <a href="#" class="btn decouvrir">
+  Découvrir la fondation en vidéo
+</a>
+
+      <br>
+      <a href="#" class="btn lsf">
+  
+</a>
+
+    </div>
+
+    <button class="dyslexie-btn">
+      <span class="acces">Accessibilité dyslexie</span>
+      <span class="classic">Version standard</span>
+    </button>
+
+  </div>
+
+
+  <div class="mobile-ct">
+    <button class="mobile-btn">Menu</button>
+  </div>
+
+</div>
+  </div>
+
+  
+        <div class="region region-navigation">
+    <div id="block-fondation-creditcoop-filsdariane" class="settings-tray-editable block block--fils-dariane" data-drupal-settingstray="editable">
+  
+    
+      <div class="block__content">
+        <nav class="breadcrumb" role="navigation" aria-labelledby="system-breadcrumb">
+    <h2 id="system-breadcrumb" class="visually-hidden">Fil d'Ariane</h2>
+    <ol>
+          <li>
+                  <a href="/">Accueil</a>
+              </li>
+        </ol>
+  </nav>
+
+    </div>
+  </div>
+
+<nav class="nav-main">
+              <ul class="navbar-nav"><li class="nav-item dropdown is-expanded"><span class="nav-link dropdown-toggle is-expanded" data-drupal-link-system-path="&lt;front&gt;">La Fondation</span><ul class="navbar-nav dropdown"><li class="nav-item dropdown is-expanded"><span class="nav-link dropdown-toggle is-expanded" data-drupal-link-system-path="&lt;front&gt;">Notre vocation</span><ul class="navbar-nav dropdown"><li class="nav-item"><a href="/regards-croises" class="nav-link" data-drupal-link-system-path="node/6">Regards croisés</a></li><li class="nav-item"><a href="/missions" class="nav-link" data-drupal-link-system-path="node/15">Missions</a></li><li class="nav-item"><a href="/collaborateurs-engages" class="nav-link" data-drupal-link-system-path="node/11">Collaborateurs engagés</a></li></ul></li><li class="nav-item dropdown is-expanded"><span class="nav-link dropdown-toggle is-expanded" data-drupal-link-system-path="&lt;front&gt;">Notre organisation</span><ul class="navbar-nav dropdown"><li class="nav-item"><a href="/notre-organisation#conseil-d-administration" class="nav-link" data-drupal-link-system-path="node/17">Conseil d&#039;administration</a></li><li class="nav-item"><a href="/notre-organisation#equipe" class="nav-link" data-drupal-link-system-path="node/17">Équipe</a></li><li class="nav-item"><a href="/notre-organisation#comites" class="nav-link" data-drupal-link-system-path="node/17">Comités</a></li></ul></li><li class="nav-item dropdown is-expanded"><span class="nav-link dropdown-toggle is-expanded" data-drupal-link-system-path="&lt;front&gt;">Nos publications</span><ul class="navbar-nav dropdown"><li class="nav-item"><a href="/editions-de-la-fondation" class="nav-link" data-drupal-link-system-path="node/9">Éditions de la Fondation</a></li><li class="nav-item"><a href="/travaux-soutenus" class="nav-link" data-drupal-link-system-path="node/10">Travaux soutenus</a></li></ul></li></ul></li><li class="nav-item dropdown is-expanded"><span class="nav-link dropdown-toggle is-expanded" data-drupal-link-system-path="&lt;front&gt;">Les champs d&#039;intervention</span><ul class="navbar-nav dropdown"><li class="nav-item dropdown is-expanded"><span class="nav-link dropdown-toggle is-expanded" data-drupal-link-system-path="&lt;front&gt;">L&#039;Exploration</span><ul class="navbar-nav dropdown"><li class="nav-item"><a href="/l-exploration" class="nav-link" data-drupal-link-system-path="node/3">Soutenir L&#039;EXPLORATION</a></li><li class="nav-item"><a href="/l-exploration#explorateurs-soutenus" class="nav-link" data-drupal-link-system-path="node/3">Explorateurs</a></li></ul></li><li class="nav-item dropdown is-expanded"><span class="nav-link dropdown-toggle is-expanded" data-drupal-link-system-path="&lt;front&gt;">L&#039;Inspiration</span><ul class="navbar-nav dropdown"><li class="nav-item"><a href="/l-inspiration" class="nav-link" data-drupal-link-system-path="node/1">Soutenir L&#039;INSPIRATION</a></li><li class="nav-item"><a href="/appel-a-initiatives-en-ess" class="nav-link" data-drupal-link-system-path="node/12">Appel à initiatives en ESS</a></li><li class="nav-item"><a href="/carte-des-inspires" class="nav-link" data-drupal-link-system-path="node/13">Carte des inspirés</a></li></ul></li><li class="nav-item dropdown is-expanded"><span class="nav-link dropdown-toggle is-expanded" data-drupal-link-system-path="&lt;front&gt;">La Transformation</span><ul class="navbar-nav dropdown"><li class="nav-item"><a href="/la-transformation" class="nav-link" data-drupal-link-system-path="node/2">Soutenir LA TRANSFORMATION</a></li><li class="nav-item"><a href="/la-transformation#transformeurs-soutenus" class="nav-link" data-drupal-link-system-path="node/2">Transformeurs</a></li></ul></li></ul></li><li class="nav-item dropdown is-expanded"><span class="nav-link dropdown-toggle is-expanded" data-drupal-link-system-path="&lt;front&gt;">Les actualités</span><ul class="navbar-nav dropdown"><li class="nav-item dropdown is-expanded"><span class="nav-link dropdown-toggle is-expanded" data-drupal-link-system-path="&lt;front&gt;">Nos actus</span><ul class="navbar-nav dropdown"><li class="nav-item"><a href="/quoi-de-neuf" class="nav-link" data-drupal-link-system-path="node/4">Quoi de neuf ?</a></li><li class="nav-item"><a href="/espace-presse" class="nav-link" data-drupal-link-system-path="node/8">Espace Presse</a></li></ul></li></ul></li></ul>  
+
+
+</nav>
+
+
+  </div>
+
+  
+  
+  
+  
+
+        <div class="region region-content">
+    <div id="block-partagedecontenu" class="settings-tray-editable block block--partager-sur" data-drupal-settingstray="editable">
+  
+      <h2 class="block__title">Partager sur</h2>
+    
+      <div class="block__content">
+      <ul class="links"><li class="twt"><a href="http://twitter.com/intent/tweet/?text=A.C.O.R&amp;url=https%3A//fondation.credit-cooperatif.coop/acor" class="share-twt" onclick="javascript:window.open(this.href,  &#039;&#039;, &#039;menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600&#039;);return false;">Partagez sur Twitter</a></li><li class="lki"><a href="https://www.linkedin.com/shareArticle?mini=true&amp;title=A.C.O.R&amp;url=https%3A//fondation.credit-cooperatif.coop/acor" class="share-lki" onclick="javascript:window.open(this.href,  &#039;&#039;, &#039;menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600&#039;);return false;">Partagez sur LinkedIn</a></li><li class="fb"><a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//fondation.credit-cooperatif.coop/acor" class="share-fb" onclick="javascript:window.open(this.href,  &#039;&#039;, &#039;menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600&#039;);return false;">Partagez sur Facebook</a></li></ul>
+    </div>
+  </div>
+<div id="block-fondation-creditcoop-contenudelapageprincipale" class="block block--contenu-de-la-page-principale">
+  
+    
+      <div class="block__content">
+      <div class="projet-full">
+  <h1><span class="field field--name-title field--type-string field--label-hidden">A.C.O.R</span>
+</h1>
+  <div class="pf-top">
+    <div class="pf-top-right">
+      <div class="maj-year-ct">
+        <div class="maj">
+          mis à jour<br>
+          le 31/08/2018
+        </div>
+        <div class="year">
+          2016
+        </div>
+      </div>
+      <div class="trophys">
+                  <div class="trophy lauréat-régional">
+    <div><span>Lauréat Régional</span></div>
+  </div><br>
+
+          </div>
+    </div>
+    <div class="pf-top-left">
+      <div class="left-col">
+                
+            <div class="field field--name-field-logo field--type-image field--label-hidden field__item">  <img src="/sites/default/files/styles/logo/public/laureat/image/35_A.C.O.R.png?itok=eOMHE-Rr" width="160" height="113" alt="" typeof="foaf:Image" class="image-style-logo" />
+
+
+</div>
+      
+            
+            <div class="clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item"><p>A.CO.R est un organisme d’insertion professionnelle qui accompagne les demandeurs d’emplois en situation d’exclusion. Son dernier projet est une application smartphone, nommée « j’ai une offre », destiné aux TPE PME locales. En appuyant simplement sur un bouton l’employeur avertit l’association d’un besoin en personnel. A.CO.R traite la demande dans la journée et propose à l’entreprise des candidatures. L’application permet aussi de diffuser l’information sur l’offre à d’autres structures d’insertion.</p></div>
+      
+      </div>
+      <div class="right-col">
+        
+                
+            <div class="field field--name-field-visuel field--type-image field--label-hidden field__item">  <img src="/sites/default/files/styles/project_full/public/2018-06/iStock-904479942_7.jpg?itok=FSKXLZ5x" width="360" height="270" alt="" typeof="foaf:Image" class="image-style-project-full" />
+
+
+</div>
+      
+            <div class="infos-txt">
+                      <div class="enjeux">
+              <b>Enjeu(x) : </b>
+              <ul>
+  <li>
+    
+            <div class="field field--name-field-logo-thematique field--type-image field--label-hidden field__item">  <img src="/sites/default/files/styles/thumbnail/public/2018-05/emploi.png?itok=BQvHSqcE" width="100" height="100" alt="" typeof="foaf:Image" class="image-style-thumbnail" />
+
+
+</div>
+        <p><strong>Emploi</strong></p>
+
+  </li>
+</ul>
+            </div>
+                              <p>
+            <b>Forme d'organisation : </b>
+            Association
+          </p>
+                                          <p>
+              <b>Rattachement : </b>
+              Réseau 2E64
+            </p>
+                            </div>
+      </div>
+    </div>
+  </div>
+
+          
+                      
+    
+  <div class="pf-bottom">
+    <h2>Contact</h2>
+
+    <div class="pf-bottom-ct">
+      <div class="pf-bottom-left">
+        <div class="projets-infos">
+  <h3><span class="field field--name-title field--type-string field--label-hidden">A.C.O.R</span>
+</h3>
+            <div class="adress">15 avenue  Jean Mermoz - 64000 - PAU</div>
+                  <div class="departement"><span>Département : </span>64 - Pyrénées-Atlantiques</div>
+                  <div class="region"><span>Région : </span>Nouvelle-Aquitaine</div>
+                  <div class="tel">05 59 82 82 02</div>
+                  <div class="email"><a href="mailto:acor@a-co-r.com">Envoyez un mail</a></div>
+        <div class="projets-links">
+                  <a href="http://www.a-co-r.com" class="link website">Voir le site internet</a>
+                            <a href="https://www.facebook.com/acorsudouest/" class="social laureat facebook">Facebook</a>
+                            </div>
+</div>      </div>
+      <div class="pf-bottom-middle">
+                
+            <div class="field field--name-field-coordonnees field--type-geofield field--label-hidden field__item"><div id="leaflet-map" style="min-width: 150px; height: 310px"></div>
+</div>
+      
+          </div>
+      <div class="pf-bottom-right">
+        <div class="box-link box-retour-carte">
+  <a href="/node/13" class="link savoir-plus">Retour à la carte</a>
+  <h4>Pour agrémenter<br>votre fiche,</h4>
+  <a href="/contact/contact" class="link savoir-plus">Contactez-nous</a>
+</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+<div class="projets-similaires">
+  <h2>À découvrir</h2>
+  <div class="projets-similaires-list">
+            <div class="projet-teaser">
+      
+            <div class="field field--name-field-visuel field--type-image field--label-hidden field__item">  <img src="/sites/default/files/styles/project_teaser/public/2018-06/iStock-866657418_2.jpg?itok=Sl-tisb_" width="285" height="175" alt="" typeof="foaf:Image" class="image-style-project-teaser" />
+
+
+</div>
+      
+    <div class="projet-teaser-txt">
+    <h5><span class="field field--name-title field--type-string field--label-hidden">Institut de Coopération Internationale</span>
+</h5>
+    
+            <div class="clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item"><p>L’Institut de Coopération Internationale a déployé un programme, « Bancoo », visant à former et orienter les jeunes de...</p></div>
+      
+    <a href="/institut-de-cooperation-internationale" class="link savoir-plus">En savoir plus</a>
+  </div>
+</div>
+<div class="projet-teaser">
+      
+            <div class="field field--name-field-visuel field--type-image field--label-hidden field__item">  <img src="/sites/default/files/styles/project_teaser/public/2018-06/iStock-635903112_8.jpg?itok=eEoWX1za" width="285" height="175" alt="" typeof="foaf:Image" class="image-style-project-teaser" />
+
+
+</div>
+      
+    <div class="projet-teaser-txt">
+    <h5><span class="field field--name-title field--type-string field--label-hidden">AIPPHEMAT</span>
+</h5>
+    
+            <div class="clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item"><p>Au Havre, depuis 1983, un atelier de reliure et de dorure est tenu par des personnes handicapées avec le soutien de l...</p></div>
+      
+    <a href="/aipphemat" class="link savoir-plus">En savoir plus</a>
+  </div>
+</div>
+<div class="projet-teaser">
+      
+            <div class="field field--name-field-visuel field--type-image field--label-hidden field__item">  <img src="/sites/default/files/styles/project_teaser/public/2018-06/iStock-843249732_7.jpg?itok=a7GCIp7G" width="285" height="175" alt="" typeof="foaf:Image" class="image-style-project-teaser" />
+
+
+</div>
+      
+    <div class="projet-teaser-txt">
+    <h5><span class="field field--name-title field--type-string field--label-hidden">Id’ées Services</span>
+</h5>
+    
+            <div class="clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item"><p>Avec <strong>65 à 75% de ses effectifs en insertion</strong>, Id’ées Services, filiale du groupe Idées,fabrique des produits de...</p></div>
+      
+    <a href="/id-ees-services" class="link savoir-plus">En savoir plus</a>
+  </div>
+</div>
+
+    </div>
+</div>
+  </div>
+
+  
+        <div class="region region-footer">
+    <div class="wrapper-container">
+      <div class="col one">
+        
+              <ul class="menu">
+                    <li class="menu-item">
+        <a href="/nos-collaborations" data-drupal-link-system-path="node/14">Nos collaborations</a>
+              </li>
+                <li class="menu-item">
+        <a href="/foire-aux-questions" data-drupal-link-system-path="node/7">Foire aux questions</a>
+              </li>
+                <li class="menu-item">
+        <a href="/espace-presse" data-drupal-link-system-path="node/8">Espace presse</a>
+              </li>
+        </ul>
+  
+
+
+      </div>
+      <div class="col two">
+        <a href="/form/contact" class="footer-link">Contact</a>
+        <div class="footer-cat">Espaces</div>
+        <ul class="footer-links">
+          <li><a href="/sitemap">Plan du site</a></li>
+          <li><a href=/node/19>Mentions légales et Crédits</a></li>
+        </ul>
+      </div>
+      <div class="col three">
+        <div class="footer-cc">
+          <a href="https://www.credit-cooperatif.coop/Institutionnel">
+            <span class="logo credit-coop white"></span> </a>
+            <p>Fondateur de la Fondation Crédit Coopératif</p>
+        </div>
+        <div class="footer-agir">
+          <a href="https://www.agirandco.coop/">
+            <span class="logo agir-co white"></span>
+          </a>
+          <p>Le hub du Crédit Coopératif</p>
+        </div>
+        <a href="#" class="btn lsf-white">
+  
+</a>
+
+<br class="mobile">
+        <button class="dyslexie-btn white">
+          <span class="acces">Accessibilité dyslexie</span>
+          <span class="classic">Version standard</span>
+        </button>
+      </div>
+      <div class="col four">
+        <div class="socials-footer">
+
+          <h3>Suivez-nous</h3>
+          <ul>
+            <li><a href="https://twitter.com/Fondation_CC" class="social footer twitter">Twitter</a></li>
+            <li><a href="https://www.youtube.com/user/FondationCC" class="social footer youtube">Youtube</a></li>
+                                  </ul>
+        </div>
+        <div class="footer-nl">
+          <h3>Abonnez-vous à la newsletter</h3>
+          <div class="block block--">
+  
+    
+      <div class="block__content">
+      <form class="webform-submission-form webform-submission-add-form webform-submission-inscription-newsletter-form webform-submission-inscription-newsletter-add-form webform-submission-inscription-newsletter-node-152-form webform-submission-inscription-newsletter-node-152-add-form js-webform-submit-once js-webform-details-toggle webform-details-toggle" data-drupal-selector="webform-submission-inscription-newsletter-node-152-add-form" action="/acor" method="post" id="webform-submission-inscription-newsletter-node-152-add-form" accept-charset="UTF-8">
+  
+  <div class="js-form-item form-item js-form-type-email form-type-email js-form-item-votre-adresse-email form-item-votre-adresse-email form-no-label">
+      <label for="edit-votre-adresse-email" class="visually-hidden">Votre adresse email</label>
+        <input data-drupal-selector="edit-votre-adresse-email" type="email" id="edit-votre-adresse-email" name="votre_adresse_email" value="" size="60" maxlength="254" placeholder="Votre adresse e-mail" class="form-email" />
+
+        </div>
+<div data-drupal-selector="edit-actions" class="form-actions webform-actions js-form-wrapper form-wrapper" id="edit-actions"><span class="submit"><input class="webform-button--submit button button--primary js-form-submit form-submit" data-drupal-selector="edit-actions-submit" type="submit" id="edit-actions-submit" name="op" value="OK" /></span>
+</div>
+<input autocomplete="off" data-drupal-selector="form-00hoxnijo-lev5ry1n-eaaimiha-2x51srgo-i7wzbe" type="hidden" name="form_build_id" value="form-00HOXnIJo-lEV5Ry1n-EAAImiHa-2x51SRGo-I7WzBE" />
+<input data-drupal-selector="edit-webform-submission-inscription-newsletter-node-152-add-form" type="hidden" name="form_id" value="webform_submission_inscription_newsletter_node_152_add_form" />
+
+  
+</form>
+
+    </div>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="popin">
+    <div class="videoWrapper">
+        <button class="close">Close</button>
+        <iframe width="560" height="315" src="" frameborder="0" allowfullscreen></iframe>
+    </div>
+</div>
+
+  </div>
+
+    
+    <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","scriptPath":null,"pathPrefix":"","currentPath":"node\/152","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"fr"},"pluralDelimiter":"\u0003","piwik":{"trackMailto":true},"data":{"extlink":{"extTarget":true,"extClass":"ext","extLabel":"","extImgClass":false,"extSubdomains":false,"extExclude":"","extInclude":"","extCssExclude":"","extCssExplicit":"","extAlert":false,"extAlertText":"","mailtoClass":"mailto","mailtoLabel":""}},"eu_cookie_compliance":{"popup_enabled":true,"popup_agreed_enabled":true,"popup_hide_agreed":true,"popup_clicking_confirmation":true,"popup_scrolling_confirmation":false,"popup_html_info":"\u003Cdiv class=\u0022eu-cookie-compliance-banner eu-cookie-compliance-banner-info\u0022\u003E\n  \u003Cdiv class =\u0022popup-content info eu-cookie-compliance-content\u0022\u003E\n    \u003Cdiv id=\u0022popup-text\u0022 class=\u0022eu-cookie-compliance-message\u0022\u003E\n      \u003Ch2\u003ENous utilisons des cookies sur ce site pour am\u00e9liorer votre exp\u00e9rience d\u0027utilisateur.\u003C\/h2\u003E\u003Cp\u003EEn cliquant sur un lien de cette page, vous nous donnez votre consentement de d\u00e9finir des cookies.\u003C\/p\u003E\n              \u003Cbutton type=\u0022button\u0022 class=\u0022find-more-button eu-cookie-compliance-more-button\u0022\u003ENon, je d\u00e9sire de plus amples informations\u003C\/button\u003E\n          \u003C\/div\u003E\n    \u003Cdiv id=\u0022popup-buttons\u0022 class=\u0022eu-cookie-compliance-buttons\u0022\u003E\n      \u003Cbutton type=\u0022button\u0022 class=\u0022agree-button eu-cookie-compliance-default-button\u0022\u003EOui, je suis d\u0026#039;accord\u003C\/button\u003E\n          \u003C\/div\u003E\n  \u003C\/div\u003E\n\u003C\/div\u003E","use_mobile_message":false,"mobile_popup_html_info":"\u003Cdiv class=\u0022eu-cookie-compliance-banner eu-cookie-compliance-banner-info\u0022\u003E\n  \u003Cdiv class =\u0022popup-content info eu-cookie-compliance-content\u0022\u003E\n    \u003Cdiv id=\u0022popup-text\u0022 class=\u0022eu-cookie-compliance-message\u0022\u003E\n      \n              \u003Cbutton type=\u0022button\u0022 class=\u0022find-more-button eu-cookie-compliance-more-button\u0022\u003ENon, je d\u00e9sire de plus amples informations\u003C\/button\u003E\n          \u003C\/div\u003E\n    \u003Cdiv id=\u0022popup-buttons\u0022 class=\u0022eu-cookie-compliance-buttons\u0022\u003E\n      \u003Cbutton type=\u0022button\u0022 class=\u0022agree-button eu-cookie-compliance-default-button\u0022\u003EOui, je suis d\u0026#039;accord\u003C\/button\u003E\n          \u003C\/div\u003E\n  \u003C\/div\u003E\n\u003C\/div\u003E","mobile_breakpoint":768,"popup_html_agreed":"\u003Cdiv class=\u0022eu-cookie-compliance-banner eu-cookie-compliance-banner-thank-you\u0022\u003E\n  \u003Cdiv class =\u0022popup-content agreed eu-cookie-compliance-content\u0022\u003E\n    \u003Cdiv id=\u0022popup-text\u0022 class=\u0022eu-cookie-compliance-message\u0022\u003E\n      \u003Ch2\u003EMerci d\u0027avoir accept\u00e9 les cookies\u003C\/h2\u003E\u003Cp\u003EVous pouvez d\u00e9sormais masquer ce message ou en apprendre plus \u00e0 propos des cookies.\u003C\/p\u003E\n    \u003C\/div\u003E\n    \u003Cdiv id=\u0022popup-buttons\u0022 class=\u0022eu-cookie-compliance-buttons\u0022\u003E\n      \u003Cbutton type=\u0022button\u0022 class=\u0022hide-popup-button eu-cookie-compliance-hide-button\u0022\u003EMasquer\u003C\/button\u003E\n              \u003Cbutton type=\u0022button\u0022 class=\u0022find-more-button eu-cookie-compliance-more-button-thank-you\u0022 \u003EPlus d\u0026#039;infos\u003C\/button\u003E\n          \u003C\/div\u003E\n  \u003C\/div\u003E\n\u003C\/div\u003E","popup_use_bare_css":false,"popup_height":"auto","popup_width":"100%","popup_delay":1000,"popup_link":"\/cookies_page","popup_link_new_window":false,"popup_position":false,"popup_language":"fr","store_consent":false,"better_support_for_screen_readers":true,"cookie_name":"","reload_page":false,"domain":"","popup_eu_only_js":false,"cookie_lifetime":100,"cookie_session":null,"disagree_do_not_show_popup":false,"method":"default","whitelisted_cookies":"","withdraw_markup":"\u003Cbutton type=\u0022button\u0022 class=\u0022eu-cookie-withdraw-tab\u0022\u003EPrivacy settings\u003C\/button\u003E\n\u003Cdiv class=\u0022eu-cookie-withdraw-banner\u0022\u003E\n  \u003Cdiv class=\u0022popup-content info eu-cookie-compliance-content\u0022\u003E\n    \u003Cdiv id=\u0022popup-text\u0022 class=\u0022eu-cookie-compliance-message\u0022\u003E\n      \u003Cp\u003E\u0026lt;h2\u0026gt;We use cookies on this site to enhance your user experience\u0026lt;\/h2\u0026gt;\u0026lt;p\u0026gt;You have given your consent for us to set cookies.\u0026lt;\/p\u0026gt;\u003C\/p\u003E\n\n    \u003C\/div\u003E\n    \u003Cdiv id=\u0022popup-buttons\u0022 class=\u0022eu-cookie-compliance-buttons\u0022\u003E\n      \u003Cbutton type=\u0022button\u0022 class=\u0022eu-cookie-withdraw-button\u0022\u003EWithdraw consent\u003C\/button\u003E\n    \u003C\/div\u003E\n  \u003C\/div\u003E\n\u003C\/div\u003E","withdraw_enabled":false},"ajaxTrustedUrl":{"form_action_p_pvdeGsVG5zNF_XLGPTvYSKCf43t8qZYSwcfZl2uzM":true},"leaflet":{"leaflet-map":{"mapId":"leaflet-map","map":{"label":"OSM Mapnik","description":"Carte Leaflet par d\u00e9faut.","settings":{"dragging":true,"touchZoom":true,"scrollWheelZoom":true,"doubleClickZoom":true,"zoomControl":true,"attributionControl":true,"trackResize":true,"fadeAnimation":true,"zoomAnimation":true,"closePopupOnClick":true,"zoom":"10","minZoom":"0","maxZoom":"18"},"layers":{"earth":{"urlTemplate":"\/\/{s}.tile.openstreetmap.org\/{z}\/{x}\/{y}.png","options":{"attribution":"OSM Mapnik"}}}},"features":[{"type":"point","lat":43.306699999999999,"lon":-0.37656400000000001}]}},"user":{"uid":0,"permissionsHash":"995a8756dc8a33acd6bc8f62c83e9a18ff19ff73ee0d3d6ccc028af25acd4180"}}</script>
+<script src="/sites/default/files/js/js_gmH9AmvMyTNe8enoD9PFKNiB0dq7mDUnj4-BjWAAtRM.js"></script>
+
+  </body>
+</html>

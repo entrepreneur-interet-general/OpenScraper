@@ -1,5 +1,10 @@
 # -*- encoding: utf-8 -*-
 
+from 	tornado.log import enable_pretty_logging, LogFormatter, access_log, app_log, gen_log
+
+gen_log.info("--> importing .spider_handler")
+
+
 from 	base_handler import *
 from 	base_utils	import *
 
@@ -38,7 +43,7 @@ class SpiderHandler(BaseHandler) :
 	@onthread
 	def get(self, slug=None ):
 		
-		print 
+		print()
 		app_log.info("SpiderHandler.get... ")
 
 		# catch error message if any
@@ -53,6 +58,12 @@ class SpiderHandler(BaseHandler) :
 		query_contrib = self.filter_slug( slug_, slug_class="crawl" )
 		app_log.info("SpiderHandler.get / query_contrib : \n %s ", pformat(query_contrib) )
 
+		# get next page
+		app_log.info("SpiderHandler.get / next : ")
+		# next_url = self.get_argument('next', '')
+		next_url = query_contrib["next"]
+		app_log.info("next_url : %s", next_url)
+
 		# get spider_id to crawl
 		spider_id 	= query_contrib["spider_id"]
 		spider_oid 	= ObjectId(spider_id)
@@ -63,7 +74,7 @@ class SpiderHandler(BaseHandler) :
 
 
 		app_log.info("SpiderHandler.get / spider_id : %s", spider_id )
-		print spider_oid, type(spider_oid)
+		print (spider_oid, type(spider_oid))
 
 		### retrieve spider config from its name in the db
 		# spider_config = self.application.coll_spiders.find_one({"scraper_config.spidername": spidername})
@@ -72,26 +83,53 @@ class SpiderHandler(BaseHandler) :
 		except : 
 			spider_config = None
 		
-		
+		### retrieve reactive spiders already running
+		try : 
+			spider_reactive_running = self.application.coll_spiders.find_one( 
+				{"$and": [
+					{"scraper_config.parse_reactive" 	: True },
+					{"scraper_log.is_running" 			: True },
+					{"$not" : {"_id": spider_oid }}
+				] } 
+			)
+			app_log.info("SpiderHandler.get --- another spider_reactive_running : \n%s", spider_reactive_running ) 
+		except : 
+			spider_reactive_running = None
+
+
 		### if no spider_config
 		if spider_config == None : 
 			
 			app_log.warning("SpiderHandler.get --- !!! spider_id -%s- not found : test spider with test_config", spider_id ) 
 			
 			self.error_msg = self.add_error_message_to_slug( 
-								error_string	= "ERROR !!! there is no spider configuration with -%s- spider_id in the DB" %(str(spider_id)),
-								args_to_delete	= QUERY_CRAWL_BY_DEFAULT.keys()
+									error_string	= "ERROR !!! there is no spider configuration with -%s- spider_id in the DB" %(str(spider_id)),
+									args_to_delete	= QUERY_CRAWL_BY_DEFAULT.keys()
 								)
 
 			# redirect client before starting spider
 			self.redirect("/contributors" + self.error_msg )
 			
-		
+			
+		### if other spider_reactive_running
+		elif spider_reactive_running != None : 
+			
+			app_log.warning("SpiderHandler.get --- !!! another reactive spider is already running ..." ) 
+			
+			self.error_msg = self.add_error_message_to_slug( 
+									error_string	= "ERROR !!! another reactive spider is already running, please retry later",
+									args_to_delete	= QUERY_CRAWL_BY_DEFAULT.keys()
+								)
+
+			# redirect client before starting spider
+			self.redirect("/contributors" + self.error_msg )
+
 		### if a spider config exists
 		else : 
 
 			# get spider status : if already running prohibit spider from running again
 			is_running 	= spider_config["scraper_log"]["is_running"]
+			is_reactive = spider_config["scraper_config"]["parse_reactive"]
 			spider_name	= spider_config["infos"]["name"]
 
 			if is_running == True : 
@@ -108,8 +146,12 @@ class SpiderHandler(BaseHandler) :
 
 			else : 
 
+
 				# redirect client before starting spider
-				self.redirect("/contributors"  )
+				if next_url != "1" : 
+					self.redirect("/contributors?page_n=" + str(next_url)  )
+				else :
+					self.redirect("/contributors"  )
 
 				app_log.info("SpiderHandler.get --- spider_id     : %s ", spider_id )
 				app_log.info("SpiderHandler.get --- spider_config : %s ", pformat(spider_config["infos"]) )
@@ -158,7 +200,7 @@ class SpiderHandler(BaseHandler) :
 						countdown=None
 					) :
 		
-		print 
+		print()
 		app_log.info("SpiderHandler.run_spider --- " )
 		
 
