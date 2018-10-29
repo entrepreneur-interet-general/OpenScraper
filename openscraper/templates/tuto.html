@@ -10,21 +10,671 @@
 <section class="section">
 	<div class="container">
 		<div class="columns is-mobile is-centered">
-		  	<div class="column is-two-thirds">
+		  	<div class="column is-10">
 				<div class="content">
 
 
 					<br>
 					<h1 class="title has-text-centered">
-						Tutorial
+						How to use 
+						<br>
+						<strong>{{ page_title }}</strong>
 					</h1>
 					<br>
 
 
 					<p>
-						Not ready yet but we're working on it, swear !
+						OK, you need some structured data but you are just discovering the marvelous world of scraping.
+						<br>So let's see - step by step - how we do it with Open Scraper...
 					</p>
-				
+					<br>
+
+
+					{# SUMMARY #}
+					<hr>
+					<div>
+						<h3 class="has-text-centered">
+							<em>summary</em>
+						</h3>
+
+						<div class="columns is-mobile is-centered">
+							<div class="column is-two-thirds">
+							
+								<p class="has-text-centered">
+									<ul>
+										<li>
+											<a href="#intro"><strong>I/ Get prepared to scrap</strong></a>
+											: familarize yourself with what scraping is and is not
+										</li>
+										<li>
+											<a href="#datamodel"><strong>II/ Define a datamodel </strong></a>
+											: what is the expected structure of the data you'll scrap 
+										</li>
+										<li>
+											<a href="#scraper"><strong>III/ Configure a scraper </strong></a>
+											: how does a scraper adapts itself to scrap the website you'll target
+										</li>
+										<li>
+											<a href="#api"><strong>IV/ Request you data </strong></a>
+											: how do you consume the dataset once the scraping is finished
+										</li>
+									</ul>
+								</p>
+							</div>
+						</div>
+
+					</div>
+
+
+
+					{# INTRODUCTION TO SCRAPING #}
+					<br id="intro">
+					<hr>
+					<h2>
+						I/ Get prepared to scrap
+					</h2>
+					<br>
+					<div class="columns is-mobile is-centered">
+						<div class="column is-one-thirds">
+							<p>
+								If you are really using a scraper for the very first time we invite you to check our presentation : 
+								<a href="https://docs.google.com/presentation/d/1J2nThxY3-8N7nst29M1jj-Po70MI3iUREYlQGamfiOs/edit?usp=sharing" target="_blank">
+									"An open source tool to scrap'em all. An introduction to scraping and to Open Scraper"
+								</a>
+								.
+							</p>
+							<p>
+								This presentation aims to summarize the main purposes of scraping, 
+								<ul>
+									<li> What is a data and a datamodel?</li>
+									<li> Why scraping data from internet could be useful and for who?</li>
+									<li> What are the main problems when it comes to scrap several websites?</li>
+									<li> How Open Scraper tries to offer a solution ... </li>
+								</ul>
+							</p>
+							<p>
+								Another notions to get used to are the ones related to the 
+								<a href="#xpath">
+									use of XPATH
+								</a>
+								, which is the main language used by Open Scraper to select items while scraping.
+							</p>
+							<p>
+								To learn more about XPATH 
+								<a href="#xpath">
+									check this section.
+								</a>
+							</p>
+						</div>
+						<div class="column is-one-thirds has-text-centered">
+							<div class="card-image">
+								<a href="https://docs.google.com/presentation/d/1J2nThxY3-8N7nst29M1jj-Po70MI3iUREYlQGamfiOs/edit?usp=sharing"  target="_blank">
+									<figure class="box image 1">
+										<img src="{{ static_url ('images/tutos/intro_00.png') }}">
+									</figure>
+									{# <em>Introduction to scraping</em> #}
+								</a>
+							</div>
+						{# </div>
+						<div class="column is-one-thirds has-text-centered"> #}
+							<div class=" card-image">
+								<a href="https://docs.google.com/presentation/d/1J2nThxY3-8N7nst29M1jj-Po70MI3iUREYlQGamfiOs/edit?usp=sharing"  target="_blank">
+									<figure class="box image 1">
+										<img src="{{ static_url ('images/tutos/intro_01.png') }}">
+									</figure>
+									{# <em>Introduction to scraping</em> #}
+								</a>
+							</div>
+						</div>
+					</div>
+
+
+
+
+
+					{# DEFINE DATAMODEL #}
+					<br id="datamodel">
+					<hr>
+					<h2>
+						II/ Define a datamodel
+					</h2>
+					<br>
+					<div>
+						<div class="columns is-mobile is-centered">
+							<div class="column is-half">
+								<p>
+									The first thing to do before doing any scraping is to define the structure of the dataset you will work on. 
+								</p>
+								<p>
+									By default everybody can see the structure / datamodel but not edit it by clicking on 
+									<a href="/datamodel/view" target="_blank">
+										"List of the fields you want to extract"
+									</a>
+									leading you to the "data structure overview".
+								</p>
+								<p>
+									If you are an <code>admin</code> or member of the <code>staff</code> you will be able to access 
+									<a href="/datamodel/edit" target="_blank">
+										"Edit your data model"
+									</a>.
+								</p>
+							</div>
+							<div class="column is-half has-text-centered">
+								<div class="box card-image">
+									<figure class="image 1">
+										<img src="{{ static_url ('images/tutos/datamodel_00c.png') }}">
+									</figure>
+								</div>
+								<div class="box card-image">
+									<figure class="image 1">
+										<img src="{{ static_url ('images/tutos/datamodel_00d.png') }}">
+									</figure>
+								</div>
+							</div>
+						</div>
+						<br>
+						<div class="columns is-mobile is-centered">
+							<div class="column is-half">
+								<p>
+									If you are an <code>admin</code> or member of the <code>staff</code> you can then click on 
+									<a href="/datamodel/view" target="_blank">
+										"edit data model"
+									</a>
+									from the fields list to make changes to your datamodel.
+								</p>
+							</div>
+							<div class="box column is-half has-text-centered">
+								<div class="card-image">
+									<figure class="image 1">
+										<img src="{{ static_url ('images/tutos/datamodel_00b.png') }}">
+									</figure>
+								</div>
+							</div>
+						</div>
+						<br>
+
+
+						<div class="columns is-mobile is-centered">
+							<div class="column is-half">
+								<p>
+									You can click on
+									<a href="/datamodel/add_field" target="_blank">
+										"add a new field"
+									</a>
+									. 
+									Every field is composed of : 
+									<ul>
+										<li>the name of the field ;</li>
+										<li>the type of the field : 
+											<code>url</code>, 
+											<code>email</code>, 
+											<code>tag</code>, 
+											<code>text</code>, 
+											<code>price</code>, 
+											<code>date</code>, 
+											... ;
+											</li>
+										<li>an option to see or delete the field ;</li>
+										<li>the degree of openess of the field : 
+											<code>private</code>, 
+											<code>collective</code>, 
+											<code>commons</code>, 
+											<code>open data</code> 
+											
+										</li>
+									</ul>
+								</p>
+							</div>
+							<div class="box column is-half has-text-centered">
+								<div class="card-image">
+									<figure class="image 1">
+										<img src="{{ static_url ('images/tutos/datamodel_03.png') }}">
+									</figure>
+								</div>
+							</div>
+						</div>
+						<br>
+						<div class="columns is-mobile is-centered">
+							<div class="column is-half">
+								<p>
+									By clicking on 									
+									<a href="/datamodel/edit" target="_blank">
+										"Edit your data model"
+									</a>
+									you can also edit any of the existing fields.  
+								</p>
+							</div>
+							<div class="box column is-half has-text-centered">
+								<div class="card-image">
+									<figure class="image 1">
+										<img src="{{ static_url ('images/tutos/datamodel_01.png') }}">
+									</figure>
+								</div>
+							</div>
+						</div>
+						<br>
+						<div class="columns is-mobile is-centered">
+							<div class="column is-half">
+								<p>
+									At the end of this process you have to save your fields.
+								</p>
+							</div>
+							<div class="box column is-half has-text-centered">
+								<div class="card-image">
+									<figure class="image 1">
+										<img src="{{ static_url ('images/tutos/datamodel_02.png') }}">
+									</figure>
+								</div>
+							</div>
+						</div>
+					</div>
+					<br>
+
+
+
+
+
+
+					{# CONFIGURE SCRAPER #}
+					<br id="scraper">
+					<hr >
+					<h2>
+						III/ Configure a scraper
+					</h2>
+					<br>
+					<div>
+						{# link to scrapers list #}
+						<div class="columns is-mobile is-centered">
+							<div class="column is-half">
+								<p>
+									Once you have defined your datamodel you can configure your scrapers.
+								</p>
+								<p>
+									You can either access the list of the existing scrapers by clicking on 
+									<a href="/contributors" target="_blank">
+										"List of all contributors" 
+									</a>
+
+									or directly add a new scraper by clicking on 
+									<a href="/contributor/add" target="_blank">
+										"Add a new contributor"
+									</a>
+
+								</p>
+							</div>
+							<div class="box column is-half has-text-centered">
+								<div class="card-image">
+									<figure class="image 1">
+										<img src="{{ static_url ('images/tutos/scraper_00.png') }}">
+									</figure>
+								</div>
+							</div>
+						</div>
+						<br>
+
+						{# list view #}
+						<div class="columns is-mobile is-centered">
+							<div class="column is-half">
+								<p>
+									On the 
+									<a href="/contributors" target="_blank">
+										"List of all contributors" 
+									</a> 
+									view you will have a table listing all spiders already configured in Open Scraper,
+									but you will be able to modify only those you'd created yourself (except if you are an <code>admin</code>, then you'll be able to modify every spider)
+
+								</p>
+
+							</div>
+							<div class="box column is-half has-text-centered">
+								<div class="card-image">
+									<a href="/contributors" target="_blank">
+										<figure class="image 1">
+											<img src="{{ static_url ('images/tutos/scraper_01.png') }}">
+										</figure>
+									</a>
+								</div>
+							</div>
+						</div>
+						<br>
+
+						{# main sections #}
+						<div>
+
+							<div class="columns is-mobile is-centered">
+								<div class="column is-8">
+									<div class="notification is-primary">
+										<div class="content has-text-centered">
+											<strong>There are two main sections to fill up in order to 
+												<a href="/contributor/add" target="_blank">
+													configure a new scraper
+												</a>
+											</strong>
+										</div>
+									</div>
+								</div>
+							</div>
+									
+
+							<div class="columns is-mobile is-centered">
+								<div class="column is-half">
+									<p class="has-text-centered">
+										<strong>the 
+											<a href="#global_fields">
+												"global fields"
+											</a>
+										</strong>
+									</p>
+									<p>
+										Define here what is the website you want to scrap : 
+										the name of the website, its root_url, if you need to go from a list to a detailed page, if the website is reactive or an API, ...
+									</p> 
+									<div class="box card-image">
+										<a href="#global_fields">
+											<figure class="image 1">
+												<img src="{{ static_url ('images/tutos/spider_add_global_fields_00.png') }}">
+											</figure>
+										</a>
+									</div>
+								</div>
+
+								<div class="column is-half">
+									<p class="has-text-centered">
+										<strong>the 
+											<a href="#custom_fields">
+												"custom fields"
+											</a>
+										</strong>
+									</p>
+									<p>
+										Define where you will find the value corresponding to the field of your datamodel, 
+										by adding the 
+										<a href="https://doc.scrapy.org/en/xpath-tutorial/topics/xpath-tutorial.html" target="_blank">
+											XPATH (see more about the xpath here)
+										</a>
+										of the targeted values in the form
+									</p>
+									<div class="box card-image">
+										<a href="#custom_fields">
+											<figure class="image 1">
+												<img src="{{ static_url ('images/tutos/spider_add_custom_fields_00.png') }}">
+											</figure>
+										</a>
+									</div>
+								</div>
+
+							</div>
+						</div>
+
+
+						{# XPATH notif #}
+						<br id="xpath">
+						<br>
+						<div class="columns is-mobile is-centered">
+							<div class="column is-8">
+								<div class="notification is-primary">
+									<strong>
+										<p>Open Scraper uses the XPATH language to select blocks and values in a HTML page. </p>
+										<ul>
+											<li>
+												for an introduction to XPATh see 
+												<a href="https://doc.scrapy.org/en/xpath-tutorial/topics/xpath-tutorial.html" target="_blank">
+													this tutorial 
+												</a> 
+												from the
+												<a href="https://doc.scrapy.org/en/latest/" target="_blank">
+													Scrapy documentation
+												</a>
+												or you can even watch this 
+												<a href="https://www.youtube.com/watch?v=GtiMKI9QNv0" target="_blank" >
+													short video
+												</a>
+											</li>
+											<li>
+												to test XPATH within your browser our team uses the 
+												<a href="https://addons.mozilla.org/en-US/firefox/addon/try-xpath/" target="_blank">
+													TRY XPATH 
+												</a>
+												add-on for Firefox
+											</li>
+
+										</ul>
+									</strong>
+								</div>
+							</div>
+						</div>
+
+						{# global fields #}
+						<br id="global_fields">
+						<br>
+						<div class="columns is-mobile is-centered">
+							<div class="column is-one-thirds">
+								<p>
+									<strong>
+									The "Global fields" describe the website you want to scrap from : 
+									</strong>
+								</p>
+								<ul>
+									<li>
+										<code>name</code> :
+										the name you want to give to your spider
+									</li>
+									<li>
+										<code>licence</code> :
+										the licence the content of the website you will scrap is under
+									</li>
+									<li>
+										<code>page_url</code> :
+										the shortest url route of the website (the domain name)
+									</li>
+									<li>
+										<code>logo_url</code> :
+										an url ending by .jpg, .png, .svg to the logo of the website if any (use "copy the image link" on your browser and paste)
+									</li>
+									<li>
+										<code>start_urls</code> :
+										the page(s) containing the list you want to scrap
+									</li>
+									<li>
+										<code>item_xpath</code> :
+										the <em>xpath</em> selecting each item's block in the list 
+										(must give in a list of results)
+									</li>
+									<li>
+										<code>next_page</code> :
+										the <em>xpath</em> selecting the button leading to the next page of results
+									</li>
+									<li>
+										<code>parse_follow</code> :
+										describe here if all the data you need to scrap is present in the list or if you need to go to more detailed page
+									</li>
+									<li>
+										<code>follow_xpath</code> :
+										the <em>xpath</em> selecting the link leading to the detailed page 
+										(must end by an <code>@href</code>)
+									</li>
+									<li>
+										<code>parse_reactive</code> :
+										describe here if the url route is changing when you go to another page (not reactive) or if the url stays the same (reactive)
+									<li>
+										<code>parse_api</code> :
+										mention here if the url you are scraping returns a normal page (no API) or a JSON (API Rest)
+									</li>
+									<li>
+										<code>api_pagination_root</code> :
+										the url route used as a base for going to the next page, if the website has an API or/and if different than the <code>page_url</code>
+									</li>
+									<li>
+										<code>follow_api</code> : 
+										the url route used as a base for going to the detailed page based on an item_id, if the website has an API or/and if different than the <code>page_url</code>
+									</li>
+
+								</ul>
+
+							</div>
+							<div class="column is-7 has-text-centered">
+								<div class="box card-image">
+									{# <a href="/contributors" target="_blank"> #}
+										<figure class="image 1">
+											<img src="{{ static_url ('images/tutos/spider_add_global_fields_01.png') }}">
+										</figure>
+									{# </a> #}
+								</div>
+							</div>
+						</div>
+						<br>
+
+
+
+						{# global fields #}
+						<br id="custom_fields">
+						<br>
+						<div class="columns is-mobile is-centered">
+							<div class="column is-7 has-text-centered">
+								<div class="box card-image">
+									{# <a href="/contributors" target="_blank"> #}
+										<figure class="image 1">
+											<img src="{{ static_url ('images/tutos/spider_add_custom_fields_01.png') }}">
+										</figure>
+									{# </a> #}
+								</div>
+							</div>
+							<div class="column is-one-thirds">
+								<p>
+									<strong>
+									The "Custom fields" describe where you will find the values for each field of your data model and store : 
+									</strong>
+								</p>
+								<ul>
+									<li>
+										<code>< the name of your custom field ></code> :
+										the <em>xpath</em> selecting the value corresponding to the field.
+										must end by either : 
+										<code>text()</code> if the value you need is some simple text,
+										<code>@href</code> if the value you need is a link hidden in an "a" tag,
+										<code>@src</code> or similar if the value you need is an image,
+										
+									</li>
+						
+								</ul>
+
+							</div>
+						</div>
+						<br>
+
+					</div>
+					<br>
+
+
+
+
+
+					{# REQUEST DATA #}
+					<br id="api">
+					<hr>
+					<h2>
+						IV/ Request your data
+					</h2>
+					<br>
+
+					<div>
+
+						{# link to scrapers list #}
+						<div class="columns is-mobile is-centered">
+							<div class="column is-one-thirds">
+								<p>
+									You can preview the results either by going to 
+									<a href="/dataset/view" target="_blank">
+										"Overview of the complete dataset"
+									</a>
+									or by clicking on the "view XX item" for each spider in the 
+									<a href="/contributors" target="_blank">
+										"List of all contributors / websites"
+									</a>
+									.
+								</p>
+
+							</div>
+							<div class="column is-one-thirds has-text-centered">
+								<div class="box card-image">
+									<a href="/dataset/view" target="_blank">
+										<figure class="image 1">
+											<img src="{{ static_url ('images/tutos/request_00.png') }}">
+										</figure>
+									</a>
+								</div>
+							</div>
+							<div class=" column is-one-thirds has-text-centered">
+								<div class="box card-image">
+									<a href="/dataset/view" target="_blank">
+										<figure class="image 1">
+											<img src="{{ static_url ('images/tutos/request_01.png') }}">
+										</figure>
+									</a>
+								</div>
+							</div>
+						</div>
+						<br>
+
+					</div>
+
+					<div class="columns is-mobile is-centered">
+						<div class="column is-10">
+							<div class="notification is-primary has-text-centered">
+								<strong>
+									You have two main options when it comes to get back the data scraped on open Scraper
+								</strong>
+							</div>
+						</div>
+					</div>
+
+					<div>
+						<div class="columns is-mobile is-centered has-text-centered">
+							<div class="column is-half">
+								<p>
+									<strong>Get the data as a 
+										.CSV file 
+									</strong>
+									<br>(from the 
+									<a href="/contributors" target="_blank">
+										"List of all contributors" view
+									</a>
+									)
+								</p> 
+								<div class="box card-image">
+									<a href="/contributors" target="_blank">
+										<figure class="image 1">
+											<img src="{{ static_url ('images/tutos/api_csv_00.png') }}">
+										</figure>
+									</a>
+								</div>
+							</div>
+							<div class="column is-half has-text-centered">
+								<p>
+									<strong>Use the API </strong>
+									<br>(see also the 
+									<a href="/infos/api" target="_blank">
+										documentation 
+									</a>
+									)
+								</p>
+								<div class="box card-image">
+									<a href="/infos/api" target="_blank">
+										<figure class="image 1">
+											<img src="{{ static_url ('images/tutos/api_api_00.png') }}">
+										</figure>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+
+
+
+
+
 
 				</div>
 			</div>
