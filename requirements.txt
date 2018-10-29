@@ -44,7 +44,7 @@ pyOpenSSL==18.0.0
 pyparsing==2.2.0
 pytz==2018.3
 queuelib==1.4.2
-requests==2.18.4
+requests==2.20.0
 Scrapy==1.5.0
 scrapy-selenium==0.0.5
 scrapy-splash==0.7.2
