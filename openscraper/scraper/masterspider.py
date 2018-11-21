@@ -131,12 +131,12 @@ options_selenium.add_argument('window-size=1200x600')
 ### set scrapy from settings_scrapy.py
 settings = Settings()
 
-settings.set( "BOT_NAME"					, BOT_NAME )
-settings.set( "USER_AGENT"					, USER_AGENT )
-# settings.set( "ROBOTSTXT_OBEY"			, ROBOTSTXT_OBEY )
-settings.set( "AUTOTHROTTLE_ENABLED"		, AUTOTHROTTLE_ENABLED )
-settings.set( "HTTPCACHE_ENABLED"			, HTTPCACHE_ENABLED )
-settings.set( "RANDOMIZE_DOWNLOAD_DELAY"	, RANDOMIZE_DOWNLOAD_DELAY )
+# settings.set( "BOT_NAME"					, BOT_NAME )
+# settings.set( "USER_AGENT"					, USER_AGENT )
+# settings.set( "ROBOTSTXT_OBEY"				, ROBOTSTXT_OBEY )
+# settings.set( "AUTOTHROTTLE_ENABLED"		, AUTOTHROTTLE_ENABLED )
+# settings.set( "HTTPCACHE_ENABLED"			, HTTPCACHE_ENABLED )
+# settings.set( "RANDOMIZE_DOWNLOAD_DELAY"	, RANDOMIZE_DOWNLOAD_DELAY )
 
 settings.set( "ITEM_PIPELINES"				, ITEM_PIPELINES )
 
@@ -277,8 +277,10 @@ class GenericSpider(Spider) :
 
 		print ("\n\n{}\n".format("> > > "*20))
 
+
 		### super init/override spider class with current args 
 		log_scrap.info("--- GenericSpider / __init__ :")
+
 
 		super(GenericSpider, self).__init__(*args, **kwargs)
 		
@@ -362,7 +364,7 @@ class GenericSpider(Spider) :
 
 			log_scrap.info("--- GenericSpider.start_requests / starting first Scrapy request... " ) 
 			yield Request(url=url, callback=self.parse, dont_filter=True, meta={'start_url': url} )
-
+			# yield Request(url=url, callback=self.parse, meta={'start_url': url} )
 
 
 	### parsing with scrapy
@@ -1367,6 +1369,12 @@ def run_generic_spider( user_id				= None,
 	settings.set( "CONCURRENT_REQUESTS"				, spider_config_flat["CONCURRENT_REQUESTS"] )
 	# settings.set( "DOWNLOAD_DELAY" 				, DOWNLOAD_DELAY )
 
+	settings.set( "BOT_NAME"						, spider_config_flat["BOT_NAME"] )
+	settings.set( "USER_AGENT"						, spider_config_flat["USER_AGENT"] )
+	settings.set( "ROBOTSTXT_OBEY"					, spider_config_flat["ROBOTSTXT_OBEY"] )
+	settings.set( "AUTOTHROTTLE_ENABLED"			, spider_config_flat["AUTOTHROTTLE_ENABLED"] )
+	settings.set( "HTTPCACHE_ENABLED"				, spider_config_flat["HTTPCACHE_ENABLED"] )
+	settings.set( "RANDOMIZE_DOWNLOAD_DELAY"		, spider_config_flat["RANDOMIZE_DOWNLOAD_DELAY"] )
 
 	### initiating crawler process
 	log_scrap.info("--- run_generic_spider / instanciate process ..." 	 )

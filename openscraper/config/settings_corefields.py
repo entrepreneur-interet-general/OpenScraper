@@ -7,6 +7,7 @@ MongoDB instanciated at Application level
 
 """
 import pprint
+from .settings_scrapy import *
 
 
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
@@ -176,6 +177,12 @@ CONTRIBUTOR_EDIT_FIELDS_RADIO = [
 	"parse_reactive",
 	"parse_api",
 	"follow_is_api",
+
+	"RANDOMIZE_DOWNLOAD_DELAY",
+	"HTTPCACHE_ENABLED",
+	"AUTOTHROTTLE_ENABLED",
+	"ROBOTSTXT_OBEY",
+
 ]
 CONTRIBUTOR_EDIT_FIELDS_RADIO_TEXTS = {
 	"parse_follow" 		: ["The data is complete in the list ","I need to click a link in the list to show the complete data "] , 
@@ -264,14 +271,22 @@ CONTRIBUTOR_EDIT_FIELDS = {
 			"RETRY_TIMES"			,
 			"LIMIT_PAGES" 			,	# max number of pages to be crawled
 			"LIMIT_ITEMS" 			,	# max number of items to be scraped
-			"CONCURRENT_ITEMS"		, 
-			"CONCURRENT_REQUESTS" 	, 
 
 			"download_delay" 	,	# delay
 
 			"wait_driver" 		,	# delay for ajax response wait
 			"wait_page" 		,	# delay for new page response wait
 			"wait_implicit" 	,	# delay for implicit response wait
+
+			"CONCURRENT_ITEMS"		, 
+			"CONCURRENT_REQUESTS" 	, 
+			"RANDOMIZE_DOWNLOAD_DELAY",
+			"HTTPCACHE_ENABLED",
+			"AUTOTHROTTLE_ENABLED",
+			"ROBOTSTXT_OBEY",
+
+			"BOT_NAME",
+			"USER_AGENT"
 
 			# "page_count" 		,	# keep track of how many pages were crawled
 		]
@@ -336,7 +351,14 @@ CONTRIBUTOR_CORE_FIELDS = {
 		"LIMIT_ITEMS" 			: 0,	# max number of items to be scraped 
 		"CONCURRENT_ITEMS" 		: 200, 
 		"CONCURRENT_REQUESTS" 	: 100, 
-		
+
+		"RANDOMIZE_DOWNLOAD_DELAY" 	: RANDOMIZE_DOWNLOAD_DELAY,
+		"HTTPCACHE_ENABLED"			: HTTPCACHE_ENABLED,
+		"AUTOTHROTTLE_ENABLED"		: AUTOTHROTTLE_ENABLED,
+		"ROBOTSTXT_OBEY"			: ROBOTSTXT_OBEY,
+		"BOT_NAME"					: BOT_NAME,
+		"USER_AGENT"				: USER_AGENT,
+
 		"download_delay" 		: 0.5,	# delay
 		
 		"wait_driver" 			: 5.0,	# delay for ajax response wait

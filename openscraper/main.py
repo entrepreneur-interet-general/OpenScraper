@@ -463,6 +463,13 @@ class Application(tornado.web.Application):
 		self.coll_spiders.update_many({'scraper_settings.wait_driver'			: {"$exists" : False}}, {"$set": {'scraper_settings.wait_driver' 		: 5.0 }})
 		self.coll_spiders.update_many({'scraper_settings.wait_page'				: {"$exists" : False}}, {"$set": {'scraper_settings.wait_page' 			: 1.5 }})
 		self.coll_spiders.update_many({'scraper_settings.wait_implicit'			: {"$exists" : False}}, {"$set": {'scraper_settings.wait_implicit' 		: 0.5 }})
+		
+		self.coll_spiders.update_many({'scraper_settings.RANDOMIZE_DOWNLOAD_DELAY' 	: {"$exists" : False}}, {"$set": {'scraper_settings.RANDOMIZE_DOWNLOAD_DELAY' 	: True }})
+		self.coll_spiders.update_many({'scraper_settings.HTTPCACHE_ENABLED' 		: {"$exists" : False}}, {"$set": {'scraper_settings.HTTPCACHE_ENABLED' 			: True }})
+		self.coll_spiders.update_many({'scraper_settings.AUTOTHROTTLE_ENABLED' 		: {"$exists" : False}}, {"$set": {'scraper_settings.AUTOTHROTTLE_ENABLED' 		: False }})
+		self.coll_spiders.update_many({'scraper_settings.ROBOTSTXT_OBEY' 			: {"$exists" : False}}, {"$set": {'scraper_settings.ROBOTSTXT_OBEY' 			: False }})
+		self.coll_spiders.update_many({'scraper_settings.BOT_NAME' 					: {"$exists" : False}}, {"$set": {'scraper_settings.BOT_NAME' 					: "OpenScraper" }})
+		self.coll_spiders.update_many({'scraper_settings.USER_AGENT' 				: {"$exists" : False}}, {"$set": {'scraper_settings.USER_AGENT' 				: "Open Scraper (+https://github.com/entrepreneur-interet-general/OpenScraper)" }})
 
 
 		# create index for every collection needing it  

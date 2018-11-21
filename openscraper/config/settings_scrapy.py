@@ -25,7 +25,7 @@ from settings_example import *
 BOT_NAME		= 	"OpenScraper"
 USER_AGENT		= 	"Open Scraper (+https://github.com/entrepreneur-interet-general/OpenScraper)"
 					# 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
-ROBOTSTXT_OBEY 	= True
+ROBOTSTXT_OBEY 	= False
 
 '''
 check 
@@ -39,7 +39,7 @@ HTTPCACHE_ENABLED 			= True
 # See also autothrottle settings and docs
 # RETRY_TIMES					= 5
 # DOWNLOAD_DELAY 				= .7
-RANDOMIZE_DOWNLOAD_DELAY 	= True
+RANDOMIZE_DOWNLOAD_DELAY 	= False
 JOBDIR_FOLDER 				= "running_spiders"
 
 # CONCURRENT_ITEMS				= 200
