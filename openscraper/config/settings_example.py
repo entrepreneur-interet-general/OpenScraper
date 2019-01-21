@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 
+print( "---------- IMPORTING SETTINGS_EXAMPLE.PY -------- " )
+
 from 	tornado.log import enable_pretty_logging, LogFormatter, access_log, app_log, gen_log
 
 gen_log.info("--> importing .settings_example")
@@ -20,7 +22,7 @@ else :
 
 
 ### setting for cookies
-WTF_CSRF_SECRET_KEY = "a_super_wtf_secret_key"
+WTF_CSRF_SECRET_KEY = "a_super_wtf_WUUU_secret_key"
 XSRF_ENABLED  		= True 
 
 
@@ -41,3 +43,4 @@ MONGODB_COLL_DATAMODEL	  = "data_model"
 MONGODB_COLL_DATASCRAPPED = "data_scraped"
 MONGODB_COLL_USERS        = "users"
 
+# MONGODB_COLL_PROJECTS		= "projects"

@@ -10,6 +10,7 @@ boltons==18.0.0
 certifi==2018.1.18
 cffi==1.11.4
 chardet==3.0.4
+Click==7.0
 configparser==3.5.0
 constantly==15.1.0
 cryptography==2.3.1

@@ -1,16 +1,30 @@
 # -*- encoding: utf-8 -*-
 
-from 	tornado.log import enable_pretty_logging, LogFormatter, access_log, app_log, gen_log
+print( "---------- IMPORT SETTINGS_SCRAPYS.PY -------- " )
 
+from tornado.options import options
+
+from 	tornado.log import enable_pretty_logging, LogFormatter, access_log, app_log, gen_log
 gen_log.info("--> importing .settings_scrapy")
 
 import os
-from settings_example import *
+
+### to get MONGODB_APP_URI, etc...
+### for debugging purposes
+print "current port from options : ", options.port 
+print "current mode from options : ", options.mode 
+
+if options.mode == "default" :
+	from settings_example import *
+if options.mode == "production" :
+	from settings_secret import *
+
 # from settings import *		# for prod
 
 # ### GET APP MODE FROM ENV VARS
 # APP_MODE = os.environ.get('APP_MODE', 'default')
 # gen_log.debug("--> APP_MODE : %s", APP_MODE)
+
 
 
 

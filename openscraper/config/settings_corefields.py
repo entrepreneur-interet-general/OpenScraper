@@ -6,8 +6,13 @@ MAIN STRUCTURE FOR DB COLLECTIONS
 MongoDB instanciated at Application level 
 
 """
+
 import pprint
-from .settings_scrapy import *
+
+print( "---------- IMPORT SETTINGS_COREFIELDS.PY -------- " )
+from .settings_scrapy import * ### to get RANDOMIZE_DOWNLOAD_DELAY, etc...
+print( "---------- AFTER SETTINGS_COREFIELDS.PY / import .settings_scrapy -------- " )
+
 
 
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###

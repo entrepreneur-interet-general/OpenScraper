@@ -90,14 +90,25 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 	> 
 		$ pip install -r requirements.txt
 
-1. **update the `config/settings.py` file** with your mongoDB URI (if you're not using default mongoDB connection)
+1. **optionnal : create a `config/settings_secret.py` file based on `config/settings_example.py`** with your mongoDB URI (if you're not using default mongoDB connection) -- or uncomment/comment lines in `main.py` : 
 
-1. **run app** from `$ ~/../app_scrapnado`
+
+1. **run app**
 
 	> 
+		$ cd openscraper
 		$ python main.py
 
-1. **check in your browser** at `localhost:8000`
+1. **you can also choose options when running main.py**
+- `-p` or `--port` : the number of your port (default : `8000`)
+- `-m` or `--mode` : the mode (default : `default`) - choices : `default` (uses `settings_example.py` in `openscraper/config` folder) | `production` (uses `settings_secret.py` in `~/config` folder )
+
+
+	example : 
+	>
+		$ python main.py -p 8100 --mode=production
+
+1. **check in your browser** at `localhost:8000` (or whichever port you entered)
 
 1. **create/update your datamodel** at `localhost:8000/datamodel/edit`
 

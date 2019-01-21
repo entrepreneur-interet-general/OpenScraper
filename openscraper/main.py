@@ -3,9 +3,13 @@
 """
 OpenScrapper - a Tornado Scrapy spiders manager
 ------------------ 
-a project by ... 
+a project by JPy
 
 """
+
+print( "- "*40 )
+print( "---------- MAIN.PY -------- " )
+print( "- "*40 )
 
 
 ### global imports
@@ -25,6 +29,10 @@ from 	bson import json_util
 from	bson.json_util import dumps
 
 import argparse
+
+
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+
 
 # BDD imports and client
 # import pymongo
@@ -57,13 +65,36 @@ from 	config.settings_logging import logging_config
 from 	tornado.log import enable_pretty_logging, LogFormatter, access_log, app_log, gen_log
 
 
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+### DEFAULT VALUES AT MAIN LEVEL ############################################################
+### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+
+# # define default port to listen to + mode
+define( "port", default=8000, 	help="run on the given port", type=int )
+define( "mode", default='default', 	help="mode for run : default, production", type=str )
+
+# parse command line arguments if any port arg
+parser = argparse.ArgumentParser()
+parser.add_argument('-p', '--port', type=int, default=8000)
+parser.add_argument('-m', '--mode', type=str, default="default") ### choices : "default" | "production"
+args = parser.parse_args()
+
+# update port with args.port
+options.port = args.port
+options.mode = args.mode
+
+print "--- default options : \n",  pformat(options.__dict__)
+print "--- mode : ",  options.mode 
+print "--- port : ",  options.port 
+
+print( "---------- MAIN.PY : import settings -------- " )
 
 ### import app settings from .config.settings (keep that file confidential)
 from config.settings_corefields import * 
+
 # from config.settings_example import * 
 # from config.settings import * 
-
-from config.settings_secret import *
+# from config.settings_secret import *
 
 
 
@@ -193,14 +224,14 @@ from controller import *
 # cf : db.getCollection('contributors').update({}, {$set:{"infos.added_by" : "admin"} }, {upsert:true, multi:true})
 
 
-### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
-### DEFAULT VALUES AT MAIN LEVEL ############################################################
-### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+# ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
+# ### DEFAULT VALUES AT MAIN LEVEL ############################################################
+# ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
 
-# # define default port to listen to + mode
-define( "port", default=APP_PORT, help="run on the given port", type=int )
-define( "mode", default='default', help="mode for run : default, production", type=str )
+# # # define default port to listen to + mode
+# define( "port", default=APP_PORT, 	help="run on the given port", type=int )
+# define( "mode", default='default', 	help="mode for run : default, production", type=str )
 
 
 
@@ -419,10 +450,16 @@ class Application(tornado.web.Application):
 
 		### check if default or production mode to load secret keys and app settings
 		if mode=="production" : 
-			try : 
-				from config.settings_secret import *
-			except :
-				pass
+			app_log.info('>>> Application.__init__ / mode == production ')
+		# 	try : 
+		# 		app_log.info('>>> Application.__init__ / importing settings_secret.py ')
+		# 		from config.settings_secret import *
+		# 	except :
+		# 		app_log.info('>>> Application.__init__ / importing settings_example.py ')
+		# 		from config.settings_example import *
+		if mode=="default" :
+			app_log.info('>>> Application.__init__ / mode == default ')
+
 		app_log.info(">>> WTF_CSRF_SECRET_KEY 	: %s ", WTF_CSRF_SECRET_KEY)
 		app_log.info(">>> JWT_SECRET_KEY 		: %s ", JWT_SECRET_KEY)
 
@@ -558,7 +595,6 @@ class Application(tornado.web.Application):
 
 
 
-
 def main():
 	"""
 	start / run app
@@ -579,15 +615,15 @@ def main():
 	app_log.info(">>> IP_ADRESS IS : %s ", ip_adress[0] )
 	s.close()
 
-	# parse command line arguments if any port arg
-	parser = argparse.ArgumentParser()
-	parser.add_argument('-p', '--port', type=int, default=APP_PORT)
-	parser.add_argument('-m', '--mode', type=str, default="default")
-	args = parser.parse_args()
+	# # parse command line arguments if any port arg
+	# parser = argparse.ArgumentParser()
+	# parser.add_argument('-p', '--port', type=int, default=APP_PORT)
+	# parser.add_argument('-m', '--mode', type=str, default="default") ### choices : "default" | "production"
+	# args = parser.parse_args()
 
-	# update port with args.port
-	options.port = args.port
-	options.mode = args.mode
+	# # update port with args.port
+	# options.port = args.port
+	# options.mode = args.mode
 
 	# set os environment variable for mode
 	os.environ['APP_MODE'] = str(options.mode)
@@ -614,6 +650,8 @@ def main():
 
 
 	# create server with args.mode
+	print()
+	app_log.info( ">>> http_server : run ...")
 	http_server = tornado.httpserver.HTTPServer(Application( mode=args.mode ))
 	app_log.info( ">>> http_server ready ...")
 
