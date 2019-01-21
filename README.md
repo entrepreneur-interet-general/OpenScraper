@@ -100,13 +100,14 @@ OpenScraper is developped in open source, and will provide a documentation as mu
 1. **optionnal : notes for installing python libs on linux servers**
 	> 
 		$ sudo apt-get install build-essential libssl-dev libffi-dev python-dev python-psycopg2 python-mysqldb python-setuptools libgnutls-dev libcurl4-gnutls-dev
+		$ sudo apt install libcurl4-openssl-dev libssl-dev
 		$ sudo apt-get install python-pip 
 		$ sudo pip install --upgrade pip 
 		$ sudo pip install --upgrade virtualenv 
 		$ sudo pip install --upgrade setuptools
 
 
-1. **optionnal : create a `config/settings_secret.py` file based on `config/settings_example.py`** with your mongoDB URI (if you're not using default mongoDB connection) -- or uncomment/comment lines in `main.py` : 
+1. **optionnal : create a `config/settings_secret.py` file based on `config/settings_example.py`** with your mongoDB URI (if you're not using default mongoDB connection) : 
 
 
 1. **run app**
