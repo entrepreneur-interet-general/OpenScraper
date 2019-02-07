@@ -26,6 +26,7 @@ OpenScraper is a minimalistic, open source webscraper with a simple interface, <
 ## WHAT IS NEW ? 
 
 
+- v1.4 - 07/02/2019 : adding infinite scroll for reactive websites to scrap
 - v1.3 - 20/10/2018 : added first csv converter and downloader for every spider's dataset and first routes to documentation
 - v1.2 - 18/10/2018 : a spider can adapt to follow pages either if they are API or HTML
 - v1.1 - 15/10/2018 : parser adapts to API Rest, configuration based on "/" description for the path inside the JSON 

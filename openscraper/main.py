@@ -475,38 +475,50 @@ class Application(tornado.web.Application):
 		# predefine collection names as .self objects
 		self.coll_users 	= self.db[ MONGODB_COLL_USERS ]
 		self.coll_model 	= self.db[ MONGODB_COLL_DATAMODEL ]
-		self.coll_spiders 	= self.db[ MONGODB_COLL_CONTRIBUTORS ]
+		self.coll_spiders = self.db[ MONGODB_COLL_CONTRIBUTORS ]
 		self.coll_data		= self.db[ MONGODB_COLL_DATASCRAPPED ]
 
 		# create default fields in spiders collection in case fields are missing
+
+		### related to : scrapper's INFOS 
 		self.coll_spiders.update_many({'infos.logo_url'						: {"$exists" : False}}, {"$set": {'infos.logo_url' 	: "" }})
 		self.coll_spiders.update_many({'infos.licence'						: {"$exists" : False}}, {"$set": {'infos.licence' 	: "" }})
 
-		self.coll_spiders.update_many({'scraper_config.parse_reactive'		: {"$exists" : False}}, {"$set": {'scraper_config.parse_reactive' 		: False }})
-		self.coll_spiders.update_many({'scraper_config.parse_api'			: {"$exists" : False}}, {"$set": {'scraper_config.parse_api' 			: False }})
-		self.coll_spiders.update_many({'scraper_config.follow_is_api'		: {"$exists" : False}}, {"$set": {'scraper_config.follow_is_api' 		: False }})
+		### related to : scrap REACTIVE 
+		self.coll_spiders.update_many({'scraper_config.parse_reactive'		: {"$exists" : False}}, {"$set": {'scraper_config.parse_reactive' : False }})
+		self.coll_spiders.update_many({'scraper_config.scroll_down'		: {"$exists" : False}}, {"$set": {'scraper_config.scroll_down' 				: False }})
+
+		### related to : scrap API
+		self.coll_spiders.update_many({'scraper_config.parse_api'			: {"$exists" : False}}, {"$set": {'scraper_config.parse_api' 									: False }})
+		self.coll_spiders.update_many({'scraper_config.follow_is_api'		: {"$exists" : False}}, {"$set": {'scraper_config.follow_is_api' 						: False }})
 		self.coll_spiders.update_many({'scraper_config.api_pagination_root'	: {"$exists" : False}}, {"$set": {'scraper_config.api_pagination_root' 	: "" }})
-		self.coll_spiders.update_many({'scraper_config.api_follow_root'		: {"$exists" : False}}, {"$set": {'scraper_config.api_follow_root' 		: "" }})
+		self.coll_spiders.update_many({'scraper_config.api_follow_root'		: {"$exists" : False}}, {"$set": {'scraper_config.api_follow_root' 				: "" }})
 		
-		self.coll_spiders.update_many({'scraper_config.deploy_list'			: {"$exists" : False}}, {"$set": {'scraper_config.deploy_list' 			: False }})
+		self.coll_spiders.update_many({'scraper_config.deploy_list'			: {"$exists" : False}}, {"$set": {'scraper_config.deploy_list' 					: False }})
 		self.coll_spiders.update_many({'scraper_config.deploy_list_xpath'	: {"$exists" : False}}, {"$set": {'scraper_config.deploy_list_xpath' 	: "" }})
 
+		### related to : scrap SETTINGS SCRAPPY 1/2
 		# self.coll_spiders.update_many({'scraper_settings.download_delay'		: {"$exists" : False}}, {"$set": {'scraper_settings.download_delay' : 0.25 }})
 		self.coll_spiders.update_many({'scraper_settings.RETRY_TIMES'			: {"$exists" : False}}, {"$set": {'scraper_settings.RETRY_TIMES' 		: 3 }})
 		self.coll_spiders.update_many({'scraper_settings.LIMIT_ITEMS'			: {"$exists" : False}}, {"$set": {'scraper_settings.LIMIT_ITEMS' 		: 0 }})
 		self.coll_spiders.update_many({'scraper_settings.LIMIT_PAGES'			: {"$exists" : False}}, {"$set": {'scraper_settings.LIMIT_PAGES'		: 100 }})
-		self.coll_spiders.update_many({'scraper_settings.CONCURRENT_ITEMS'		: {"$exists" : False}}, {"$set": {'scraper_settings.CONCURRENT_ITEMS'	: 200 }})
+		self.coll_spiders.update_many({'scraper_settings.CONCURRENT_ITEMS'		: {"$exists" : False}}, {"$set": {'scraper_settings.CONCURRENT_ITEMS'		: 200 }})
 		self.coll_spiders.update_many({'scraper_settings.CONCURRENT_REQUESTS'	: {"$exists" : False}}, {"$set": {'scraper_settings.CONCURRENT_REQUESTS': 100 }})
-		self.coll_spiders.update_many({'scraper_settings.wait_driver'			: {"$exists" : False}}, {"$set": {'scraper_settings.wait_driver' 		: 5.0 }})
-		self.coll_spiders.update_many({'scraper_settings.wait_page'				: {"$exists" : False}}, {"$set": {'scraper_settings.wait_page' 			: 1.5 }})
-		self.coll_spiders.update_many({'scraper_settings.wait_implicit'			: {"$exists" : False}}, {"$set": {'scraper_settings.wait_implicit' 		: 0.5 }})
+
+		### related to : scrap SETTINGS SELENIUM 
+		self.coll_spiders.update_many({'scraper_settings.wait_driver'				: {"$exists" : False}}, {"$set": {'scraper_settings.wait_driver' 				: 5.0 }})
+		self.coll_spiders.update_many({'scraper_settings.wait_page'					: {"$exists" : False}}, {"$set": {'scraper_settings.wait_page' 					: 1.5 }})
+		self.coll_spiders.update_many({'scraper_settings.wait_implicit'			: {"$exists" : False}}, {"$set": {'scraper_settings.wait_implicit' 			: 0.5 }})
+		self.coll_spiders.update_many({'scraper_settings.scroll_pause_time'	: {"$exists" : False}}, {"$set": {'scraper_settings.scroll_pause_time' 	: 0.5 }})
+		self.coll_spiders.update_many({'scraper_settings.scroll_loops'			: {"$exists" : False}}, {"$set": {'scraper_settings.scroll_loops' 			: 3 }})
 		
-		self.coll_spiders.update_many({'scraper_settings.RANDOMIZE_DOWNLOAD_DELAY' 	: {"$exists" : False}}, {"$set": {'scraper_settings.RANDOMIZE_DOWNLOAD_DELAY' 	: True }})
-		self.coll_spiders.update_many({'scraper_settings.HTTPCACHE_ENABLED' 		: {"$exists" : False}}, {"$set": {'scraper_settings.HTTPCACHE_ENABLED' 			: True }})
-		self.coll_spiders.update_many({'scraper_settings.AUTOTHROTTLE_ENABLED' 		: {"$exists" : False}}, {"$set": {'scraper_settings.AUTOTHROTTLE_ENABLED' 		: False }})
-		self.coll_spiders.update_many({'scraper_settings.ROBOTSTXT_OBEY' 			: {"$exists" : False}}, {"$set": {'scraper_settings.ROBOTSTXT_OBEY' 			: False }})
-		self.coll_spiders.update_many({'scraper_settings.BOT_NAME' 					: {"$exists" : False}}, {"$set": {'scraper_settings.BOT_NAME' 					: "OpenScraper" }})
-		self.coll_spiders.update_many({'scraper_settings.USER_AGENT' 				: {"$exists" : False}}, {"$set": {'scraper_settings.USER_AGENT' 				: "Open Scraper (+https://github.com/entrepreneur-interet-general/OpenScraper)" }})
+		### related to : scrap SETTINGS SCRAPPY 2/2 
+		self.coll_spiders.update_many({'scraper_settings.RANDOMIZE_DOWNLOAD_DELAY' 	: {"$exists" : False}}, {"$set": {'scraper_settings.RANDOMIZE_DOWNLOAD_DELAY' : True }})
+		self.coll_spiders.update_many({'scraper_settings.HTTPCACHE_ENABLED' 				: {"$exists" : False}}, {"$set": {'scraper_settings.HTTPCACHE_ENABLED' 				: True }})
+		self.coll_spiders.update_many({'scraper_settings.AUTOTHROTTLE_ENABLED' 			: {"$exists" : False}}, {"$set": {'scraper_settings.AUTOTHROTTLE_ENABLED' 		: False }})
+		self.coll_spiders.update_many({'scraper_settings.ROBOTSTXT_OBEY' 						: {"$exists" : False}}, {"$set": {'scraper_settings.ROBOTSTXT_OBEY' 					: False }})
+		self.coll_spiders.update_many({'scraper_settings.BOT_NAME' 									: {"$exists" : False}}, {"$set": {'scraper_settings.BOT_NAME' 								: "OpenScraper" }})
+		self.coll_spiders.update_many({'scraper_settings.USER_AGENT' 								: {"$exists" : False}}, {"$set": {'scraper_settings.USER_AGENT' 							: "Open Scraper (+https://github.com/entrepreneur-interet-general/OpenScraper)" }})
 
 
 		# create index for every collection needing it  

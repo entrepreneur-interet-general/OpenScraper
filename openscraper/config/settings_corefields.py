@@ -21,7 +21,7 @@ print( "---------- AFTER SETTINGS_COREFIELDS.PY / import .settings_scrapy ------
 
 # need to be compatible with DATAMODEL_FIELD_OPEN_VARS
 OPEN_LEVEL_DICT = {
-	"admin"			: ["opendata", "commons", "collective", "private", "admin"], 
+	"admin"				: ["opendata", "commons", "collective", "private", "admin"], 
 	"collective"	: ["opendata", "commons", "collective", "private"], 
 	"commons" 		: ["opendata", "commons", ],
 	"opendata" 		: ["opendata"],
@@ -33,21 +33,21 @@ OPEN_LEVEL_DICT = {
 
 USER_AUTH_LEVELS = {
 	"admin"   	: {	"datamodel" 	: "all", 
-					"contributors"	: "all", 	
-					"data" 			: "admin"  
-					}, 	# can modify and view everything
+		"contributors"	: "all", 	
+		"data" 					: "admin"  
+	}, 	# can modify and view everything
 	"staff"		: {	"datamodel" 	: "own", 
-					"contributors" 	: "own", 	
-					"data" 			: "collective"  
-					},		# can modify its own fields in datamodel, can modify its own spiders
+		"contributors" 	: "own", 	
+		"data" 					: "collective"  
+	},		# can modify its own fields in datamodel, can modify its own spiders
 	"user"	  	: {	"datamodel" 	: "none", 
-					"contributors" 	: "own", 	
-					"data" 			: "commons"  
-					},		# cannot modify fields in datamodel, can modify its own spiders
+		"contributors" 	: "own", 	
+		"data" 					: "commons"  
+	},		# cannot modify fields in datamodel, can modify its own spiders
 	"visitor" 	: {	"datamodel" 	: "none", 
-					"contributors" 	: "none", 	
-					"data" 			: "opendata" 
-					},		# cannot modify anything
+		"contributors" 	: "none", 	
+		"data" 					: "opendata" 
+	},		# cannot modify anything
 }
 ### to initiate user core fields in mongoDB
 USER_CORE_FIELDS = [
@@ -108,10 +108,10 @@ DATAMODEL_FIELD_OPEN_VARS = [
 # fields to keep always as db backbone - mainly fields necessary to create a spider
 DATAMODEL_CORE_FIELDS = [
 
-	{"field_name" : "item_xpath", 		"field_type" : "url",	"field_open" : "commons" }, 	# spider-related
+	{"field_name" : "item_xpath", 			"field_type" : "url",	"field_open" : "commons" }, 	# spider-related
 	{"field_name" : "item_list_xpath", 	"field_type" : "url",	"field_open" : "commons" }, 	# spider-related
-	{"field_name" : "next_page", 		"field_type" : "text",	"field_open" : "commons" },		# spider-related
-	{"field_name" : "follow_xpath",		"field_type" : "url", 	"field_open" : "commons" }, 	# spider-related
+	{"field_name" : "next_page", 				"field_type" : "text",	"field_open" : "commons" },		# spider-related
+	{"field_name" : "follow_xpath",			"field_type" : "url", 	"field_open" : "commons" }, 	# spider-related
 
 	{"field_name" : "spider_id", 		"field_type" : "text", 	"field_open" : "commons" },			# item-related = to be stored in item
 
@@ -121,8 +121,8 @@ DATAMODEL_CORE_FIELDS = [
 	{"field_name" : "added_by", 		"field_type" : "email",	"field_open" : "private" },			# item-related = to be stored in item
 	{"field_name" : "added_at", 		"field_type" : "date",	"field_open" : "opendata" },		# item-related = to be stored in item
 
-	{"field_name" : "modified_by", 		"field_type" : "email",	"field_open" : "opendata" }, 	# spider-related
-	{"field_name" : "modified_at", 		"field_type" : "date", 	"field_open" : "opendata" }, 	# spider-related
+	{"field_name" : "modified_by", 	"field_type" : "email",	"field_open" : "opendata" }, 	# spider-related
+	{"field_name" : "modified_at", 	"field_type" : "date", 	"field_open" : "opendata" }, 	# spider-related
 
 	{"field_name" : "page_n", 			"field_type" : "integer", "field_open" : "opendata" },		# item-related = to be stored in item
 	{"field_name" : "item_n", 			"field_type" : "integer", "field_open" : "opendata" },		# item-related = to be stored in item
@@ -151,11 +151,11 @@ DATAMODEL_CORE_FIELDS_ITEM = [
 ]
 # TO DO / IMPLEMENT AT MAIN.PY : default fields for first 
 DATAMODEL_DEFAULT_CUSTOM_FIELDS = [
-	{"field_name" : "author",	"field_type" : "text", 	"field_open" : "opendata" },
+	{"field_name" : "author",		"field_type" : "text", 	"field_open" : "opendata" },
 	{"field_name" : "abstract", "field_type" : "text", 	"field_open" : "opendata" },
-	{"field_name" : "tags", 	"field_type" : "tags", 	"field_open" : "opendata" },
-	{"field_name" : "url", 		"field_type" : "url", 	"field_open" : "opendata" },
-	{"field_name" : "image", 	"field_type" : "image", "field_open" : "opendata" },
+	{"field_name" : "tags", 		"field_type" : "tags", 	"field_open" : "opendata" },
+	{"field_name" : "url", 			"field_type" : "url", 	"field_open" : "opendata" },
+	{"field_name" : "image",	 	"field_type" : "image", "field_open" : "opendata" },
 ]
 
 
@@ -179,7 +179,10 @@ CONTRIBUTOR_EDIT_FIELDS_RADIO = [
 	"parse_follow", 
 	# "page_needs_splash", 
 	# "deploy_list", 
+
 	"parse_reactive",
+	"scroll_down",
+
 	"parse_api",
 	"follow_is_api",
 
@@ -190,12 +193,13 @@ CONTRIBUTOR_EDIT_FIELDS_RADIO = [
 
 ]
 CONTRIBUTOR_EDIT_FIELDS_RADIO_TEXTS = {
-	"parse_follow" 		: ["The data is complete in the list ","I need to click a link in the list to show the complete data "] , 
-	"parse_reactive" 	: ["The website is not reactive","The website is reactive"] , 
-	"parse_api"			: ["The website has no API", "The website has an API"],
-	"follow_is_api"		: ["The follow page is an HTML page", "The follow page is an API"],
+	"parse_follow" 				: ["The data is complete in the list ","I need to click a link in the list to show the complete data "] , 
+	"parse_reactive" 			: ["The website is not reactive","The website is reactive"] , 
+	"scroll_down" 				: ["No scroll down needed","You need to scroll down to load more results (only reactive)"] , 
+	"parse_api"						: ["The website has no API", "The website has an API"],
+	"follow_is_api"				: ["The follow page is an HTML page", "The follow page is an API"],
 	# "page_needs_splash" : ["no","yes"], 
-	# "deploy_list" 		: ["There is no special button at the end of the list","There is a 'show more button' at the end of the list"]
+	# "deploy_list" 			: ["There is no special button at the end of the list","There is a 'show more button' at the end of the list"]
 }
 CONTRIBUTOR_EDIT_FIELDS_NUMBER = [
 	
@@ -210,6 +214,8 @@ CONTRIBUTOR_EDIT_FIELDS_NUMBER = [
 	"wait_driver" 	,	# delay for ajax response wait
 	"wait_page" 	,	# delay for new page response wait
 	"wait_implicit" ,	# delay for implicit response wait
+	"scroll_pause_time",
+	"scroll_loops",
 
 	"page_count"
 ]
@@ -220,6 +226,7 @@ CONTRIBUTOR_EDIT_FIELDS_FLOAT = [
 	"wait_driver" 	,	# delay for ajax response wait
 	"wait_page" 	,	# delay for new page response wait
 	"wait_implicit" ,	# delay for implicit response wait
+	"scroll_pause_time",
 
 ]
 ### to display form for edit contributor
@@ -255,7 +262,9 @@ CONTRIBUTOR_EDIT_FIELDS = {
 			# "deploy_list_xpath",
 			"parse_follow",
 			"follow_xpath",
+
 			"parse_reactive",
+			"scroll_down",
 
 			"parse_api",
 			"api_pagination_root",
@@ -282,6 +291,8 @@ CONTRIBUTOR_EDIT_FIELDS = {
 			"wait_driver" 		,	# delay for ajax response wait
 			"wait_page" 		,	# delay for new page response wait
 			"wait_implicit" 	,	# delay for implicit response wait
+			"scroll_pause_time",
+			"scroll_loops",
 
 			"CONCURRENT_ITEMS"		, 
 			"CONCURRENT_REQUESTS" 	, 
@@ -306,12 +317,12 @@ CONTRIBUTOR_CORE_FIELDS = {
 	# scraper - custom infos 
 	"infos" : {
 
-		"name" 			: "" , 	# real name contributor
+		"name" 				: "" , 	# real name contributor
 		"page_url" 		: "" ,	# domain to crawl
-		"licence"	 	: "",	# licence of all data scrapped by this spider
+		"licence"	 		: "",	# licence of all data scrapped by this spider
 		"logo_url"		: "" ,	# url for contributor's logo
 		"contact" 		: "" ,	# why did I put this field ?
-		"notes" 		: " ",	# text area to store notes on the spider
+		"notes" 			: " ",	# text area to store notes on the spider
 		# "added_by" 	: "",
 		# "modified_by" : "",
 		# "is_working" 	: False
@@ -325,8 +336,8 @@ CONTRIBUTOR_CORE_FIELDS = {
 		"start_urls" 		: [],		# list of urls to parse
 		
 		"item_list_xpath"	: "",		# xpath of items list on a page
-		"item_xpath"		: "",		# xpath of each item on a page
-		"next_page" 		: "",		# xpath to go to next page
+		"item_xpath"			: "",		# xpath of each item on a page
+		"next_page" 			: "",		# xpath to go to next page
 
 		"parse_follow" 		: False,	# boolean to know if needs to follow link in page to get all infos
 		"follow_xpath" 		: "",		# xpath to follow item's url to get all info on item
@@ -336,6 +347,7 @@ CONTRIBUTOR_CORE_FIELDS = {
 
 		# "page_needs_splash" : False,	# if page needs jquery to be parsed
 		"parse_reactive" 	: False,	# if page needs javascript to be parsed
+		"scroll_down" 		: False,	# if page needs javascript to be parsed
 	
 		"parse_api"				: False,	# use the website's API to get data 
 		"api_pagination_root" 	: "",
@@ -351,43 +363,45 @@ CONTRIBUTOR_CORE_FIELDS = {
 	# scraper - global settings	
 	"scraper_settings" : {
 
-		"RETRY_TIMES"			: 3,
-		"LIMIT_PAGES" 			: 150,	# max number of pages to be crawled
-		"LIMIT_ITEMS" 			: 0,	# max number of items to be scraped 
+		"RETRY_TIMES"					: 3,
+		"LIMIT_PAGES" 				: 150,	# max number of pages to be crawled
+		"LIMIT_ITEMS" 				: 0,	# max number of items to be scraped 
 		"CONCURRENT_ITEMS" 		: 200, 
-		"CONCURRENT_REQUESTS" 	: 100, 
+		"CONCURRENT_REQUESTS" : 100, 
 
 		"RANDOMIZE_DOWNLOAD_DELAY" 	: RANDOMIZE_DOWNLOAD_DELAY,
-		"HTTPCACHE_ENABLED"			: HTTPCACHE_ENABLED,
-		"AUTOTHROTTLE_ENABLED"		: AUTOTHROTTLE_ENABLED,
-		"ROBOTSTXT_OBEY"			: ROBOTSTXT_OBEY,
-		"BOT_NAME"					: BOT_NAME,
-		"USER_AGENT"				: USER_AGENT,
+		"HTTPCACHE_ENABLED"					: HTTPCACHE_ENABLED,
+		"AUTOTHROTTLE_ENABLED"			: AUTOTHROTTLE_ENABLED,
+		"ROBOTSTXT_OBEY"						: ROBOTSTXT_OBEY,
+		"BOT_NAME"									: BOT_NAME,
+		"USER_AGENT"								: USER_AGENT,
 
 		"download_delay" 		: 0.5,	# delay
 		
 		"wait_driver" 			: 5.0,	# delay for ajax response wait
-		"wait_page" 			: 1.5,	# delay for new page response wait
+		"wait_page" 				: 1.5,	# delay for new page response wait
 		"wait_implicit" 		: 0.5,	# delay for implicit response wait
-		
-		"page_count" 			: 1,	# keep track of how many pages were crawled
+		"scroll_pause_time" : 0.5,	# delay between scroll loops for scroll down
+		"scroll_loops"			: 3,
+
+		"page_count" 				: 1,	# keep track of how many pages were crawled
 	},
 
 	# scraper - log and stats	
 	"scraper_log" : {
 		
-		"added_by" 				: "",		# 
-		"added_at" 				: None,		# 
-		"modified_by" 			: "",		# 
-		"modified_at" 			: None,		# 
+		"added_by" 						: "",		# 
+		"added_at" 						: None,		# 
+		"modified_by" 				: "",		# 
+		"modified_at" 				: None,		# 
 		
-		"is_working" 			: False,	# 
-		"is_tested" 			: False,	# 
-		"is_running" 			: False,	# 
+		"is_working" 					: False,	# 
+		"is_tested" 					: False,	# 
+		"is_running" 					: False,	# 
 		
-		"error_array" 			: [],		# 
+		"error_array" 				: [],		# 
 		
-		"item_count" 			: 0,		# 
+		"item_count" 					: 0,		# 
 		"item_count_depth_1" 	: 0,		# 
 	},
 

@@ -138,17 +138,17 @@ settings = Settings()
 # settings.set( "HTTPCACHE_ENABLED"			, HTTPCACHE_ENABLED )
 # settings.set( "RANDOMIZE_DOWNLOAD_DELAY"	, RANDOMIZE_DOWNLOAD_DELAY )
 
-settings.set( "ITEM_PIPELINES"				, ITEM_PIPELINES )
+settings.set( "ITEM_PIPELINES"					, ITEM_PIPELINES )
 
-settings.set( "DB_DATA_URI" 				, DB_DATA_URI )
-settings.set( "DB_DATA_DATABASE" 			, DB_DATA_DATABASE )
+settings.set( "DB_DATA_URI" 						, DB_DATA_URI )
+settings.set( "DB_DATA_DATABASE" 				, DB_DATA_DATABASE )
 settings.set( "DB_DATA_COLL_SCRAP" 			, DB_DATA_COLL_SCRAP )
 
-# settings.set( "RETRY_TIMES"					, RETRY_TIMES )
+# settings.set( "RETRY_TIMES"							, RETRY_TIMES )
 # settings.set( "CONCURRENT_ITEMS"				, CONCURRENT_ITEMS )
 # settings.set( "CONCURRENT_REQUESTS"			, CONCURRENT_REQUESTS )
 settings.set( "CONCURRENT_REQUESTS_PER_DOMAIN"	, CONCURRENT_REQUESTS_PER_DOMAIN )
-settings.set( "REDIRECT_MAX_TIMES"				, REDIRECT_MAX_TIMES )
+settings.set( "REDIRECT_MAX_TIMES"			, REDIRECT_MAX_TIMES )
 settings.set( "DOWNLOAD_MAXSIZE" 				, DOWNLOAD_MAXSIZE )
 # settings.set( "DEPTH_PRIORITY"				, DEPTH_PRIORITY )
 # settings.set( "SCHEDULER_DISK_QUEUE"			, SCHEDULER_DISK_QUEUE )
@@ -157,9 +157,9 @@ settings.set( "DOWNLOAD_MAXSIZE" 				, DOWNLOAD_MAXSIZE )
 log_scrap.debug (">>> settings scrapy : \n %s \n", pformat(dict(settings)) )
 # pprint(dict(settings))
 
-log_scrap.debug ("--- run_generic_spider / BOT_NAME 		: %s", 		settings.get('BOT_NAME'))
+log_scrap.debug ("--- run_generic_spider / BOT_NAME 			: %s", 		settings.get('BOT_NAME'))
 log_scrap.debug ("--- run_generic_spider / USER_AGENT 		: %s",		settings.get('USER_AGENT'))
-log_scrap.debug ("--- run_generic_spider / ITEM_PIPELINES 	: %s \n", 	settings.get('ITEM_PIPELINES').__dict__)
+log_scrap.debug ("--- run_generic_spider / ITEM_PIPELINES : %s \n", settings.get('ITEM_PIPELINES').__dict__)
 
 
 
@@ -220,6 +220,68 @@ def get_dictvalue_from_xpath(full_dict, path_string):
 		key_value = key_value[i]
 
 	return key_value
+
+
+def scroll_down(driver, scroll_pause_time, max_loops=3) : 
+  
+	"""
+	scroll down a page with selenium
+	cf : https://stackoverflow.com/questions/20986631/how-can-i-scroll-a-web-page-using-selenium-webdriver-in-python 
+	"""
+
+	log_scrap.info("--- scroll_down --- START ..." )
+	log_scrap.info("--- scroll_down / scroll_pause_time : %s ", scroll_pause_time )
+	log_scrap.info("--- scroll_down / max_loops : %s ", max_loops )
+
+	loop_number = 0
+
+	# while True:
+	while loop_number <= max_loops :
+  		
+		log_scrap.info("--- scroll_down --- STARTING LOOPS..." )
+		# Get scroll height
+		### This is the difference. Moving this *inside* the loop
+		### means that it checks if scrollTo is still scrolling 
+		last_height = driver.execute_script("return document.body.scrollHeight")
+		log_scrap.info("--- scroll_down / last_height : %s", last_height )
+
+		# Scroll down to bottom
+		driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+		log_scrap.info("--- scroll_down --- scrollTo /1..." )
+
+		# Wait to load page
+		time.sleep(scroll_pause_time)
+
+		# Calculate new scroll height and compare with last scroll height
+		new_height = driver.execute_script("return document.body.scrollHeight")
+		log_scrap.info("--- scroll_down / new_height : %s", new_height )
+
+		if new_height == last_height:
+
+				# try again (can be removed)
+				driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+				# Wait to load page
+				time.sleep(scroll_pause_time)
+
+				# Calculate new scroll height and compare with last scroll height
+				new_height = driver.execute_script("return document.body.scrollHeight")
+
+				# check if the page height has remained the same
+				# if new_height == last_height or loop_number >= max_loops :
+				if new_height == last_height :
+						# if so, you are done
+						break
+
+				# if not, move on to the next loop
+				else:
+						last_height = new_height
+						loop_number += 1 
+						continue
+
+	log_scrap.info("--- scroll_down --- END ..." )
+
+	return driver
 
 
 # to be used in GenericSpider class
@@ -284,7 +346,7 @@ class GenericSpider(Spider) :
 
 		super(GenericSpider, self).__init__(*args, **kwargs)
 
-		self.user_id	= user_id
+		self.user_id		= user_id
 		self.spider_id 	= spider_id
 
 		self.test_limit = test_limit
@@ -301,8 +363,8 @@ class GenericSpider(Spider) :
 		self.spider_config_flat = spider_config_flat
 
 		### global infos on spider
-		self.spider_name 				= self.spider_config_flat['name']
-		self.spider_page_url 			= self.spider_config_flat['page_url']
+		self.spider_name 			= self.spider_config_flat['name']
+		self.spider_page_url	= self.spider_config_flat['page_url']
 		# self.spider_current_starturl 	= ""
 
 		# self.settings_limit_pages = self.spider_config_flat['LIMIT']
@@ -313,10 +375,13 @@ class GenericSpider(Spider) :
 
 
 		### get settings for selenium
-		self.delay_driver 	= self.spider_config_flat['wait_driver'] 	# 5.0
-		self.delay_new_page = self.spider_config_flat['wait_page'] 		# 1.5
-		self.delay_implicit	= self.spider_config_flat['wait_implicit'] 	# 0.5
-		# self.delay_item 	= self.spider_config_flat['LIMIT'] # 1.0
+		self.parse_reactive			= self.spider_config_flat['parse_reactive']
+		self.scroll_pause_time	= self.spider_config_flat['scroll_pause_time']
+		self.delay_driver 			= self.spider_config_flat['wait_driver'] 	# 5.0
+		self.delay_new_page 		= self.spider_config_flat['wait_page'] 		# 1.5
+		self.delay_implicit			= self.spider_config_flat['wait_implicit'] 	# 0.5
+		self.delay_driver 			= self.spider_config_flat['scroll_pause_time'] 	# .5
+		# self.delay_item 			= self.spider_config_flat['LIMIT'] # 1.0
 
 		### getting all the config args from spider_config_flat (i.e. next_page, ...)
 		log_scrap.info("--- GenericSpider / passing kwargs..." )
@@ -327,15 +392,12 @@ class GenericSpider(Spider) :
 
 		### getting data model for later use in item
 		log_scrap.info("--- GenericSpider / datamodel[:1] : \n %s \n ...", pformat(datamodel[:1]) )
-		# self.datamodel = datamodel
-		# pprint (datamodel[:3])
-		# print "..."
 
 		### storing correspondance dict from datamodel
-		self.dm_core 					= { i["field_name"] : { "field_type" : i["field_type"] } for i in datamodel if i["field_class"] == "core" }
-		self.dm_core_item_related 		= DATAMODEL_CORE_FIELDS_ITEM
+		self.dm_core 							= { i["field_name"] : { "field_type" : i["field_type"] } for i in datamodel if i["field_class"] == "core" }
+		self.dm_core_item_related = DATAMODEL_CORE_FIELDS_ITEM
 
-		self.dm_custom 					= { str(i["_id"]) 	: { "field_type" : i["field_type"],
+		self.dm_custom 						= { str(i["_id"]) 	: { "field_type" : i["field_type"],
 																"field_name" : i["field_name"]
 															} for i in datamodel if i["field_class"] == "custom" }
 		log_scrap.info("--- GenericSpider / dm_custom : \n %s", pformat(self.dm_custom) )
@@ -344,8 +406,6 @@ class GenericSpider(Spider) :
 
 		self.dm_item_related 			= self.dm_custom_list + self.dm_core_item_related
 		log_scrap.info("--- GenericSpider / dm_item_related : \n %s", pformat(self.dm_item_related) )
-
-
 
 		### SPLASH
 		### cf : https://blog.scrapinghub.com/2015/03/02/handling-javascript-in-scrapy-with-splash/
@@ -531,16 +591,12 @@ class GenericSpider(Spider) :
 				# raise CloseSpider('OUT OF TEST_LIMIT')
 
 
-
-
-
-
-
 		### - - - - - - - - - - - - - - - - - - - - - - - ###
 		### start requests with pure Scrapy requests
 		### - - - - - - - - - - - - - - - - - - - - - - - ###
 		elif self.spider_config_flat["parse_reactive"] == False :
-
+		# elif self.parse_reactive == False :
+  
 			log_scrap.info("\n--- GenericSpider.parse / starting requests with Scrapy... " )
 			# self.parse_scrapy(response)
 
@@ -704,7 +760,7 @@ class GenericSpider(Spider) :
 
 			# retrieve exec path for chromedriver from settings_scrapy.py
 			### GET APP MODE FROM ENV VARS
-			app_mode 			= os.environ.get('APP_MODE', 'default')
+			app_mode 						= os.environ.get('APP_MODE', 'default')
 			log_scrap.debug(u"--- GenericSpider.parse / APP_MODE : %s", app_mode)
 			chromedriver_path 	= CHROMEDRIVER_PATH_LIST[ app_mode ]
 			log_scrap.debug(u"--- GenericSpider.parse / chromedriver_path : %s", chromedriver_path)
@@ -731,7 +787,18 @@ class GenericSpider(Spider) :
 			log_scrap.debug(u"--- GenericSpider. / response._url       : %s", response._url )
 			try :
 				self.driver.get(response._url)
+
+				### try scroll_down if needed in config
+				if self.spider_config_flat['scroll_down'] : 
+					log_scrap.info("--- GenericSpider. / scroll_down is TRUE ... " )
+					# log_scrap.debug(u"--- GenericsSpider. / scroll_down - self.spider_config_flat   : \n%s", pformat(self.spider_config_flat) )
+
+					scroll_pause_time = self.spider_config_flat["scroll_pause_time"]
+					max_loops 				= self.spider_config_flat["scroll_loops"]
+					self.driver = scroll_down(self.driver, scroll_pause_time, max_loops)
+					# scroll_down(self.driver, scroll_pause_time, max_loops)
 				log_scrap.info("--- GenericSpider. / url '{}' is loaded ... ".format( response._url ))
+			
 			except :
 				# self.there_is_more_items_to_scrap = False
 				self.there_is_more_items_to_scrap_dict[start_url] = False
@@ -888,7 +955,6 @@ class GenericSpider(Spider) :
 								log_scrap.debug(u" --> item ..." )
 
 							else :
-								# self.there_is_more_items_to_scrap = False
 								self.there_is_more_items_to_scrap_dict[start_url] = False
 								log_scrap.warning(u"--- GenericSpider. / OUT OF LIMIT_ITEMS - items count : {} - LIMIT_ITEMS : {} / except -> break".format(self.item_count, self.LIMIT_ITEMS) )
 								self.driver.close()
@@ -897,7 +963,6 @@ class GenericSpider(Spider) :
 								break
 
 					else :
-						# self.there_is_more_items_to_scrap = False
 						self.there_is_more_items_to_scrap_dict[start_url] = False
 						log_scrap.warning(u"--- GenericSpider. / OUT OF ITEMS - page n°{} - limit : {} - test_limit : {} / except -> break".format(self.page_count, self.settings_limit_pages, self.test_limit) )
 						self.driver.close()
@@ -910,7 +975,6 @@ class GenericSpider(Spider) :
 					if self.test_limit == None or self.page_count < self.test_limit :
 
 						if self.there_is_more_items_to_scrap_dict[start_url] :
-						# if self.there_is_more_items_to_scrap :
 
 							if self.page_count < self.settings_limit_pages or self.settings_limit_pages == 0 :
 
@@ -944,8 +1008,6 @@ class GenericSpider(Spider) :
 								# except TimeoutException:
 								# except :
 								# 	log_scrap.error("--- GenericSpider. / Timed out waiting for page to load")
-
-
 
 								### click next button and wait for ajax calls to complete (post and get)
 								### cf : http://www.obeythetestinggoat.com/how-to-get-selenium-to-wait-for-page-load-after-a-click.html
@@ -990,8 +1052,6 @@ class GenericSpider(Spider) :
 									time.sleep(self.delay_new_page)
 								except :
 									log_scrap.error("--- GenericSpider. / !!! FAIL / wait for ajax to finish... " )
-
-
 
 							else :
 								# self.there_is_more_items_to_scrap = False
@@ -1296,7 +1356,6 @@ class GenericSpider(Spider) :
 ### SPIDER RUNNER ###########################################################################
 ### + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ###
 
-
 ### define the spider runner
 ### cf : https://stackoverflow.com/questions/13437402/how-to-run-scrapy-from-within-a-python-script
 ### cf : https://doc.scrapy.org/en/latest/topics/practices.html
@@ -1360,21 +1419,21 @@ def run_generic_spider( user_id				= None,
 
 	## https://scrapy.readthedocs.io/en/0.12/topics/extensions.html#module-scrapy.contrib.closespider
 
-	settings.set( "CURRENT_SPIDER_ID" 				, spider_id )
-	settings.set( "RETRY_TIMES"						, spider_config_flat["RETRY_TIMES"] )
-	settings.set( "CLOSESPIDER_ITEMCOUNT"			, spider_config_flat["LIMIT_ITEMS"] )
-	# settings.set( "CLOSESPIDER_PAGECOUNT"			, spider_config_flat["LIMIT_PAGES"] )
+	settings.set( "CURRENT_SPIDER_ID" 			, spider_id )
+	settings.set( "RETRY_TIMES"							, spider_config_flat["RETRY_TIMES"] )
+	settings.set( "CLOSESPIDER_ITEMCOUNT"		, spider_config_flat["LIMIT_ITEMS"] )
+	# settings.set( "CLOSESPIDER_PAGECOUNT"		, spider_config_flat["LIMIT_PAGES"] )
 	settings.set( "DOWNLOAD_DELAY" 					, spider_config_flat["download_delay"] )
 	settings.set( "CONCURRENT_ITEMS"				, spider_config_flat["CONCURRENT_ITEMS"] )
-	settings.set( "CONCURRENT_REQUESTS"				, spider_config_flat["CONCURRENT_REQUESTS"] )
+	settings.set( "CONCURRENT_REQUESTS"			, spider_config_flat["CONCURRENT_REQUESTS"] )
 	# settings.set( "DOWNLOAD_DELAY" 				, DOWNLOAD_DELAY )
 
-	settings.set( "BOT_NAME"						, spider_config_flat["BOT_NAME"] )
-	settings.set( "USER_AGENT"						, spider_config_flat["USER_AGENT"] )
-	settings.set( "ROBOTSTXT_OBEY"					, spider_config_flat["ROBOTSTXT_OBEY"] )
+	settings.set( "BOT_NAME"									, spider_config_flat["BOT_NAME"] )
+	settings.set( "USER_AGENT"								, spider_config_flat["USER_AGENT"] )
+	settings.set( "ROBOTSTXT_OBEY"						, spider_config_flat["ROBOTSTXT_OBEY"] )
 	settings.set( "AUTOTHROTTLE_ENABLED"			, spider_config_flat["AUTOTHROTTLE_ENABLED"] )
-	settings.set( "HTTPCACHE_ENABLED"				, spider_config_flat["HTTPCACHE_ENABLED"] )
-	settings.set( "RANDOMIZE_DOWNLOAD_DELAY"		, spider_config_flat["RANDOMIZE_DOWNLOAD_DELAY"] )
+	settings.set( "HTTPCACHE_ENABLED"					, spider_config_flat["HTTPCACHE_ENABLED"] )
+	settings.set( "RANDOMIZE_DOWNLOAD_DELAY"	, spider_config_flat["RANDOMIZE_DOWNLOAD_DELAY"] )
 
 	### initiating crawler process
 	log_scrap.info("--- run_generic_spider / instanciate process ..." 	 )
