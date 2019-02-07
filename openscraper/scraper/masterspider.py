@@ -233,10 +233,11 @@ def scroll_down(driver, scroll_pause_time, max_loops=3) :
 	log_scrap.info("--- scroll_down / scroll_pause_time : %s ", scroll_pause_time )
 	log_scrap.info("--- scroll_down / max_loops : %s ", max_loops )
 
-	loop_number = 0
+	loop_number 	= 0
+	needs_scroll 	= True
 
 	# while True:
-	while loop_number <= max_loops :
+	while loop_number <= max_loops and needs_scroll :
   		
 		log_scrap.info("--- scroll_down --- STARTING LOOPS..." )
 		# Get scroll height
@@ -266,11 +267,13 @@ def scroll_down(driver, scroll_pause_time, max_loops=3) :
 
 				# Calculate new scroll height and compare with last scroll height
 				new_height = driver.execute_script("return document.body.scrollHeight")
+				log_scrap.info("--- scroll_down / new_height : %s", new_height )
 
 				# check if the page height has remained the same
 				# if new_height == last_height or loop_number >= max_loops :
 				if new_height == last_height :
 						# if so, you are done
+						needs_scroll = False
 						break
 
 				# if not, move on to the next loop
@@ -328,11 +331,11 @@ class GenericSpider(Spider) :
 	### spider class needs a default name
 	name = "genericspider"
 
-	def __init__(self, 	user_id				= None,
-						datamodel			= None,
-						spider_id			= None,
+	def __init__(self, 	user_id		= None,
+						datamodel						= None,
+						spider_id						= None,
 						spider_config_flat	= None,
-						test_limit			= None,
+						test_limit					= None,
 						*args, **kwargs
 				) :
 
@@ -489,10 +492,10 @@ class GenericSpider(Spider) :
 						item 		= itemclass()
 
 						### add global info to item : i.e. core fields in dm_core_item_related list
-						item[ 'spider_id' ]		= self.spider_id
-						item[ 'added_by'  ]		= self.user_id
-						item[ 'added_at'  ]		= time.time()		# timestamp
-						item[ 'link_src'  ]		= response._url
+						item[ 'spider_id' ]	= self.spider_id
+						item[ 'added_by'  ]	= self.user_id
+						item[ 'added_at'  ]	= time.time()		# timestamp
+						item[ 'link_src'  ]	= response._url
 
 						item[ 'page_n'  ]		= self.page_count
 						item[ 'item_n'  ]		= self.item_count
@@ -1446,11 +1449,11 @@ def run_generic_spider( user_id				= None,
 			### cf : https://stackoverflow.com/questions/35662146/dynamic-spider-generation-with-scrapy-subclass-init-error
 
 			deferred = process.crawl( 	GenericSpider,
-											user_id				= user_id,
-											datamodel 			= datamodel ,
-											spider_id 			= spider_id ,
+											user_id							= user_id,
+											datamodel 					= datamodel ,
+											spider_id 					= spider_id ,
 											spider_config_flat	= spider_config_flat,
-											test_limit			= test_limit
+											test_limit					= test_limit
 									)
 			deferred.addBoth(lambda _: reactor.stop())
 			reactor.run()

@@ -61,7 +61,7 @@ tornadotools==0.2.2
 toro==1.0.1
 Twisted==17.9.0
 typing==3.6.4
-urllib3==1.22
+urllib3==1.24.1
 w3lib==1.19.0
 wrapt==1.10.11
 WTForms==2.1
