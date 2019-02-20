@@ -190,6 +190,7 @@ CONTRIBUTOR_EDIT_FIELDS_RADIO = [
 	"HTTPCACHE_ENABLED",
 	"AUTOTHROTTLE_ENABLED",
 	"ROBOTSTXT_OBEY",
+	"CHROME_HEADLESS"
 
 ]
 CONTRIBUTOR_EDIT_FIELDS_RADIO_TEXTS = {
@@ -302,7 +303,9 @@ CONTRIBUTOR_EDIT_FIELDS = {
 			"ROBOTSTXT_OBEY",
 
 			"BOT_NAME",
-			"USER_AGENT"
+			"USER_AGENT",
+
+			"CHROME_HEADLESS"
 
 			# "page_count" 		,	# keep track of how many pages were crawled
 		]
@@ -375,6 +378,7 @@ CONTRIBUTOR_CORE_FIELDS = {
 		"ROBOTSTXT_OBEY"						: ROBOTSTXT_OBEY,
 		"BOT_NAME"									: BOT_NAME,
 		"USER_AGENT"								: USER_AGENT,
+		"CHROME_HEADLESS"								: CHROME_HEADLESS,
 
 		"download_delay" 		: 0.5,	# delay
 		

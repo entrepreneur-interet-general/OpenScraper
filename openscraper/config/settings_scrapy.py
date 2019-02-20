@@ -41,6 +41,8 @@ USER_AGENT		= 	"Open Scraper (+https://github.com/entrepreneur-interet-general/O
 					# 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
 ROBOTSTXT_OBEY 	= False
 
+CHROME_HEADLESS = True
+
 '''
 check 
 wget -U 'Open Scraper (+https://github.com/entrepreneur-interet-general/OpenScraper)' https://fondation.credit-cooperatif.coop/acor 
