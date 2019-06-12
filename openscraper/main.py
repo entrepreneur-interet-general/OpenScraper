@@ -664,7 +664,7 @@ def main():
 	# create server with args.mode
 	print()
 	app_log.info( ">>> http_server : run ...")
-	http_server = tornado.httpserver.HTTPServer(Application( mode=args.mode ))
+	http_server = tornado.httpserver.HTTPServer(Application( mode=args.mode ), xheaders=True)
 	app_log.info( ">>> http_server ready ...")
 
 

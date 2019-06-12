@@ -1110,11 +1110,8 @@ class GenericSpider(Spider) :
 				if self.spider_config_flat[ dm_field ] != [] and self.spider_config_flat[ dm_field ] != "" :
 
 					full_data = None
-					# dm_name   = str( self.dm_custom[dm_field]["field_name"] )
 					dm_name   = self.dm_custom[dm_field]["field_name"]
 					dm_type   = self.dm_custom[dm_field]["field_type"]
-					# dm_name   = dm_field[u"field_name"]
-					# dm_type   = dm_field[u"field_type"]
 					# log_scrap.info(" -+- extract / dm_name : %s ", dm_name )
 
 					### fill item field corresponding to xpath
@@ -1125,6 +1122,7 @@ class GenericSpider(Spider) :
 						try :
 							# log_scrap.debug(u" -+- extract / with Scrapy ... " )
 							# log_scrap.info(" -+- extract / item_field_xpath : {} ".format(item_field_xpath ))
+							# log_scrap.info(u" -+- extract Scrapy / self.dm_custom[dm_field] : %s ",  self.dm_custom[dm_field] )
 							log_scrap.debug(u" -+- extract Scrapy / dm_name : %s - item_field_xpath : %s " %(dm_name, item_field_xpath ))
 							full_data 			= raw_data.xpath( item_field_xpath ).extract()
 						except :
@@ -1213,7 +1211,7 @@ class GenericSpider(Spider) :
 						if full_data != None or full_data != [] or full_data != [u""] :
 
 							# delete duplicates
-							full_data_uniques 	= set(full_data)
+							full_data_uniques = set(full_data)
 							full_data_clean 	= list(full_data_uniques)
 
 							# aggregate to existing results
@@ -1221,8 +1219,6 @@ class GenericSpider(Spider) :
 								item[ dm_field ] = item[ dm_field ] + full_data_clean
 							else :
 								item[ dm_field ] = full_data_clean
-
-
 
 		log_scrap.warning(u">>> item n°{} - page n°{} >>> END OF : fill_item_from_results_page >>>".format( item_n, self.page_count))
 		# log_scrap.warning(u"\n %s \n", pformat(item))
@@ -1236,9 +1232,9 @@ class GenericSpider(Spider) :
 
 		log_scrap.info(" === GenericSpider / spider_name : '%s' - parse_detailed_page I : %s" %(self.spider_name, response._url) )
 
-		item 		= response.meta["item"]
+		item 			= response.meta["item"]
 		item_n 		= response.meta["item_n"]
-		start_url 	= response.meta["start_url"]
+		start_url = response.meta["start_url"]
 		parse_api	= response.meta["parse_api"]
 
 		# log_scrap.info(" === GenericSpider / parse_detailed_page I / item_n : {} - page_n : {} ".format(item_n, page_n) )
@@ -1265,7 +1261,10 @@ class GenericSpider(Spider) :
 
 		# start_url 	= response.meta["start_url"]
 
+		log_scrap.info(" === GenericSpider / get_next_page / response : \n'%s' " %(response) )
+
 		log_scrap.info(" === GenericSpider / get_next_page / spider_name : '%s' " %(self.spider_name) )
+		log_scrap.info(" === GenericSpider / get_next_page / next_page : '%s' " %(self.next_page) )
 		log_scrap.debug(u"=== GenericSpider / VARIABLES - item n°{} - there_is_more_items_to_scrap_dict[start_url] : {} ".format(self.item_count, self.there_is_more_items_to_scrap_dict[start_url]) )
 
 		try :
