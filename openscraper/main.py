@@ -466,8 +466,8 @@ class Application(tornado.web.Application):
 
     ### connect to MongoDB with variables from config.settings.py
     client = MongoClient(
-          host = MONGODB_HOST, 
-          port = MONGODB_PORT
+      host = MONGODB_HOST, 
+      port = MONGODB_PORT
     )
     self.db = client[ MONGODB_DB ]
     
@@ -679,14 +679,14 @@ def main():
   # for local dev --> debug
   if APP_DEBUG == True : 
     http_server.listen(options.port)
-    http_server.listen(443)	
+    # http_server.listen(443)	
     tornado.ioloop.IOLoop.instance().start()
 
   # for prod --> doesn't work with autoreload == True
   # cf : http://www.tornadoweb.org/en/stable/guide/running.html
   elif APP_DEBUG == False : 
     http_server.bind(options.port)	
-    http_server.bind(443)	
+    # http_server.bind(443)	
     http_server.start(0)  			# forks one process per cpu
     tornado.ioloop.IOLoop.current().start()
 
