@@ -226,6 +226,7 @@ class LoginHandler(BaseHandler):
     ### TO DO : form validation 
     # form validation here....
 
+    admin_user = self.get_admin_user_from_db( self.get_argument("email") )
 
     ### check if user exists in db
     if user : 
@@ -239,18 +240,25 @@ class LoginHandler(BaseHandler):
         # set user
         self.set_current_user(user)
 
-        # self.redirect("/")
-        self.redirect( next_url )
+        if admin_user != None : 
+          # self.redirect("/")
+          self.redirect( next_url )
       
+        else : 
+          # add error message and redirect if user is not an admin in admin_users
+          self.error_slug = self.add_error_message_to_slug("due to abuses you can now only login and use openn scraper-CIS if you arre registred as an admin... If not please contact : codemos.infos-at-gmail.com")
+          self.redirect("/login/" + self.error_slug )
+
+
       else : 
         # add error message and redirect if user wrote wrong password
-        self.error_slug = self.add_error_message_to_slug("bad password or email mate ! no id stealing around here... mate !")
+        self.error_slug = self.add_error_message_to_slug("bad password or email ! no id stealing around here...  !")
         self.redirect("/login/" + self.error_slug )
     
     else : 
       # add error message and redirect if no user registred in db
       # error_slug 		= u"?error=" + tornado.escape.url_escape("Login incorrect")
-      self.error_slug = self.add_error_message_to_slug("incorrect login mate ! try again ")
+      self.error_slug = self.add_error_message_to_slug("incorrect login ! try again ")
       self.redirect("/login/" + self.error_slug)
   
 
