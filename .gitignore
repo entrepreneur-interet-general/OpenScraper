@@ -15,6 +15,7 @@ config.py
 # openscraper/config/config_mail_recaptcha.py 
 # openscraper/config/config.py 
 **/settings_secret.py
+**/settings_secret_admins.py
 
 config.cfg
 */config.cfg

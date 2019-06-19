@@ -60,7 +60,9 @@ from 	os import path, remove
 import 	logging
 import 	logging.config
 from 	logging.config import dictConfig
+
 from 	config.settings_logging import logging_config
+from  config.settings_secret_admins import admin_list
 
 from 	tornado.log import enable_pretty_logging, LogFormatter, access_log, app_log, gen_log
 
@@ -478,6 +480,8 @@ class Application(tornado.web.Application):
     self.coll_spiders = self.db[ MONGODB_COLL_CONTRIBUTORS ]
     self.coll_data		= self.db[ MONGODB_COLL_DATASCRAPPED ]
 
+    self.coll_admin_users 	= self.db[ MONGODB_COLL_ADMIN_USERS ]
+
     # create default fields in spiders collection in case fields are missing
 
     ### related to : scrapper's INFOS 
@@ -520,6 +524,14 @@ class Application(tornado.web.Application):
     self.coll_spiders.update_many({'scraper_settings.BOT_NAME' 									: {"$exists" : False}}, {"$set": {'scraper_settings.BOT_NAME' 								: "OpenScraper" }})
     self.coll_spiders.update_many({'scraper_settings.USER_AGENT' 								: {"$exists" : False}}, {"$set": {'scraper_settings.USER_AGENT' 							: "Open Scraper (+https://github.com/entrepreneur-interet-general/OpenScraper)" }})
 
+    # self.coll_admin_users.delete_many({})
+    for admin_email in admin_list : 
+      admin = {
+        "admin_email" : admin_email
+      }
+      is_admin = self.coll_admin_users.find_one({'admin_email' : admin_email})
+      if is_admin == None :
+        self.coll_admin_users.insert(admin)
 
     # create index for every collection needing it  
     # cf : https://code.tutsplus.com/tutorials/full-text-search-in-mongodb--cms-24835 
@@ -571,9 +583,9 @@ class Application(tornado.web.Application):
     cwd = os.getcwd()
     app_log.info('>>> BACKUP MONGO COLLECITONS : cwd : %s', cwd )
     reboot_datetime = datetime.now().strftime("%Y-%m-%d-h%H-m%M-s%S")
-    backup_mongo_collection(self.coll_spiders,	 cwd + "/_backups_collections/backup_coll_spiders-"+reboot_datetime +".json")
-    backup_mongo_collection(self.coll_model,	 cwd + "/_backups_collections/backup_coll_model-"+reboot_datetime +".json")
-    backup_mongo_collection(self.coll_users,	 cwd + "/_backups_collections/backup_coll_users-"+reboot_datetime +".json")
+    # backup_mongo_collection(self.coll_spiders,	 cwd + "/_backups_collections/backup_coll_spiders-"+reboot_datetime +".json")
+    # backup_mongo_collection(self.coll_model,	 cwd + "/_backups_collections/backup_coll_model-"+reboot_datetime +".json")
+    # backup_mongo_collection(self.coll_users,	 cwd + "/_backups_collections/backup_coll_users-"+reboot_datetime +".json")
 
 
 

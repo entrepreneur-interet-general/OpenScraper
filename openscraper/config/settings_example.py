@@ -43,4 +43,6 @@ MONGODB_COLL_DATAMODEL	  = "data_model"
 MONGODB_COLL_DATASCRAPPED = "data_scraped"
 MONGODB_COLL_USERS        = "users"
 
+MONGODB_COLL_ADMIN_USERS = "admin_users"
+
 # MONGODB_COLL_PROJECTS		= "projects"
