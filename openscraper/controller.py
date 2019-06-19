@@ -237,18 +237,16 @@ class LoginHandler(BaseHandler):
       # TO DO : hash and/or decrypt password
       if self.get_argument("password") == user_password : 
         
-        # set user
-        self.set_current_user(user)
-
         if admin_user != None : 
+          # set user
+          self.set_current_user(user)
           # self.redirect("/")
           self.redirect( next_url )
       
         else : 
           # add error message and redirect if user is not an admin in admin_users
-          self.error_slug = self.add_error_message_to_slug("due to abuses you can now only login and use openn scraper-CIS if you arre registred as an admin... If not please contact : codemos.infos-at-gmail.com")
+          self.error_slug = self.add_error_message_to_slug("due to abuses you can now only login and use open scraper-CIS if you are registred as an admin... If not and yu'd like to please contact : codemos.infos-at-gmail.com")
           self.redirect("/login/" + self.error_slug )
-
 
       else : 
         # add error message and redirect if user wrote wrong password
