@@ -245,7 +245,7 @@ class LoginHandler(BaseHandler):
       
         else : 
           # add error message and redirect if user is not an admin in admin_users
-          self.error_slug = self.add_error_message_to_slug("due to abuses you can now only login and use open scraper-CIS if you are registred as an admin... If not and yu'd like to please contact : codemos.infos-at-gmail.com")
+          self.error_slug = self.add_error_message_to_slug("Due to abuses you can now only login and use open scraper-CIS if you are registred as an admin... If you would like to, please contact : codemos.infos-at-gmail.com")
           self.redirect("/login/" + self.error_slug )
 
       else : 
@@ -363,7 +363,7 @@ class RegisterHandler(BaseHandler):
         if admin_user != None : 
           self.error_slug = self.add_error_message_to_slug("user email already exists")
         if admin_user == None : 
-          self.error_slug = self.add_error_message_to_slug("user email is not listed as admin email")
+          self.error_slug = self.add_error_message_to_slug("Due to abuses you can now only rregister and use open scraper-CIS if you are registred as an admin... If you would like to, please contact : codemos.infos-at-gmail.com")
         self.redirect("/register/" + self.error_slug )
       
     else : 
