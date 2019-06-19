@@ -478,7 +478,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
   def get_admin_user_from_db(self, user_email) :
     """ get admin user from db"""
-    user = self.application.coll_admin_users.find_one({"email": user_email })
+    user = self.application.coll_admin_users.find_one({"admin_email": user_email })
     return user 
 
   def get_user_from_db(self, user_email) :
