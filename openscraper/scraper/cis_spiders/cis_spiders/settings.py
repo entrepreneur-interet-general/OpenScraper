@@ -20,6 +20,7 @@ NEWSPIDER_MODULE = 'cis_spiders.spiders'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
+CHROME_HEADLESS = True
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32

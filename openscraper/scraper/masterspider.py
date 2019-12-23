@@ -98,7 +98,6 @@ from time import sleep
 ### cf : https://duo.com/decipher/driving-headless-chrome-with-python
 options_selenium = webdriver.ChromeOptions()
 # options.binary_location = '/usr/local/bin/chromedriver'
-options_selenium.add_argument('headless')
 # option.add_argument(' — incognito')
 # set the window size
 options_selenium.add_argument('window-size=1200x600')
@@ -770,6 +769,8 @@ class GenericSpider(Spider) :
 
 			### specify executable path to launch webdriver-->
 			# cf : where chromedriver was installed when `brew install chromedriver`
+			if self.spider_config_flat['CHROME_HEADLESS']:
+				options_selenium.add_argument('headless')
 			self.driver = webdriver.Chrome(executable_path=chromedriver_path, chrome_options=options_selenium)
 			# self.driver = webdriver.Chrome(chrome_options=options_selenium)
 			# self.driver = webdriver.Firefox()

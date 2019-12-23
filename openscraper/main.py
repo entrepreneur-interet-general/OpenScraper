@@ -517,6 +517,7 @@ class Application(tornado.web.Application):
 		self.coll_spiders.update_many({'scraper_settings.HTTPCACHE_ENABLED' 				: {"$exists" : False}}, {"$set": {'scraper_settings.HTTPCACHE_ENABLED' 				: True }})
 		self.coll_spiders.update_many({'scraper_settings.AUTOTHROTTLE_ENABLED' 			: {"$exists" : False}}, {"$set": {'scraper_settings.AUTOTHROTTLE_ENABLED' 		: False }})
 		self.coll_spiders.update_many({'scraper_settings.ROBOTSTXT_OBEY' 						: {"$exists" : False}}, {"$set": {'scraper_settings.ROBOTSTXT_OBEY' 					: False }})
+		self.coll_spiders.update_many({'scraper_settings.CHROME_HEADLESS' 						: {"$exists" : False}}, {"$set": {'scraper_settings.CHROME_HEADLESS' 					: True }})
 		self.coll_spiders.update_many({'scraper_settings.BOT_NAME' 									: {"$exists" : False}}, {"$set": {'scraper_settings.BOT_NAME' 								: "OpenScraper" }})
 		self.coll_spiders.update_many({'scraper_settings.USER_AGENT' 								: {"$exists" : False}}, {"$set": {'scraper_settings.USER_AGENT' 							: "Open Scraper (+https://github.com/entrepreneur-interet-general/OpenScraper)" }})
 
