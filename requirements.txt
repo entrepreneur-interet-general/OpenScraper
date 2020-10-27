@@ -13,7 +13,7 @@ chardet==3.0.4
 Click==7.0
 configparser==3.5.0
 constantly==15.1.0
-cryptography==2.3.1
+cryptography==3.2
 cssselect==1.0.3
 docutils==0.14
 enum34==1.1.6
