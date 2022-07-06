@@ -27,7 +27,7 @@ isort==4.3.4
 Jinja2==2.10
 jwt==0.5.2
 lazy-object-proxy==1.3.1
-lxml==4.1.1
+lxml==4.9.1
 MarkupSafe==1.0
 mccabe==0.6.1
 packaging==16.8
